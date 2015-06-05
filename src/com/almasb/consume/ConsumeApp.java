@@ -16,8 +16,8 @@ public class ConsumeApp extends GameApplication {
     protected void initSettings(GameSettings settings) {
         settings.setTitle("Consume");
         settings.setVersion("0.0.1dev");
-        settings.setWidth(1280);
-        settings.setHeight(720);
+        settings.setWidth(640);
+        settings.setHeight(360);
     }
 
     @Override
@@ -42,6 +42,8 @@ public class ConsumeApp extends GameApplication {
 
         Button btnLoad = new Button("LOAD");
         btnLoad.setFont(font);
+        btnLoad.setOnAction(event-> {mainMenuRoot.setLayoutX(mainMenuRoot.getLayoutX()-mainMenuRoot.getWidth()/4);
+        mainMenuRoot.setLayoutY(mainMenuRoot.getLayoutY()-mainMenuRoot.getHeight()/4);});
 
         Button btnExit = new Button("EXIT");
         btnExit.setFont(font);
@@ -52,6 +54,9 @@ public class ConsumeApp extends GameApplication {
         vbox.setTranslateX(500);
         vbox.setTranslateY(150);
 
+        mainMenuRoot.setScaleX(0.5);
+        mainMenuRoot.setScaleY(0.5);
+        
         mainMenuRoot.getChildren().addAll(bg, vbox);
     }
 
