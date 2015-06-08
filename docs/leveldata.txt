@@ -1,0 +1,63 @@
+ - Empty cell, ignore.
+0- End of line
+1- Spawn Point
+2- Next Level
+3-
+4-
+5-
+6-
+7-
+8-
+9-
+a-
+A-
+b-
+B-
+c-
+C-
+d- Destructible block
+D-
+e-
+E-
+f-
+F-
+g-
+G-
+h-
+H-
+i- Indestructible block
+I-
+j-
+J-
+k-
+K-
+l-
+L-
+m-
+M-
+n-
+N-
+o-
+O-
+p- Ladder
+P-
+q-
+Q-
+r-
+R-
+s-
+S- 
+t-
+T-
+u- Increase Max Health
+U- Increase Max Mana
+v- Increase Mana Regeneration
+V- 
+w-
+W-
+x-
+X-
+y-
+Y-
+z-
+Z-
