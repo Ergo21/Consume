@@ -1,0 +1,10 @@
+Name= A string value representing the characters name.
+Health= A non-zero positive numeric value, representing the characters max health
+Mana= A numeric value that is >= 0, representing the characters max mana
+ManaR= A numeric value that is >= 0, representing the characters mana regeneration rate in %
+Resists= A list of ELEMENTAL tags of which damage is halved.
+Weak= A list of ELEMENTAL tags of which damage is doubled. 
+Spritesheet= A string value that gives the name of the enemies sprite sheet. 
+
+
+ELEMENTAL Tags= "FIRE", "ICE" 

@@ -1,0 +1,7 @@
+Name="Mook"
+Health="2"
+Mana="0"
+ManaR="0"
+Resists="NONE"
+Weak="NONE"
+Spritesheet="mook.png"
