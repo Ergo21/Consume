@@ -41,31 +41,33 @@ public class LevelParser {
                     case '0':
                         break;
                     case '1':
+                        e = new Entity(Types.Type.SPAWN_POINT);
+                        rect.setFill(Color.TRANSPARENT);
                         break;
                     case '2':
                         break;
                     case 'd':
-                        e = new Entity(Type.DESTRUCTIBLE_BLOCK);
+                        e = new Entity(Types.Type.PLATFORM);
                         rect.setFill(Color.DARKGREEN);
                         break;
                     case 'i':
-                        e = new Entity(Type.INDESTRUCTIBLE_BLOCK);
+                        e = new Entity(Types.Type.PLATFORM);
                         rect.setFill(Color.BROWN);
                         break;
                     case 'p':
-                        e = new Entity(Type.LADDER);
+                        e = new Entity(Types.Type.BLOCK);
                         rect.setFill(Color.GREY);
                         break;
                     case 'u':
-                        e = new Entity(Type.INCREASE_MAX_HEALTH);
+                        e = new Entity(Types.Type.POWERUP);
                         rect.setFill(Color.PURPLE);
                         break;
                     case 'U':
-                        e = new Entity(Type.INCREASE_MAX_MANA);
+                        e = new Entity(Types.Type.POWERUP);
                         rect.setFill(Color.PURPLE);
                         break;
                     case 'v':
-                        e = new Entity(Type.INCREASE_MANA_REGEN);
+                        e = new Entity(Types.Type.POWERUP);
                         rect.setFill(Color.PURPLE);
                         break;
                 }
