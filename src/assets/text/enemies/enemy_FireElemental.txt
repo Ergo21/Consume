@@ -1,0 +1,7 @@
+Name="Fire Elemental"
+Health="3"
+Mana="10"
+ManaR="1"
+Resists="FIRE"
+Weak="ICE"
+Spritesheet="fElem.png"
