@@ -1,5 +1,7 @@
 package com.almasb.consume;
 
+import java.util.Arrays;
+
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.layout.Pane;
@@ -7,10 +9,16 @@ import javafx.scene.layout.VBox;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 
+import com.almasb.consume.LevelParser.Level;
+import com.almasb.consume.LevelParser.LevelData;
 import com.almasb.fxgl.GameApplication;
 import com.almasb.fxgl.GameSettings;
+import com.almasb.fxgl.asset.Assets;
+import com.almasb.fxgl.entity.Entity;
 
 public class ConsumeApp extends GameApplication {
+
+    private Assets assets;
 
     @Override
     protected void initSettings(GameSettings settings) {
@@ -22,7 +30,7 @@ public class ConsumeApp extends GameApplication {
 
     @Override
     protected void initAssets() throws Exception {
-        // TODO Auto-generated method stub
+        assets = assetManager.cache();
 
     }
 
@@ -56,14 +64,19 @@ public class ConsumeApp extends GameApplication {
 
         mainMenuRoot.setScaleX(0.5);
         mainMenuRoot.setScaleY(0.5);
-        
+
         mainMenuRoot.getChildren().addAll(bg, vbox);
     }
 
     @Override
     protected void initGame(Pane gameRoot) {
-        // TODO Auto-generated method stub
+        LevelData levelData = new LevelData(assets.getText("levels/level_0.txt"));
 
+        LevelParser parser = new LevelParser(Arrays.asList(levelData));
+
+        Level level = parser.parse(0);
+
+        addEntities(level.getEntities().toArray(new Entity[0]));
     }
 
     @Override
