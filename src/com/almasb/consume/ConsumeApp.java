@@ -20,7 +20,6 @@ import com.almasb.fxgl.entity.Entity;
 public class ConsumeApp extends GameApplication {
 
     private Assets assets;
-    private List<String> levelText;
 
     @Override
     protected void initSettings(GameSettings settings) {
@@ -32,7 +31,8 @@ public class ConsumeApp extends GameApplication {
 
     @Override
     protected void initAssets() throws Exception {
-        levelText = assetManager.loadText("levels/level_0.txt");
+        assets = assetManager.cache();
+        assets.logCached();
     }
 
     @Override
@@ -71,7 +71,7 @@ public class ConsumeApp extends GameApplication {
 
     @Override
     protected void initGame(Pane gameRoot) {
-        LevelData levelData = new LevelData(levelText);
+        LevelData levelData = new LevelData(assets.getText("levels/level_0.txt"));
 
         LevelParser parser = new LevelParser(Arrays.asList(levelData));
 
