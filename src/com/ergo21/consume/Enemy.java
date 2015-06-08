@@ -6,15 +6,15 @@ import java.util.List;
 public class Enemy{
 	
 	enum ETags{NONE, FIRE, ICE};
-	private String name;
-	private String sSheet;
-	private int mHealth;
-	private int cHealth;
-	private int mMana;
-	private int cMana;
-	private int manaR;
-	private ArrayList<ETags> resists;
-	private ArrayList<ETags> weaks;
+	protected String name;
+	protected String sSheet;
+	protected int mHealth;
+	protected int cHealth;
+	protected int mMana;
+	protected int cMana;
+	protected int manaR;
+	protected ArrayList<ETags> resists;
+	protected ArrayList<ETags> weaks;
 	
 	public Enemy(List<String> prop){
 		for(String p : prop){
