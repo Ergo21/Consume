@@ -29,9 +29,9 @@ public class LevelParser {
         int height = data.size() * 40;
         List<Entity> entities = new ArrayList<>();
 
-        for (int i = 0; i < height; i++) {
+        for (int i = 0; i < data.size(); i++) {
             String line = data.get(i);
-            for (int j = 0; j < width; j++) {
+            for (int j = 0; j < data.get(0).length(); j++) {
                 Rectangle rect = new Rectangle(40, 40);
                 Entity e = null;
 
@@ -70,8 +70,11 @@ public class LevelParser {
                         break;
                 }
 
-                e.setGraphics(rect);
-                entities.add(e);
+                if (e != null) {
+                    e.setPosition(j*40, i*40);
+                    e.setGraphics(rect);
+                    entities.add(e);
+                }
             }
         }
 

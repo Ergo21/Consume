@@ -1,6 +1,7 @@
 package com.almasb.consume;
 
 import java.util.Arrays;
+import java.util.List;
 
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
@@ -19,6 +20,7 @@ import com.almasb.fxgl.entity.Entity;
 public class ConsumeApp extends GameApplication {
 
     private Assets assets;
+    private List<String> levelText;
 
     @Override
     protected void initSettings(GameSettings settings) {
@@ -30,8 +32,7 @@ public class ConsumeApp extends GameApplication {
 
     @Override
     protected void initAssets() throws Exception {
-        assets = assetManager.cache();
-
+        levelText = assetManager.loadText("levels/level_0.txt");
     }
 
     @Override
@@ -70,7 +71,7 @@ public class ConsumeApp extends GameApplication {
 
     @Override
     protected void initGame(Pane gameRoot) {
-        LevelData levelData = new LevelData(assets.getText("levels/level_0.txt"));
+        LevelData levelData = new LevelData(levelText);
 
         LevelParser parser = new LevelParser(Arrays.asList(levelData));
 
