@@ -81,34 +81,34 @@ public class Enemy{
 	public String getName(){
 		return name;
 	}
-	public String getSSheet(){
+	public String getSpritesheet(){
 		return sSheet;
 	}
-	public int getMHealth(){
+	public int getMaxHealth(){
 		return mHealth;
 	}
-	public int getCHealth(){
+	public int getCurrentHealth(){
 		return cHealth;
 	}
-	public void setCHealth(int cH){
+	public void setCurrentHealth(int cH){
 		cHealth = cH;
 	}
-	public int getMMana(){
+	public int getMaxMana(){
 		return mMana;
 	}
-	public int getCMana(){
+	public int getCurrentMana(){
 		return cMana;
 	}
-	public void setCMana(int cM){
+	public void setCurrentMana(int cM){
 		cMana = cM;
 	}
-	public int getManaR(){
+	public int getManaRegenRate(){
 		return manaR;
 	}
-	public ArrayList<ETags> getResists(){
+	public ArrayList<ETags> getResistances(){
 		return resists;
 	}
-	public ArrayList<ETags> getWeaks(){
+	public ArrayList<ETags> getWeaknesses(){
 		return weaks;
 	}
 }
