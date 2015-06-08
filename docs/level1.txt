@@ -1,0 +1,15 @@
+i           pi0
+i 2     v   pi0
+iiiiiiiiiiiipi0
+i         d pi0
+i         d pi0
+i         dUpi0
+i ipiiii  iiii0
+i  p         i0
+i  p         i0
+i  pu        i0
+i iii  iiiipii0
+i       d  p i0
+i       d  p i0
+i 1     d  p i0
+iiiiiiiiiiiiii0
