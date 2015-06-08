@@ -58,15 +58,15 @@ public class LevelParser {
                         break;
                     case 'u':
                         e = new Entity(Type.INCREASE_MAX_HEALTH);
-                        rect.setFill(Color.PINK);
+                        rect.setFill(Color.PURPLE);
                         break;
                     case 'U':
                         e = new Entity(Type.INCREASE_MAX_MANA);
-                        rect.setFill(Color.PINK);
+                        rect.setFill(Color.PURPLE);
                         break;
                     case 'v':
                         e = new Entity(Type.INCREASE_MANA_REGEN);
-                        rect.setFill(Color.PINK);
+                        rect.setFill(Color.PURPLE);
                         break;
                 }
 
