@@ -1,0 +1,4 @@
+Ergo ("ErgoIcon.png"): "I think the project is going fairly well so far."
+Almas ("AlmasIcon.png"): "Pretty well considering its been two days."
+Ergo ("ErgoIcon.png"): "Hopefully we can keep this pace up and get some nice assets."
+END
