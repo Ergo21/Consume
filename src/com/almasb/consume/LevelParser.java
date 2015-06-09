@@ -31,7 +31,7 @@ public class LevelParser {
 
         for (int i = 0; i < data.size(); i++) {
             String line = data.get(i);
-            for (int j = 0; j < data.get(0).length(); j++) {
+            for (int j = 0; j < line.length(); j++) {
                 Rectangle rect = new Rectangle(40, 40);
                 Entity e = null;
 
@@ -45,6 +45,8 @@ public class LevelParser {
                         rect.setFill(Color.TRANSPARENT);
                         break;
                     case '2':
+                        e = new Entity(Types.Type.NEXT_LEVEL_POINT);
+                        rect.setFill(Color.BLACK);
                         break;
                     case 'd':
                         e = new Entity(Types.Type.PLATFORM);
