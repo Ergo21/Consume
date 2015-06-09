@@ -45,8 +45,6 @@ public class GameScene extends Group{
 			tVal = tVal.substring(tVal.indexOf('=') + 1);
 			String lin = tVal.trim();
 
-			System.out.println(icoNam);
-
 			script.add(new SceneLine(nam, ass.getTexture(icoNam), lin));
 		}
 
