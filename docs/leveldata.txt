@@ -11,8 +11,8 @@
 9-
 a-
 A-
-b-
-B-
+b- Barrier (Allows the player through, but becomes indestructible afterwards)
+B- Boss
 c-
 C-
 d- Destructible block

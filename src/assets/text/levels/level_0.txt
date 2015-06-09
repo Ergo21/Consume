@@ -1,15 +1,22 @@
+i                      d               u    i0
+i                      dU              i    i0
+i                      di                   i0
+i             ipiii    i         i          i0
+i              p   iiii                     i0 
+i 1        i   p           i                i0 
+iiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii       i0
+i   d                                       i0
+i v d                                       i0
+iiiiiiiiiiiipiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii0
 i           pi0
-i 2     v   pi0
-iiiiiiiiiiiipi0
-i         d pi0
-i         d pi0
-i         dUpi0
+i           pi0
+i           pi0
 i ipiiii  iiii0
 i  p         i0
 i  p         i0
-i  pu        i0
+i  p         i0
 i iii  iiiipii0
 i       d  p i0
 i       d  p i0
-i 1     d  p i0
+i 2     d  p i0
 iiiiiiiiiiiiii0
