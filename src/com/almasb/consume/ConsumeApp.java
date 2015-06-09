@@ -1,5 +1,6 @@
 package com.almasb.consume;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -26,9 +27,11 @@ public class ConsumeApp extends GameApplication {
 
     private Assets assets;
 
-    private Entity player;
+    private Entity player = new Entity(Type.PLAYER);
 
     private Physics physics = new Physics();
+
+    private int currentLevel = 0;
 
     @Override
     protected void initSettings(GameSettings settings) {
@@ -80,8 +83,13 @@ public class ConsumeApp extends GameApplication {
 
     @Override
     protected void initGame(Pane gameRoot) {
-        LevelData levelData = new LevelData(assets.getText("levels/level_0.txt"));
-        LevelParser parser = new LevelParser(Arrays.asList(levelData));
+        List<LevelData> levelData = new ArrayList<>();
+        for (int i = 0; i < Config.MAX_LEVELS; i++) {
+            LevelData data = new LevelData(assets.getText("levels/level_" + i + ".txt"));
+            levelData.add(data);
+        }
+
+        LevelParser parser = new LevelParser(levelData);
 
         Level level = parser.parse(0);
 
@@ -122,6 +130,25 @@ public class ConsumeApp extends GameApplication {
         testEnemy.addControl(new SeekControl(player));
 
         addEntities(testEnemy);
+
+        Entity nextPoint = entities.stream().filter(e -> e.isType(Type.NEXT_LEVEL_POINT)).findAny().get();
+        nextPoint.setUsePhysics(true);
+
+        addCollisionHandler(Type.PLAYER, Type.NEXT_LEVEL_POINT, (player, point) -> {
+            getAllEntities().forEach(this::removeEntity);
+
+            runOnceAfter(() -> {
+                Level l = parser.parse(++currentLevel);
+
+                List<Entity> ent = l.getEntities();
+                addEntities(ent.toArray(new Entity[0]));
+
+                Entity s = ent.stream().filter(e -> e.isType(Type.SPAWN_POINT)).findAny().get();
+                spawnPlayer(s.getPosition());
+            }, 1 * SECOND);
+
+
+        });
     }
 
     @Override
@@ -274,12 +301,11 @@ public class ConsumeApp extends GameApplication {
         Rectangle graphics = new Rectangle(15, 30);
         graphics.setFill(Color.YELLOW);
 
-        player = new Entity(Type.PLAYER)
-                    .setPosition(p.getX(), p.getY())
-                    .setUsePhysics(true)
-                    .setGraphics(graphics)
-                    .setProperty("jumping", false)
-                    .setProperty("velocity", new Point2D(0, 0));
+        player.setPosition(p.getX(), p.getY())
+            .setUsePhysics(true)
+            .setGraphics(graphics)
+            .setProperty("jumping", false)
+            .setProperty("velocity", new Point2D(0, 0));
 
         player.addControl((entity, now) -> {
             Point2D velocity = entity.getProperty("velocity");

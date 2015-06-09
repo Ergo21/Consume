@@ -18,5 +18,7 @@ public final class Config {
 
     public static final int BLOCK_SIZE = 40;
 
+    public static final int MAX_LEVELS = 2;
+
     public static final int PATROL_RADIUS = 3 * BLOCK_SIZE;
 }
