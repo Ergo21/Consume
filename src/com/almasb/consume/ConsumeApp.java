@@ -17,6 +17,7 @@ import javafx.scene.text.Font;
 import com.almasb.consume.LevelParser.Level;
 import com.almasb.consume.LevelParser.LevelData;
 import com.almasb.consume.Types.Type;
+import com.almasb.consume.ai.SeekControl;
 import com.almasb.fxgl.GameApplication;
 import com.almasb.fxgl.GameSettings;
 import com.almasb.fxgl.asset.Assets;
@@ -27,6 +28,7 @@ public class ConsumeApp extends GameApplication {
     private Assets assets;
 
     private Entity player;
+    private Entity testEnemy;
 
     @Override
     protected void initSettings(GameSettings settings) {
@@ -90,6 +92,17 @@ public class ConsumeApp extends GameApplication {
         spawnPlayer(spawnPoint.getPosition());
 
         bindViewportOrigin(player, 320, 180);
+
+        testEnemy = new Entity(Type.ENEMY);
+
+        Rectangle rect = new Rectangle(30, 30);
+        rect.setFill(Color.RED);
+
+        testEnemy.setGraphics(rect);
+        testEnemy.setPosition(spawnPoint.getTranslateX() + 80, spawnPoint.getTranslateY() + 10);
+        testEnemy.addControl(new SeekControl(player));
+
+        addEntities(testEnemy);
     }
 
     @Override
