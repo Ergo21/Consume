@@ -19,6 +19,7 @@ import com.almasb.fxgl.GameApplication;
 import com.almasb.fxgl.GameSettings;
 import com.almasb.fxgl.asset.Assets;
 import com.almasb.fxgl.entity.Entity;
+import com.ergo21.consume.GameScene;
 
 public class ConsumeApp extends GameApplication {
 
@@ -124,8 +125,11 @@ public class ConsumeApp extends GameApplication {
 
     @Override
     protected void initUI(Pane uiRoot) {
-        // TODO Auto-generated method stub
 
+        GameScene scene = new GameScene(assets.getText("dialogue/scene_0.txt"), assets);
+        uiRoot.getChildren().add(scene);
+
+        addKeyTypedBinding(KeyCode.ENTER, scene::updateScript);
     }
 
     @Override
