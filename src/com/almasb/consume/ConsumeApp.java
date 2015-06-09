@@ -4,19 +4,16 @@ import java.util.Arrays;
 import java.util.List;
 
 import javafx.geometry.Point2D;
-import javafx.geometry.Pos;
 import javafx.geometry.Rectangle2D;
-import javafx.scene.control.Button;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.Pane;
-import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
-import javafx.scene.text.Font;
 
 import com.almasb.consume.LevelParser.Level;
 import com.almasb.consume.LevelParser.LevelData;
 import com.almasb.consume.Types.Type;
+import com.almasb.consume.ai.PatrolControl;
 import com.almasb.consume.ai.SeekControl;
 import com.almasb.fxgl.GameApplication;
 import com.almasb.fxgl.GameSettings;
@@ -28,7 +25,8 @@ public class ConsumeApp extends GameApplication {
     private Assets assets;
 
     private Entity player;
-    private Entity testEnemy;
+
+    private Physics physics = new Physics();
 
     @Override
     protected void initSettings(GameSettings settings) {
@@ -93,13 +91,32 @@ public class ConsumeApp extends GameApplication {
 
         bindViewportOrigin(player, 320, 180);
 
-        testEnemy = new Entity(Type.ENEMY);
+        ////////////////////////////////////////////////////////////////////////////////////////////
+
+        Entity testEnemy = new Entity(Type.ENEMY);
 
         Rectangle rect = new Rectangle(30, 30);
         rect.setFill(Color.RED);
 
         testEnemy.setGraphics(rect);
+        testEnemy.setProperty("jumping", false);
+        testEnemy.setProperty("velocity", new Point2D(0, 0));
+        testEnemy.setProperty("physics", physics);
         testEnemy.setPosition(spawnPoint.getTranslateX() + 80, spawnPoint.getTranslateY() + 10);
+        testEnemy.addControl(new PatrolControl(player.getPosition()));
+
+        addEntities(testEnemy);
+
+        testEnemy = new Entity(Type.ENEMY);
+
+        rect = new Rectangle(30, 30);
+        rect.setFill(Color.RED);
+
+        testEnemy.setGraphics(rect);
+        testEnemy.setProperty("jumping", false);
+        testEnemy.setProperty("velocity", new Point2D(0, 0));
+        testEnemy.setProperty("physics", physics);
+        testEnemy.setPosition(spawnPoint.getTranslateX() + 240, spawnPoint.getTranslateY() + 10);
         testEnemy.addControl(new SeekControl(player));
 
         addEntities(testEnemy);
@@ -141,6 +158,64 @@ public class ConsumeApp extends GameApplication {
     protected void onUpdate(long now) {
         // TODO Auto-generated method stub
 
+    }
+
+    public class Physics {
+        /**
+         * Returns true iff entity has moved value units
+         *
+         * @param e
+         * @param value
+         * @return
+         */
+        public boolean moveX(Entity e, int value) {
+            boolean movingRight = value > 0;
+
+            for (int i = 0; i < Math.abs(value); i++) {
+                for (Entity platform : getEntities(Type.PLATFORM)) {
+                    if (e.getBoundsInParent().intersects(platform.getBoundsInParent())) {
+                        if (movingRight) {
+                            if (e.getTranslateX() + e.getWidth() == platform.getTranslateX()) {
+                                return false;
+                            }
+                        }
+                        else {
+                            if (e.getTranslateX() == platform.getTranslateX() + platform.getWidth()) {
+                                return false;
+                            }
+                        }
+                    }
+                }
+                e.setTranslateX(e.getTranslateX() + (movingRight ? 1 : -1));
+            }
+
+            return true;
+        }
+
+        public void moveY(Entity e, int value) {
+            boolean movingDown = value > 0;
+
+            for (int i = 0; i < Math.abs(value); i++) {
+                for (Entity platform : getEntities(Type.PLATFORM)) {
+                    if (e.getBoundsInParent().intersects(platform.getBoundsInParent())) {
+                        if (movingDown) {
+                            if (e.getTranslateY() + e.getHeight() == platform.getTranslateY()) {
+                                e.setTranslateY(e.getTranslateY() - 1);
+                                e.setProperty("jumping", false);
+                                return;
+                            }
+                        }
+                        else {
+                            if (e.getTranslateY() == platform.getTranslateY() + platform.getHeight()) {
+                                return;
+                            }
+                        }
+                    }
+                }
+                e.setTranslateY(e.getTranslateY() + (movingDown ? 1 : -1));
+                e.setProperty("jumping", true);
+            }
+        }
     }
 
     private void movePlayerX(int value) {
