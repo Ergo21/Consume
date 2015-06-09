@@ -7,7 +7,8 @@ public class Types {
 
     public enum Type implements EntityType {
         PLAYER, SPAWN_POINT, NEXT_LEVEL_POINT,
-        ENEMY, PLATFORM, BLOCK, TRIGGER, POWERUP
+        ENEMY, PLATFORM, BLOCK, TRIGGER, POWERUP,
+        PROJECTILE
     }
 
     public enum Powerup {

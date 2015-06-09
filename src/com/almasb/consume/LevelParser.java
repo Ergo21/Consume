@@ -25,8 +25,8 @@ public class LevelParser {
 
         // TODO: range checks
 
-        int width = data.get(0).length() * 40;
-        int height = data.size() * 40;
+        int width = data.get(0).length() * Config.BLOCK_SIZE;
+        int height = data.size() * Config.BLOCK_SIZE;
         List<Entity> entities = new ArrayList<>();
 
         for (int i = 0; i < data.size(); i++) {
@@ -75,7 +75,7 @@ public class LevelParser {
                 }
 
                 if (e != null) {
-                    e.setPosition(j*40, i*40);
+                    e.setPosition(j*Config.BLOCK_SIZE, i*Config.BLOCK_SIZE);
                     e.setGraphics(rect);
                     entities.add(e);
                 }

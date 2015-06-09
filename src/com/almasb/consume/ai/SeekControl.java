@@ -26,9 +26,9 @@ public class SeekControl implements Control {
 
 
                 Point2D velocity = entity.getProperty("velocity");
-                velocity = velocity.add(0, 1);
-                if (velocity.getY() > 10)
-                    velocity = new Point2D(velocity.getX(), 10);
+                velocity = velocity.add(0, Speed.GRAVITY_ACCEL);
+                if (velocity.getY() > Speed.GRAVITY_MAX)
+                    velocity = new Point2D(velocity.getX(), Speed.GRAVITY_MAX);
 
                 entity.setProperty("velocity", velocity);
 

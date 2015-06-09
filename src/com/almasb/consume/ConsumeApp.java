@@ -10,6 +10,7 @@ import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 
+import com.almasb.consume.Config.Speed;
 import com.almasb.consume.LevelParser.Level;
 import com.almasb.consume.LevelParser.LevelData;
 import com.almasb.consume.Types.Type;
@@ -32,7 +33,7 @@ public class ConsumeApp extends GameApplication {
     @Override
     protected void initSettings(GameSettings settings) {
         settings.setTitle("Consume");
-        settings.setVersion("0.0.1dev");
+        settings.setVersion("dev version");
         settings.setWidth(640);
         settings.setHeight(360);
     }
@@ -135,10 +136,10 @@ public class ConsumeApp extends GameApplication {
     @Override
     protected void initInput() {
         addKeyPressBinding(KeyCode.A, () -> {
-            movePlayerX(-5);
+            movePlayerX(-Speed.PLAYER_MOVE);
         });
         addKeyPressBinding(KeyCode.D, () -> {
-            movePlayerX(5);
+            movePlayerX(Speed.PLAYER_MOVE);
         });
         addKeyPressBinding(KeyCode.W, () -> {
             if (player.<Boolean>getProperty("jumping"))
@@ -148,7 +149,7 @@ public class ConsumeApp extends GameApplication {
 
             Point2D velocity = player.getProperty("velocity");
 
-            player.setProperty("velocity", velocity.add(0, -30));
+            player.setProperty("velocity", velocity.add(0, -Speed.PLAYER_JUMP));
         });
 
         // debug
@@ -282,9 +283,9 @@ public class ConsumeApp extends GameApplication {
 
         player.addControl((entity, now) -> {
             Point2D velocity = entity.getProperty("velocity");
-            velocity = velocity.add(0, 1);
-            if (velocity.getY() > 10)
-                velocity = new Point2D(velocity.getX(), 10);
+            velocity = velocity.add(0, Speed.GRAVITY_ACCEL);
+            if (velocity.getY() > Speed.GRAVITY_MAX)
+                velocity = new Point2D(velocity.getX(), Speed.GRAVITY_MAX);
 
             entity.setProperty("velocity", velocity);
 
