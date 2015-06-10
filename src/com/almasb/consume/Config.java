@@ -21,4 +21,8 @@ public final class Config {
     public static final int MAX_LEVELS = 2;
 
     public static final int PATROL_RADIUS = 3 * BLOCK_SIZE;
+
+    public static final int MAX_HEALTH_INC = 10;
+    public static final int MAX_MANA_INC = 10;
+    public static final int MANA_REGEN_INC = 1;
 }

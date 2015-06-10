@@ -1,7 +1,6 @@
 package com.almasb.consume;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import javafx.geometry.Point2D;
@@ -14,6 +13,8 @@ import javafx.scene.shape.Rectangle;
 import com.almasb.consume.Config.Speed;
 import com.almasb.consume.LevelParser.Level;
 import com.almasb.consume.LevelParser.LevelData;
+import com.almasb.consume.Types.Powerup;
+import com.almasb.consume.Types.Property;
 import com.almasb.consume.Types.Type;
 import com.almasb.consume.ai.PatrolControl;
 import com.almasb.consume.ai.SeekControl;
@@ -22,6 +23,8 @@ import com.almasb.fxgl.GameSettings;
 import com.almasb.fxgl.asset.Assets;
 import com.almasb.fxgl.entity.Entity;
 import com.ergo21.consume.GameScene;
+import com.ergo21.consume.Player;
+import com.ergo21.consume.PlayerHUD;
 
 public class ConsumeApp extends GameApplication {
 
@@ -32,6 +35,8 @@ public class ConsumeApp extends GameApplication {
     private Physics physics = new Physics();
 
     private int currentLevel = 0;
+
+    private PlayerHUD hud;
 
     @Override
     protected void initSettings(GameSettings settings) {
@@ -146,9 +151,9 @@ public class ConsumeApp extends GameApplication {
                 Entity s = ent.stream().filter(e -> e.isType(Type.SPAWN_POINT)).findAny().get();
                 spawnPlayer(s.getPosition());
             }, 1 * SECOND);
-
-
         });
+
+        initCollisions();
     }
 
     @Override
@@ -158,6 +163,40 @@ public class ConsumeApp extends GameApplication {
         uiRoot.getChildren().add(scene);
 
         addKeyTypedBinding(KeyCode.ENTER, scene::updateScript);
+
+        hud = new PlayerHUD(player.<Player>getProperty(Property.DATA).getMaxHealth(),
+                player.<Player>getProperty(Property.DATA).getMaxMana());
+
+        hud.setTranslateX(10);
+        hud.setTranslateY(100);
+
+        uiRoot.getChildren().add(hud);
+    }
+
+    private void initCollisions() {
+        addCollisionHandler(Type.PLAYER, Type.POWERUP, (playerEntity, powerup) -> {
+            removeEntity(powerup);
+
+            Powerup type = powerup.getProperty(Property.SUB_TYPE);
+            Player playerData = playerEntity.getProperty(Property.DATA);
+            switch (type) {
+                case INC_MANA_REGEN:
+                    playerData.increaseManaRegen(Config.MANA_REGEN_INC);
+                    break;
+                case INC_MAX_HEALTH:
+                    playerData.increaseMaxHealth(Config.MAX_HEALTH_INC);
+                    break;
+                case INC_MAX_MANA:
+                    playerData.increaseMaxMana(Config.MAX_MANA_INC);
+                    break;
+                case RESTORE_HEALTH:
+                    break;
+                case RESTORE_MANA:
+                    break;
+                default:
+                    break;
+            }
+        });
     }
 
     @Override
@@ -184,12 +223,20 @@ public class ConsumeApp extends GameApplication {
             getEntitiesInRange(new Rectangle2D(player.getTranslateX() - 50, player.getTranslateY() - 50, 200, 200), Type.PLATFORM.getUniqueType())
                 .forEach(e -> System.out.println(e.getType()));
         });
+
+        addKeyTypedBinding(KeyCode.I, () -> {
+            Player p = player.getProperty(Property.DATA);
+            System.out.println(p.toString());
+        });
     }
 
     @Override
     protected void onUpdate(long now) {
-        // TODO Auto-generated method stub
-
+        Player p = player.getProperty(Property.DATA);
+        hud.setCurHealth(p.getCurrentHealth());
+        hud.setCurMana(p.getCurrentMana());
+        hud.setMaxHealth(p.getMaxHealth());
+        hud.setMaxMana(p.getMaxMana());
     }
 
     public class Physics {
@@ -305,7 +352,8 @@ public class ConsumeApp extends GameApplication {
             .setUsePhysics(true)
             .setGraphics(graphics)
             .setProperty("jumping", false)
-            .setProperty("velocity", new Point2D(0, 0));
+            .setProperty("velocity", new Point2D(0, 0))
+            .setProperty(Property.DATA, new Player(assets.getText("enemies/enemy_Mook.txt")));
 
         player.addControl((entity, now) -> {
             Point2D velocity = entity.getProperty("velocity");

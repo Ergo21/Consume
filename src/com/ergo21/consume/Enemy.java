@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Enemy{
-	
+
 	enum ETags{NONE, FIRE, ICE};
 	protected String name;
 	protected String sSheet;
@@ -15,7 +15,7 @@ public class Enemy{
 	protected int manaR;
 	protected ArrayList<ETags> resists;
 	protected ArrayList<ETags> weaks;
-	
+
 	public Enemy(List<String> prop){
 		for(String p : prop){
 			String val = p.substring(p.indexOf('"') + 1, p.lastIndexOf('"'));
@@ -71,13 +71,13 @@ public class Enemy{
 					break;
 				}
 			}
-			
+
 		}
-		
+
 		return rws;
 	}
-	
-	
+
+
 	public String getName(){
 		return name;
 	}
@@ -110,5 +110,15 @@ public class Enemy{
 	}
 	public ArrayList<ETags> getWeaknesses(){
 		return weaks;
+	}
+
+	@Override
+    public String toString() {
+	    StringBuilder sb = new StringBuilder();
+	    sb.append(name).append(",").append(sSheet);
+	    sb.append(",health:").append(cHealth).append("/").append(mHealth);
+	    sb.append(",mana:").append(cMana).append("/").append(mMana);
+	    sb.append("(").append(manaR).append("%").append(")");
+	    return sb.toString();
 	}
 }

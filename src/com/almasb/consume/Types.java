@@ -21,6 +21,6 @@ public class Types {
     }
 
     public enum Property implements PropertyKey {
-        SUB_TYPE
+        DATA, SUB_TYPE
     }
 }
