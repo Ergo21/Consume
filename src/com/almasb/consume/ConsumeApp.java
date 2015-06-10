@@ -1,7 +1,6 @@
 package com.almasb.consume;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import javafx.geometry.Point2D;
@@ -25,6 +24,7 @@ import com.almasb.fxgl.asset.Assets;
 import com.almasb.fxgl.entity.Entity;
 import com.ergo21.consume.GameScene;
 import com.ergo21.consume.Player;
+import com.ergo21.consume.PlayerHUD;
 
 public class ConsumeApp extends GameApplication {
 
@@ -35,6 +35,8 @@ public class ConsumeApp extends GameApplication {
     private Physics physics = new Physics();
 
     private int currentLevel = 0;
+
+    private PlayerHUD hud;
 
     @Override
     protected void initSettings(GameSettings settings) {
@@ -161,6 +163,14 @@ public class ConsumeApp extends GameApplication {
         uiRoot.getChildren().add(scene);
 
         addKeyTypedBinding(KeyCode.ENTER, scene::updateScript);
+
+        hud = new PlayerHUD(player.<Player>getProperty(Property.DATA).getMaxHealth(),
+                player.<Player>getProperty(Property.DATA).getMaxMana());
+
+        hud.setTranslateX(10);
+        hud.setTranslateY(100);
+
+        uiRoot.getChildren().add(hud);
     }
 
     private void initCollisions() {
@@ -222,8 +232,11 @@ public class ConsumeApp extends GameApplication {
 
     @Override
     protected void onUpdate(long now) {
-        // TODO Auto-generated method stub
-
+        Player p = player.getProperty(Property.DATA);
+        hud.setCurHealth(p.getCurrentHealth());
+        hud.setCurMana(p.getCurrentMana());
+        hud.setMaxHealth(p.getMaxHealth());
+        hud.setMaxMana(p.getMaxMana());
     }
 
     public class Physics {

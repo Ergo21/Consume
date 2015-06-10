@@ -14,10 +14,10 @@ public class PlayerHUD extends Group{
 	private int curMana;
 	private ProgressBar healthBar;
 	private ProgressBar manaBar;
-	
+
 	private Label healthLab;
 	private Label manaLab;
-	
+
 	public PlayerHUD(int mHel, int mMan){
 		super();
 		maxHealth = mHel;
@@ -30,7 +30,7 @@ public class PlayerHUD extends Group{
 		manaBar.getTransforms().add(new Rotate(270));
 		healthLab = new Label();
 		manaLab = new Label();
-		
+
 		GridPane grid = new GridPane();
 		grid.setVgap(2);
 		grid.setHgap(2);
@@ -39,50 +39,53 @@ public class PlayerHUD extends Group{
 		grid.add(manaBar, 1, 0);
 		grid.add(healthLab, 0, 1);
 		grid.add(manaLab, 1, 1);
-		
+
+		getChildren().add(grid);
+
 		updateValues();
 	}
-	
+
 	public int getMaxHealth(){
 		return maxHealth;
 	}
-	
+
 	public void setMaxHealth(int newMHealth){
 		maxHealth = newMHealth;
 		updateValues();
 	}
-	
+
 	public int getCurHealth(){
 		return curHealth;
 	}
-	
+
 	public void setCurHealth(int newCHealth){
 		curHealth = newCHealth;
 		updateValues();
 	}
-	
+
 	public int getMaxMana(){
 		return maxMana;
 	}
-	
+
 	public void setMaxMana(int newMMana){
 		maxMana = newMMana;
 		updateValues();
 	}
-	
+
 	public int getCurMana(){
 		return curMana;
 	}
-	
+
 	public void setCurMana(int newCMana){
 		curMana = newCMana;
 		updateValues();
 	}
-	
+
 	private void updateValues(){
-		healthBar.setProgress(curHealth/maxHealth);
-		manaBar.setProgress(curMana/maxMana);
-		
+		healthBar.setProgress(curHealth * 1.0 /maxHealth);
+		if (maxMana != 0)
+		    manaBar.setProgress(curMana * 1.0 /maxMana);
+
 		healthLab.setText(curHealth + "/" + maxHealth);
 		manaLab.setText(curMana + "/" + maxMana);
 	}
