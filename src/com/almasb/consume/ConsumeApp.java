@@ -141,6 +141,7 @@ public class ConsumeApp extends GameApplication {
 
         addCollisionHandler(Type.PLAYER, Type.NEXT_LEVEL_POINT, (player, point) -> {
             getAllEntities().forEach(this::removeEntity);
+            player.removeControls();
 
             runOnceAfter(() -> {
                 Level l = parser.parse(++currentLevel);
@@ -233,10 +234,12 @@ public class ConsumeApp extends GameApplication {
     @Override
     protected void onUpdate(long now) {
         Player p = player.getProperty(Property.DATA);
-        hud.setCurHealth(p.getCurrentHealth());
-        hud.setCurMana(p.getCurrentMana());
-        hud.setMaxHealth(p.getMaxHealth());
-        hud.setMaxMana(p.getMaxMana());
+        if (p != null) {
+            hud.setCurHealth(p.getCurrentHealth());
+            hud.setCurMana(p.getCurrentMana());
+            hud.setMaxHealth(p.getMaxHealth());
+            hud.setMaxMana(p.getMaxMana());
+        }
     }
 
     public class Physics {
