@@ -44,6 +44,8 @@ public class ConsumeApp extends GameApplication {
 
     private Random random = new Random();
 
+    private long regenTime = 0;
+
     @Override
     protected void initSettings(GameSettings settings) {
         settings.setTitle("Consume");
@@ -265,6 +267,12 @@ public class ConsumeApp extends GameApplication {
     protected void onUpdate(long now) {
         Player p = player.getProperty(Property.DATA);
         if (p != null) {
+
+            if (now - regenTime >= Config.REGEN_TIME_INTERVAL) {
+                p.regenMana();
+                regenTime = now;
+            }
+
             hud.setCurHealth(p.getCurrentHealth());
             hud.setCurMana(p.getCurrentMana());
             hud.setMaxHealth(p.getMaxHealth());
@@ -386,7 +394,7 @@ public class ConsumeApp extends GameApplication {
             .setGraphics(graphics)
             .setProperty("jumping", false)
             .setProperty("velocity", new Point2D(0, 0))
-            .setProperty(Property.DATA, new Player(assets.getText("enemies/enemy_Mook.txt")));
+            .setProperty(Property.DATA, new Player(assets.getText("player.txt")));
 
         player.addControl((entity, now) -> {
             Point2D velocity = entity.getProperty("velocity");

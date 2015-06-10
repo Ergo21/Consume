@@ -140,6 +140,14 @@ public class Enemy{
         setCurrentMana(Math.min(mMana, cMana + restored));
     }
 
+    /**
+     * Regen "tick", restores mana according to
+     * character's mana regeneration rate
+     */
+    public void regenMana() {
+        restoreMana(manaR / 100.0);
+    }
+
 	@Override
     public String toString() {
 	    StringBuilder sb = new StringBuilder();
