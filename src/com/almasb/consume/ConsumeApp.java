@@ -1,7 +1,10 @@
 package com.almasb.consume;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
+import java.util.Random;
 
 import javafx.geometry.Point2D;
 import javafx.geometry.Rectangle2D;
@@ -22,6 +25,7 @@ import com.almasb.fxgl.GameApplication;
 import com.almasb.fxgl.GameSettings;
 import com.almasb.fxgl.asset.Assets;
 import com.almasb.fxgl.entity.Entity;
+import com.almasb.fxgl.entity.FXGLEvent;
 import com.ergo21.consume.GameScene;
 import com.ergo21.consume.Player;
 import com.ergo21.consume.PlayerHUD;
@@ -37,6 +41,8 @@ public class ConsumeApp extends GameApplication {
     private int currentLevel = 0;
 
     private PlayerHUD hud;
+
+    private Random random = new Random();
 
     @Override
     protected void initSettings(GameSettings settings) {
@@ -114,11 +120,13 @@ public class ConsumeApp extends GameApplication {
         rect.setFill(Color.RED);
 
         testEnemy.setGraphics(rect);
+        testEnemy.setUsePhysics(true);
         testEnemy.setProperty("jumping", false);
         testEnemy.setProperty("velocity", new Point2D(0, 0));
         testEnemy.setProperty("physics", physics);
         testEnemy.setPosition(spawnPoint.getTranslateX() + 80, spawnPoint.getTranslateY() + 10);
         testEnemy.addControl(new PatrolControl(player.getPosition()));
+        testEnemy.addFXGLEventHandler(Event.DEATH, this::onEnemyDeath);
 
         addEntities(testEnemy);
 
@@ -128,11 +136,13 @@ public class ConsumeApp extends GameApplication {
         rect.setFill(Color.RED);
 
         testEnemy.setGraphics(rect);
+        testEnemy.setUsePhysics(true);
         testEnemy.setProperty("jumping", false);
         testEnemy.setProperty("velocity", new Point2D(0, 0));
         testEnemy.setProperty("physics", physics);
         testEnemy.setPosition(spawnPoint.getTranslateX() + 240, spawnPoint.getTranslateY() + 10);
         testEnemy.addControl(new SeekControl(player));
+        testEnemy.addFXGLEventHandler(Event.DEATH, this::onEnemyDeath);
 
         addEntities(testEnemy);
 
@@ -190,13 +200,18 @@ public class ConsumeApp extends GameApplication {
                 case INC_MAX_MANA:
                     playerData.increaseMaxMana(Config.MAX_MANA_INC);
                     break;
-                case RESTORE_HEALTH:
-                    break;
-                case RESTORE_MANA:
-                    break;
+
+                    // TODO: add missing cases
+
                 default:
+                    System.out.println("Picked up a powerup: " + type);
                     break;
             }
+        });
+
+        // just a test
+        addCollisionHandler(Type.PLAYER, Type.ENEMY, (player, enemy) -> {
+            enemy.fireFXGLEvent(new FXGLEvent(Event.DEATH));
         });
     }
 
@@ -369,6 +384,57 @@ public class ConsumeApp extends GameApplication {
             movePlayerY((int)velocity.getY());
         });
         addEntities(player);
+    }
+
+    private void onEnemyDeath(FXGLEvent event) {
+        Entity enemy = event.getTarget();
+        removeEntity(enemy);
+
+        // chance based drop logic
+        if (random.nextInt(100) <= 33) {    // check if dropping
+            ArrayList<Powerup> drops = new ArrayList<>();
+            drops.add(Powerup.RESTORE_HEALTH_12);
+            drops.add(Powerup.RESTORE_MANA_12);
+
+            Player p = player.getProperty(Property.DATA);
+            double hpPercent = p.getCurrentHealth() * 1.0 / p.getMaxHealth();
+            double manaPercent = p.getCurrentMana() * 1.0 / p.getMaxMana();
+
+            if (hpPercent < 0.75)
+                drops.add(Powerup.RESTORE_HEALTH_25);
+
+            if (hpPercent < 0.5)
+                drops.add(Powerup.RESTORE_HEALTH_50);
+
+            if (manaPercent < 0.75)
+                drops.add(Powerup.RESTORE_MANA_25);
+
+            if (hpPercent < 0.5)
+                drops.add(Powerup.RESTORE_MANA_50);
+
+            if (hpPercent > manaPercent) {
+                drops.remove(Powerup.RESTORE_HEALTH_12);
+                drops.remove(Powerup.RESTORE_HEALTH_25);
+                drops.remove(Powerup.RESTORE_HEALTH_50);
+            }
+            else {
+                drops.remove(Powerup.RESTORE_MANA_12);
+                drops.remove(Powerup.RESTORE_MANA_25);
+                drops.remove(Powerup.RESTORE_MANA_50);
+            }
+
+            Collections.shuffle(drops);
+
+            Entity e = new Entity(Type.POWERUP);
+            e.setUsePhysics(true);
+            e.setPosition(enemy.getTranslateX(), enemy.getTranslateY());
+            e.setProperty(Property.SUB_TYPE, drops.get(0));
+            Rectangle r = new Rectangle(30, 30);
+            r.setFill(Color.PINK);
+            e.setGraphics(r);
+
+            addEntities(e);
+        }
     }
 
     public static void main(String[] args) {
