@@ -1,0 +1,7 @@
+Name="Player"
+Health="10"
+Mana="10"
+ManaR="10"
+Resists="NONE"
+Weak="NONE"
+Spritesheet="player.png"

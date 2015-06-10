@@ -1,5 +1,7 @@
 package com.almasb.consume;
 
+import com.almasb.fxgl.GameApplication;
+
 public final class Config {
 
     public static final class Speed {
@@ -24,5 +26,7 @@ public final class Config {
 
     public static final int MAX_HEALTH_INC = 10;
     public static final int MAX_MANA_INC = 10;
-    public static final int MANA_REGEN_INC = 1;
+    public static final int MANA_REGEN_INC = 5;
+
+    public static final long REGEN_TIME_INTERVAL = 1 * GameApplication.SECOND;
 }

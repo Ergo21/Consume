@@ -24,6 +24,10 @@ public class Types {
         DESTRUCTIBLE, INDESTRUCTIBLE
     }
 
+    public enum Block {
+        BARRIER, LADDER
+    }
+
     public enum Property implements PropertyKey {
         DATA, SUB_TYPE
     }

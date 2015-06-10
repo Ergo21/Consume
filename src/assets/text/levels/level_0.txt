@@ -1,9 +1,9 @@
 i                      d               u    i0
-i                      dU              i    i0
-i             u v U    di                   i0
-i             ipiii    i         i          i0
-i              p   iiii                     i0 
-i 1        i   p           i                i0 
+i     i    i           dU              i    i0
+i     i    i  u        di                   i0
+i     b    b  ipiii    i         i          i0
+i     b    b   p   iiii                     i0 
+i 1   b    i   p           i                i0 
 iiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii       i0
 i   d                                       i0
 i v d           T t T t T t T t             i0

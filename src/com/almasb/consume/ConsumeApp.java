@@ -16,6 +16,7 @@ import javafx.scene.shape.Rectangle;
 import com.almasb.consume.Config.Speed;
 import com.almasb.consume.LevelParser.Level;
 import com.almasb.consume.LevelParser.LevelData;
+import com.almasb.consume.Types.Block;
 import com.almasb.consume.Types.Powerup;
 import com.almasb.consume.Types.Property;
 import com.almasb.consume.Types.Type;
@@ -43,6 +44,8 @@ public class ConsumeApp extends GameApplication {
     private PlayerHUD hud;
 
     private Random random = new Random();
+
+    private long regenTime = 0;
 
     @Override
     protected void initSettings(GameSettings settings) {
@@ -114,37 +117,37 @@ public class ConsumeApp extends GameApplication {
 
         ////////////////////////////////////////////////////////////////////////////////////////////
 
-        Entity testEnemy = new Entity(Type.ENEMY);
-
-        Rectangle rect = new Rectangle(30, 30);
-        rect.setFill(Color.RED);
-
-        testEnemy.setGraphics(rect);
-        testEnemy.setUsePhysics(true);
-        testEnemy.setProperty("jumping", false);
-        testEnemy.setProperty("velocity", new Point2D(0, 0));
-        testEnemy.setProperty("physics", physics);
-        testEnemy.setPosition(spawnPoint.getTranslateX() + 80, spawnPoint.getTranslateY() + 10);
-        testEnemy.addControl(new PatrolControl(player.getPosition()));
-        testEnemy.addFXGLEventHandler(Event.DEATH, this::onEnemyDeath);
-
-        addEntities(testEnemy);
-
-        testEnemy = new Entity(Type.ENEMY);
-
-        rect = new Rectangle(30, 30);
-        rect.setFill(Color.RED);
-
-        testEnemy.setGraphics(rect);
-        testEnemy.setUsePhysics(true);
-        testEnemy.setProperty("jumping", false);
-        testEnemy.setProperty("velocity", new Point2D(0, 0));
-        testEnemy.setProperty("physics", physics);
-        testEnemy.setPosition(spawnPoint.getTranslateX() + 240, spawnPoint.getTranslateY() + 10);
-        testEnemy.addControl(new SeekControl(player));
-        testEnemy.addFXGLEventHandler(Event.DEATH, this::onEnemyDeath);
-
-        addEntities(testEnemy);
+//        Entity testEnemy = new Entity(Type.ENEMY);
+//
+//        Rectangle rect = new Rectangle(30, 30);
+//        rect.setFill(Color.RED);
+//
+//        testEnemy.setGraphics(rect);
+//        testEnemy.setUsePhysics(true);
+//        testEnemy.setProperty("jumping", false);
+//        testEnemy.setProperty("velocity", new Point2D(0, 0));
+//        testEnemy.setProperty("physics", physics);
+//        testEnemy.setPosition(spawnPoint.getTranslateX() + 80, spawnPoint.getTranslateY() + 10);
+//        testEnemy.addControl(new PatrolControl(player.getPosition()));
+//        testEnemy.addFXGLEventHandler(Event.DEATH, this::onEnemyDeath);
+//
+//        addEntities(testEnemy);
+//
+//        testEnemy = new Entity(Type.ENEMY);
+//
+//        rect = new Rectangle(30, 30);
+//        rect.setFill(Color.RED);
+//
+//        testEnemy.setGraphics(rect);
+//        testEnemy.setUsePhysics(true);
+//        testEnemy.setProperty("jumping", false);
+//        testEnemy.setProperty("velocity", new Point2D(0, 0));
+//        testEnemy.setProperty("physics", physics);
+//        testEnemy.setPosition(spawnPoint.getTranslateX() + 240, spawnPoint.getTranslateY() + 10);
+//        testEnemy.addControl(new SeekControl(player));
+//        testEnemy.addFXGLEventHandler(Event.DEATH, this::onEnemyDeath);
+//
+//        addEntities(testEnemy);
 
         Entity nextPoint = entities.stream().filter(e -> e.isType(Type.NEXT_LEVEL_POINT)).findAny().get();
         nextPoint.setUsePhysics(true);
@@ -200,11 +203,26 @@ public class ConsumeApp extends GameApplication {
                 case INC_MAX_MANA:
                     playerData.increaseMaxMana(Config.MAX_MANA_INC);
                     break;
-
-                    // TODO: add missing cases
-
+                case RESTORE_HEALTH_12:
+                    playerData.restoreHealth(0.125);
+                    break;
+                case RESTORE_HEALTH_25:
+                    playerData.restoreHealth(0.25);
+                    break;
+                case RESTORE_HEALTH_50:
+                    playerData.restoreHealth(0.5);
+                    break;
+                case RESTORE_MANA_12:
+                    playerData.restoreMana(0.125);
+                    break;
+                case RESTORE_MANA_25:
+                    playerData.restoreMana(0.25);
+                    break;
+                case RESTORE_MANA_50:
+                    playerData.restoreMana(0.5);
+                    break;
                 default:
-                    System.out.println("Picked up a powerup: " + type);
+                    System.out.println("Picked up an unknown powerup: " + type);
                     break;
             }
         });
@@ -212,6 +230,22 @@ public class ConsumeApp extends GameApplication {
         // just a test
         addCollisionHandler(Type.PLAYER, Type.ENEMY, (player, enemy) -> {
             enemy.fireFXGLEvent(new FXGLEvent(Event.DEATH));
+        });
+
+        addCollisionHandler(Type.PLAYER, Type.BLOCK, (player, block) -> {
+            if (block.getProperty(Property.SUB_TYPE) == Block.BARRIER) {
+                block.setProperty("state", "passing");
+
+                if ("none".equals(block.getProperty("start"))) {
+                    if (player.getTranslateX() <= block.getTranslateX()) {
+                        block.setProperty("start", "left");
+                    }
+                    else {
+                        block.setProperty("start", "right");
+                    }
+                }
+
+            }
         });
     }
 
@@ -250,10 +284,48 @@ public class ConsumeApp extends GameApplication {
     protected void onUpdate(long now) {
         Player p = player.getProperty(Property.DATA);
         if (p != null) {
+
+            if (now - regenTime >= Config.REGEN_TIME_INTERVAL) {
+                p.regenMana();
+                regenTime = now;
+            }
+
             hud.setCurHealth(p.getCurrentHealth());
             hud.setCurMana(p.getCurrentMana());
             hud.setMaxHealth(p.getMaxHealth());
             hud.setMaxMana(p.getMaxMana());
+        }
+
+        for (Entity e : getEntities(Type.BLOCK)) {
+            if (e.getProperty(Property.SUB_TYPE) == Block.BARRIER
+                    &&"idle".equals(e.getProperty("state"))
+                    && !"none".equals(e.getProperty("start"))) {
+
+                if (player.getTranslateX() <= e.getTranslateX()) {
+                    // check if came from left
+                    if (!"left".equals(e.getProperty("start"))) {
+                        activateBarrier(e);
+                        player.setTranslateX(e.getTranslateX() - 40);
+                    }
+                    else {
+                        e.setProperty("start", "none");
+                    }
+                }
+                else {
+                    if (!"right".equals(e.getProperty("start"))) {
+                        activateBarrier(e);
+                        player.setTranslateX(e.getTranslateX() + 40);
+                    }
+                    else {
+                        e.setProperty("start", "none");
+                    }
+                }
+            }
+        }
+
+        for (Entity e : getEntities(Type.BLOCK)) {
+            if (e.getProperty(Property.SUB_TYPE) == Block.BARRIER)
+                e.setProperty("state", "idle");
         }
     }
 
@@ -371,7 +443,7 @@ public class ConsumeApp extends GameApplication {
             .setGraphics(graphics)
             .setProperty("jumping", false)
             .setProperty("velocity", new Point2D(0, 0))
-            .setProperty(Property.DATA, new Player(assets.getText("enemies/enemy_Mook.txt")));
+            .setProperty(Property.DATA, new Player(assets.getText("player.txt")));
 
         player.addControl((entity, now) -> {
             Point2D velocity = entity.getProperty("velocity");
@@ -435,6 +507,30 @@ public class ConsumeApp extends GameApplication {
 
             addEntities(e);
         }
+    }
+
+    private void activateBarrier(Entity block) {
+        block.setProperty("state", "dying");
+
+        for (Entity b : getEntitiesInRange(
+                new Rectangle2D(block.getTranslateX() - 40,
+                        block.getTranslateY() - 40,
+                        120, 120),
+                        Type.BLOCK.getUniqueType())) {
+            if (b.getProperty(Property.SUB_TYPE) == Block.BARRIER
+                    && !"dying".equals(b.getProperty("state"))) {
+                activateBarrier(b);
+            }
+        }
+
+        removeEntity(block);
+        Entity e = new Entity(Type.PLATFORM);
+        e.setPosition(block.getTranslateX(), block.getTranslateY());
+        Rectangle rect = new Rectangle(40, 40);
+        rect.setFill(Color.GREY);
+        e.setGraphics(rect);
+
+        addEntities(e);
     }
 
     public static void main(String[] args) {
