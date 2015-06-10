@@ -14,6 +14,8 @@ import javafx.scene.shape.Rectangle;
 import com.almasb.consume.Config.Speed;
 import com.almasb.consume.LevelParser.Level;
 import com.almasb.consume.LevelParser.LevelData;
+import com.almasb.consume.Types.Powerup;
+import com.almasb.consume.Types.Property;
 import com.almasb.consume.Types.Type;
 import com.almasb.consume.ai.PatrolControl;
 import com.almasb.consume.ai.SeekControl;
@@ -22,6 +24,7 @@ import com.almasb.fxgl.GameSettings;
 import com.almasb.fxgl.asset.Assets;
 import com.almasb.fxgl.entity.Entity;
 import com.ergo21.consume.GameScene;
+import com.ergo21.consume.Player;
 
 public class ConsumeApp extends GameApplication {
 
@@ -146,9 +149,9 @@ public class ConsumeApp extends GameApplication {
                 Entity s = ent.stream().filter(e -> e.isType(Type.SPAWN_POINT)).findAny().get();
                 spawnPlayer(s.getPosition());
             }, 1 * SECOND);
-
-
         });
+
+        initCollisions();
     }
 
     @Override
@@ -158,6 +161,32 @@ public class ConsumeApp extends GameApplication {
         uiRoot.getChildren().add(scene);
 
         addKeyTypedBinding(KeyCode.ENTER, scene::updateScript);
+    }
+
+    private void initCollisions() {
+        addCollisionHandler(Type.PLAYER, Type.POWERUP, (playerEntity, powerup) -> {
+            removeEntity(powerup);
+
+            Powerup type = powerup.getProperty(Property.SUB_TYPE);
+            Player playerData = playerEntity.getProperty(Property.DATA);
+            switch (type) {
+                case INC_MANA_REGEN:
+                    playerData.increaseManaRegen(Config.MANA_REGEN_INC);
+                    break;
+                case INC_MAX_HEALTH:
+                    playerData.increaseMaxHealth(Config.MAX_HEALTH_INC);
+                    break;
+                case INC_MAX_MANA:
+                    playerData.increaseMaxMana(Config.MAX_MANA_INC);
+                    break;
+                case RESTORE_HEALTH:
+                    break;
+                case RESTORE_MANA:
+                    break;
+                default:
+                    break;
+            }
+        });
     }
 
     @Override
@@ -183,6 +212,11 @@ public class ConsumeApp extends GameApplication {
         addKeyTypedBinding(KeyCode.L, () -> {
             getEntitiesInRange(new Rectangle2D(player.getTranslateX() - 50, player.getTranslateY() - 50, 200, 200), Type.PLATFORM.getUniqueType())
                 .forEach(e -> System.out.println(e.getType()));
+        });
+
+        addKeyTypedBinding(KeyCode.I, () -> {
+            Player p = player.getProperty(Property.DATA);
+            System.out.println(p.toString());
         });
     }
 
@@ -305,7 +339,8 @@ public class ConsumeApp extends GameApplication {
             .setUsePhysics(true)
             .setGraphics(graphics)
             .setProperty("jumping", false)
-            .setProperty("velocity", new Point2D(0, 0));
+            .setProperty("velocity", new Point2D(0, 0))
+            .setProperty(Property.DATA, new Player(assets.getText("enemies/enemy_Mook.txt")));
 
         player.addControl((entity, now) -> {
             Point2D velocity = entity.getProperty("velocity");

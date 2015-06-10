@@ -1,6 +1,6 @@
 i                      d               u    i0
 i                      dU              i    i0
-i                      di                   i0
+i             u v U    di                   i0
 i             ipiii    i         i          i0
 i              p   iiii                     i0 
 i 1        i   p           i                i0 

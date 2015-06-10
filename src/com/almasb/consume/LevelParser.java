@@ -6,6 +6,8 @@ import java.util.List;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 
+import com.almasb.consume.Types.Powerup;
+import com.almasb.consume.Types.Property;
 import com.almasb.fxgl.entity.Entity;
 
 public class LevelParser {
@@ -62,14 +64,20 @@ public class LevelParser {
                         break;
                     case 'u':
                         e = new Entity(Types.Type.POWERUP);
+                        e.setProperty(Property.SUB_TYPE, Powerup.INC_MAX_HEALTH);
+                        e.setUsePhysics(true);
                         rect.setFill(Color.PURPLE);
                         break;
                     case 'U':
                         e = new Entity(Types.Type.POWERUP);
+                        e.setProperty(Property.SUB_TYPE, Powerup.INC_MAX_MANA);
+                        e.setUsePhysics(true);
                         rect.setFill(Color.PURPLE);
                         break;
                     case 'v':
                         e = new Entity(Types.Type.POWERUP);
+                        e.setProperty(Property.SUB_TYPE, Powerup.INC_MANA_REGEN);
+                        e.setUsePhysics(true);
                         rect.setFill(Color.PURPLE);
                         break;
                 }
