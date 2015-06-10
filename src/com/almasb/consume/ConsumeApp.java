@@ -200,11 +200,26 @@ public class ConsumeApp extends GameApplication {
                 case INC_MAX_MANA:
                     playerData.increaseMaxMana(Config.MAX_MANA_INC);
                     break;
-
-                    // TODO: add missing cases
-
+                case RESTORE_HEALTH_12:
+                    playerData.restoreHealth(0.125);
+                    break;
+                case RESTORE_HEALTH_25:
+                    playerData.restoreHealth(0.25);
+                    break;
+                case RESTORE_HEALTH_50:
+                    playerData.restoreHealth(0.5);
+                    break;
+                case RESTORE_MANA_12:
+                    playerData.restoreMana(0.125);
+                    break;
+                case RESTORE_MANA_25:
+                    playerData.restoreMana(0.25);
+                    break;
+                case RESTORE_MANA_50:
+                    playerData.restoreMana(0.5);
+                    break;
                 default:
-                    System.out.println("Picked up a powerup: " + type);
+                    System.out.println("Picked up an unknown powerup: " + type);
                     break;
             }
         });

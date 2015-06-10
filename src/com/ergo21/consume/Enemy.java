@@ -112,6 +112,34 @@ public class Enemy{
 		return weaks;
 	}
 
+	/**
+	 * Restores health of enemy/player by given value in % ratio
+	 * 1.0 = 100%
+	 * 0.5 = 50%
+	 *
+	 * Will NOT overheal the character
+	 *
+	 * @param percent
+	 */
+	public void restoreHealth(double percent) {
+        int restored = (int)(mHealth * percent);
+        setCurrentHealth(Math.min(mHealth, cHealth + restored));
+	}
+
+    /**
+     * Restores mana of enemy/player by given value in % ratio
+     * 1.0 = 100%
+     * 0.5 = 50%
+     *
+     * Will NOT increase mana over 100%
+     *
+     * @param percent
+     */
+    public void restoreMana(double percent) {
+        int restored = (int)(mMana * percent);
+        setCurrentMana(Math.min(mMana, cMana + restored));
+    }
+
 	@Override
     public String toString() {
 	    StringBuilder sb = new StringBuilder();
