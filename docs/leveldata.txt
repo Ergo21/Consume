@@ -47,8 +47,8 @@ r-
 R-
 s-
 S- 
-t-
-T-
+t- Temporary block used for testing
+T- Temporary block used for testing
 u- Increase Max Health
 U- Increase Max Mana
 v- Increase Mana Regeneration
