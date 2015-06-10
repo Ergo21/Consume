@@ -6,7 +6,7 @@ i              p   iiii                     i0
 i 1        i   p           i                i0 
 iiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii       i0
 i   d                                       i0
-i v d                                       i0
+i v d           T t T t T t T t             i0
 iiiiiiiiiiiipiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii0
 i           pi0
 i           pi0
