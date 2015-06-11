@@ -12,6 +12,7 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
+import javafx.scene.text.Text;
 
 import com.almasb.consume.Config.Speed;
 import com.almasb.consume.LevelParser.Level;
@@ -131,6 +132,16 @@ public class ConsumeApp extends GameApplication {
         testEnemy.setPosition(spawnPoint.getTranslateX() + 640, spawnPoint.getTranslateY() + 10);
         testEnemy.addControl(new ChargeControl(player));
         testEnemy.addFXGLEventHandler(Event.DEATH, this::onEnemyDeath);
+        testEnemy.addFXGLEventHandler(Event.ENEMY_SAW_PLAYER, event -> {
+            Entity enemy = event.getTarget();
+
+            Entity e = Entity.noType().setGraphics(new Text("!"));
+            e.setPosition(enemy.getTranslateX(), enemy.getTranslateY());
+            addEntities(e);
+            runOnceAfter(() -> {
+                removeEntity(e);
+            }, Config.ENEMY_CHARGE_DELAY);
+        });
 
         addEntities(testEnemy);
 //

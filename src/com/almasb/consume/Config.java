@@ -23,6 +23,8 @@ public final class Config {
     public static final int MAX_LEVELS = 2;
 
     public static final int PATROL_RADIUS = 3 * BLOCK_SIZE;
+    public static final int ENEMY_CHARGE_RANGE = 5 * BLOCK_SIZE;
+    public static final double ENEMY_CHARGE_DELAY = 0.5 * GameApplication.SECOND;
 
     public static final int MAX_HEALTH_INC = 10;
     public static final int MAX_MANA_INC = 10;
