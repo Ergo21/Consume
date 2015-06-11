@@ -1,10 +1,11 @@
 package com.almasb.consume;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Random;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import javafx.geometry.Point2D;
 import javafx.geometry.Rectangle2D;
@@ -22,9 +23,7 @@ import com.almasb.consume.Types.Powerup;
 import com.almasb.consume.Types.Property;
 import com.almasb.consume.Types.Type;
 import com.almasb.consume.ai.ChargeControl;
-import com.almasb.consume.ai.PatrolControl;
 import com.almasb.consume.ai.PhysicsControl;
-import com.almasb.consume.ai.SeekControl;
 import com.almasb.fxgl.GameApplication;
 import com.almasb.fxgl.GameSettings;
 import com.almasb.fxgl.asset.Assets;
@@ -39,9 +38,11 @@ public class ConsumeApp extends GameApplication {
     private Assets assets;
 
     private Entity player = new Entity(Type.PLAYER);
+    private Player playerData;
 
     private Physics physics = new Physics();
 
+    private List<Level> levels;
     private int currentLevel = 0;
 
     private PlayerHUD hud;
@@ -65,126 +66,22 @@ public class ConsumeApp extends GameApplication {
     }
 
     @Override
-    protected void initMainMenu(Pane mainMenuRoot) {
-//        Rectangle bg = new Rectangle(1280, 720);
-//
-//        Font font = Font.font(48);
-//
-//        Button btnContinue = new Button("CONTINUE");
-//        btnContinue.setDisable(true);
-//        btnContinue.setFont(font);
-//
-//        Button btnStart = new Button("START");
-//        btnStart.setFont(font);
-//        btnStart.setOnAction(event -> startGame());
-//
-//        Button btnLoad = new Button("LOAD");
-//        btnLoad.setFont(font);
-//        btnLoad.setOnAction(event-> {mainMenuRoot.setLayoutX(mainMenuRoot.getLayoutX()-mainMenuRoot.getWidth()/4);
-//        mainMenuRoot.setLayoutY(mainMenuRoot.getLayoutY()-mainMenuRoot.getHeight()/4);});
-//
-//        Button btnExit = new Button("EXIT");
-//        btnExit.setFont(font);
-//        btnExit.setOnAction(event -> exit());
-//
-//        VBox vbox = new VBox(20, btnContinue, btnStart, btnLoad, btnExit);
-//        vbox.setAlignment(Pos.CENTER);
-//        vbox.setTranslateX(500);
-//        vbox.setTranslateY(150);
-//
-//        mainMenuRoot.setScaleX(0.5);
-//        mainMenuRoot.setScaleY(0.5);
-//
-//        mainMenuRoot.getChildren().addAll(bg, vbox);
-    }
+    protected void initMainMenu(Pane mainMenuRoot) {}
 
     @Override
     protected void initGame(Pane gameRoot) {
-        List<LevelData> levelData = new ArrayList<>();
-        for (int i = 0; i < Config.MAX_LEVELS; i++) {
-            LevelData data = new LevelData(assets.getText("levels/level_" + i + ".txt"));
-            levelData.add(data);
-        }
+        playerData = new Player(assets.getText("player.txt"));
 
-        LevelParser parser = new LevelParser(levelData);
-
-        Level level = parser.parse(0);
-
-        List<Entity> entities = level.getEntities();
-        addEntities(entities.toArray(new Entity[0]));
-
-        Entity spawnPoint = entities.stream().filter(e -> e.isType(Type.SPAWN_POINT)).findAny().get();
-        spawnPlayer(spawnPoint.getPosition());
-
+        initPlayer();
+        initLevels();
+        initCollisions();
         bindViewportOrigin(player, 320, 180);
 
-        ////////////////////////////////////////////////////////////////////////////////////////////
-
-        Entity testEnemy = new Entity(Type.ENEMY);
-
-        Rectangle rect = new Rectangle(30, 30);
-        rect.setFill(Color.RED);
-
-        testEnemy.setGraphics(rect);
-        testEnemy.setUsePhysics(true);
-        testEnemy.setProperty("physics", physics);
-        testEnemy.setPosition(spawnPoint.getTranslateX() + 640, spawnPoint.getTranslateY() + 10);
-        testEnemy.addControl(new ChargeControl(player));
-        testEnemy.addControl(new PhysicsControl(physics));
-        testEnemy.addFXGLEventHandler(Event.DEATH, this::onEnemyDeath);
-        testEnemy.addFXGLEventHandler(Event.ENEMY_SAW_PLAYER, event -> {
-            Entity enemy = event.getTarget();
-
-            Entity e = Entity.noType().setGraphics(new Text("!"));
-            e.setPosition(enemy.getTranslateX(), enemy.getTranslateY());
-            addEntities(e);
-            runOnceAfter(() -> {
-                removeEntity(e);
-            }, Config.ENEMY_CHARGE_DELAY);
-        });
-
-        addEntities(testEnemy);
-//
-//        testEnemy = new Entity(Type.ENEMY);
-//
-//        rect = new Rectangle(30, 30);
-//        rect.setFill(Color.RED);
-//
-//        testEnemy.setGraphics(rect);
-//        testEnemy.setUsePhysics(true);
-//        testEnemy.setProperty("jumping", false);
-//        testEnemy.setProperty("velocity", new Point2D(0, 0));
-//        testEnemy.setProperty("physics", physics);
-//        testEnemy.setPosition(spawnPoint.getTranslateX() + 240, spawnPoint.getTranslateY() + 10);
-//        testEnemy.addControl(new SeekControl(player));
-//        testEnemy.addFXGLEventHandler(Event.DEATH, this::onEnemyDeath);
-//
-//        addEntities(testEnemy);
-
-        Entity nextPoint = entities.stream().filter(e -> e.isType(Type.NEXT_LEVEL_POINT)).findAny().get();
-        nextPoint.setUsePhysics(true);
-
-        addCollisionHandler(Type.PLAYER, Type.NEXT_LEVEL_POINT, (player, point) -> {
-            getAllEntities().forEach(this::removeEntity);
-            player.removeControls();
-
-            runOnceAfter(() -> {
-                Level l = parser.parse(++currentLevel);
-
-                List<Entity> ent = l.getEntities();
-                addEntities(ent.toArray(new Entity[0]));
-
-                Entity s = ent.stream().filter(e -> e.isType(Type.SPAWN_POINT)).findAny().get();
-                spawnPlayer(s.getPosition());
-            }, 1 * SECOND);
-        });
-
-        initCollisions();
+        loadNextLevel();
     }
 
     @Override
     protected void initUI(Pane uiRoot) {
-
         GameScene scene = new GameScene(assets.getText("dialogue/scene_0.txt"), assets);
         uiRoot.getChildren().add(scene);
 
@@ -197,6 +94,16 @@ public class ConsumeApp extends GameApplication {
         hud.setTranslateY(100);
 
         uiRoot.getChildren().add(hud);
+    }
+
+    private void initLevels() {
+        List<LevelData> levelData =
+                IntStream.range(0, Config.MAX_LEVELS)
+                .mapToObj(i -> new LevelData(assets.getText("levels/level_" + i + ".txt")))
+                .collect(Collectors.toList());
+
+        LevelParser parser = new LevelParser(levelData);
+        levels = parser.parseAll();
     }
 
     private void initCollisions() {
@@ -259,6 +166,21 @@ public class ConsumeApp extends GameApplication {
 
             }
         });
+
+//        addCollisionHandler(Type.PLAYER, Type.NEXT_LEVEL_POINT, (player, point) -> {
+//          getAllEntities().forEach(this::removeEntity);
+//          player.removeControls();
+//
+//          runOnceAfter(() -> {
+//              Level l = parser.parse(++currentLevel);
+//
+//              List<Entity> ent = l.getEntities();
+//              addEntities(ent.toArray(new Entity[0]));
+//
+//              Entity s = ent.stream().filter(e -> e.isType(Type.SPAWN_POINT)).findAny().get();
+//              spawnPlayer(s.getPosition());
+//          }, 1 * SECOND);
+//          });
     }
 
     @Override
@@ -334,6 +256,41 @@ public class ConsumeApp extends GameApplication {
         }
     }
 
+    private void loadNextLevel() {
+        Level level = levels.get(currentLevel++);
+
+        addEntities(level.getEntitiesAsArray());
+
+        Point2D spawnPoint = level.getSpawnPoint();
+        player.setPosition(spawnPoint.getX(), spawnPoint.getY());
+
+        // TODO: remove after test
+        Entity testEnemy = new Entity(Type.ENEMY);
+
+        Rectangle rect = new Rectangle(30, 30);
+        rect.setFill(Color.RED);
+
+        testEnemy.setGraphics(rect);
+        testEnemy.setUsePhysics(true);
+        testEnemy.setProperty("physics", physics);
+        testEnemy.setPosition(spawnPoint.getX() + 640, spawnPoint.getY() + 10);
+        testEnemy.addControl(new ChargeControl(player));
+        testEnemy.addControl(new PhysicsControl(physics));
+        testEnemy.addFXGLEventHandler(Event.DEATH, this::onEnemyDeath);
+        testEnemy.addFXGLEventHandler(Event.ENEMY_SAW_PLAYER, event -> {
+            Entity enemy = event.getTarget();
+
+            Entity e = Entity.noType().setGraphics(new Text("!"));
+            e.setPosition(enemy.getTranslateX(), enemy.getTranslateY());
+            addEntities(e);
+            runOnceAfter(() -> {
+                removeEntity(e);
+            }, Config.ENEMY_CHARGE_DELAY);
+        });
+
+        addEntities(testEnemy);
+    }
+
     public class Physics {
         /**
          * Returns true iff entity has moved value units
@@ -392,14 +349,13 @@ public class ConsumeApp extends GameApplication {
         }
     }
 
-    private void spawnPlayer(Point2D p) {
+    private void initPlayer() {
         Rectangle graphics = new Rectangle(15, 30);
         graphics.setFill(Color.YELLOW);
 
-        player.setPosition(p.getX(), p.getY())
-            .setUsePhysics(true)
+        player.setUsePhysics(true)
             .setGraphics(graphics)
-            .setProperty(Property.DATA, new Player(assets.getText("player.txt")));
+            .setProperty(Property.DATA, playerData);
 
         player.addControl(new PhysicsControl(physics));
         addEntities(player);

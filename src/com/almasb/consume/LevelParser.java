@@ -2,7 +2,10 @@ package com.almasb.consume;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
+import javafx.geometry.Point2D;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 
@@ -19,18 +22,21 @@ public class LevelParser {
         this.levels = levels;
     }
 
-    public Level parse(int level) {
-        if (level >= levels.size())
-            throw new IllegalArgumentException("There are only " + levels.size()
-                    + " levels. Attempted to load level: " + level);
+    public List<Level> parseAll() {
+        return IntStream.range(0, levels.size())
+                .mapToObj(this::parse)
+                .collect(Collectors.toList());
+    }
 
-        List<String> data = levels.get(level).data;
+    private Level parse(int levelNumber) {
+        List<String> data = levels.get(levelNumber).data;
 
         // TODO: range checks
 
-        int width = data.get(0).length() * Config.BLOCK_SIZE;
-        int height = data.size() * Config.BLOCK_SIZE;
-        List<Entity> entities = new ArrayList<>();
+        Level level = new Level();
+
+        level.width = data.get(0).length() * Config.BLOCK_SIZE;
+        level.height = data.size() * Config.BLOCK_SIZE;
 
         for (int i = 0; i < data.size(); i++) {
             String line = data.get(i);
@@ -44,11 +50,12 @@ public class LevelParser {
                     case '0':
                         break;
                     case '1':
-                        e = new Entity(Types.Type.SPAWN_POINT);
-                        rect.setFill(Color.TRANSPARENT);
+                        level.spawnPoint = new Point2D(j*Config.BLOCK_SIZE, i*Config.BLOCK_SIZE);
                         break;
                     case '2':
                         e = new Entity(Types.Type.NEXT_LEVEL_POINT);
+                        e.setUsePhysics(true);
+                        level.nextLevelEntity = e;
                         rect.setFill(Color.BLACK);
                         break;
                     case 'b':
@@ -95,12 +102,15 @@ public class LevelParser {
                 if (e != null) {
                     e.setPosition(j*Config.BLOCK_SIZE, i*Config.BLOCK_SIZE);
                     e.setGraphics(rect);
-                    entities.add(e);
+                    level.entities.add(e);
                 }
             }
         }
 
-        return new Level(width, height, entities);
+        if (!level.isValid())
+            throw new IllegalArgumentException("Level: " + levelNumber + " was not parsed as valid");
+
+        return level;
     }
 
     public static class LevelData {
@@ -116,16 +126,33 @@ public class LevelParser {
 
     public static class Level {
         private int width, height;
-        private List<Entity> entities;
+        private List<Entity> entities = new ArrayList<>();
+        private Point2D spawnPoint;
+        private Entity nextLevelEntity;
 
-        public Level(int width, int height, List<Entity> entities) {
-            this.width = width;
-            this.height = height;
-            this.entities = entities;
+        /* package-private */ Level() {
+
+        }
+
+        private boolean isValid() {
+            return spawnPoint != null && nextLevelEntity != null
+                    && width != 0 && height != 0;
         }
 
         public List<Entity> getEntities() {
             return entities;
+        }
+
+        public Entity[] getEntitiesAsArray() {
+            return entities.toArray(new Entity[0]);
+        }
+
+        public Point2D getSpawnPoint() {
+            return spawnPoint;
+        }
+
+        public Entity getNextLevelEntity() {
+            return nextLevelEntity;
         }
     }
 }
