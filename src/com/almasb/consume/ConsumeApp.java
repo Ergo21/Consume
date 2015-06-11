@@ -23,6 +23,7 @@ import com.almasb.consume.Types.Property;
 import com.almasb.consume.Types.Type;
 import com.almasb.consume.ai.ChargeControl;
 import com.almasb.consume.ai.PatrolControl;
+import com.almasb.consume.ai.PhysicsControl;
 import com.almasb.consume.ai.SeekControl;
 import com.almasb.fxgl.GameApplication;
 import com.almasb.fxgl.GameSettings;
@@ -126,11 +127,10 @@ public class ConsumeApp extends GameApplication {
 
         testEnemy.setGraphics(rect);
         testEnemy.setUsePhysics(true);
-        testEnemy.setProperty("jumping", false);
-        testEnemy.setProperty("velocity", new Point2D(0, 0));
         testEnemy.setProperty("physics", physics);
         testEnemy.setPosition(spawnPoint.getTranslateX() + 640, spawnPoint.getTranslateY() + 10);
         testEnemy.addControl(new ChargeControl(player));
+        testEnemy.addControl(new PhysicsControl(physics));
         testEnemy.addFXGLEventHandler(Event.DEATH, this::onEnemyDeath);
         testEnemy.addFXGLEventHandler(Event.ENEMY_SAW_PLAYER, event -> {
             Entity enemy = event.getTarget();
@@ -264,20 +264,13 @@ public class ConsumeApp extends GameApplication {
     @Override
     protected void initInput() {
         addKeyPressBinding(KeyCode.A, () -> {
-            movePlayerX(-Speed.PLAYER_MOVE);
+            player.getControl(PhysicsControl.class).moveX(-Speed.PLAYER_MOVE);
         });
         addKeyPressBinding(KeyCode.D, () -> {
-            movePlayerX(Speed.PLAYER_MOVE);
+            player.getControl(PhysicsControl.class).moveX(Speed.PLAYER_MOVE);
         });
         addKeyPressBinding(KeyCode.W, () -> {
-            if (player.<Boolean>getProperty("jumping"))
-                return;
-
-            player.setProperty("jumping", true);
-
-            Point2D velocity = player.getProperty("velocity");
-
-            player.setProperty("velocity", velocity.add(0, -Speed.PLAYER_JUMP));
+            player.getControl(PhysicsControl.class).jump();
         });
 
         // debug
@@ -399,53 +392,6 @@ public class ConsumeApp extends GameApplication {
         }
     }
 
-    private void movePlayerX(int value) {
-        boolean movingRight = value > 0;
-
-        for (int i = 0; i < Math.abs(value); i++) {
-            for (Entity platform : getEntities(Type.PLATFORM)) {
-                if (player.getBoundsInParent().intersects(platform.getBoundsInParent())) {
-                    if (movingRight) {
-                        if (player.getTranslateX() + player.getWidth() == platform.getTranslateX()) {
-                            return;
-                        }
-                    }
-                    else {
-                        if (player.getTranslateX() == platform.getTranslateX() + platform.getWidth()) {
-                            return;
-                        }
-                    }
-                }
-            }
-            player.setTranslateX(player.getTranslateX() + (movingRight ? 1 : -1));
-        }
-    }
-
-    private void movePlayerY(int value) {
-        boolean movingDown = value > 0;
-
-        for (int i = 0; i < Math.abs(value); i++) {
-            for (Entity platform : getEntities(Type.PLATFORM)) {
-                if (player.getBoundsInParent().intersects(platform.getBoundsInParent())) {
-                    if (movingDown) {
-                        if (player.getTranslateY() + player.getHeight() == platform.getTranslateY()) {
-                            player.setTranslateY(player.getTranslateY() - 1);
-                            player.setProperty("jumping", false);
-                            return;
-                        }
-                    }
-                    else {
-                        if (player.getTranslateY() == platform.getTranslateY() + platform.getHeight()) {
-                            return;
-                        }
-                    }
-                }
-            }
-            player.setTranslateY(player.getTranslateY() + (movingDown ? 1 : -1));
-            player.setProperty("jumping", true);
-        }
-    }
-
     private void spawnPlayer(Point2D p) {
         Rectangle graphics = new Rectangle(15, 30);
         graphics.setFill(Color.YELLOW);
@@ -453,20 +399,9 @@ public class ConsumeApp extends GameApplication {
         player.setPosition(p.getX(), p.getY())
             .setUsePhysics(true)
             .setGraphics(graphics)
-            .setProperty("jumping", false)
-            .setProperty("velocity", new Point2D(0, 0))
             .setProperty(Property.DATA, new Player(assets.getText("player.txt")));
 
-        player.addControl((entity, now) -> {
-            Point2D velocity = entity.getProperty("velocity");
-            velocity = velocity.add(0, Speed.GRAVITY_ACCEL);
-            if (velocity.getY() > Speed.GRAVITY_MAX)
-                velocity = new Point2D(velocity.getX(), Speed.GRAVITY_MAX);
-
-            entity.setProperty("velocity", velocity);
-
-            movePlayerY((int)velocity.getY());
-        });
+        player.addControl(new PhysicsControl(physics));
         addEntities(player);
     }
 

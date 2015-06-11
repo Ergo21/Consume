@@ -1,13 +1,10 @@
 package com.almasb.consume.ai;
 
-import javafx.geometry.Point2D;
-
 import com.almasb.consume.Config;
 import com.almasb.consume.Config.Speed;
 import com.almasb.consume.ConsumeApp.Physics;
 import com.almasb.consume.Event;
 import com.almasb.fxgl.entity.AbstractControl;
-import com.almasb.fxgl.entity.Control;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.FXGLEvent;
 
@@ -52,15 +49,6 @@ public class ChargeControl extends AbstractControl {
 
             if (!canMove)
                 vel = 0;
-
-            Point2D velocity = entity.getProperty("velocity");
-            velocity = velocity.add(0, Speed.GRAVITY_ACCEL);
-            if (velocity.getY() > Speed.GRAVITY_MAX)
-                velocity = new Point2D(velocity.getX(), Speed.GRAVITY_MAX);
-
-            entity.setProperty("velocity", velocity);
-
-            physics.moveY(entity, (int)velocity.getY());
         }
         else {
             if (vel == 0)
