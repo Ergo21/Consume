@@ -12,6 +12,7 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
+import javafx.scene.text.Text;
 
 import com.almasb.consume.Config.Speed;
 import com.almasb.consume.LevelParser.Level;
@@ -20,6 +21,7 @@ import com.almasb.consume.Types.Block;
 import com.almasb.consume.Types.Powerup;
 import com.almasb.consume.Types.Property;
 import com.almasb.consume.Types.Type;
+import com.almasb.consume.ai.ChargeControl;
 import com.almasb.consume.ai.PatrolControl;
 import com.almasb.consume.ai.SeekControl;
 import com.almasb.fxgl.GameApplication;
@@ -117,21 +119,31 @@ public class ConsumeApp extends GameApplication {
 
         ////////////////////////////////////////////////////////////////////////////////////////////
 
-//        Entity testEnemy = new Entity(Type.ENEMY);
-//
-//        Rectangle rect = new Rectangle(30, 30);
-//        rect.setFill(Color.RED);
-//
-//        testEnemy.setGraphics(rect);
-//        testEnemy.setUsePhysics(true);
-//        testEnemy.setProperty("jumping", false);
-//        testEnemy.setProperty("velocity", new Point2D(0, 0));
-//        testEnemy.setProperty("physics", physics);
-//        testEnemy.setPosition(spawnPoint.getTranslateX() + 80, spawnPoint.getTranslateY() + 10);
-//        testEnemy.addControl(new PatrolControl(player.getPosition()));
-//        testEnemy.addFXGLEventHandler(Event.DEATH, this::onEnemyDeath);
-//
-//        addEntities(testEnemy);
+        Entity testEnemy = new Entity(Type.ENEMY);
+
+        Rectangle rect = new Rectangle(30, 30);
+        rect.setFill(Color.RED);
+
+        testEnemy.setGraphics(rect);
+        testEnemy.setUsePhysics(true);
+        testEnemy.setProperty("jumping", false);
+        testEnemy.setProperty("velocity", new Point2D(0, 0));
+        testEnemy.setProperty("physics", physics);
+        testEnemy.setPosition(spawnPoint.getTranslateX() + 640, spawnPoint.getTranslateY() + 10);
+        testEnemy.addControl(new ChargeControl(player));
+        testEnemy.addFXGLEventHandler(Event.DEATH, this::onEnemyDeath);
+        testEnemy.addFXGLEventHandler(Event.ENEMY_SAW_PLAYER, event -> {
+            Entity enemy = event.getTarget();
+
+            Entity e = Entity.noType().setGraphics(new Text("!"));
+            e.setPosition(enemy.getTranslateX(), enemy.getTranslateY());
+            addEntities(e);
+            runOnceAfter(() -> {
+                removeEntity(e);
+            }, Config.ENEMY_CHARGE_DELAY);
+        });
+
+        addEntities(testEnemy);
 //
 //        testEnemy = new Entity(Type.ENEMY);
 //
@@ -228,9 +240,9 @@ public class ConsumeApp extends GameApplication {
         });
 
         // just a test
-        addCollisionHandler(Type.PLAYER, Type.ENEMY, (player, enemy) -> {
-            enemy.fireFXGLEvent(new FXGLEvent(Event.DEATH));
-        });
+//        addCollisionHandler(Type.PLAYER, Type.ENEMY, (player, enemy) -> {
+//            enemy.fireFXGLEvent(new FXGLEvent(Event.DEATH));
+//        });
 
         addCollisionHandler(Type.PLAYER, Type.BLOCK, (player, block) -> {
             if (block.getProperty(Property.SUB_TYPE) == Block.BARRIER) {
