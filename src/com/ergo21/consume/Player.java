@@ -3,8 +3,10 @@ package com.ergo21.consume;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.ergo21.consume.powers.Power;
+
 public class Player extends Enemy {
-    enum Power {
+    public enum PowerElem {
         NORMAL, FIRE, ICE
     };
 
@@ -13,8 +15,8 @@ public class Player extends Enemy {
 
     public Player(List<String> prop) {
         super(prop);
-        powers.add(Power.NORMAL);
-        curPower = Power.NORMAL;
+        powers.add(new Power(this, PowerElem.NORMAL));
+        curPower = powers.get(0);
     }
 
     public void setMaxHealth(int mH) {
@@ -47,7 +49,7 @@ public class Player extends Enemy {
 
     public void setCurrentPower(Power p) {
         curPower = p;
-        switch (curPower) {
+        switch (curPower.getElement()) {
             case NORMAL: {
                 resists.clear();
                 weaks.clear();
