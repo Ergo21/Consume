@@ -13,7 +13,7 @@ public final class Config {
 
         public static final int ENEMY_SEEK_ACCEL = 1;
         public static final int ENEMY_SEEK_DECEL = 1;
-        public static final int ENEMY_SEEK_MAX = PLAYER_MOVE * 2;
+        public static final int ENEMY_SEEK_MAX = PLAYER_MOVE * 4;
 
         public static final int ENEMY_PATROL = PLAYER_MOVE / 2;
     }
