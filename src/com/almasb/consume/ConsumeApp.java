@@ -167,20 +167,9 @@ public class ConsumeApp extends GameApplication {
             }
         });
 
-//        addCollisionHandler(Type.PLAYER, Type.NEXT_LEVEL_POINT, (player, point) -> {
-//          getAllEntities().forEach(this::removeEntity);
-//          player.removeControls();
-//
-//          runOnceAfter(() -> {
-//              Level l = parser.parse(++currentLevel);
-//
-//              List<Entity> ent = l.getEntities();
-//              addEntities(ent.toArray(new Entity[0]));
-//
-//              Entity s = ent.stream().filter(e -> e.isType(Type.SPAWN_POINT)).findAny().get();
-//              spawnPlayer(s.getPosition());
-//          }, 1 * SECOND);
-//          });
+        addCollisionHandler(Type.PLAYER, Type.NEXT_LEVEL_POINT, (player, point) -> {
+            loadNextLevel();
+        });
     }
 
     @Override
@@ -257,6 +246,8 @@ public class ConsumeApp extends GameApplication {
     }
 
     private void loadNextLevel() {
+        getAllEntities().stream().filter(e -> !e.isType(Type.PLAYER)).forEach(this::removeEntity);
+
         Level level = levels.get(currentLevel++);
 
         addEntities(level.getEntitiesAsArray());
