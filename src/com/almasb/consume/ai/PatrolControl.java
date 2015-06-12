@@ -19,19 +19,8 @@ public class PatrolControl implements Control {
 
     @Override
     public void onUpdate(Entity entity, long now) {
-
         Physics physics = entity.getProperty("physics");
         boolean canMove = physics.moveX(entity, movingRight ? Speed.ENEMY_PATROL : -Speed.ENEMY_PATROL);
-
-
-        Point2D velocity = entity.getProperty("velocity");
-        velocity = velocity.add(0, Speed.GRAVITY_ACCEL);
-        if (velocity.getY() > Speed.GRAVITY_MAX)
-            velocity = new Point2D(velocity.getX(), Speed.GRAVITY_MAX);
-
-        entity.setProperty("velocity", velocity);
-
-        physics.moveY(entity, (int)velocity.getY());
 
         if (!canMove || patrolPoint.distance(entity.getPosition()) >= Config.PATROL_RADIUS) {
             movingRight = !movingRight;
