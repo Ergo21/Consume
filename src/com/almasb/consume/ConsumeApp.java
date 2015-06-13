@@ -46,6 +46,7 @@ public class ConsumeApp extends GameApplication {
     private int currentLevel = 0;
 
     private PlayerHUD hud;
+    private Text performance = new Text();
 
     private Random random = new Random();
 
@@ -94,6 +95,13 @@ public class ConsumeApp extends GameApplication {
         hud.setTranslateY(100);
 
         uiRoot.getChildren().add(hud);
+
+
+        performance.setTranslateX(450);
+        performance.setTranslateY(50);
+        performance.setFill(Color.BLACK);
+
+        uiRoot.getChildren().add(performance);
     }
 
     private void initLevels() {
@@ -243,6 +251,8 @@ public class ConsumeApp extends GameApplication {
             if (e.getProperty(Property.SUB_TYPE) == Block.BARRIER)
                 e.setProperty("state", "idle");
         }
+
+        performance.setText("FPS: " + fps + " Performance: " + fpsPerformance);
     }
 
     private void loadNextLevel() {
