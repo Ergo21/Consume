@@ -20,8 +20,10 @@ public class ChargeControl extends AbstractControl {
 
     @Override
     protected void initEntity(Entity entity) {
-        // TODO Auto-generated method stub
-
+        entity.addFXGLEventHandler(Event.ENEMY_HIT_PLAYER, event -> {
+            vel = 0;
+            lastTimeSaw = -1;
+        });
     }
 
     @Override
@@ -71,5 +73,9 @@ public class ChargeControl extends AbstractControl {
     private boolean isTargetInRange() {
         return target.getPosition().distance(entity.getPosition()) <= Config.ENEMY_CHARGE_RANGE
                 && Math.abs(target.getTranslateY() - entity.getTranslateY()) <= 10;
+    }
+
+    public int getVelocity() {
+        return vel;
     }
 }

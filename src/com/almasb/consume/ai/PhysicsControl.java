@@ -49,4 +49,8 @@ public class PhysicsControl extends AbstractControl {
         entity.setProperty("jumping", true);
         velocity = velocity.add(0, -Speed.PLAYER_JUMP);
     }
+
+    public Point2D getVelocity() {
+        return velocity;
+    }
 }

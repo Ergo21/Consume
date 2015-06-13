@@ -154,10 +154,26 @@ public class ConsumeApp extends GameApplication {
             }
         });
 
-        // just a test
-//        addCollisionHandler(Type.PLAYER, Type.ENEMY, (player, enemy) -> {
-//            enemy.fireFXGLEvent(new FXGLEvent(Event.DEATH));
-//        });
+        addCollisionHandler(Type.PLAYER, Type.ENEMY, (player, enemy) -> {
+            if (enemy.getControl(ChargeControl.class) != null) {
+                int velocityX = enemy.getControl(ChargeControl.class).getVelocity();
+                player.getControl(PhysicsControl.class).moveX(velocityX * 5);
+
+                enemy.fireFXGLEvent(new FXGLEvent(Event.ENEMY_HIT_PLAYER));
+
+                player.setUsePhysics(false);
+                Entity e = Entity.noType().setGraphics(new Text("INVINCIBLE"));
+                e.translateXProperty().bind(player.translateXProperty());
+                e.translateYProperty().bind(player.translateYProperty().subtract(20));
+
+                addEntities(e);
+
+                runOnceAfter(() -> {
+                    removeEntity(e);
+                    player.setUsePhysics(true);
+                }, 2 * SECOND);
+            }
+        });
 
         addCollisionHandler(Type.PLAYER, Type.BLOCK, (player, block) -> {
             if (block.getProperty(Property.SUB_TYPE) == Block.BARRIER) {
