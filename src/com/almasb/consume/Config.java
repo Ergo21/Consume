@@ -16,6 +16,8 @@ public final class Config {
         public static final int ENEMY_SEEK_MAX = PLAYER_MOVE * 4;
 
         public static final int ENEMY_PATROL = PLAYER_MOVE / 2;
+
+        public static final int PROJECTILE = PLAYER_MOVE / 2;
     }
 
     public static final int BLOCK_SIZE = 40;
@@ -31,4 +33,6 @@ public final class Config {
     public static final int MANA_REGEN_INC = 5;
 
     public static final long REGEN_TIME_INTERVAL = 1 * GameApplication.SECOND;
+
+    public static final int POWER_DAMAGE = 4;
 }

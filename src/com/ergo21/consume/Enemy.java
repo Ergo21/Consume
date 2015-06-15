@@ -106,10 +106,10 @@ public class Enemy{
 	public int getManaRegenRate(){
 		return manaR;
 	}
-	public ArrayList<Element> getResistances(){
+	public List<Element> getResistances(){
 		return resists;
 	}
-	public ArrayList<Element> getWeaknesses(){
+	public List<Element> getWeaknesses(){
 		return weaks;
 	}
 
@@ -147,6 +147,10 @@ public class Enemy{
      */
     public void regenMana() {
         restoreMana(manaR / 100.0);
+    }
+
+    public void takeDamage(int value) {
+        cHealth -= value;
     }
 
 	@Override
