@@ -87,6 +87,8 @@ public class ConsumeApp extends GameApplication {
         loadNextLevel();
     }
 
+    private Text debug = new Text();
+
     @Override
     protected void initUI(Pane uiRoot) {
         GameScene scene = new GameScene(assets.getText("dialogue/scene_0.txt"), assets);
@@ -108,6 +110,10 @@ public class ConsumeApp extends GameApplication {
         performance.setFill(Color.BLACK);
 
         uiRoot.getChildren().add(performance);
+
+        debug.setTranslateX(450);
+        debug.setTranslateY(100);
+        uiRoot.getChildren().add(debug);
     }
 
     private void initLevels() {
@@ -340,6 +346,7 @@ public class ConsumeApp extends GameApplication {
         }
 
         performance.setText("FPS: " + fps + " Performance: " + fpsPerformance);
+        debug.setText("Debug text goes here");
     }
 
     private void loadNextLevel() {
@@ -396,11 +403,13 @@ public class ConsumeApp extends GameApplication {
                     if (e.getBoundsInParent().intersects(platform.getBoundsInParent())) {
                         if (movingRight) {
                             if (e.getTranslateX() + e.getWidth() == platform.getTranslateX()) {
+                                e.translate(-1, 0);
                                 return false;
                             }
                         }
                         else {
                             if (e.getTranslateX() == platform.getTranslateX() + platform.getWidth()) {
+                                e.translate(1, 0);
                                 return false;
                             }
                         }
