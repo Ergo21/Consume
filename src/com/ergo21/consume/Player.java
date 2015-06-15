@@ -6,7 +6,7 @@ import java.util.List;
 import com.almasb.consume.Types.Element;
 
 public class Player extends Enemy {
-	
+
     private ArrayList<Element> powers = new ArrayList<Element>();
     private Element curPower;
 
@@ -38,6 +38,10 @@ public class Player extends Enemy {
 
     public void increaseManaRegen(int value) {
         manaR += value;
+    }
+
+    public Element getCurrentPower() {
+        return curPower;
     }
 
     public ArrayList<Element> getPowers() {

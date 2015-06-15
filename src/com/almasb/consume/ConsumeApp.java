@@ -7,6 +7,7 @@ import java.util.Random;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+import javafx.animation.FadeTransition;
 import javafx.geometry.Point2D;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.input.KeyCode;
@@ -14,21 +15,25 @@ import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
+import javafx.util.Duration;
 
 import com.almasb.consume.Config.Speed;
 import com.almasb.consume.LevelParser.Level;
 import com.almasb.consume.LevelParser.LevelData;
 import com.almasb.consume.Types.Block;
+import com.almasb.consume.Types.Element;
 import com.almasb.consume.Types.Powerup;
 import com.almasb.consume.Types.Property;
 import com.almasb.consume.Types.Type;
 import com.almasb.consume.ai.ChargeControl;
 import com.almasb.consume.ai.PhysicsControl;
+import com.almasb.consume.ai.ProjectileControl;
 import com.almasb.fxgl.GameApplication;
 import com.almasb.fxgl.GameSettings;
 import com.almasb.fxgl.asset.Assets;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.FXGLEvent;
+import com.ergo21.consume.Enemy;
 import com.ergo21.consume.GameScene;
 import com.ergo21.consume.Player;
 import com.ergo21.consume.PlayerHUD;
@@ -39,6 +44,7 @@ public class ConsumeApp extends GameApplication {
 
     private Entity player = new Entity(Type.PLAYER);
     private Player playerData;
+    private boolean facingRight = true;
 
     private Physics physics = new Physics();
 
@@ -191,6 +197,53 @@ public class ConsumeApp extends GameApplication {
             }
         });
 
+        // TODO: add platforms to collision detection but efficiently
+
+//        addCollisionHandler(Type.PROJECTILE, Type.PLATFORM, (proj, platform) -> {
+//            removeEntity(proj);
+//        });
+
+        addCollisionHandler(Type.PROJECTILE, Type.ENEMY, (proj, enemy) -> {
+            Element element = proj.getProperty(Property.SUB_TYPE);
+            Enemy enemyData = enemy.getProperty(Property.DATA);
+
+            List<Element> resists = enemyData.getResistances();
+            List<Element> weaknesses = enemyData.getWeaknesses();
+
+            int damage = Config.POWER_DAMAGE;
+            String modifier = "x1";
+
+            if (resists.contains(element)) {
+                damage = (int)(damage * 0.5);
+                modifier = "x0.5";
+            }
+            else if (weaknesses.contains(element)) {
+                damage *= 2;
+                modifier = "x2";
+            }
+
+            Entity e = Entity.noType()
+                        .setPosition(enemy.getTranslateX(), enemy.getTranslateY())
+                        .setGraphics(new Text(damage + "!  " + modifier));
+
+            addEntities(e);
+
+            FadeTransition ft = new FadeTransition(Duration.seconds(1.5), e);
+            ft.setToValue(0);
+            ft.setOnFinished(event -> {
+                removeEntity(e);
+            });
+            ft.play();
+
+            enemyData.takeDamage(damage);
+
+            removeEntity(proj);
+
+            if (enemyData.getCurrentHealth() <= 0) {
+                removeEntity(enemy);
+            }
+        });
+
         addCollisionHandler(Type.PLAYER, Type.NEXT_LEVEL_POINT, (player, point) -> {
             loadNextLevel();
         });
@@ -200,12 +253,30 @@ public class ConsumeApp extends GameApplication {
     protected void initInput() {
         addKeyPressBinding(KeyCode.A, () -> {
             player.getControl(PhysicsControl.class).moveX(-Speed.PLAYER_MOVE);
+            facingRight = false;
         });
         addKeyPressBinding(KeyCode.D, () -> {
             player.getControl(PhysicsControl.class).moveX(Speed.PLAYER_MOVE);
+            facingRight = true;
         });
         addKeyPressBinding(KeyCode.W, () -> {
             player.getControl(PhysicsControl.class).jump();
+        });
+
+        addKeyTypedBinding(KeyCode.Q, () -> {
+            Element element = playerData.getCurrentPower();
+
+            Entity e = new Entity(Type.PROJECTILE);
+            e.setProperty(Property.SUB_TYPE, element);
+            e.setPosition(player.getTranslateX(), player.getTranslateY());
+            e.setUsePhysics(true);
+            e.setGraphics(new Rectangle(10, 1));
+            e.addControl(new ProjectileControl(facingRight));
+            e.addFXGLEventHandler(Event.DEATH, event -> {
+                removeEntity(event.getTarget());
+            });
+
+            addEntities(e);
         });
 
         // debug
@@ -289,6 +360,7 @@ public class ConsumeApp extends GameApplication {
 
         testEnemy.setGraphics(rect);
         testEnemy.setUsePhysics(true);
+        testEnemy.setProperty(Property.DATA, new Enemy(assets.getText("enemies/enemy_FireElemental.txt")));
         testEnemy.setProperty("physics", physics);
         testEnemy.setPosition(spawnPoint.getX() + 640, spawnPoint.getY() + 10);
         testEnemy.addControl(new ChargeControl(player));
