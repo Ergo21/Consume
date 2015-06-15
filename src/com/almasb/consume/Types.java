@@ -31,4 +31,8 @@ public class Types {
     public enum Property implements PropertyKey {
         DATA, SUB_TYPE
     }
+    
+    public enum Element {
+    	NEUTRAL, FIRE, ICE
+    }
 }

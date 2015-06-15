@@ -3,19 +3,16 @@ package com.ergo21.consume;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.ergo21.consume.powers.Power;
+import com.almasb.consume.Types.Element;
 
 public class Player extends Enemy {
-    public enum PowerElem {
-        NORMAL, FIRE, ICE
-    };
 
-    private List<Power> powers = new ArrayList<>();
-    private Power curPower;
+    private ArrayList<Element> powers = new ArrayList<Element>();
+    private Element curPower;
 
     public Player(List<String> prop) {
         super(prop);
-        powers.add(new Power(this, PowerElem.NORMAL));
+        powers.add(Element.NEUTRAL);
         curPower = powers.get(0);
     }
 
@@ -43,30 +40,34 @@ public class Player extends Enemy {
         manaR += value;
     }
 
-    public List<Power> getPowers() {
+    public Element getCurrentPower() {
+        return curPower;
+    }
+
+    public ArrayList<Element> getPowers() {
         return powers;
     }
 
-    public void setCurrentPower(Power p) {
+    public void setCurrentPower(Element p) {
         curPower = p;
-        switch (curPower.getElement()) {
-            case NORMAL: {
+        switch (curPower) {
+            case NEUTRAL: {
                 resists.clear();
                 weaks.clear();
                 break;
             }
             case FIRE: {
                 resists.clear();
-                resists.add(ETags.FIRE);
+                resists.add(Element.FIRE);
                 weaks.clear();
-                weaks.add(ETags.ICE);
+                weaks.add(Element.ICE);
                 break;
             }
             case ICE: {
                 resists.clear();
-                resists.add(ETags.ICE);
+                resists.add(Element.ICE);
                 weaks.clear();
-                weaks.add(ETags.FIRE);
+                weaks.add(Element.FIRE);
                 break;
             }
             default: {

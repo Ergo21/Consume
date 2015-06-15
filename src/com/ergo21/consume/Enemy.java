@@ -3,9 +3,10 @@ package com.ergo21.consume;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.almasb.consume.Types.Element;
+
 public class Enemy{
 
-	enum ETags{NONE, FIRE, ICE};
 	protected String name;
 	protected String sSheet;
 	protected int mHealth;
@@ -13,8 +14,8 @@ public class Enemy{
 	protected int mMana;
 	protected int cMana;
 	protected int manaR;
-	protected ArrayList<ETags> resists;
-	protected ArrayList<ETags> weaks;
+	protected ArrayList<Element> resists;
+	protected ArrayList<Element> weaks;
 
 	public Enemy(List<String> prop){
 		for(String p : prop){
@@ -54,8 +55,8 @@ public class Enemy{
 		}
 	}
 
-	private ArrayList<ETags> getRWs(String p) {
-		ArrayList<ETags> rws = new ArrayList<ETags>();
+	private ArrayList<Element> getRWs(String p) {
+		ArrayList<Element> rws = new ArrayList<Element>();
 
 		while(p.contains("\"")){
 			p = p.substring(p.indexOf('"') + 1);
@@ -63,11 +64,11 @@ public class Enemy{
 			p = p.substring(p.indexOf('"') + 1);
 			switch(val){
 				case "FIRE":{
-					rws.add(ETags.FIRE);
+					rws.add(Element.FIRE);
 					break;
 				}
 				case "ICE":{
-					rws.add(ETags.ICE);
+					rws.add(Element.ICE);
 					break;
 				}
 			}
@@ -105,10 +106,10 @@ public class Enemy{
 	public int getManaRegenRate(){
 		return manaR;
 	}
-	public ArrayList<ETags> getResistances(){
+	public List<Element> getResistances(){
 		return resists;
 	}
-	public ArrayList<ETags> getWeaknesses(){
+	public List<Element> getWeaknesses(){
 		return weaks;
 	}
 
@@ -146,6 +147,10 @@ public class Enemy{
      */
     public void regenMana() {
         restoreMana(manaR / 100.0);
+    }
+
+    public void takeDamage(int value) {
+        cHealth -= value;
     }
 
 	@Override
