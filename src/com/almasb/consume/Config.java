@@ -11,7 +11,7 @@ public final class Config {
         public static final int PLAYER_MOVE = 5;
         public static final int PLAYER_JUMP = 30;
 
-        public static final int ENEMY_SEEK_ACCEL = 1;
+        public static final int ENEMY_SEEK_ACCEL = 2;
         public static final int ENEMY_SEEK_DECEL = 1;
         public static final int ENEMY_SEEK_MAX = PLAYER_MOVE * 4;
 
@@ -23,7 +23,7 @@ public final class Config {
     public static final int MAX_LEVELS = 2;
 
     public static final int PATROL_RADIUS = 3 * BLOCK_SIZE;
-    public static final int ENEMY_CHARGE_RANGE = 5 * BLOCK_SIZE;
+    public static final int ENEMY_CHARGE_RANGE = 7 * BLOCK_SIZE;
     public static final double ENEMY_CHARGE_DELAY = 0.5 * GameApplication.SECOND;
 
     public static final int MAX_HEALTH_INC = 10;
