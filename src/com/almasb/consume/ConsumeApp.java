@@ -42,7 +42,7 @@ public class ConsumeApp extends GameApplication {
 
     private Assets assets;
 
-    private Entity player = new Entity(Type.PLAYER);
+    private Entity player;
     private Player playerData;
     private boolean facingRight = true;
 
@@ -79,10 +79,8 @@ public class ConsumeApp extends GameApplication {
     protected void initGame(Pane gameRoot) {
         playerData = new Player(assets.getText("player.txt"));
 
-        initPlayer();
         initLevels();
         initCollisions();
-        bindViewportOrigin(player, 320, 180);
 
         loadNextLevel();
     }
@@ -350,14 +348,15 @@ public class ConsumeApp extends GameApplication {
     }
 
     private void loadNextLevel() {
-        getAllEntities().stream().filter(e -> !e.isType(Type.PLAYER)).forEach(this::removeEntity);
+        getAllEntities().forEach(this::removeEntity);
 
         Level level = levels.get(currentLevel++);
-
-        addEntities(level.getEntitiesAsArray());
-
         Point2D spawnPoint = level.getSpawnPoint();
-        player.setPosition(spawnPoint.getX(), spawnPoint.getY());
+
+        // add level objects
+        addEntities(level.getEntitiesAsArray());
+        // add player
+        initPlayer(spawnPoint);
 
         // TODO: remove after test
         Entity testEnemy = new Entity(Type.ENEMY);
@@ -451,15 +450,18 @@ public class ConsumeApp extends GameApplication {
         }
     }
 
-    private void initPlayer() {
+    private void initPlayer(Point2D point) {
         Rectangle graphics = new Rectangle(15, 30);
         graphics.setFill(Color.YELLOW);
 
-        player.setUsePhysics(true)
+        player = new Entity(Type.PLAYER)
+            .setPosition(point.getX(), point.getY())
+            .setUsePhysics(true)
             .setGraphics(graphics)
-            .setProperty(Property.DATA, playerData);
+            .setProperty(Property.DATA, playerData)
+            .addControl(new PhysicsControl(physics));
 
-        player.addControl(new PhysicsControl(physics));
+        bindViewportOrigin(player, 320, 180);
         addEntities(player);
     }
 
