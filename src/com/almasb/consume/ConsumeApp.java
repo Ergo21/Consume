@@ -203,12 +203,6 @@ public class ConsumeApp extends GameApplication {
             }
         });
 
-        // TODO: add platforms to collision detection but efficiently
-
-//        addCollisionHandler(Type.PROJECTILE, Type.PLATFORM, (proj, platform) -> {
-//            removeEntity(proj);
-//        });
-
         addCollisionHandler(Type.PROJECTILE, Type.ENEMY, (proj, enemy) -> {
             Element element = proj.getProperty(Property.SUB_TYPE);
             Enemy enemyData = enemy.getProperty(Property.DATA);
@@ -274,11 +268,16 @@ public class ConsumeApp extends GameApplication {
 
             Entity e = new Entity(Type.PROJECTILE);
             e.setProperty(Property.SUB_TYPE, element);
+            e.setProperty(Property.DISABLE_GRAVITY, true);
             e.setPosition(player.getTranslateX(), player.getTranslateY());
             e.setUsePhysics(true);
             e.setGraphics(new Rectangle(10, 1));
-            e.addControl(new ProjectileControl(facingRight));
+            e.addControl(new PhysicsControl(physics));
+            e.addControl(new ProjectileControl(facingRight, player));
             e.addFXGLEventHandler(Event.DEATH, event -> {
+                removeEntity(event.getTarget());
+            });
+            e.addFXGLEventHandler(Event.COLLIDED_PLATFORM, event -> {
                 removeEntity(event.getTarget());
             });
 
@@ -403,12 +402,14 @@ public class ConsumeApp extends GameApplication {
                     if (e.getBoundsInParent().intersects(platform.getBoundsInParent())) {
                         if (movingRight) {
                             if (e.getTranslateX() + e.getWidth() == platform.getTranslateX()) {
+                                e.fireFXGLEvent(new FXGLEvent(Event.COLLIDED_PLATFORM, platform));
                                 e.translate(-1, 0);
                                 return false;
                             }
                         }
                         else {
                             if (e.getTranslateX() == platform.getTranslateX() + platform.getWidth()) {
+                                e.fireFXGLEvent(new FXGLEvent(Event.COLLIDED_PLATFORM, platform));
                                 e.translate(1, 0);
                                 return false;
                             }
@@ -429,6 +430,7 @@ public class ConsumeApp extends GameApplication {
                     if (e.getBoundsInParent().intersects(platform.getBoundsInParent())) {
                         if (movingDown) {
                             if (e.getTranslateY() + e.getHeight() == platform.getTranslateY()) {
+                                e.fireFXGLEvent(new FXGLEvent(Event.COLLIDED_PLATFORM, platform));
                                 e.setTranslateY(e.getTranslateY() - 1);
                                 e.setProperty("jumping", false);
                                 return;
@@ -436,6 +438,7 @@ public class ConsumeApp extends GameApplication {
                         }
                         else {
                             if (e.getTranslateY() == platform.getTranslateY() + platform.getHeight()) {
+                                e.fireFXGLEvent(new FXGLEvent(Event.COLLIDED_PLATFORM, platform));
                                 return;
                             }
                         }
