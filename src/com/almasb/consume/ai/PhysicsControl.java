@@ -4,6 +4,7 @@ import javafx.geometry.Point2D;
 
 import com.almasb.consume.Config.Speed;
 import com.almasb.consume.ConsumeApp.Physics;
+import com.almasb.consume.Types.Property;
 import com.almasb.fxgl.entity.AbstractControl;
 import com.almasb.fxgl.entity.Entity;
 
@@ -31,11 +32,13 @@ public class PhysicsControl extends AbstractControl {
 
     @Override
     public void onUpdate(Entity entity, long now) {
-        velocity = velocity.add(0, Speed.GRAVITY_ACCEL);
-        if (velocity.getY() > Speed.GRAVITY_MAX)
-            velocity = new Point2D(velocity.getX(), Speed.GRAVITY_MAX);
+        if (entity.getProperty(Property.DISABLE_GRAVITY) == null) {
+            velocity = velocity.add(0, Speed.GRAVITY_ACCEL);
+            if (velocity.getY() > Speed.GRAVITY_MAX)
+                velocity = new Point2D(velocity.getX(), Speed.GRAVITY_MAX);
 
-        physics.moveY(entity, (int)velocity.getY());
+            physics.moveY(entity, (int)velocity.getY());
+        }
     }
 
     public boolean moveX(int value) {

@@ -9,9 +9,11 @@ import com.almasb.fxgl.entity.FXGLEvent;
 public class ProjectileControl extends AbstractControl {
 
     private boolean facingRight;
+    private Entity player;
 
-    public ProjectileControl(boolean facingRight) {
+    public ProjectileControl(boolean facingRight, Entity player) {
         this.facingRight = facingRight;
+        this.player = player;
     }
 
     @Override
@@ -22,9 +24,10 @@ public class ProjectileControl extends AbstractControl {
 
     @Override
     public void onUpdate(Entity entity, long now) {
-        entity.translate(facingRight ? Speed.PROJECTILE : -Speed.PROJECTILE, 0);
+        PhysicsControl control = entity.getControl(PhysicsControl.class);
+        control.moveX(facingRight ? Speed.PROJECTILE : -Speed.PROJECTILE);
 
-        if (entity.getTranslateX() >= 5000 || entity.getTranslateX() < -5000) {
+        if (Math.abs(entity.getTranslateX() - player.getTranslateX()) >= 350) {
             entity.fireFXGLEvent(new FXGLEvent(Event.DEATH));
         }
     }
