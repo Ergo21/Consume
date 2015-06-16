@@ -28,11 +28,12 @@ public class PhysicsControl extends AbstractControl {
     @Override
     protected void initEntity(Entity entity) {
         entity.setProperty("jumping", false);
+        entity.setProperty(Property.ENABLE_GRAVITY, true);
     }
 
     @Override
     public void onUpdate(Entity entity, long now) {
-        if (entity.getProperty(Property.DISABLE_GRAVITY) == null) {
+        if (entity.<Boolean>getProperty(Property.ENABLE_GRAVITY)) {
             velocity = velocity.add(0, Speed.GRAVITY_ACCEL);
             if (velocity.getY() > Speed.GRAVITY_MAX)
                 velocity = new Point2D(velocity.getX(), Speed.GRAVITY_MAX);

@@ -268,7 +268,6 @@ public class ConsumeApp extends GameApplication {
 
             Entity e = new Entity(Type.PROJECTILE);
             e.setProperty(Property.SUB_TYPE, element);
-            e.setProperty(Property.DISABLE_GRAVITY, true);
             e.setPosition(player.getTranslateX(), player.getTranslateY());
             e.setUsePhysics(true);
             e.setGraphics(new Rectangle(10, 1));
@@ -280,6 +279,8 @@ public class ConsumeApp extends GameApplication {
             e.addFXGLEventHandler(Event.COLLIDED_PLATFORM, event -> {
                 removeEntity(event.getTarget());
             });
+
+            e.setProperty(Property.ENABLE_GRAVITY, false);
 
             addEntities(e);
         });

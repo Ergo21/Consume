@@ -29,7 +29,7 @@ public class Types {
     }
 
     public enum Property implements PropertyKey {
-        DATA, SUB_TYPE, DISABLE_GRAVITY
+        DATA, SUB_TYPE, ENABLE_GRAVITY
     }
 
     public enum Element {
