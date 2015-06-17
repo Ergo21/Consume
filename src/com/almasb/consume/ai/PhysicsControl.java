@@ -3,7 +3,7 @@ package com.almasb.consume.ai;
 import javafx.geometry.Point2D;
 
 import com.almasb.consume.Config.Speed;
-import com.almasb.consume.ConsumeApp.Physics;
+import com.almasb.consume.Physics;
 import com.almasb.consume.Types.Property;
 import com.almasb.fxgl.entity.AbstractControl;
 import com.almasb.fxgl.entity.Entity;

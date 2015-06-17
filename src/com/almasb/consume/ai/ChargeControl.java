@@ -2,8 +2,8 @@ package com.almasb.consume.ai;
 
 import com.almasb.consume.Config;
 import com.almasb.consume.Config.Speed;
-import com.almasb.consume.ConsumeApp.Physics;
 import com.almasb.consume.Event;
+import com.almasb.consume.Physics;
 import com.almasb.fxgl.entity.AbstractControl;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.FXGLEvent;

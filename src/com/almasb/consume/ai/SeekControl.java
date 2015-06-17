@@ -1,7 +1,7 @@
 package com.almasb.consume.ai;
 
 import com.almasb.consume.Config.Speed;
-import com.almasb.consume.ConsumeApp.Physics;
+import com.almasb.consume.Physics;
 import com.almasb.fxgl.entity.Control;
 import com.almasb.fxgl.entity.Entity;
 
