@@ -22,6 +22,7 @@ import com.almasb.consume.LevelParser.Level;
 import com.almasb.consume.LevelParser.LevelData;
 import com.almasb.consume.Types.Block;
 import com.almasb.consume.Types.Element;
+import com.almasb.consume.Types.Platform;
 import com.almasb.consume.Types.Powerup;
 import com.almasb.consume.Types.Property;
 import com.almasb.consume.Types.Type;
@@ -276,6 +277,11 @@ public class ConsumeApp extends GameApplication {
             });
             e.addFXGLEventHandler(Event.COLLIDED_PLATFORM, event -> {
                 removeEntity(event.getTarget());
+
+                Entity platform = event.getSource();
+                if (platform.getProperty(Property.SUB_TYPE) == Platform.DESTRUCTIBLE) {
+                    destroyBlock(platform);
+                }
             });
 
             e.setProperty(Property.ENABLE_GRAVITY, false);
@@ -538,6 +544,23 @@ public class ConsumeApp extends GameApplication {
         e.setGraphics(rect);
 
         addEntities(e);
+    }
+
+    private void destroyBlock(Entity block) {
+        block.setProperty("state", "dying");
+
+        for (Entity b : getEntitiesInRange(
+                new Rectangle2D(block.getTranslateX() - 40,
+                        block.getTranslateY() - 40,
+                        120, 120),
+                        Type.PLATFORM.getUniqueType())) {
+            if (b.getProperty(Property.SUB_TYPE) == Platform.DESTRUCTIBLE
+                    && !"dying".equals(b.getProperty("state"))) {
+                destroyBlock(b);
+            }
+        }
+
+        removeEntity(block);
     }
 
     public static void main(String[] args) {

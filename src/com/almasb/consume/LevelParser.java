@@ -10,6 +10,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 
 import com.almasb.consume.Types.Block;
+import com.almasb.consume.Types.Platform;
 import com.almasb.consume.Types.Powerup;
 import com.almasb.consume.Types.Property;
 import com.almasb.fxgl.entity.Entity;
@@ -68,10 +69,13 @@ public class LevelParser {
                         break;
                     case 'd':
                         e = new Entity(Types.Type.PLATFORM);
+                        e.setProperty(Property.SUB_TYPE, Platform.DESTRUCTIBLE);
+                        e.setProperty("state", "none");
                         rect.setFill(Color.DARKGREEN);
                         break;
                     case 'i':
                         e = new Entity(Types.Type.PLATFORM);
+                        e.setProperty(Property.SUB_TYPE, Platform.INDESTRUCTIBLE);
                         rect.setFill(Color.BROWN);
                         break;
                     case 'p':
