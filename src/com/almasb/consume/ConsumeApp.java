@@ -3,11 +3,9 @@ package com.almasb.consume;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Random;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-import javafx.animation.FadeTransition;
 import javafx.geometry.Point2D;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.input.KeyCode;
@@ -15,19 +13,23 @@ import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
-import javafx.util.Duration;
 
 import com.almasb.consume.Config.Speed;
 import com.almasb.consume.LevelParser.Level;
 import com.almasb.consume.LevelParser.LevelData;
 import com.almasb.consume.Types.Block;
 import com.almasb.consume.Types.Element;
+import com.almasb.consume.Types.Platform;
 import com.almasb.consume.Types.Powerup;
 import com.almasb.consume.Types.Property;
 import com.almasb.consume.Types.Type;
 import com.almasb.consume.ai.ChargeControl;
 import com.almasb.consume.ai.PhysicsControl;
 import com.almasb.consume.ai.ProjectileControl;
+import com.almasb.consume.collision.PlayerBlockHandler;
+import com.almasb.consume.collision.PlayerEnemyHandler;
+import com.almasb.consume.collision.PlayerPowerupHandler;
+import com.almasb.consume.collision.ProjectileEnemyHandler;
 import com.almasb.fxgl.GameApplication;
 import com.almasb.fxgl.GameSettings;
 import com.almasb.fxgl.asset.Assets;
@@ -42,19 +44,17 @@ public class ConsumeApp extends GameApplication {
 
     private Assets assets;
 
-    private Entity player = new Entity(Type.PLAYER);
+    private Entity player;
     private Player playerData;
     private boolean facingRight = true;
 
-    private Physics physics = new Physics();
+    private Physics physics = new Physics(this);
 
     private List<Level> levels;
     private int currentLevel = 0;
 
     private PlayerHUD hud;
     private Text performance = new Text();
-
-    private Random random = new Random();
 
     private long regenTime = 0;
 
@@ -79,10 +79,8 @@ public class ConsumeApp extends GameApplication {
     protected void initGame(Pane gameRoot) {
         playerData = new Player(assets.getText("player.txt"));
 
-        initPlayer();
         initLevels();
         initCollisions();
-        bindViewportOrigin(player, 320, 180);
 
         loadNextLevel();
     }
@@ -92,7 +90,6 @@ public class ConsumeApp extends GameApplication {
     @Override
     protected void initUI(Pane uiRoot) {
         GameScene scene = new GameScene(assets.getText("dialogue/scene_0.txt"), assets);
-        uiRoot.getChildren().add(scene);
 
         addKeyTypedBinding(KeyCode.ENTER, scene::updateScript);
 
@@ -102,18 +99,14 @@ public class ConsumeApp extends GameApplication {
         hud.setTranslateX(10);
         hud.setTranslateY(100);
 
-        uiRoot.getChildren().add(hud);
-
-
         performance.setTranslateX(450);
         performance.setTranslateY(50);
         performance.setFill(Color.BLACK);
 
-        uiRoot.getChildren().add(performance);
-
         debug.setTranslateX(450);
         debug.setTranslateY(100);
-        uiRoot.getChildren().add(debug);
+
+        uiRoot.getChildren().addAll(scene, hud, performance, debug);
     }
 
     private void initLevels() {
@@ -127,125 +120,22 @@ public class ConsumeApp extends GameApplication {
     }
 
     private void initCollisions() {
-        addCollisionHandler(Type.PLAYER, Type.POWERUP, (playerEntity, powerup) -> {
-            removeEntity(powerup);
-
-            Powerup type = powerup.getProperty(Property.SUB_TYPE);
-            Player playerData = playerEntity.getProperty(Property.DATA);
-            switch (type) {
-                case INC_MANA_REGEN:
-                    playerData.increaseManaRegen(Config.MANA_REGEN_INC);
-                    break;
-                case INC_MAX_HEALTH:
-                    playerData.increaseMaxHealth(Config.MAX_HEALTH_INC);
-                    break;
-                case INC_MAX_MANA:
-                    playerData.increaseMaxMana(Config.MAX_MANA_INC);
-                    break;
-                case RESTORE_HEALTH_12:
-                    playerData.restoreHealth(0.125);
-                    break;
-                case RESTORE_HEALTH_25:
-                    playerData.restoreHealth(0.25);
-                    break;
-                case RESTORE_HEALTH_50:
-                    playerData.restoreHealth(0.5);
-                    break;
-                case RESTORE_MANA_12:
-                    playerData.restoreMana(0.125);
-                    break;
-                case RESTORE_MANA_25:
-                    playerData.restoreMana(0.25);
-                    break;
-                case RESTORE_MANA_50:
-                    playerData.restoreMana(0.5);
-                    break;
-                default:
-                    System.out.println("Picked up an unknown powerup: " + type);
-                    break;
-            }
-        });
-
-        addCollisionHandler(Type.PLAYER, Type.ENEMY, (player, enemy) -> {
-            if (enemy.getControl(ChargeControl.class) != null) {
-                int velocityX = enemy.getControl(ChargeControl.class).getVelocity();
-                player.getControl(PhysicsControl.class).moveX(velocityX * 5);
-
-                enemy.fireFXGLEvent(new FXGLEvent(Event.ENEMY_HIT_PLAYER));
-
-                player.setUsePhysics(false);
-                Entity e = Entity.noType().setGraphics(new Text("INVINCIBLE"));
-                e.translateXProperty().bind(player.translateXProperty());
-                e.translateYProperty().bind(player.translateYProperty().subtract(20));
-
-                addEntities(e);
-
-                runOnceAfter(() -> {
-                    removeEntity(e);
-                    player.setUsePhysics(true);
-                }, 2 * SECOND);
-            }
-        });
-
-        addCollisionHandler(Type.PLAYER, Type.BLOCK, (player, block) -> {
-            if (block.getProperty(Property.SUB_TYPE) == Block.BARRIER) {
-                block.setProperty("state", "passing");
-
-                if ("none".equals(block.getProperty("start"))) {
-                    if (player.getTranslateX() <= block.getTranslateX()) {
-                        block.setProperty("start", "left");
-                    }
-                    else {
-                        block.setProperty("start", "right");
-                    }
-                }
-
-            }
-        });
-
-        addCollisionHandler(Type.PROJECTILE, Type.ENEMY, (proj, enemy) -> {
-            Element element = proj.getProperty(Property.SUB_TYPE);
-            Enemy enemyData = enemy.getProperty(Property.DATA);
-
-            List<Element> resists = enemyData.getResistances();
-            List<Element> weaknesses = enemyData.getWeaknesses();
-
-            int damage = Config.POWER_DAMAGE;
-            String modifier = "x1";
-
-            if (resists.contains(element)) {
-                damage = (int)(damage * 0.5);
-                modifier = "x0.5";
-            }
-            else if (weaknesses.contains(element)) {
-                damage *= 2;
-                modifier = "x2";
-            }
-
-            Entity e = Entity.noType()
-                        .setPosition(enemy.getTranslateX(), enemy.getTranslateY())
-                        .setGraphics(new Text(damage + "!  " + modifier));
-
-            addEntities(e);
-
-            FadeTransition ft = new FadeTransition(Duration.seconds(1.5), e);
-            ft.setToValue(0);
-            ft.setOnFinished(event -> {
-                removeEntity(e);
-            });
-            ft.play();
-
-            enemyData.takeDamage(damage);
-
-            removeEntity(proj);
-
-            if (enemyData.getCurrentHealth() <= 0) {
-                removeEntity(enemy);
-            }
-        });
+        // order matters, must match class name
+        addCollisionHandler(Type.PLAYER, Type.POWERUP, new PlayerPowerupHandler());
+        addCollisionHandler(Type.PLAYER, Type.ENEMY, new PlayerEnemyHandler(this));
+        addCollisionHandler(Type.PROJECTILE, Type.ENEMY, new ProjectileEnemyHandler(this));
+        addCollisionHandler(Type.PLAYER, Type.BLOCK, new PlayerBlockHandler());
 
         addCollisionHandler(Type.PLAYER, Type.NEXT_LEVEL_POINT, (player, point) -> {
             loadNextLevel();
+        });
+
+        addCollisionHandler(Type.PROJECTILE, Type.PLATFORM, (proj, platform) -> {
+            removeEntity(proj);
+
+            if (platform.getProperty(Property.SUB_TYPE) == Platform.DESTRUCTIBLE) {
+                destroyBlock(platform);
+            }
         });
     }
 
@@ -264,53 +154,27 @@ public class ConsumeApp extends GameApplication {
         });
 
         addKeyTypedBinding(KeyCode.Q, () -> {
-            Element element = playerData.getCurrentPower();
-
-            Entity e = new Entity(Type.PROJECTILE);
-            e.setProperty(Property.SUB_TYPE, element);
-            e.setProperty(Property.DISABLE_GRAVITY, true);
-            e.setPosition(player.getTranslateX(), player.getTranslateY());
-            e.setUsePhysics(true);
-            e.setGraphics(new Rectangle(10, 1));
-            e.addControl(new PhysicsControl(physics));
-            e.addControl(new ProjectileControl(facingRight, player));
-            e.addFXGLEventHandler(Event.DEATH, event -> {
-                removeEntity(event.getTarget());
-            });
-            e.addFXGLEventHandler(Event.COLLIDED_PLATFORM, event -> {
-                removeEntity(event.getTarget());
-            });
-
-            addEntities(e);
+            shootProjectile();
         });
 
         // debug
-        addKeyTypedBinding(KeyCode.L, () -> {
-            getEntitiesInRange(new Rectangle2D(player.getTranslateX() - 50, player.getTranslateY() - 50, 200, 200), Type.PLATFORM.getUniqueType())
-                .forEach(e -> System.out.println(e.getType()));
-        });
-
         addKeyTypedBinding(KeyCode.I, () -> {
-            Player p = player.getProperty(Property.DATA);
-            System.out.println(p.toString());
+            log.info(playerData::toString);
         });
     }
 
     @Override
     protected void onUpdate(long now) {
-        Player p = player.getProperty(Property.DATA);
-        if (p != null) {
-
-            if (now - regenTime >= Config.REGEN_TIME_INTERVAL) {
-                p.regenMana();
-                regenTime = now;
-            }
-
-            hud.setCurHealth(p.getCurrentHealth());
-            hud.setCurMana(p.getCurrentMana());
-            hud.setMaxHealth(p.getMaxHealth());
-            hud.setMaxMana(p.getMaxMana());
+        if (now - regenTime >= Config.REGEN_TIME_INTERVAL) {
+            playerData.regenMana();
+            regenTime = now;
         }
+
+        // leave manual update for now
+        hud.setCurHealth(playerData.getCurrentHealth());
+        hud.setCurMana(playerData.getCurrentMana());
+        hud.setMaxHealth(playerData.getMaxHealth());
+        hud.setMaxMana(playerData.getMaxMana());
 
         for (Entity e : getEntities(Type.BLOCK)) {
             if (e.getProperty(Property.SUB_TYPE) == Block.BARRIER
@@ -337,9 +201,7 @@ public class ConsumeApp extends GameApplication {
                     }
                 }
             }
-        }
 
-        for (Entity e : getEntities(Type.BLOCK)) {
             if (e.getProperty(Property.SUB_TYPE) == Block.BARRIER)
                 e.setProperty("state", "idle");
         }
@@ -349,14 +211,23 @@ public class ConsumeApp extends GameApplication {
     }
 
     private void loadNextLevel() {
-        getAllEntities().stream().filter(e -> !e.isType(Type.PLAYER)).forEach(this::removeEntity);
+        getAllEntities().forEach(this::removeEntity);
 
         Level level = levels.get(currentLevel++);
-
-        addEntities(level.getEntitiesAsArray());
-
         Point2D spawnPoint = level.getSpawnPoint();
-        player.setPosition(spawnPoint.getX(), spawnPoint.getY());
+
+        // add level objects
+        for (Entity e : level.getEntitiesAsArray()) {
+            // TODO: currently we don't have death animations/handlers for other types
+            // when we will, this might move to another class
+            if (e.isType(Type.POWERUP)) {
+                e.addFXGLEventHandler(Event.DEATH, event -> removeEntity(e));
+            }
+
+            addEntities(e);
+        }
+        // add player
+        initPlayer(spawnPoint);
 
         // TODO: remove after test
         Entity testEnemy = new Entity(Type.ENEMY);
@@ -386,79 +257,18 @@ public class ConsumeApp extends GameApplication {
         addEntities(testEnemy);
     }
 
-    public class Physics {
-        /**
-         * Returns true iff entity has moved value units
-         *
-         * @param e
-         * @param value
-         * @return
-         */
-        public boolean moveX(Entity e, int value) {
-            boolean movingRight = value > 0;
-
-            for (int i = 0; i < Math.abs(value); i++) {
-                for (Entity platform : getEntities(Type.PLATFORM)) {
-                    if (e.getBoundsInParent().intersects(platform.getBoundsInParent())) {
-                        if (movingRight) {
-                            if (e.getTranslateX() + e.getWidth() == platform.getTranslateX()) {
-                                e.fireFXGLEvent(new FXGLEvent(Event.COLLIDED_PLATFORM, platform));
-                                e.translate(-1, 0);
-                                return false;
-                            }
-                        }
-                        else {
-                            if (e.getTranslateX() == platform.getTranslateX() + platform.getWidth()) {
-                                e.fireFXGLEvent(new FXGLEvent(Event.COLLIDED_PLATFORM, platform));
-                                e.translate(1, 0);
-                                return false;
-                            }
-                        }
-                    }
-                }
-                e.setTranslateX(e.getTranslateX() + (movingRight ? 1 : -1));
-            }
-
-            return true;
-        }
-
-        public void moveY(Entity e, int value) {
-            boolean movingDown = value > 0;
-
-            for (int i = 0; i < Math.abs(value); i++) {
-                for (Entity platform : getEntities(Type.PLATFORM)) {
-                    if (e.getBoundsInParent().intersects(platform.getBoundsInParent())) {
-                        if (movingDown) {
-                            if (e.getTranslateY() + e.getHeight() == platform.getTranslateY()) {
-                                e.fireFXGLEvent(new FXGLEvent(Event.COLLIDED_PLATFORM, platform));
-                                e.setTranslateY(e.getTranslateY() - 1);
-                                e.setProperty("jumping", false);
-                                return;
-                            }
-                        }
-                        else {
-                            if (e.getTranslateY() == platform.getTranslateY() + platform.getHeight()) {
-                                e.fireFXGLEvent(new FXGLEvent(Event.COLLIDED_PLATFORM, platform));
-                                return;
-                            }
-                        }
-                    }
-                }
-                e.setTranslateY(e.getTranslateY() + (movingDown ? 1 : -1));
-                e.setProperty("jumping", true);
-            }
-        }
-    }
-
-    private void initPlayer() {
+    private void initPlayer(Point2D point) {
         Rectangle graphics = new Rectangle(15, 30);
         graphics.setFill(Color.YELLOW);
 
-        player.setUsePhysics(true)
+        player = new Entity(Type.PLAYER)
+            .setPosition(point.getX(), point.getY())
+            .setUsePhysics(true)
             .setGraphics(graphics)
-            .setProperty(Property.DATA, playerData);
+            .setProperty(Property.DATA, playerData)
+            .addControl(new PhysicsControl(physics));
 
-        player.addControl(new PhysicsControl(physics));
+        bindViewportOrigin(player, 320, 180);
         addEntities(player);
     }
 
@@ -533,6 +343,42 @@ public class ConsumeApp extends GameApplication {
         Rectangle rect = new Rectangle(40, 40);
         rect.setFill(Color.GREY);
         e.setGraphics(rect);
+
+        addEntities(e);
+    }
+
+    private void destroyBlock(Entity block) {
+        block.setProperty("state", "dying");
+
+        for (Entity b : getEntitiesInRange(
+                new Rectangle2D(block.getTranslateX() - 40,
+                        block.getTranslateY() - 40,
+                        120, 120),
+                        Type.PLATFORM.getUniqueType())) {
+            if (b.getProperty(Property.SUB_TYPE) == Platform.DESTRUCTIBLE
+                    && !"dying".equals(b.getProperty("state"))) {
+                destroyBlock(b);
+            }
+        }
+
+        removeEntity(block);
+    }
+
+    private void shootProjectile() {
+        Element element = playerData.getCurrentPower();
+
+        Entity e = new Entity(Type.PROJECTILE);
+        e.setProperty(Property.SUB_TYPE, element);
+        e.setPosition(player.getPosition());
+        e.setUsePhysics(true);
+        e.setGraphics(new Rectangle(10, 1));
+        e.addControl(new PhysicsControl(physics));
+        e.addControl(new ProjectileControl(facingRight, player));
+        e.addFXGLEventHandler(Event.DEATH, event -> {
+            removeEntity(event.getTarget());
+        });
+
+        e.setProperty(Property.ENABLE_GRAVITY, false);
 
         addEntities(e);
     }
