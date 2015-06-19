@@ -150,7 +150,21 @@ public class ConsumeApp extends GameApplication {
             facingRight = true;
         });
         addKeyPressBinding(KeyCode.W, () -> {
-            player.getControl(PhysicsControl.class).jump();
+            if (player.<Boolean>getProperty("climbing")) {
+                player.getControl(PhysicsControl.class).moveY(-5);
+            }
+            else
+                player.getControl(PhysicsControl.class).jump();
+        });
+        addKeyPressBinding(KeyCode.S, () -> {
+            if (player.<Boolean>getProperty("climbing")) {
+                player.getControl(PhysicsControl.class).moveY(5);
+            }
+        });
+        addKeyPressBinding(KeyCode.SPACE, () -> {
+            if (player.<Boolean>getProperty("climbing")) {
+                player.getControl(PhysicsControl.class).moveY(-15);
+            }
         });
 
         addKeyTypedBinding(KeyCode.Q, () -> {
@@ -165,6 +179,12 @@ public class ConsumeApp extends GameApplication {
 
     @Override
     protected void onUpdate(long now) {
+        if (!player.<Boolean>getProperty("climb")) {
+            // here player is no longer touching the ladder
+            player.setProperty("climbing", false);
+            player.setProperty(Property.ENABLE_GRAVITY, true);
+        }
+
         if (now - regenTime >= Config.REGEN_TIME_INTERVAL) {
             playerData.regenMana();
             regenTime = now;
@@ -205,6 +225,8 @@ public class ConsumeApp extends GameApplication {
             if (e.getProperty(Property.SUB_TYPE) == Block.BARRIER)
                 e.setProperty("state", "idle");
         }
+
+        player.setProperty("climb", false);
 
         performance.setText("FPS: " + fps + " Performance: " + fpsPerformance);
         debug.setText("Debug text goes here");
@@ -266,6 +288,8 @@ public class ConsumeApp extends GameApplication {
             .setUsePhysics(true)
             .setGraphics(graphics)
             .setProperty(Property.DATA, playerData)
+            .setProperty("climb", false)
+            .setProperty("climbing", false)
             .addControl(new PhysicsControl(physics));
 
         bindViewportOrigin(player, 320, 180);

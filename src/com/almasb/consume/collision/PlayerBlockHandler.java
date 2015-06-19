@@ -21,5 +21,10 @@ public class PlayerBlockHandler implements CollisionHandler {
                 }
             }
         }
+        else if (block.getProperty(Property.SUB_TYPE) == Block.LADDER) {
+            player.setProperty("climbing", true);
+            player.setProperty("climb", true);
+            player.setProperty(Property.ENABLE_GRAVITY, false);
+        }
     }
 }

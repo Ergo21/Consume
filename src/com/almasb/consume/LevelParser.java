@@ -81,6 +81,7 @@ public class LevelParser {
                     case 'p':
                         e = new Entity(Types.Type.BLOCK);
                         e.setProperty(Property.SUB_TYPE, Block.LADDER);
+                        e.setUsePhysics(true);
                         rect.setFill(Color.GREY);
                         break;
                     case 'u':
