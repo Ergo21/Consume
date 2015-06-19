@@ -46,6 +46,10 @@ public class PhysicsControl extends AbstractControl {
         return physics.moveX(entity, value);
     }
 
+    public void moveY(int value) {
+        physics.moveY(entity, value);
+    }
+
     public void jump() {
         if (entity.<Boolean>getProperty("jumping"))
             return;
