@@ -162,9 +162,6 @@ public class ConsumeApp extends GameApplication {
             }
         });
         addKeyPressBinding(KeyCode.SPACE, () -> {
-            if (player.<Boolean>getProperty("climbing")) {
-                player.getControl(PhysicsControl.class).moveY(-15);
-            }
         });
 
         addKeyTypedBinding(KeyCode.Q, () -> {
@@ -179,7 +176,7 @@ public class ConsumeApp extends GameApplication {
 
     @Override
     protected void onUpdate(long now) {
-        if (!player.<Boolean>getProperty("climb")) {
+    	if (!player.<Boolean>getProperty("climb")) {
             // here player is no longer touching the ladder
             player.setProperty("climbing", false);
             player.setProperty(Property.ENABLE_GRAVITY, true);
@@ -232,7 +229,11 @@ public class ConsumeApp extends GameApplication {
         debug.setText("Debug text goes here");
     }
 
-    private void loadNextLevel() {
+    @Override
+    protected void postInit() {
+	}
+
+	private void loadNextLevel() {
         getAllEntities().forEach(this::removeEntity);
 
         Level level = levels.get(currentLevel++);
