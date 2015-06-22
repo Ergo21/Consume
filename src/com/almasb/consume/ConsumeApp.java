@@ -90,6 +90,10 @@ public class ConsumeApp extends GameApplication {
     @Override
     protected void initUI(Pane uiRoot) {
         GameScene scene = new GameScene(assets.getText("dialogue/scene_0.txt"), assets);
+        scene.setTranslateX(140);
+        scene.setTranslateY(300);
+        scene.setScaleX(1.75);
+        scene.setScaleY(1.75);
 
         addKeyTypedBinding(KeyCode.ENTER, scene::updateScript);
 
@@ -105,7 +109,6 @@ public class ConsumeApp extends GameApplication {
 
         debug.setTranslateX(450);
         debug.setTranslateY(100);
-
         uiRoot.getChildren().addAll(scene, hud, performance, debug);
     }
 
