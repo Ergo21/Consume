@@ -23,13 +23,16 @@ import com.almasb.consume.Types.Platform;
 import com.almasb.consume.Types.Powerup;
 import com.almasb.consume.Types.Property;
 import com.almasb.consume.Types.Type;
+import com.almasb.consume.ai.AimedProjectileControl;
 import com.almasb.consume.ai.ChargeControl;
 import com.almasb.consume.ai.PhysicsControl;
 import com.almasb.consume.ai.ProjectileControl;
+import com.almasb.consume.ai.SimpleMoveControl;
 import com.almasb.consume.collision.PlayerBlockHandler;
 import com.almasb.consume.collision.PlayerEnemyHandler;
 import com.almasb.consume.collision.PlayerPowerupHandler;
 import com.almasb.consume.collision.ProjectileEnemyHandler;
+import com.almasb.consume.collision.ProjectilePlayerHandler;
 import com.almasb.fxgl.GameApplication;
 import com.almasb.fxgl.GameSettings;
 import com.almasb.fxgl.asset.Assets;
@@ -126,14 +129,15 @@ public class ConsumeApp extends GameApplication {
         // order matters, must match class name
         addCollisionHandler(Type.PLAYER, Type.POWERUP, new PlayerPowerupHandler());
         addCollisionHandler(Type.PLAYER, Type.ENEMY, new PlayerEnemyHandler(this));
-        addCollisionHandler(Type.PROJECTILE, Type.ENEMY, new ProjectileEnemyHandler(this));
+        addCollisionHandler(Type.PLAYER_PROJECTILE, Type.ENEMY, new ProjectileEnemyHandler(this));
         addCollisionHandler(Type.PLAYER, Type.BLOCK, new PlayerBlockHandler());
+        addCollisionHandler(Type.PLAYER, Type.ENEMY_PROJECTILE, new ProjectilePlayerHandler(this));
 
         addCollisionHandler(Type.PLAYER, Type.NEXT_LEVEL_POINT, (player, point) -> {
             loadNextLevel();
         });
 
-        addCollisionHandler(Type.PROJECTILE, Type.PLATFORM, (proj, platform) -> {
+        addCollisionHandler(Type.PLAYER_PROJECTILE, Type.PLATFORM, (proj, platform) -> {
             removeEntity(proj);
 
             if (platform.getProperty(Property.SUB_TYPE) == Platform.DESTRUCTIBLE) {
@@ -281,6 +285,21 @@ public class ConsumeApp extends GameApplication {
         });
 
         addEntities(testEnemy);
+        
+        Entity testEnemy2 = new Entity(Type.ENEMY);
+        Rectangle rect2 = new Rectangle(30, 30);
+        rect2.setFill(Color.RED);
+
+        testEnemy2.setGraphics(rect2);
+        testEnemy2.setUsePhysics(true);
+        testEnemy2.setProperty(Property.DATA, new Enemy(assets.getText("enemies/enemy_FireElemental.txt")));
+        testEnemy2.setProperty("physics", physics);
+        testEnemy2.setPosition(spawnPoint.getX() + 640, spawnPoint.getY() - 90);
+        //testEnemy2.addControl(new AimedProjectileControl(player));
+        testEnemy2.addControl(new SimpleMoveControl(player));
+        testEnemy2.addFXGLEventHandler(Event.DEATH, this::onEnemyDeath);
+        testEnemy2.addFXGLEventHandler(Event.ENEMY_SAW_PLAYER, event -> aimedProjectile(testEnemy2, player));
+        addEntities(testEnemy2);
     }
 
     private void initPlayer(Point2D point) {
@@ -395,13 +414,36 @@ public class ConsumeApp extends GameApplication {
     private void shootProjectile() {
         Element element = playerData.getCurrentPower();
 
-        Entity e = new Entity(Type.PROJECTILE);
+        Entity e = new Entity(Type.PLAYER_PROJECTILE);
         e.setProperty(Property.SUB_TYPE, element);
         e.setPosition(player.getPosition());
         e.setUsePhysics(true);
         e.setGraphics(new Rectangle(10, 1));
         e.addControl(new PhysicsControl(physics));
         e.addControl(new ProjectileControl(facingRight, player));
+        e.addFXGLEventHandler(Event.DEATH, event -> {
+            removeEntity(event.getTarget());
+        });
+
+        e.setProperty(Property.ENABLE_GRAVITY, false);
+
+        addEntities(e);
+    }
+    
+    private void aimedProjectile(Entity source, Entity target){
+    	Enemy sourceData = source.getProperty(Property.DATA);
+    	Type t = Type.ENEMY_PROJECTILE;
+    	if(source == player){
+    		t = Type.PLAYER_PROJECTILE;
+    	}
+    	
+    	Entity e = new Entity(t);
+    	e.setProperty(Property.SUB_TYPE, sourceData.getElement());
+    	e.setPosition(source.getPosition().add(0, source.getHeight()/2));
+    	e.setUsePhysics(true);
+        e.setGraphics(new Rectangle(10, 1));
+        e.addControl(new PhysicsControl(physics));
+        e.addControl(new AimedProjectileControl(source, target));
         e.addFXGLEventHandler(Event.DEATH, event -> {
             removeEntity(event.getTarget());
         });

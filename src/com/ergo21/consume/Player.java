@@ -8,12 +8,11 @@ import com.almasb.consume.Types.Element;
 public class Player extends Enemy {
 
     private ArrayList<Element> powers = new ArrayList<Element>();
-    private Element curPower;
 
     public Player(List<String> prop) {
         super(prop);
         powers.add(Element.NEUTRAL);
-        curPower = powers.get(0);
+        curElement = powers.get(0);
     }
 
     public void setMaxHealth(int mH) {
@@ -41,7 +40,7 @@ public class Player extends Enemy {
     }
 
     public Element getCurrentPower() {
-        return curPower;
+        return curElement;
     }
 
     public ArrayList<Element> getPowers() {
@@ -49,8 +48,8 @@ public class Player extends Enemy {
     }
 
     public void setCurrentPower(Element p) {
-        curPower = p;
-        switch (curPower) {
+        curElement = p;
+        switch (curElement) {
             case NEUTRAL: {
                 resists.clear();
                 weaks.clear();
