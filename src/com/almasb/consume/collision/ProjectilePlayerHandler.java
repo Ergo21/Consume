@@ -7,11 +7,13 @@ import javafx.scene.text.Text;
 import javafx.util.Duration;
 
 import com.almasb.consume.Config;
+import com.almasb.consume.Event;
 import com.almasb.consume.Types.Element;
 import com.almasb.consume.Types.Property;
 import com.almasb.fxgl.GameApplication;
 import com.almasb.fxgl.entity.CollisionHandler;
 import com.almasb.fxgl.entity.Entity;
+import com.almasb.fxgl.entity.FXGLEvent;
 import com.ergo21.consume.Enemy;
 
 public class ProjectilePlayerHandler implements CollisionHandler {
@@ -59,9 +61,23 @@ public class ProjectilePlayerHandler implements CollisionHandler {
         ft.play();
 
         playerData.takeDamage(damage);
+        
+        projectile.fireFXGLEvent(new FXGLEvent(Event.ENEMY_HIT_PLAYER));
+
+        player.setUsePhysics(false);
+        Entity e2 = Entity.noType().setGraphics(new Text("INVINCIBLE"));
+        e2.translateXProperty().bind(player.translateXProperty());
+        e2.translateYProperty().bind(player.translateYProperty().subtract(20));
+
+        app.addEntities(e2);
+
+        app.runOnceAfter(() -> {
+            app.removeEntity(e2);
+            player.setUsePhysics(true);
+        }, 2 * GameApplication.SECOND);
 
         app.removeEntity(projectile);
-
+        
         if (playerData.getCurrentHealth() <= 0) {
             //app.removeEntity(player);
         }

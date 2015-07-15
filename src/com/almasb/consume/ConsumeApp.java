@@ -26,8 +26,9 @@ import com.almasb.consume.Types.Type;
 import com.almasb.consume.ai.AimedProjectileControl;
 import com.almasb.consume.ai.ChargeControl;
 import com.almasb.consume.ai.PhysicsControl;
-import com.almasb.consume.ai.ProjectileControl;
+import com.almasb.consume.ai.FireballProjectileControl;
 import com.almasb.consume.ai.SimpleMoveControl;
+import com.almasb.consume.ai.SpearProjectileControl;
 import com.almasb.consume.collision.PlayerBlockHandler;
 import com.almasb.consume.collision.PlayerEnemyHandler;
 import com.almasb.consume.collision.PlayerPowerupHandler;
@@ -36,6 +37,7 @@ import com.almasb.consume.collision.ProjectilePlayerHandler;
 import com.almasb.fxgl.GameApplication;
 import com.almasb.fxgl.GameSettings;
 import com.almasb.fxgl.asset.Assets;
+import com.almasb.fxgl.asset.Texture;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.FXGLEvent;
 import com.ergo21.consume.Enemy;
@@ -81,6 +83,8 @@ public class ConsumeApp extends GameApplication {
     @Override
     protected void initGame(Pane gameRoot) {
         playerData = new Player(assets.getText("player.txt"));
+        playerData.getPowers().add(Element.FIRE);
+        playerData.getPowers().add(Element.ICE);
 
         initLevels();
         initCollisions();
@@ -173,6 +177,9 @@ public class ConsumeApp extends GameApplication {
 
         addKeyTypedBinding(KeyCode.Q, () -> {
             shootProjectile();
+        });
+        addKeyTypedBinding(KeyCode.E, () -> {
+        	changePower();
         });
 
         // debug
@@ -302,20 +309,37 @@ public class ConsumeApp extends GameApplication {
         addEntities(testEnemy2);
     }
 
+	Entity powerStatus;
+	
     private void initPlayer(Point2D point) {
-        Rectangle graphics = new Rectangle(15, 30);
-        graphics.setFill(Color.YELLOW);
 
         player = new Entity(Type.PLAYER)
             .setPosition(point.getX(), point.getY())
             .setUsePhysics(true)
-            .setGraphics(graphics)
             .setProperty(Property.DATA, playerData)
             .setProperty("climb", false)
             .setProperty("climbing", false)
             .addControl(new PhysicsControl(physics));
+        
+        Rectangle graphics = new Rectangle(15, 30);
+        graphics.setFill(Color.YELLOW);
+		try {
+			Texture t = this.assetManager.loadTexture("Sprite test1.png");
+			player.setGraphics(t);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			player.setGraphics(graphics);
+		}
 
         bindViewportOrigin(player, 320, 180);
+        
+        powerStatus = Entity.noType().setGraphics(new Text(playerData.getCurrentPower().toString()));
+        powerStatus.translateXProperty().bind(player.translateXProperty());
+        powerStatus.translateYProperty().bind(player.translateYProperty().subtract(40));
+
+        addEntities(powerStatus);
+        
         addEntities(player);
     }
 
@@ -411,6 +435,7 @@ public class ConsumeApp extends GameApplication {
         removeEntity(block);
     }
 
+    Entity spear;
     private void shootProjectile() {
         Element element = playerData.getCurrentPower();
 
@@ -420,12 +445,36 @@ public class ConsumeApp extends GameApplication {
         e.setUsePhysics(true);
         e.setGraphics(new Rectangle(10, 1));
         e.addControl(new PhysicsControl(physics));
-        e.addControl(new ProjectileControl(facingRight, player));
         e.addFXGLEventHandler(Event.DEATH, event -> {
             removeEntity(event.getTarget());
         });
-
-        e.setProperty(Property.ENABLE_GRAVITY, false);
+        
+        switch(element){
+        	case NEUTRAL:{
+                e.addControl(new SpearProjectileControl(facingRight, player));
+                if(spear == null || !this.getAllEntities().contains(spear)){
+                	spear = e;
+                }
+                else{
+                	return;
+                }
+        		break;
+        	}
+        	case FIRE:{
+                e.addControl(new FireballProjectileControl(facingRight, player));
+                e.setProperty(Property.ENABLE_GRAVITY, false);
+                if(playerData.getCurrentMana() >= Config.FIREBALL_COST){
+                	playerData.setCurrentMana(playerData.getCurrentMana() - Config.FIREBALL_COST);
+                }
+                else {
+                	return;
+                }
+        		break;
+        	}
+        	case ICE:{
+        		break;
+        	}
+        }
 
         addEntities(e);
     }
@@ -451,6 +500,17 @@ public class ConsumeApp extends GameApplication {
         e.setProperty(Property.ENABLE_GRAVITY, false);
 
         addEntities(e);
+    }
+    
+    private void changePower(){
+    	int ind = playerData.getPowers().indexOf(playerData.getCurrentPower());
+    	ind++;
+    	if(ind >= playerData.getPowers().size()){
+    		ind = 0;
+    	}
+    	playerData.setCurrentPower(playerData.getPowers().get(ind));
+    	
+    	powerStatus.setGraphics(new Text(playerData.getCurrentPower().toString()));
     }
 
     public static void main(String[] args) {

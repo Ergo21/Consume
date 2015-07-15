@@ -5,11 +5,11 @@ import com.almasb.fxgl.GameApplication;
 public final class Config {
 
     public static final class Speed {
-        public static final int GRAVITY_ACCEL = 1;
+        public static final double GRAVITY_ACCEL = 0.2;
         public static final int GRAVITY_MAX = 10;
 
-        public static final int PLAYER_MOVE = 4;
-        public static final int PLAYER_JUMP = 30;
+        public static final int PLAYER_MOVE = 3;
+        public static final int PLAYER_JUMP = 8;
 
         public static final double ENEMY_SEEK_ACCEL = 1.5;
         public static final double ENEMY_SEEK_DECEL = 0.05;
@@ -38,4 +38,6 @@ public final class Config {
     public static final long REGEN_TIME_INTERVAL = 1 * GameApplication.SECOND;
 
     public static final int POWER_DAMAGE = 4;
+    
+    public static final int FIREBALL_COST = 3;
 }
