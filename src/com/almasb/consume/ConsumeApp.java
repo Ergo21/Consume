@@ -71,6 +71,7 @@ public class ConsumeApp extends GameApplication {
         settings.setHeight(360);
         settings.setIntroEnabled(false);
         settings.setMenuEnabled(false);
+        settings.setIconFileName("app_icon.png");
     }
 
     @Override
