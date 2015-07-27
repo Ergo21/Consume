@@ -6,9 +6,13 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.event.EventHandler;
 import javafx.geometry.Point2D;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
@@ -24,6 +28,7 @@ import com.almasb.consume.Types.Powerup;
 import com.almasb.consume.Types.Property;
 import com.almasb.consume.Types.Type;
 import com.almasb.consume.ai.AimedProjectileControl;
+import com.almasb.consume.ai.AnimatedPlayerControl;
 import com.almasb.consume.ai.ChargeControl;
 import com.almasb.consume.ai.PhysicsControl;
 import com.almasb.consume.ai.FireballProjectileControl;
@@ -37,6 +42,7 @@ import com.almasb.consume.collision.ProjectilePlayerHandler;
 import com.almasb.fxgl.GameApplication;
 import com.almasb.fxgl.GameSettings;
 import com.almasb.fxgl.asset.Assets;
+import com.almasb.fxgl.asset.StaticAnimatedTexture;
 import com.almasb.fxgl.asset.Texture;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.FXGLEvent;
@@ -51,7 +57,6 @@ public class ConsumeApp extends GameApplication {
 
     private Entity player;
     private Player playerData;
-    private boolean facingRight = true;
 
     private Physics physics = new Physics(this);
 
@@ -154,11 +159,13 @@ public class ConsumeApp extends GameApplication {
     protected void initInput() {
         addKeyPressBinding(KeyCode.A, () -> {
             player.getControl(PhysicsControl.class).moveX(-Speed.PLAYER_MOVE);
-            facingRight = false;
+            player.setProperty("facingRight", false);
+            System.out.println("Key Pressed: " + player.getControl(PhysicsControl.class).getVelocity());
         });
         addKeyPressBinding(KeyCode.D, () -> {
             player.getControl(PhysicsControl.class).moveX(Speed.PLAYER_MOVE);
-            facingRight = true;
+            player.setProperty("facingRight", true);
+            System.out.println("Key Pressed: " + player.getControl(PhysicsControl.class).getVelocity());
         });
         addKeyPressBinding(KeyCode.W, () -> {
             if (player.<Boolean>getProperty("climbing")) {
@@ -245,6 +252,16 @@ public class ConsumeApp extends GameApplication {
 
     @Override
     protected void postInit() {
+    	this.mainScene.addEventHandler(KeyEvent.KEY_RELEASED, new EventHandler<KeyEvent>(){
+			@Override
+			public void handle(KeyEvent ke) {
+				if(ke.getCode() == KeyCode.A || ke.getCode() == KeyCode.D){
+					System.out.println("Key Released");
+					System.out.println(player.getControl(PhysicsControl.class).getVelocity());
+					player.getControl(PhysicsControl.class).moveX(0);
+					System.out.println(player.getControl(PhysicsControl.class).getVelocity());
+				}
+			}});
 	}
 
 	private void loadNextLevel() {
@@ -319,12 +336,15 @@ public class ConsumeApp extends GameApplication {
             .setProperty(Property.DATA, playerData)
             .setProperty("climb", false)
             .setProperty("climbing", false)
+            .setProperty("facingRight", true)
             .addControl(new PhysicsControl(physics));
         
         Rectangle graphics = new Rectangle(15, 30);
         graphics.setFill(Color.YELLOW);
 		try {
-			Texture t = this.assetManager.loadTexture("Sprite test1.png");
+			Texture t = this.assetManager.loadTexture("MC Unarmed.png");
+			player.addControl(new AnimatedPlayerControl(t));
+			t.setViewport(new Rectangle2D(150,0,30,30));
 			player.setGraphics(t);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
@@ -333,6 +353,8 @@ public class ConsumeApp extends GameApplication {
 		}
 
         bindViewportOrigin(player, 320, 180);
+        
+        
         
         powerStatus = Entity.noType().setGraphics(new Text(playerData.getCurrentPower().toString()));
         powerStatus.translateXProperty().bind(player.translateXProperty());
@@ -451,7 +473,7 @@ public class ConsumeApp extends GameApplication {
         
         switch(element){
         	case NEUTRAL:{
-                e.addControl(new SpearProjectileControl(facingRight, player));
+                e.addControl(new SpearProjectileControl(player.getProperty("facingRight"), player));
                 if(spear == null || !this.getAllEntities().contains(spear)){
                 	spear = e;
                 }
@@ -461,7 +483,7 @@ public class ConsumeApp extends GameApplication {
         		break;
         	}
         	case FIRE:{
-                e.addControl(new FireballProjectileControl(facingRight, player));
+                e.addControl(new FireballProjectileControl(player.getProperty("facingRight"), player));
                 e.setProperty(Property.ENABLE_GRAVITY, false);
                 if(playerData.getCurrentMana() >= Config.FIREBALL_COST){
                 	playerData.setCurrentMana(playerData.getCurrentMana() - Config.FIREBALL_COST);

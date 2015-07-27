@@ -33,6 +33,7 @@ public class PhysicsControl extends AbstractControl {
 
     @Override
     public void onUpdate(Entity entity, long now) {
+    	physics.moveX(entity, (int)velocity.getX());
         if (entity.<Boolean>getProperty(Property.ENABLE_GRAVITY)) {
             velocity = velocity.add(0, Speed.GRAVITY_ACCEL);
             if (velocity.getY() > Speed.GRAVITY_MAX)
@@ -42,12 +43,12 @@ public class PhysicsControl extends AbstractControl {
         }
     }
 
-    public boolean moveX(int value) {
-        return physics.moveX(entity, value);
+    public void moveX(int value) {
+        velocity = new Point2D(value, velocity.getY());
     }
 
     public void moveY(int value) {
-        physics.moveY(entity, value);
+    	velocity = new Point2D(velocity.getX(), value);
     }
 
     public void jump() {

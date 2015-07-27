@@ -27,7 +27,7 @@ public class PlayerEnemyHandler implements CollisionHandler {
         	playerData.setCurrentHealth(playerData.getCurrentHealth() - 1);
         	
             int velocityX = enemy.getControl(ChargeControl.class).getVelocity();
-            player.getControl(PhysicsControl.class).moveX(velocityX * 5);
+            player.getControl(PhysicsControl.class).moveX(velocityX);
 
             enemy.fireFXGLEvent(new FXGLEvent(Event.ENEMY_HIT_PLAYER));
 
@@ -37,6 +37,12 @@ public class PlayerEnemyHandler implements CollisionHandler {
             e.translateYProperty().bind(player.translateYProperty().subtract(20));
 
             app.addEntities(e);
+            
+            app.runOnceAfter(() -> {
+            	if(player.getControl(PhysicsControl.class).getVelocity().getX() == velocityX){
+            		player.getControl(PhysicsControl.class).moveX(0);
+                }
+            }, GameApplication.SECOND/2);
 
             app.runOnceAfter(() -> {
                 app.removeEntity(e);
