@@ -6,6 +6,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.layout.GridPane;
 import javafx.scene.transform.Rotate;
+import javafx.scene.transform.Translate;
 
 public class PlayerHUD extends Group{
 	private int maxHealth;
@@ -28,6 +29,7 @@ public class PlayerHUD extends Group{
 		healthBar.getTransforms().add(new Rotate(270));
 		manaBar = new ProgressBar();
 		manaBar.getTransforms().add(new Rotate(270));
+		manaBar.getTransforms().add(new Translate(0, 25, 0));
 		healthLab = new Label();
 		manaLab = new Label();
 
@@ -35,12 +37,10 @@ public class PlayerHUD extends Group{
 		grid.setVgap(2);
 		grid.setHgap(2);
 		grid.setPadding(new Insets(5,5,5,5));
-		grid.add(healthBar, 0, 0);
-		grid.add(manaBar, 1, 0);
 		grid.add(healthLab, 0, 1);
 		grid.add(manaLab, 1, 1);
 
-		getChildren().add(grid);
+		getChildren().addAll(grid, healthBar, manaBar);
 
 		updateValues();
 	}
