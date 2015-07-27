@@ -55,7 +55,7 @@ public class LevelParser {
                         break;
                     case '2':
                         e = new Entity(Types.Type.NEXT_LEVEL_POINT);
-                        e.setUsePhysics(true);
+                        e.setCollidable(true);
                         level.nextLevelEntity = e;
                         rect.setFill(Color.BLACK);
                         break;
@@ -64,7 +64,7 @@ public class LevelParser {
                         e.setProperty(Property.SUB_TYPE, Block.BARRIER);
                         e.setProperty("state", "idle");
                         e.setProperty("start", "none");
-                        e.setUsePhysics(true);
+                        e.setCollidable(true);
                         rect.setFill(Color.BLUE);
                         break;
                     case 'd':
@@ -81,25 +81,25 @@ public class LevelParser {
                     case 'p':
                         e = new Entity(Types.Type.BLOCK);
                         e.setProperty(Property.SUB_TYPE, Block.LADDER);
-                        e.setUsePhysics(true);
+                        e.setCollidable(true);
                         rect.setFill(Color.GREY);
                         break;
                     case 'u':
                         e = new Entity(Types.Type.POWERUP);
                         e.setProperty(Property.SUB_TYPE, Powerup.INC_MAX_HEALTH);
-                        e.setUsePhysics(true);
+                        e.setCollidable(true);
                         rect.setFill(Color.PURPLE);
                         break;
                     case 'U':
                         e = new Entity(Types.Type.POWERUP);
                         e.setProperty(Property.SUB_TYPE, Powerup.INC_MAX_MANA);
-                        e.setUsePhysics(true);
+                        e.setCollidable(true);
                         rect.setFill(Color.PURPLE);
                         break;
                     case 'v':
                         e = new Entity(Types.Type.POWERUP);
                         e.setProperty(Property.SUB_TYPE, Powerup.INC_MANA_REGEN);
-                        e.setUsePhysics(true);
+                        e.setCollidable(true);
                         rect.setFill(Color.PURPLE);
                         break;
                 }

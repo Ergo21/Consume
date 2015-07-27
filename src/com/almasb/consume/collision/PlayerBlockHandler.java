@@ -2,10 +2,15 @@ package com.almasb.consume.collision;
 
 import com.almasb.consume.Types.Block;
 import com.almasb.consume.Types.Property;
-import com.almasb.fxgl.entity.CollisionHandler;
+import com.almasb.consume.Types.Type;
 import com.almasb.fxgl.entity.Entity;
+import com.almasb.fxgl.physics.CollisionHandler;
 
-public class PlayerBlockHandler implements CollisionHandler {
+public class PlayerBlockHandler extends CollisionHandler {
+
+    public PlayerBlockHandler() {
+        super(Type.PLAYER, Type.BLOCK);
+    }
 
     @Override
     public void onCollision(Entity player, Entity block) {
@@ -26,5 +31,17 @@ public class PlayerBlockHandler implements CollisionHandler {
             player.setProperty("climb", true);
             player.setProperty(Property.ENABLE_GRAVITY, false);
         }
+    }
+
+    @Override
+    public void onCollisionBegin(Entity a, Entity b) {
+        // TODO Auto-generated method stub
+
+    }
+
+    @Override
+    public void onCollisionEnd(Entity a, Entity b) {
+        // TODO Auto-generated method stub
+
     }
 }
