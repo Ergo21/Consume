@@ -93,7 +93,6 @@ public class ConsumeApp extends GameApplication {
 
     @Override
     protected void initPhysics() {
-        // order matters, must match class name
         physicsManager.addCollisionHandler(new PlayerPowerupHandler());
         physicsManager.addCollisionHandler(new PlayerEnemyHandler(this));
         physicsManager.addCollisionHandler(new ProjectileEnemyHandler(this));
