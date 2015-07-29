@@ -162,14 +162,16 @@ public class ConsumeApp extends GameApplication {
         });
         inputManager.addKeyPressBinding(KeyCode.W, () -> {
             if (player.<Boolean>getProperty("climbing")) {
-                player.getControl(PhysicsControl.class).moveY(-5);
+                player.getControl(PhysicsControl.class).climb(-5);
+                System.out.println("Key Pressed: " + player.getControl(PhysicsControl.class).getVelocity());
             }
             else
                 player.getControl(PhysicsControl.class).jump();
         });
         inputManager.addKeyPressBinding(KeyCode.S, () -> {
             if (player.<Boolean>getProperty("climbing")) {
-                player.getControl(PhysicsControl.class).moveY(5);
+                player.getControl(PhysicsControl.class).climb(5);
+                System.out.println("Key Pressed: " + player.getControl(PhysicsControl.class).getVelocity());
             }
         });
         inputManager.addKeyPressBinding(KeyCode.SPACE, () -> {
