@@ -6,12 +6,12 @@ import com.almasb.fxgl.entity.AbstractControl;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.FXGLEvent;
 
-public class ProjectileControl extends AbstractControl {
+public class FireballProjectileControl extends AbstractControl {
 
     private boolean facingRight;
     private Entity player;
 
-    public ProjectileControl(boolean facingRight, Entity player) {
+    public FireballProjectileControl(boolean facingRight, Entity player) {
         this.facingRight = facingRight;
         this.player = player;
     }
@@ -19,7 +19,6 @@ public class ProjectileControl extends AbstractControl {
     @Override
     protected void initEntity(Entity entity) {
         // TODO Auto-generated method stub
-
     }
 
     @Override

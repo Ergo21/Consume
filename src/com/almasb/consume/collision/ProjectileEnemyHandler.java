@@ -2,23 +2,25 @@ package com.almasb.consume.collision;
 
 import java.util.List;
 
+import com.almasb.consume.Config;
+import com.almasb.consume.Types.Element;
+import com.almasb.consume.Types.Property;
+import com.almasb.consume.Types.Type;
+import com.almasb.fxgl.GameApplication;
+import com.almasb.fxgl.entity.Entity;
+import com.almasb.fxgl.physics.CollisionHandler;
+import com.ergo21.consume.Enemy;
+
 import javafx.animation.FadeTransition;
 import javafx.scene.text.Text;
 import javafx.util.Duration;
 
-import com.almasb.consume.Config;
-import com.almasb.consume.Types.Element;
-import com.almasb.consume.Types.Property;
-import com.almasb.fxgl.GameApplication;
-import com.almasb.fxgl.entity.CollisionHandler;
-import com.almasb.fxgl.entity.Entity;
-import com.ergo21.consume.Enemy;
-
-public class ProjectileEnemyHandler implements CollisionHandler {
+public class ProjectileEnemyHandler extends CollisionHandler {
 
     private GameApplication app;
 
     public ProjectileEnemyHandler(GameApplication app) {
+        super(Type.PLAYER_PROJECTILE, Type.ENEMY);
         this.app = app;
     }
 
@@ -62,5 +64,17 @@ public class ProjectileEnemyHandler implements CollisionHandler {
         if (enemyData.getCurrentHealth() <= 0) {
             app.removeEntity(enemy);
         }
+    }
+
+    @Override
+    public void onCollisionBegin(Entity a, Entity b) {
+        // TODO Auto-generated method stub
+
+    }
+
+    @Override
+    public void onCollisionEnd(Entity a, Entity b) {
+        // TODO Auto-generated method stub
+
     }
 }

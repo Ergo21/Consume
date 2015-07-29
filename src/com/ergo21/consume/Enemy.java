@@ -14,6 +14,7 @@ public class Enemy{
 	protected int mMana;
 	protected int cMana;
 	protected int manaR;
+	protected Element curElement;
 	protected ArrayList<Element> resists;
 	protected ArrayList<Element> weaks;
 
@@ -38,6 +39,21 @@ public class Enemy{
 				case "ManaR":{
 					manaR = Integer.parseInt(val);
 					break;
+				}
+				case "Element":{
+					switch(val){
+						case "FIRE":{
+							curElement = Element.FIRE;
+							break;
+						}
+						case "ICE":{
+							curElement = Element.ICE;
+							break;
+						}
+						default:{
+							curElement = Element.NEUTRAL;
+						}
+					}
 				}
 				case "Resists":{
 					resists = getRWs(p);
@@ -105,6 +121,9 @@ public class Enemy{
 	}
 	public int getManaRegenRate(){
 		return manaR;
+	}
+	public Element getElement(){
+		return curElement;
 	}
 	public List<Element> getResistances(){
 		return resists;

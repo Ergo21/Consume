@@ -6,15 +6,20 @@ import com.almasb.consume.Config;
 import com.almasb.consume.Event;
 import com.almasb.consume.Types.Powerup;
 import com.almasb.consume.Types.Property;
-import com.almasb.fxgl.FXGLLogger;
-import com.almasb.fxgl.entity.CollisionHandler;
+import com.almasb.consume.Types.Type;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.FXGLEvent;
+import com.almasb.fxgl.physics.CollisionHandler;
+import com.almasb.fxgl.util.FXGLLogger;
 import com.ergo21.consume.Player;
 
-public class PlayerPowerupHandler implements CollisionHandler {
+public class PlayerPowerupHandler extends CollisionHandler {
 
     private static final Logger log = FXGLLogger.getLogger("PlayerPowerupHandler");
+
+    public PlayerPowerupHandler() {
+        super(Type.PLAYER, Type.POWERUP);
+    }
 
     @Override
     public void onCollision(Entity player, Entity powerup) {
@@ -55,5 +60,17 @@ public class PlayerPowerupHandler implements CollisionHandler {
                 log.info("Picked up an unknown powerup: " + type);
                 break;
         }
+    }
+
+    @Override
+    public void onCollisionBegin(Entity a, Entity b) {
+        // TODO Auto-generated method stub
+
+    }
+
+    @Override
+    public void onCollisionEnd(Entity a, Entity b) {
+        // TODO Auto-generated method stub
+
     }
 }

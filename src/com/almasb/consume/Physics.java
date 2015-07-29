@@ -3,6 +3,7 @@ package com.almasb.consume;
 import com.almasb.consume.Types.Type;
 import com.almasb.fxgl.GameApplication;
 import com.almasb.fxgl.entity.Entity;
+import com.almasb.fxgl.entity.FXGLEvent;
 
 public class Physics {
 
@@ -27,14 +28,14 @@ public class Physics {
                 if (e.getBoundsInParent().intersects(platform.getBoundsInParent())) {
                     if (movingRight) {
                         if (e.getTranslateX() + e.getWidth() == platform.getTranslateX()) {
-                            app.triggerCollision(e, platform);
+                            e.fireFXGLEvent(new FXGLEvent(Event.COLLIDED_PLATFORM, platform));
                             e.translate(-1, 0);
                             return false;
                         }
                     }
                     else {
                         if (e.getTranslateX() == platform.getTranslateX() + platform.getWidth()) {
-                            app.triggerCollision(e, platform);
+                            e.fireFXGLEvent(new FXGLEvent(Event.COLLIDED_PLATFORM, platform));
                             e.translate(1, 0);
                             return false;
                         }
@@ -55,7 +56,7 @@ public class Physics {
                 if (e.getBoundsInParent().intersects(platform.getBoundsInParent())) {
                     if (movingDown) {
                         if (e.getTranslateY() + e.getHeight() == platform.getTranslateY()) {
-                            app.triggerCollision(e, platform);
+                            e.fireFXGLEvent(new FXGLEvent(Event.COLLIDED_PLATFORM, platform));
                             e.setTranslateY(e.getTranslateY() - 1);
                             e.setProperty("jumping", false);
                             return;
@@ -63,7 +64,7 @@ public class Physics {
                     }
                     else {
                         if (e.getTranslateY() == platform.getTranslateY() + platform.getHeight()) {
-                            app.triggerCollision(e, platform);
+                            e.fireFXGLEvent(new FXGLEvent(Event.COLLIDED_PLATFORM, platform));
                             return;
                         }
                     }
