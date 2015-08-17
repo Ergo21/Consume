@@ -20,7 +20,6 @@ public class SeekControl implements Control {
                 boolean right = target.getTranslateX() - entity.getTranslateX() > 0;
 
                 Physics physics = entity.getProperty("physics");
-                //boolean canMove = 
                 physics.moveX(entity, right ? Speed.ENEMY_PATROL : -Speed.ENEMY_PATROL);
             }
         }

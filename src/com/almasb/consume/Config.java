@@ -22,7 +22,7 @@ public final class Config {
 
     public static final int BLOCK_SIZE = 40;
 
-    public static final int MAX_LEVELS = 2;
+    public static final int MAX_LEVELS = 4;
 
     public static final int PATROL_RADIUS = 3 * BLOCK_SIZE;
     public static final int ENEMY_CHARGE_RANGE = 7 * BLOCK_SIZE;
@@ -40,4 +40,8 @@ public final class Config {
     public static final int POWER_DAMAGE = 4;
     
     public static final int FIREBALL_COST = 3;
+    
+    public static final int SAND_COST = 5;
+    public static final double SAND_DELAY = 0.5 * GameApplication.SECOND;
+    public static final double SAND_DECAY = 2 * GameApplication.SECOND;
 }

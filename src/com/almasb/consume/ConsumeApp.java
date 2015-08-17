@@ -20,6 +20,7 @@ import com.almasb.consume.ai.AnimatedPlayerControl;
 import com.almasb.consume.ai.ChargeControl;
 import com.almasb.consume.ai.FireballProjectileControl;
 import com.almasb.consume.ai.PhysicsControl;
+import com.almasb.consume.ai.SandProjectileControl;
 import com.almasb.consume.ai.SimpleMoveControl;
 import com.almasb.consume.ai.SpearProjectileControl;
 import com.almasb.consume.collision.PlayerBlockHandler;
@@ -62,6 +63,8 @@ public class ConsumeApp extends GameApplication {
     private Text performance = new Text();
 
     private long regenTime = 0;
+    
+    private GameScene gScene;
 
     @Override
     protected void initSettings(GameSettings settings) {
@@ -84,19 +87,25 @@ public class ConsumeApp extends GameApplication {
     protected void initGame() {
         playerData = new Player(assets.getText("player.txt"));
         playerData.getPowers().add(Element.FIRE);
-        playerData.getPowers().add(Element.ICE);
+        playerData.getPowers().add(Element.EARTH);
+        playerData.getPowers().add(Element.LIGHTNING);
+        playerData.getPowers().add(Element.METAL);
+        playerData.getPowers().add(Element.DEATH);
 
         initLevels();
 
         loadNextLevel();
     }
-
+    
     @Override
     protected void initPhysics() {
         physicsManager.addCollisionHandler(new PlayerPowerupHandler());
         physicsManager.addCollisionHandler(new PlayerEnemyHandler(this));
         physicsManager.addCollisionHandler(new ProjectileEnemyHandler(this));
-        physicsManager.addCollisionHandler(new PlayerBlockHandler());
+        physicsManager.addCollisionHandler(new PlayerBlockHandler((String scName)->{
+        	gScene.changeScene(assets.getText(scName));
+        	gScene.setVisible(true);
+        }));
         physicsManager.addCollisionHandler(new ProjectilePlayerHandler(this));
 
         physicsManager.addCollisionHandler(new CollisionHandler(Type.PLAYER, Type.NEXT_LEVEL_POINT) {
@@ -115,13 +124,13 @@ public class ConsumeApp extends GameApplication {
 
     @Override
     protected void initUI() {
-        GameScene scene = new GameScene(assets.getText("dialogue/scene_0.txt"), assets);
-        scene.setTranslateX(140);
-        scene.setTranslateY(300);
-        scene.setScaleX(1.75);
-        scene.setScaleY(1.75);
+        gScene = new GameScene(assets.getText("dialogue/scene_0.txt"), assets, this);
+        gScene.setTranslateX(140);
+        gScene.setTranslateY(300);
+        gScene.setScaleX(1.75);
+        gScene.setScaleY(1.75);
 
-        inputManager.addKeyTypedBinding(KeyCode.ENTER, scene::updateScript);
+        inputManager.addKeyTypedBinding(KeyCode.ENTER, gScene::updateScript);
 
         hud = new PlayerHUD(player.<Player>getProperty(Property.DATA).getMaxHealth(),
                 player.<Player>getProperty(Property.DATA).getMaxMana());
@@ -135,7 +144,7 @@ public class ConsumeApp extends GameApplication {
 
         debug.setTranslateX(450);
         debug.setTranslateY(100);
-        addUINodes(scene, hud, performance, debug);
+        addUINodes(gScene, hud, performance, debug);
     }
 
     private void initLevels() {
@@ -153,17 +162,14 @@ public class ConsumeApp extends GameApplication {
         inputManager.addKeyPressBinding(KeyCode.A, () -> {
             player.getControl(PhysicsControl.class).moveX(-Speed.PLAYER_MOVE);
             player.setProperty("facingRight", false);
-            System.out.println("Key Pressed: " + player.getControl(PhysicsControl.class).getVelocity());
         });
         inputManager.addKeyPressBinding(KeyCode.D, () -> {
             player.getControl(PhysicsControl.class).moveX(Speed.PLAYER_MOVE);
             player.setProperty("facingRight", true);
-            System.out.println("Key Pressed: " + player.getControl(PhysicsControl.class).getVelocity());
         });
         inputManager.addKeyPressBinding(KeyCode.W, () -> {
             if (player.<Boolean>getProperty("climbing")) {
                 player.getControl(PhysicsControl.class).climb(-5);
-                System.out.println("Key Pressed: " + player.getControl(PhysicsControl.class).getVelocity());
             }
             else
                 player.getControl(PhysicsControl.class).jump();
@@ -171,7 +177,6 @@ public class ConsumeApp extends GameApplication {
         inputManager.addKeyPressBinding(KeyCode.S, () -> {
             if (player.<Boolean>getProperty("climbing")) {
                 player.getControl(PhysicsControl.class).climb(5);
-                System.out.println("Key Pressed: " + player.getControl(PhysicsControl.class).getVelocity());
             }
         });
         inputManager.addKeyPressBinding(KeyCode.SPACE, () -> {
@@ -248,10 +253,7 @@ public class ConsumeApp extends GameApplication {
     @Override
     protected void postInit() {
     	Runnable action = () -> {
-            System.out.println("Key Released");
-            System.out.println(player.getControl(PhysicsControl.class).getVelocity());
             player.getControl(PhysicsControl.class).moveX(0);
-            System.out.println(player.getControl(PhysicsControl.class).getVelocity());
     	};
 
     	inputManager.addKeyReleasedBinding(KeyCode.A, action);
@@ -495,7 +497,55 @@ public class ConsumeApp extends GameApplication {
                 }
         		break;
         	}
-        	case ICE:{
+        	case EARTH:{
+        		 if(playerData.getCurrentMana() >= Config.SAND_COST){
+                 	playerData.setCurrentMana(playerData.getCurrentMana() - Config.SAND_COST);
+                 }
+                 else {
+                 	return;
+                 }
+        		Point2D p = player.getPosition();
+        		if((boolean)player.getProperty("facingRight")){
+        			p = p.add(player.getWidth(), 0);
+        		}
+        		else{
+        			p = p.add(-e.getWidth(), 0);
+        		}
+                e.setPosition(p);
+        		e.addControl(new SandProjectileControl(player.getProperty("facingRight"), player, false));
+        		e.setProperty(Property.ENABLE_GRAVITY, false);
+ 
+                
+                Entity e2 = new Entity(Type.PLAYER_PROJECTILE);
+                e2.setProperty(Property.SUB_TYPE, element);
+                e2.setPosition(p);
+                e2.setCollidable(true);
+                e2.setGraphics(new Rectangle(10, 1));
+                e2.addControl(new PhysicsControl(physics));
+                e2.addFXGLEventHandler(Event.COLLIDED_PLATFORM, event -> {
+                    Entity platform = event.getSource();
+                    removeEntity(e2);
+
+                    if (platform.getProperty(Property.SUB_TYPE) == Platform.DESTRUCTIBLE) {
+                        destroyBlock(platform);
+                    }
+                });
+                e2.addFXGLEventHandler(Event.DEATH, event -> {
+                    removeEntity(event.getTarget());
+                });
+                e2.addControl(new SandProjectileControl(player.getProperty("facingRight"), player, true));
+        		e2.setProperty(Property.ENABLE_GRAVITY, false);
+                
+                addEntities(e2);
+        		break;
+        	}
+        	case METAL:{
+        		break;
+        	}
+        	case LIGHTNING:{
+        		break;
+        	}
+        	case DEATH:{
         		break;
         	}
         }
@@ -536,6 +586,7 @@ public class ConsumeApp extends GameApplication {
 
     	powerStatus.setGraphics(new Text(playerData.getCurrentPower().toString()));
     }
+    
 
     public static void main(String[] args) {
         launch(args);

@@ -46,8 +46,20 @@ public class Enemy{
 							curElement = Element.FIRE;
 							break;
 						}
-						case "ICE":{
-							curElement = Element.ICE;
+						case "LIGHTING":{
+							curElement = Element.LIGHTNING;
+							break;
+						}
+						case "EARTH":{
+							curElement = Element.EARTH;
+							break;
+						}
+						case "METAL":{
+							curElement = Element.METAL;
+							break;
+						}
+						case "DEATH":{
+							curElement = Element.DEATH;
 							break;
 						}
 						default:{
@@ -83,8 +95,20 @@ public class Enemy{
 					rws.add(Element.FIRE);
 					break;
 				}
-				case "ICE":{
-					rws.add(Element.ICE);
+				case "EARTH":{
+					rws.add(Element.EARTH);
+					break;
+				}
+				case "METAL":{
+					rws.add(Element.METAL);
+					break;
+				}
+				case "LIGHTING":{
+					rws.add(Element.LIGHTNING);
+					break;
+				}
+				case "DEATH":{
+					rws.add(Element.DEATH);
 					break;
 				}
 			}

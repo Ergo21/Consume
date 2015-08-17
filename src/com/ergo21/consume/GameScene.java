@@ -3,6 +3,9 @@ package com.ergo21.consume;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.almasb.consume.Types.Type;
+import com.almasb.consume.ai.PhysicsControl;
+import com.almasb.fxgl.GameApplication;
 import com.almasb.fxgl.asset.Assets;
 
 import javafx.geometry.HPos;
@@ -20,9 +23,13 @@ public class GameScene extends Group{
 	private Text name;
 	private Text line;
 	private ImageView icon;
+	private Assets assets;
+	private GameApplication app;
 
-	public GameScene(List<String> values, Assets ass){
+	public GameScene(List<String> values, Assets as, GameApplication a){
 		super();
+		assets = as;
+		app = a;
 		script = new ArrayList<SceneLine>();
 		currentLine = 0;
 		GridPane grid = new GridPane();
@@ -43,25 +50,6 @@ public class GameScene extends Group{
 		c.setHalignment(HPos.CENTER);
 		grid.getColumnConstraints().add(c);
 		
-		changeScene(values, ass);
-
-		setValues(script.get(currentLine));
-	}
-
-	public boolean updateScript(){
-		if(currentLine + 1 >= script.size()){
-			this.setVisible(false);
-			return false;
-		}
-		else{
-			currentLine += 1;
-			setValues(script.get(currentLine));
-		}
-
-		return true;
-	}
-	
-	public void changeScene(List<String> values, Assets ass){
 		for(String val : values){
 			if(val.equals("END")){
 				break;
@@ -72,8 +60,45 @@ public class GameScene extends Group{
 			tVal = tVal.substring(tVal.indexOf('=') + 1);
 			String lin = tVal.trim();
 
-			script.add(new SceneLine(nam, ass.getTexture(icoNam), lin));
+			script.add(new SceneLine(nam, assets.getTexture(icoNam), lin));
 		}
+
+		setValues(script.get(currentLine));
+	}
+
+	public boolean updateScript(){
+		if(currentLine + 1 >= script.size()){
+			this.setVisible(false);
+			app.resume();
+			return false;
+		}
+		else{
+			currentLine += 1;
+			setValues(script.get(currentLine));
+		}
+
+		return true;
+	}
+	
+	public void changeScene(List<String> values){
+		currentLine = 0;
+		script.clear();
+		app.getEntities(Type.PLAYER).get(0).getControl(PhysicsControl.class).moveX(0);
+		app.pause();		
+		for(String val : values){
+			if(val.equals("END")){
+				break;
+			}
+			String nam = val.substring(0, val.indexOf('('));
+			String tVal = val.substring(val.indexOf('"') + 1);
+			String icoNam = tVal.substring(0, tVal.indexOf('"'));
+			tVal = tVal.substring(tVal.indexOf('=') + 1);
+			String lin = tVal.trim();
+
+			script.add(new SceneLine(nam, assets.getTexture(icoNam), lin));
+		}
+		
+		setValues(script.get(currentLine));
 	}
 
 	private void setValues(SceneLine sceneLine) {
@@ -81,5 +106,9 @@ public class GameScene extends Group{
 		line.setText(sceneLine.getSentence());
 		//icon = sceneLine.getIcon();
 		icon.setImage(sceneLine.getIcon().getImage());
+	}
+	
+	public Assets getAssets(){
+		return assets;
 	}
 }

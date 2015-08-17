@@ -35,10 +35,8 @@ public class AnimatedPlayerControl implements Control {
     public void onUpdate(Entity entity, long now) {
         PhysicsControl pc = entity.getControl(PhysicsControl.class);
         if(pc != null){
-        	//System.out.println("Update X: " + pc.getVelocity().getX() + ", Y: " + pc.getVelocity().getY());
         	if(pc.getVelocity().getX() == 0){
         		if(current != CurAnim.IDLER && entity.<Boolean>getProperty("facingRight")){
-        			System.out.println("Update");
         			ImageView t = subTexture(new Rectangle2D(150,0,90,30), spritesheet);
         			LocalAnimatedTexture sAT = new LocalAnimatedTexture(t.getImage(), 3, ConsumeApp.SECOND);
         			entity.setGraphics(sAT);

@@ -59,6 +59,18 @@ public class LevelParser {
                         level.nextLevelEntity = e;
                         rect.setFill(Color.BLACK);
                         break;
+                    case '5': case '6': case '7': case '8': case '9':
+                    	e = new Entity(Types.Type.BLOCK);
+                    	e.setProperty(Property.SUB_TYPE, Block.SCENE);
+                    	e.setProperty("played", false);
+                    	e.setCollidable(true);
+                    	String chTe = ""+line.charAt(j);
+                    	int scNo = Integer.parseInt(chTe);
+                    	scNo -= 4;
+                    	String scTe = "dialogue/scene_" + levelNumber + "_" + scNo + ".txt";
+                    	e.setProperty("sceneName", scTe);
+                    	rect.setFill(Color.YELLOW);
+                    	break;
                     case 'b':
                         e = new Entity(Types.Type.BLOCK);
                         e.setProperty(Property.SUB_TYPE, Block.BARRIER);

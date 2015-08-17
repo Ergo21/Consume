@@ -38,8 +38,9 @@ public class PhysicsControl extends AbstractControl {
             velocity = velocity.add(0, Speed.GRAVITY_ACCEL);
             if (velocity.getY() > Speed.GRAVITY_MAX)
                 velocity = new Point2D(velocity.getX(), Speed.GRAVITY_MAX);
-            physics.moveY(entity, (int)velocity.getY());
+            
         }
+        physics.moveY(entity, (int)velocity.getY());
         
     }
 
