@@ -44,4 +44,8 @@ public final class Config {
     public static final int SAND_COST = 5;
     public static final double SAND_DELAY = 0.5 * GameApplication.SECOND;
     public static final double SAND_DECAY = 2 * GameApplication.SECOND;
+
+	public static final int LIGHTNING_COST = 7;
+	public static final double LIGHTNING_DELAY = 0.5 * GameApplication.SECOND;
+	public static final double LIGHTNING_DECAY = 1.5 * GameApplication.SECOND;
 }
