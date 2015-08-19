@@ -48,4 +48,6 @@ public final class Config {
 	public static final int LIGHTNING_COST = 7;
 	public static final double LIGHTNING_DELAY = 0.5 * GameApplication.SECOND;
 	public static final double LIGHTNING_DECAY = 1.5 * GameApplication.SECOND;
+
+	public static final int BULLET_COST = 0;
 }

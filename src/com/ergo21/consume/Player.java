@@ -90,6 +90,11 @@ public class Player extends Enemy {
                 weaks.add(Element.FIRE);
                 break;
             }
+            case CONSUME: {
+            	resists.clear();
+                weaks.clear();
+                break;
+            }
             default: {
                 resists.clear();
                 weaks.clear();

@@ -8,3 +8,4 @@ Anubis ("AnubisIcon.png")= "Then I cannot help you. You may leave, as you have n
 PLAYER ("PlayerIcon.png")= "I’m not leaving without your power."
 Anubis ("AnubisIcon.png")= "I told you I cannot…"
 PLAYER ("PlayerIcon.png")= "I wasn’t asking." 
+END

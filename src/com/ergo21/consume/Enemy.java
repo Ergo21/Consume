@@ -62,6 +62,10 @@ public class Enemy{
 							curElement = Element.DEATH;
 							break;
 						}
+						case "CONSUME":{
+							curElement = Element.CONSUME;
+							break;
+						}
 						default:{
 							curElement = Element.NEUTRAL;
 						}
@@ -109,6 +113,10 @@ public class Enemy{
 				}
 				case "DEATH":{
 					rws.add(Element.DEATH);
+					break;
+				}
+				case "CONSUME":{
+					rws.add(Element.CONSUME);
 					break;
 				}
 			}

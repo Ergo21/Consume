@@ -17,6 +17,7 @@ import com.almasb.consume.Types.Property;
 import com.almasb.consume.Types.Type;
 import com.almasb.consume.ai.AimedProjectileControl;
 import com.almasb.consume.ai.AnimatedPlayerControl;
+import com.almasb.consume.ai.BulletProjectileControl;
 import com.almasb.consume.ai.ChargeControl;
 import com.almasb.consume.ai.FireballProjectileControl;
 import com.almasb.consume.ai.LightningControl;
@@ -96,6 +97,8 @@ public class ConsumeApp extends GameApplication {
         playerData.getPowers().add(Element.LIGHTNING);
         playerData.getPowers().add(Element.METAL);
         playerData.getPowers().add(Element.DEATH);
+        playerData.getPowers().add(Element.CONSUME);
+        fired = false;
 
         initLevels();
 
@@ -458,13 +461,14 @@ public class ConsumeApp extends GameApplication {
         removeEntity(block);
     }
 
-    Entity spear;
+    private Entity spear;
+    private boolean fired;
     private void shootProjectile() {
         Element element = playerData.getCurrentPower();
 
         Entity e = new Entity(Type.PLAYER_PROJECTILE);
         e.setProperty(Property.SUB_TYPE, element);
-        e.setPosition(player.getPosition());
+        e.setPosition(player.getPosition().add((player.getWidth()/2), 0));
         e.setCollidable(true);
         e.setGraphics(new Rectangle(10, 1));
         e.addControl(new PhysicsControl(physics));
@@ -545,6 +549,19 @@ public class ConsumeApp extends GameApplication {
         		break;
         	}
         	case METAL:{
+        		if(playerData.getCurrentMana() >= Config.BULLET_COST){
+                	playerData.setCurrentMana(playerData.getCurrentMana() - Config.BULLET_COST);
+                }
+                else {
+                	return;
+                }
+        		if(fired){
+        			return;
+        		}
+        		this.runOnceAfter(() -> fired = false, SECOND*3);
+        		fired = true;
+        		e.addControl(new BulletProjectileControl(player.getProperty("facingRight"), player));
+                e.setProperty(Property.ENABLE_GRAVITY, false);             
         		break;
         	}
         	case LIGHTNING:{
@@ -581,6 +598,9 @@ public class ConsumeApp extends GameApplication {
         		break;
         	}
         	case DEATH:{
+        		break;
+        	}
+        	case CONSUME:{
         		break;
         	}
         }

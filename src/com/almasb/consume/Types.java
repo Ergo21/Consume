@@ -33,6 +33,6 @@ public class Types {
     }
 
     public enum Element {
-    	NEUTRAL, FIRE, EARTH, LIGHTNING, METAL, DEATH
+    	NEUTRAL, FIRE, EARTH, LIGHTNING, METAL, DEATH, CONSUME
     }
 }
