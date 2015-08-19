@@ -17,9 +17,12 @@ import com.almasb.consume.Types.Property;
 import com.almasb.consume.Types.Type;
 import com.almasb.consume.ai.AimedProjectileControl;
 import com.almasb.consume.ai.AnimatedPlayerControl;
+import com.almasb.consume.ai.BulletProjectileControl;
 import com.almasb.consume.ai.ChargeControl;
 import com.almasb.consume.ai.FireballProjectileControl;
+import com.almasb.consume.ai.LightningControl;
 import com.almasb.consume.ai.PhysicsControl;
+import com.almasb.consume.ai.SandProjectileControl;
 import com.almasb.consume.ai.SimpleMoveControl;
 import com.almasb.consume.ai.SpearProjectileControl;
 import com.almasb.consume.collision.PlayerBlockHandler;
@@ -41,8 +44,12 @@ import com.ergo21.consume.PlayerHUD;
 
 import javafx.geometry.Point2D;
 import javafx.geometry.Rectangle2D;
+import javafx.scene.Group;
+import javafx.scene.effect.DropShadow;
+import javafx.scene.effect.Glow;
 import javafx.scene.input.KeyCode;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 
@@ -62,6 +69,8 @@ public class ConsumeApp extends GameApplication {
     private Text performance = new Text();
 
     private long regenTime = 0;
+    
+    private GameScene gScene;
 
     @Override
     protected void initSettings(GameSettings settings) {
@@ -84,19 +93,27 @@ public class ConsumeApp extends GameApplication {
     protected void initGame() {
         playerData = new Player(assets.getText("player.txt"));
         playerData.getPowers().add(Element.FIRE);
-        playerData.getPowers().add(Element.ICE);
+        playerData.getPowers().add(Element.EARTH);
+        playerData.getPowers().add(Element.LIGHTNING);
+        playerData.getPowers().add(Element.METAL);
+        playerData.getPowers().add(Element.DEATH);
+        playerData.getPowers().add(Element.CONSUME);
+        fired = false;
 
         initLevels();
 
         loadNextLevel();
     }
-
+    
     @Override
     protected void initPhysics() {
         physicsManager.addCollisionHandler(new PlayerPowerupHandler());
         physicsManager.addCollisionHandler(new PlayerEnemyHandler(this));
         physicsManager.addCollisionHandler(new ProjectileEnemyHandler(this));
-        physicsManager.addCollisionHandler(new PlayerBlockHandler());
+        physicsManager.addCollisionHandler(new PlayerBlockHandler((String scName)->{
+        	gScene.changeScene(assets.getText(scName));
+        	gScene.setVisible(true);
+        }));
         physicsManager.addCollisionHandler(new ProjectilePlayerHandler(this));
 
         physicsManager.addCollisionHandler(new CollisionHandler(Type.PLAYER, Type.NEXT_LEVEL_POINT) {
@@ -115,13 +132,13 @@ public class ConsumeApp extends GameApplication {
 
     @Override
     protected void initUI() {
-        GameScene scene = new GameScene(assets.getText("dialogue/scene_0.txt"), assets);
-        scene.setTranslateX(140);
-        scene.setTranslateY(300);
-        scene.setScaleX(1.75);
-        scene.setScaleY(1.75);
+        gScene = new GameScene(assets.getText("dialogue/scene_0.txt"), assets, this);
+        gScene.setTranslateX(140);
+        gScene.setTranslateY(300);
+        gScene.setScaleX(1.75);
+        gScene.setScaleY(1.75);
 
-        inputManager.addKeyTypedBinding(KeyCode.ENTER, scene::updateScript);
+        inputManager.addKeyTypedBinding(KeyCode.ENTER, gScene::updateScript);
 
         hud = new PlayerHUD(player.<Player>getProperty(Property.DATA).getMaxHealth(),
                 player.<Player>getProperty(Property.DATA).getMaxMana());
@@ -135,7 +152,7 @@ public class ConsumeApp extends GameApplication {
 
         debug.setTranslateX(450);
         debug.setTranslateY(100);
-        addUINodes(scene, hud, performance, debug);
+        addUINodes(gScene, hud, performance, debug);
     }
 
     private void initLevels() {
@@ -153,23 +170,21 @@ public class ConsumeApp extends GameApplication {
         inputManager.addKeyPressBinding(KeyCode.A, () -> {
             player.getControl(PhysicsControl.class).moveX(-Speed.PLAYER_MOVE);
             player.setProperty("facingRight", false);
-            System.out.println("Key Pressed: " + player.getControl(PhysicsControl.class).getVelocity());
         });
         inputManager.addKeyPressBinding(KeyCode.D, () -> {
             player.getControl(PhysicsControl.class).moveX(Speed.PLAYER_MOVE);
             player.setProperty("facingRight", true);
-            System.out.println("Key Pressed: " + player.getControl(PhysicsControl.class).getVelocity());
         });
         inputManager.addKeyPressBinding(KeyCode.W, () -> {
             if (player.<Boolean>getProperty("climbing")) {
-                player.getControl(PhysicsControl.class).moveY(-5);
+                player.getControl(PhysicsControl.class).climb(-5);
             }
             else
                 player.getControl(PhysicsControl.class).jump();
         });
         inputManager.addKeyPressBinding(KeyCode.S, () -> {
             if (player.<Boolean>getProperty("climbing")) {
-                player.getControl(PhysicsControl.class).moveY(5);
+                player.getControl(PhysicsControl.class).climb(5);
             }
         });
         inputManager.addKeyPressBinding(KeyCode.SPACE, () -> {
@@ -246,10 +261,7 @@ public class ConsumeApp extends GameApplication {
     @Override
     protected void postInit() {
     	Runnable action = () -> {
-            System.out.println("Key Released");
-            System.out.println(player.getControl(PhysicsControl.class).getVelocity());
             player.getControl(PhysicsControl.class).moveX(0);
-            System.out.println(player.getControl(PhysicsControl.class).getVelocity());
     	};
 
     	inputManager.addKeyReleasedBinding(KeyCode.A, action);
@@ -449,13 +461,14 @@ public class ConsumeApp extends GameApplication {
         removeEntity(block);
     }
 
-    Entity spear;
+    private Entity spear;
+    private boolean fired;
     private void shootProjectile() {
         Element element = playerData.getCurrentPower();
 
         Entity e = new Entity(Type.PLAYER_PROJECTILE);
         e.setProperty(Property.SUB_TYPE, element);
-        e.setPosition(player.getPosition());
+        e.setPosition(player.getPosition().add((player.getWidth()/2), 0));
         e.setCollidable(true);
         e.setGraphics(new Rectangle(10, 1));
         e.addControl(new PhysicsControl(physics));
@@ -493,7 +506,101 @@ public class ConsumeApp extends GameApplication {
                 }
         		break;
         	}
-        	case ICE:{
+        	case EARTH:{
+        		 if(playerData.getCurrentMana() >= Config.SAND_COST){
+                 	playerData.setCurrentMana(playerData.getCurrentMana() - Config.SAND_COST);
+                 }
+                 else {
+                 	return;
+                 }
+        		Point2D p = player.getPosition();
+        		if((boolean)player.getProperty("facingRight")){
+        			p = p.add(player.getWidth(), 0);
+        		}
+        		else{
+        			p = p.add(-e.getWidth(), 0);
+        		}
+                e.setPosition(p);
+        		e.addControl(new SandProjectileControl(player.getProperty("facingRight"), player, false));
+        		e.setProperty(Property.ENABLE_GRAVITY, false);
+ 
+                
+                Entity e2 = new Entity(Type.PLAYER_PROJECTILE);
+                e2.setProperty(Property.SUB_TYPE, element);
+                e2.setPosition(p);
+                e2.setCollidable(true);
+                e2.setGraphics(new Rectangle(10, 1));
+                e2.addControl(new PhysicsControl(physics));
+                e2.addFXGLEventHandler(Event.COLLIDED_PLATFORM, event -> {
+                    Entity platform = event.getSource();
+                    removeEntity(e2);
+
+                    if (platform.getProperty(Property.SUB_TYPE) == Platform.DESTRUCTIBLE) {
+                        destroyBlock(platform);
+                    }
+                });
+                e2.addFXGLEventHandler(Event.DEATH, event -> {
+                    removeEntity(event.getTarget());
+                });
+                e2.addControl(new SandProjectileControl(player.getProperty("facingRight"), player, true));
+        		e2.setProperty(Property.ENABLE_GRAVITY, false);
+                
+                addEntities(e2);
+        		break;
+        	}
+        	case METAL:{
+        		if(playerData.getCurrentMana() >= Config.BULLET_COST){
+                	playerData.setCurrentMana(playerData.getCurrentMana() - Config.BULLET_COST);
+                }
+                else {
+                	return;
+                }
+        		if(fired){
+        			return;
+        		}
+        		this.runOnceAfter(() -> fired = false, SECOND*3);
+        		fired = true;
+        		e.addControl(new BulletProjectileControl(player.getProperty("facingRight"), player));
+                e.setProperty(Property.ENABLE_GRAVITY, false);             
+        		break;
+        	}
+        	case LIGHTNING:{
+        		if(playerData.getCurrentMana() >= Config.LIGHTNING_COST){
+                	playerData.setCurrentMana(playerData.getCurrentMana() - Config.LIGHTNING_COST);
+                }
+                else {
+                	return;
+                }
+                e.setVisible(false);
+            	e.setCollidable(false);
+            	Group g = new Group();
+                e.addControl(new PhysicsControl(physics));
+                LightningControl lc = new LightningControl(g);
+                e.addControl(lc);
+        		Point2D p = player.getPosition();
+        		if((boolean)player.getProperty("facingRight")){
+        			p = p.add(player.getWidth() + 30, 0);
+        		}
+        		else{
+        			p = p.add(-e.getWidth() -30, 0);
+        		}
+        		p = p.add(0, player.getHeight());
+                e.setPosition(0,0);
+                
+                
+                g.getChildren().addAll(createBolt(new Point2D(p.getX(),-200),p, 5));
+                e.setGraphics(g);
+ 
+                DropShadow shadow = new DropShadow(20, Color.PURPLE);
+                shadow.setInput(new Glow(0.7));
+                g.setEffect(shadow);
+        		e.setProperty(Property.ENABLE_GRAVITY, false);
+        		break;
+        	}
+        	case DEATH:{
+        		break;
+        	}
+        	case CONSUME:{
         		break;
         	}
         }
@@ -534,6 +641,60 @@ public class ConsumeApp extends GameApplication {
 
     	powerStatus.setGraphics(new Text(playerData.getCurrentPower().toString()));
     }
+    
+    private List<Line> createBolt(Point2D src, Point2D dst, float thickness) {
+        ArrayList<Line> results = new ArrayList<Line>();
+
+        Point2D tangent = dst.subtract(src);
+        Point2D normal = new Point2D(tangent.getY(), -tangent.getX()).normalize();
+
+        double length = tangent.magnitude();
+
+        ArrayList<Float> positions = new ArrayList<Float>();
+        positions.add(0.0f);
+
+        for (int i = 0; i < length / 4; i++)
+            positions.add((float)Math.random());
+
+        Collections.sort(positions);
+
+        float sway = 80;
+        float jaggedness = 1 / sway;
+
+        Point2D prevPoint = src;
+        float prevDisplacement = 0;
+        Color c = Color.rgb(245, 230, 250);
+        for (int i = 1; i < positions.size(); i++) {
+            float pos = positions.get(i);
+
+            // used to prevent sharp angles by ensuring very close positions also have small perpendicular variation.
+            double scale = (length * jaggedness) * (pos - positions.get(i - 1));
+
+            // defines an envelope. Points near the middle of the bolt can be further from the central line.
+            float envelope = pos > 0.95f ? 20 * (1 - pos) : 1;
+
+            float displacement = (float)(sway * (Math.random() * 2 - 1));
+            displacement -= (displacement - prevDisplacement) * (1 - scale);
+            displacement *= envelope;
+
+            Point2D point = src.add(tangent.multiply(pos)).add(normal.multiply(displacement));
+
+            Line line = new Line(prevPoint.getX(), prevPoint.getY(), point.getX(), point.getY());
+            line.setStrokeWidth(thickness);
+            line.setStroke(c);
+            results.add(line);
+            prevPoint = point;
+            prevDisplacement = displacement;
+        }
+
+        Line line = new Line(prevPoint.getX(), prevPoint.getY(), dst.getX(), dst.getY());
+        line.setStrokeWidth(thickness);
+        line.setStroke(c);
+        results.add(line);
+
+        return results;
+    }
+    
 
     public static void main(String[] args) {
         launch(args);

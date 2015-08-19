@@ -59,14 +59,40 @@ public class Player extends Enemy {
                 resists.clear();
                 resists.add(Element.FIRE);
                 weaks.clear();
-                weaks.add(Element.ICE);
+                weaks.add(Element.EARTH);
                 break;
             }
-            case ICE: {
+            case EARTH: {
                 resists.clear();
-                resists.add(Element.ICE);
+                resists.add(Element.EARTH);
+                weaks.clear();
+                weaks.add(Element.METAL);
+                break;
+            }
+            case METAL: {
+                resists.clear();
+                resists.add(Element.METAL);
+                weaks.clear();
+                weaks.add(Element.LIGHTNING);
+                break;
+            }
+            case LIGHTNING: {
+                resists.clear();
+                resists.add(Element.LIGHTNING);
+                weaks.clear();
+                weaks.add(Element.DEATH);
+                break;
+            }
+            case DEATH: {
+                resists.clear();
+                resists.add(Element.DEATH);
                 weaks.clear();
                 weaks.add(Element.FIRE);
+                break;
+            }
+            case CONSUME: {
+            	resists.clear();
+                weaks.clear();
                 break;
             }
             default: {

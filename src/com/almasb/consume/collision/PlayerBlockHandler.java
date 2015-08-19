@@ -1,18 +1,24 @@
 package com.almasb.consume.collision;
 
+import java.util.function.Consumer;
+
 import com.almasb.consume.Types.Block;
 import com.almasb.consume.Types.Property;
 import com.almasb.consume.Types.Type;
+import com.almasb.consume.ai.PhysicsControl;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.physics.CollisionHandler;
 
 public class PlayerBlockHandler extends CollisionHandler {
 
-    public PlayerBlockHandler() {
+	private Consumer<String> changeScene;
+    public PlayerBlockHandler(Consumer<String> chSc) {
         super(Type.PLAYER, Type.BLOCK);
+        changeScene = chSc;
     }
 
-    @Override
+
+	@Override
     public void onCollision(Entity player, Entity block) {
         if (block.getProperty(Property.SUB_TYPE) == Block.BARRIER) {
             block.setProperty("state", "passing");
@@ -34,14 +40,27 @@ public class PlayerBlockHandler extends CollisionHandler {
     }
 
     @Override
-    public void onCollisionBegin(Entity a, Entity b) {
-        // TODO Auto-generated method stub
-
+    public void onCollisionBegin(Entity player, Entity block) {
+    	if (block.getProperty(Property.SUB_TYPE) == Block.SCENE){
+        	block.setProperty("played", true);
+        	block.setVisible(false);
+        	String sNam = block.getProperty("sceneName");
+        	changeScene.accept(sNam);
+        }
+    	else if (block.getProperty(Property.SUB_TYPE) == Block.LADDER) {
+            player.setProperty("climbing", true);
+            player.setProperty("climb", true);
+            player.setProperty(Property.ENABLE_GRAVITY, false);
+            player.getControl(PhysicsControl.class).moveY(0);
+        }
     }
 
     @Override
-    public void onCollisionEnd(Entity a, Entity b) {
-        // TODO Auto-generated method stub
-
+    public void onCollisionEnd(Entity player, Entity block) {
+    	if (block.getProperty(Property.SUB_TYPE) == Block.LADDER) {
+            player.setProperty("climbing", false);
+            player.setProperty("climb", false);
+            player.setProperty(Property.ENABLE_GRAVITY, true);
+        }
     }
 }

@@ -17,7 +17,6 @@ public class AimedProjectileControl extends AbstractControl {
         target = targ;
         Point2D aim = new Point2D(target.getTranslateX() + target.getWidth()/2, target.getTranslateY() + target.getHeight()/2);
         angle = Math.asin((source.getPosition().getX() - aim.getX())/source.getPosition().distance(aim));
-        System.out.println("P1: " + source.getPosition() + ", P2: " + aim + ", Angle: " + angle);
     }
 
     @Override
