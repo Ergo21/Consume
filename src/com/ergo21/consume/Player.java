@@ -50,7 +50,7 @@ public class Player extends Enemy {
     public void setCurrentPower(Element p) {
         curElement = p;
         switch (curElement) {
-            case NEUTRAL: {
+            case NEUTRAL: case NEUTRAL2: case CONSUME:{
                 resists.clear();
                 weaks.clear();
                 break;
@@ -88,11 +88,6 @@ public class Player extends Enemy {
                 resists.add(Element.DEATH);
                 weaks.clear();
                 weaks.add(Element.FIRE);
-                break;
-            }
-            case CONSUME: {
-            	resists.clear();
-                weaks.clear();
                 break;
             }
             default: {

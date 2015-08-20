@@ -11,8 +11,8 @@ public class BulletProjectileControl extends AbstractControl {
     private boolean facingRight;
     private Entity player;
 
-    public BulletProjectileControl(boolean facingRight, Entity player) {
-        this.facingRight = facingRight;
+    public BulletProjectileControl(Entity player) {
+        facingRight = player.getProperty("facingRight");
         this.player = player;
     }
 

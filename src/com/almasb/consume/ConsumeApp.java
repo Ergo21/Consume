@@ -19,6 +19,7 @@ import com.almasb.consume.ai.AimedProjectileControl;
 import com.almasb.consume.ai.AnimatedPlayerControl;
 import com.almasb.consume.ai.BulletProjectileControl;
 import com.almasb.consume.ai.ChargeControl;
+import com.almasb.consume.ai.ConsumeControl;
 import com.almasb.consume.ai.FireballProjectileControl;
 import com.almasb.consume.ai.LightningControl;
 import com.almasb.consume.ai.PhysicsControl;
@@ -92,6 +93,7 @@ public class ConsumeApp extends GameApplication {
     @Override
     protected void initGame() {
         playerData = new Player(assets.getText("player.txt"));
+        playerData.getPowers().add(Element.NEUTRAL2);
         playerData.getPowers().add(Element.FIRE);
         playerData.getPowers().add(Element.EARTH);
         playerData.getPowers().add(Element.LIGHTNING);
@@ -486,7 +488,7 @@ public class ConsumeApp extends GameApplication {
 
         switch(element){
         	case NEUTRAL:{
-                e.addControl(new SpearProjectileControl(player.getProperty("facingRight"), player));
+                e.addControl(new SpearProjectileControl(player));
                 if(spear == null || !this.getAllEntities().contains(spear)){
                 	spear = e;
                 }
@@ -495,8 +497,17 @@ public class ConsumeApp extends GameApplication {
                 }
         		break;
         	}
+        	case NEUTRAL2:{
+        		e.setVisible(true);
+        		e.setCollidable(true);
+        		e.setGraphics(new Rectangle(0, 0,
+        				player.getWidth()/2, player.getHeight()));
+        		e.setProperty(Property.ENABLE_GRAVITY, false);
+        		e.addControl(new ConsumeControl(player));
+        		break;
+        	}
         	case FIRE:{
-                e.addControl(new FireballProjectileControl(player.getProperty("facingRight"), player));
+                e.addControl(new FireballProjectileControl(player));
                 e.setProperty(Property.ENABLE_GRAVITY, false);
                 if(playerData.getCurrentMana() >= Config.FIREBALL_COST){
                 	playerData.setCurrentMana(playerData.getCurrentMana() - Config.FIREBALL_COST);
@@ -521,7 +532,7 @@ public class ConsumeApp extends GameApplication {
         			p = p.add(-e.getWidth(), 0);
         		}
                 e.setPosition(p);
-        		e.addControl(new SandProjectileControl(player.getProperty("facingRight"), player, false));
+        		e.addControl(new SandProjectileControl(player, false));
         		e.setProperty(Property.ENABLE_GRAVITY, false);
  
                 
@@ -542,7 +553,7 @@ public class ConsumeApp extends GameApplication {
                 e2.addFXGLEventHandler(Event.DEATH, event -> {
                     removeEntity(event.getTarget());
                 });
-                e2.addControl(new SandProjectileControl(player.getProperty("facingRight"), player, true));
+                e2.addControl(new SandProjectileControl(player, true));
         		e2.setProperty(Property.ENABLE_GRAVITY, false);
                 
                 addEntities(e2);
@@ -560,7 +571,7 @@ public class ConsumeApp extends GameApplication {
         		}
         		this.runOnceAfter(() -> fired = false, SECOND*3);
         		fired = true;
-        		e.addControl(new BulletProjectileControl(player.getProperty("facingRight"), player));
+        		e.addControl(new BulletProjectileControl(player));
                 e.setProperty(Property.ENABLE_GRAVITY, false);             
         		break;
         	}
@@ -601,6 +612,12 @@ public class ConsumeApp extends GameApplication {
         		break;
         	}
         	case CONSUME:{
+        		//e.setVisible(true);
+        		e.setCollidable(true);
+        		e.setGraphics(new Rectangle(0, 0,
+        				player.getWidth()/2, player.getHeight()));
+        		e.setProperty(Property.ENABLE_GRAVITY, false);
+        		e.addControl(new ConsumeControl(player));
         		break;
         	}
         }

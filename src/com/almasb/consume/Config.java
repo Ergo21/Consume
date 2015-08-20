@@ -37,17 +37,29 @@ public final class Config {
 
     public static final long REGEN_TIME_INTERVAL = 1 * GameApplication.SECOND;
 
-    public static final int POWER_DAMAGE = 4;
+    //public static final int POWER_DAMAGE = 4;
+    //public static final int NEUTRAL_DAMAGE = 4;
+    public static final int SPEAR_DAMAGE = 3;
+    public static final int KNIFE_DAMAGE = 6;
     
     public static final int FIREBALL_COST = 3;
+    public static final int FIREBALL_DAMAGE = 4;
     
     public static final int SAND_COST = 5;
+    public static final int SAND_DAMAGE = 3;
     public static final double SAND_DELAY = 0.5 * GameApplication.SECOND;
     public static final double SAND_DECAY = 2 * GameApplication.SECOND;
 
 	public static final int LIGHTNING_COST = 7;
+	public static final int LIGHTNING_DAMAGE = 6;
 	public static final double LIGHTNING_DELAY = 0.5 * GameApplication.SECOND;
 	public static final double LIGHTNING_DECAY = 1.5 * GameApplication.SECOND;
 
 	public static final int BULLET_COST = 0;
+	public static final int BULLET_DAMAGE = 5;
+
+	public static final double CONSUME_DECAY = 0.5 * GameApplication.SECOND;
+
+	public static final int DEATH_DAMAGE = 0;
+
 }
