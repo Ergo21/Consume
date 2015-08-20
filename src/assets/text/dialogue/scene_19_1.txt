@@ -1,0 +1,13 @@
+Shaka ("ShakaIcon.png")= "What business have you with the great Zulu?"
+PLAYER ("PlayerIcon.png")= "My village is suffering from bandit attacks and I am collecting power to fight them."
+Shaka ("ShakaIcon.png")= "So what precisely are you requesting? Money, Technology, People?"
+PLAYER ("PlayerIcon.png")= "I wish to learn the fighting skills that have earned your people their reputation as warriors."
+Shaka ("ShakaIcon.png")= "....................."
+Shaka ("ShakaIcon.png")= "Tell me outsider, does your mother still live in your village?"
+PLAYER ("PlayerIcon.png")= "Not if I fail to get the power I need to save her."
+Shaka ("ShakaIcon.png")= "Then I won't help you."
+PLAYER ("PlayerIcon.png")= "What!?"
+Shaka ("ShakaIcon.png")= "Your mother will die like everybody else, and you will know the pain I feel every day. Take him away."
+PLAYER ("PlayerIcon.png")= "You will help, voluntarily or not."
+Shaka ("ShakaIcon.png")= "I think not. Guards!"
+END

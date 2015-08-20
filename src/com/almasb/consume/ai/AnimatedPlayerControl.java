@@ -4,7 +4,6 @@ import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
 import javafx.beans.property.SimpleIntegerProperty;
-import javafx.geometry.Point2D;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -14,12 +13,8 @@ import javafx.scene.image.WritableImage;
 import javafx.scene.paint.Color;
 import javafx.util.Duration;
 
-import com.almasb.consume.Config;
 import com.almasb.consume.ConsumeApp;
-import com.almasb.consume.Config.Speed;
-import com.almasb.consume.Physics;
 import com.almasb.fxgl.GameApplication;
-import com.almasb.fxgl.asset.StaticAnimatedTexture;
 import com.almasb.fxgl.asset.Texture;
 import com.almasb.fxgl.entity.Control;
 import com.almasb.fxgl.entity.Entity;
@@ -38,13 +33,10 @@ public class AnimatedPlayerControl implements Control {
 
     @Override
     public void onUpdate(Entity entity, long now) {
-        Physics physics = entity.getProperty("physics");
         PhysicsControl pc = entity.getControl(PhysicsControl.class);
         if(pc != null){
-        	//System.out.println("Update X: " + pc.getVelocity().getX() + ", Y: " + pc.getVelocity().getY());
         	if(pc.getVelocity().getX() == 0){
         		if(current != CurAnim.IDLER && entity.<Boolean>getProperty("facingRight")){
-        			System.out.println("Update");
         			ImageView t = subTexture(new Rectangle2D(150,0,90,30), spritesheet);
         			LocalAnimatedTexture sAT = new LocalAnimatedTexture(t.getImage(), 3, ConsumeApp.SECOND);
         			entity.setGraphics(sAT);

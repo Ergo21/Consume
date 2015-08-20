@@ -24,7 +24,12 @@ public class PlayerEnemyHandler extends CollisionHandler {
 
     @Override
     public void onCollision(Entity player, Entity enemy) {
-        if (enemy.getControl(ChargeControl.class) != null) {
+        
+    }
+
+    @Override
+    public void onCollisionBegin(Entity player, Entity enemy) {
+    	if (enemy.getControl(ChargeControl.class) != null) {
         	Player playerData = player.getProperty(Property.DATA);
         	playerData.setCurrentHealth(playerData.getCurrentHealth() - 1);
 
@@ -68,12 +73,6 @@ public class PlayerEnemyHandler extends CollisionHandler {
                 player.setCollidable(true);
             }, 2 * GameApplication.SECOND);
         }
-    }
-
-    @Override
-    public void onCollisionBegin(Entity a, Entity b) {
-        // TODO Auto-generated method stub
-
     }
 
     @Override

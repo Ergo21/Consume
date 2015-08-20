@@ -38,9 +38,10 @@ public class PhysicsControl extends AbstractControl {
             velocity = velocity.add(0, Speed.GRAVITY_ACCEL);
             if (velocity.getY() > Speed.GRAVITY_MAX)
                 velocity = new Point2D(velocity.getX(), Speed.GRAVITY_MAX);
-
-            physics.moveY(entity, (int)velocity.getY());
+            
         }
+        physics.moveY(entity, (int)velocity.getY());
+        
     }
 
     public void moveX(int value) {
@@ -57,6 +58,12 @@ public class PhysicsControl extends AbstractControl {
 
         entity.setProperty("jumping", true);
         velocity = new Point2D(velocity.getX(), -Speed.PLAYER_JUMP);
+    }
+    
+    public void climb(int clSpd) {
+    	if(entity.getProperty("climbing") != null && entity.<Boolean>getProperty("climbing")){
+    		physics.moveY(entity, clSpd);
+    	}
     }
 
     public Point2D getVelocity() {

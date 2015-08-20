@@ -25,7 +25,7 @@ public class Types {
     }
 
     public enum Block {
-        BARRIER, LADDER
+        BARRIER, LADDER, SCENE
     }
 
     public enum Property implements PropertyKey {
@@ -33,6 +33,6 @@ public class Types {
     }
 
     public enum Element {
-    	NEUTRAL, FIRE, ICE
+    	NEUTRAL, FIRE, EARTH, LIGHTNING, METAL, DEATH, CONSUME
     }
 }
