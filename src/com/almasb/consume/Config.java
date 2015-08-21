@@ -1,6 +1,5 @@
 package com.almasb.consume;
 
-import com.almasb.fxgl.GameApplication;
 import com.almasb.fxgl.time.TimerManager;
 
 public final class Config {

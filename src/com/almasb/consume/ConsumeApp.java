@@ -125,10 +125,6 @@ public class ConsumeApp extends GameApplication {
             public void onCollisionBegin(Entity a, Entity b) {
                 loadNextLevel();
             }
-            @Override
-            public void onCollision(Entity a, Entity b) {}
-            @Override
-            public void onCollisionEnd(Entity a, Entity b) {}
         });
     }
 
