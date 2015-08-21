@@ -84,6 +84,7 @@ public class ConsumeApp extends GameApplication {
         settings.setIntroEnabled(false);
         settings.setMenuEnabled(false);
         settings.setIconFileName("app_icon.png");
+        settings.setShowFPS(true);
     }
 
     @Override
