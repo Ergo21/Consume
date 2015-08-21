@@ -11,6 +11,7 @@ import com.almasb.fxgl.GameApplication;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.FXGLEvent;
 import com.almasb.fxgl.physics.CollisionHandler;
+import com.almasb.fxgl.time.TimerManager;
 import com.ergo21.consume.Enemy;
 
 import javafx.animation.FadeTransition;
@@ -76,12 +77,12 @@ public class ProjectilePlayerHandler extends CollisionHandler {
                     .setPosition(player.getTranslateX(), player.getTranslateY())
                     .setGraphics(new Text(damage + "!  " + modifier));
 
-        app.addEntities(e);
+        app.getSceneManager().addEntities(e);
 
         FadeTransition ft = new FadeTransition(Duration.seconds(1.5), e);
         ft.setToValue(0);
         ft.setOnFinished(event -> {
-            app.removeEntity(e);
+            app.getSceneManager().removeEntity(e);
         });
         ft.play();
 
@@ -94,29 +95,17 @@ public class ProjectilePlayerHandler extends CollisionHandler {
         e2.translateXProperty().bind(player.translateXProperty());
         e2.translateYProperty().bind(player.translateYProperty().subtract(20));
 
-        app.addEntities(e2);
+        app.getSceneManager().addEntities(e2);
 
-        app.runOnceAfter(() -> {
-            app.removeEntity(e2);
+        app.getTimerManager().runOnceAfter(() -> {
+            app.getSceneManager().removeEntity(e2);
             player.setCollidable(true);
-        }, 2 * GameApplication.SECOND);
+        }, 2 * TimerManager.SECOND);
 
-        app.removeEntity(projectile);
+        app.getSceneManager().removeEntity(projectile);
 
         if (playerData.getCurrentHealth() <= 0) {
             //app.removeEntity(player);
         }
-    }
-
-    @Override
-    public void onCollisionBegin(Entity a, Entity b) {
-        // TODO Auto-generated method stub
-
-    }
-
-    @Override
-    public void onCollisionEnd(Entity a, Entity b) {
-        // TODO Auto-generated method stub
-
     }
 }

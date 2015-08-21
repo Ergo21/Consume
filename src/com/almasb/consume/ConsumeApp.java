@@ -37,7 +37,9 @@ import com.almasb.fxgl.asset.Assets;
 import com.almasb.fxgl.asset.Texture;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.FXGLEvent;
+import com.almasb.fxgl.event.UserAction;
 import com.almasb.fxgl.physics.CollisionHandler;
+import com.almasb.fxgl.time.TimerManager;
 import com.ergo21.consume.Enemy;
 import com.ergo21.consume.GameScene;
 import com.ergo21.consume.Player;
@@ -70,7 +72,7 @@ public class ConsumeApp extends GameApplication {
     private Text performance = new Text();
 
     private long regenTime = 0;
-    
+
     private GameScene gScene;
 
     @Override
@@ -82,6 +84,7 @@ public class ConsumeApp extends GameApplication {
         settings.setIntroEnabled(false);
         settings.setMenuEnabled(false);
         settings.setIconFileName("app_icon.png");
+        settings.setShowFPS(true);
     }
 
     @Override
@@ -106,7 +109,7 @@ public class ConsumeApp extends GameApplication {
 
         loadNextLevel();
     }
-    
+
     @Override
     protected void initPhysics() {
         physicsManager.addCollisionHandler(new PlayerPowerupHandler());
@@ -123,10 +126,6 @@ public class ConsumeApp extends GameApplication {
             public void onCollisionBegin(Entity a, Entity b) {
                 loadNextLevel();
             }
-            @Override
-            public void onCollision(Entity a, Entity b) {}
-            @Override
-            public void onCollisionEnd(Entity a, Entity b) {}
         });
     }
 
@@ -140,7 +139,12 @@ public class ConsumeApp extends GameApplication {
         gScene.setScaleX(1.75);
         gScene.setScaleY(1.75);
 
-        inputManager.addKeyTypedBinding(KeyCode.ENTER, gScene::updateScript);
+        inputManager.addAction(new UserAction("Update Script") {
+            @Override
+            protected void onActionBegin() {
+                gScene.updateScript();
+            }
+        }, KeyCode.ENTER);
 
         hud = new PlayerHUD(player.<Player>getProperty(Property.DATA).getMaxHealth(),
                 player.<Player>getProperty(Property.DATA).getMaxMana());
@@ -154,7 +158,7 @@ public class ConsumeApp extends GameApplication {
 
         debug.setTranslateX(450);
         debug.setTranslateY(100);
-        addUINodes(gScene, hud, performance, debug);
+        sceneManager.addUINodes(gScene, hud, performance, debug);
     }
 
     private void initLevels() {
@@ -169,40 +173,64 @@ public class ConsumeApp extends GameApplication {
 
     @Override
     protected void initInput() {
-        inputManager.addKeyPressBinding(KeyCode.A, () -> {
-            player.getControl(PhysicsControl.class).moveX(-Speed.PLAYER_MOVE);
-            player.setProperty("facingRight", false);
-        });
-        inputManager.addKeyPressBinding(KeyCode.D, () -> {
-            player.getControl(PhysicsControl.class).moveX(Speed.PLAYER_MOVE);
-            player.setProperty("facingRight", true);
-        });
-        inputManager.addKeyPressBinding(KeyCode.W, () -> {
-            if (player.<Boolean>getProperty("climbing")) {
-                player.getControl(PhysicsControl.class).climb(-5);
+        inputManager.addAction(new UserAction("Move Left") {
+            @Override
+            protected void onAction() {
+                player.getControl(PhysicsControl.class).moveX(-Speed.PLAYER_MOVE);
+                player.setProperty("facingRight", false);
             }
-            else
-                player.getControl(PhysicsControl.class).jump();
-        });
-        inputManager.addKeyPressBinding(KeyCode.S, () -> {
-            if (player.<Boolean>getProperty("climbing")) {
-                player.getControl(PhysicsControl.class).climb(5);
+
+            @Override
+            protected void onActionEnd() {
+                player.getControl(PhysicsControl.class).moveX(0);
             }
-        });
-        inputManager.addKeyPressBinding(KeyCode.SPACE, () -> {
-        });
+        }, KeyCode.A);
 
-        inputManager.addKeyTypedBinding(KeyCode.Q, () -> {
-            shootProjectile();
-        });
-        inputManager.addKeyTypedBinding(KeyCode.E, () -> {
-        	changePower();
-        });
+        inputManager.addAction(new UserAction("Move Right") {
+            @Override
+            protected void onAction() {
+                player.getControl(PhysicsControl.class).moveX(Speed.PLAYER_MOVE);
+                player.setProperty("facingRight", true);
+            }
 
-        // debug
-        inputManager.addKeyTypedBinding(KeyCode.I, () -> {
-            log.info(playerData::toString);
-        });
+            @Override
+            protected void onActionEnd() {
+                player.getControl(PhysicsControl.class).moveX(0);
+            }
+        }, KeyCode.D);
+
+        inputManager.addAction(new UserAction("Jump / Climb Up") {
+            @Override
+            protected void onAction() {
+                if (player.<Boolean>getProperty("climbing"))
+                    player.getControl(PhysicsControl.class).climb(-5);
+                else
+                    player.getControl(PhysicsControl.class).jump();
+            }
+        }, KeyCode.W);
+
+        inputManager.addAction(new UserAction("Climb Down") {
+            @Override
+            protected void onAction() {
+                if (player.<Boolean>getProperty("climbing")) {
+                    player.getControl(PhysicsControl.class).climb(5);
+                }
+            }
+        }, KeyCode.S);
+
+        inputManager.addAction(new UserAction("Shoot") {
+            @Override
+            protected void onActionBegin() {
+                shootProjectile();
+            }
+        }, KeyCode.Q);
+
+        inputManager.addAction(new UserAction("Change Power") {
+            @Override
+            protected void onActionBegin() {
+                changePower();
+            }
+        }, KeyCode.E);
     }
 
     @Override
@@ -213,9 +241,9 @@ public class ConsumeApp extends GameApplication {
             player.setProperty(Property.ENABLE_GRAVITY, true);
         }
 
-        if (now - regenTime >= Config.REGEN_TIME_INTERVAL) {
+        if (getNow() - regenTime >= Config.REGEN_TIME_INTERVAL) {
             playerData.regenMana();
-            regenTime = now;
+            regenTime = getNow();
         }
 
         // leave manual update for now
@@ -224,7 +252,7 @@ public class ConsumeApp extends GameApplication {
         hud.setMaxHealth(playerData.getMaxHealth());
         hud.setMaxMana(playerData.getMaxMana());
 
-        for (Entity e : getEntities(Type.BLOCK)) {
+        for (Entity e : sceneManager.getEntities(Type.BLOCK)) {
             if (e.getProperty(Property.SUB_TYPE) == Block.BARRIER
                     &&"idle".equals(e.getProperty("state"))
                     && !"none".equals(e.getProperty("start"))) {
@@ -256,22 +284,11 @@ public class ConsumeApp extends GameApplication {
 
         player.setProperty("climb", false);
 
-        performance.setText("FPS: " + fps + " Performance: " + fpsPerformance);
         debug.setText("Debug text goes here");
     }
 
-    @Override
-    protected void postInit() {
-    	Runnable action = () -> {
-            player.getControl(PhysicsControl.class).moveX(0);
-    	};
-
-    	inputManager.addKeyReleasedBinding(KeyCode.A, action);
-    	inputManager.addKeyReleasedBinding(KeyCode.D, action);
-	}
-
 	private void loadNextLevel() {
-        getAllEntities().forEach(this::removeEntity);
+	    sceneManager.getEntities().forEach(sceneManager::removeEntity);
 
         Level level = levels.get(currentLevel++);
         Point2D spawnPoint = level.getSpawnPoint();
@@ -281,10 +298,10 @@ public class ConsumeApp extends GameApplication {
             // TODO: currently we don't have death animations/handlers for other types
             // when we will, this might move to another class
             if (e.isType(Type.POWERUP)) {
-                e.addFXGLEventHandler(Event.DEATH, event -> removeEntity(e));
+                e.addFXGLEventHandler(Event.DEATH, event -> sceneManager.removeEntity(e));
             }
 
-            addEntities(e);
+            sceneManager.addEntities(e);
         }
         // add player
         initPlayer(spawnPoint);
@@ -308,13 +325,13 @@ public class ConsumeApp extends GameApplication {
 
             Entity e = Entity.noType().setGraphics(new Text("!"));
             e.setPosition(enemy.getTranslateX(), enemy.getTranslateY());
-            addEntities(e);
-            runOnceAfter(() -> {
-                removeEntity(e);
+            sceneManager.addEntities(e);
+            timerManager.runOnceAfter(() -> {
+                sceneManager.removeEntity(e);
             }, Config.ENEMY_CHARGE_DELAY);
         });
 
-        addEntities(testEnemy);
+        sceneManager.addEntities(testEnemy);
 
         Entity testEnemy2 = new Entity(Type.ENEMY);
         Rectangle rect2 = new Rectangle(30, 30);
@@ -329,7 +346,7 @@ public class ConsumeApp extends GameApplication {
         testEnemy2.addControl(new SimpleMoveControl(player));
         testEnemy2.addFXGLEventHandler(Event.DEATH, this::onEnemyDeath);
         testEnemy2.addFXGLEventHandler(Event.ENEMY_SAW_PLAYER, event -> aimedProjectile(testEnemy2, player));
-        addEntities(testEnemy2);
+        sceneManager.addEntities(testEnemy2);
     }
 
 	Entity powerStatus;
@@ -358,7 +375,7 @@ public class ConsumeApp extends GameApplication {
 			player.setGraphics(graphics);
 		}
 
-        bindViewportOrigin(player, 320, 180);
+		sceneManager.bindViewportOrigin(player, 320, 180);
 
 
 
@@ -366,14 +383,14 @@ public class ConsumeApp extends GameApplication {
         powerStatus.translateXProperty().bind(player.translateXProperty());
         powerStatus.translateYProperty().bind(player.translateYProperty().subtract(40));
 
-        addEntities(powerStatus);
+        sceneManager.addEntities(powerStatus);
 
-        addEntities(player);
+        sceneManager.addEntities(player);
     }
 
     private void onEnemyDeath(FXGLEvent event) {
         Entity enemy = event.getTarget();
-        removeEntity(enemy);
+        sceneManager.removeEntity(enemy);
 
         // chance based drop logic
         if (random.nextInt(100) <= 33) {    // check if dropping
@@ -418,14 +435,14 @@ public class ConsumeApp extends GameApplication {
             r.setFill(Color.PINK);
             e.setGraphics(r);
 
-            addEntities(e);
+            sceneManager.addEntities(e);
         }
     }
 
     private void activateBarrier(Entity block) {
         block.setProperty("state", "dying");
 
-        for (Entity b : getEntitiesInRange(
+        for (Entity b : sceneManager.getEntitiesInRange(
                 new Rectangle2D(block.getTranslateX() - 40,
                         block.getTranslateY() - 40,
                         120, 120),
@@ -436,20 +453,20 @@ public class ConsumeApp extends GameApplication {
             }
         }
 
-        removeEntity(block);
+        sceneManager.removeEntity(block);
         Entity e = new Entity(Type.PLATFORM);
         e.setPosition(block.getTranslateX(), block.getTranslateY());
         Rectangle rect = new Rectangle(40, 40);
         rect.setFill(Color.GREY);
         e.setGraphics(rect);
 
-        addEntities(e);
+        sceneManager.addEntities(e);
     }
 
     private void destroyBlock(Entity block) {
         block.setProperty("state", "dying");
 
-        for (Entity b : getEntitiesInRange(
+        for (Entity b : sceneManager.getEntitiesInRange(
                 new Rectangle2D(block.getTranslateX() - 40,
                         block.getTranslateY() - 40,
                         120, 120),
@@ -460,7 +477,7 @@ public class ConsumeApp extends GameApplication {
             }
         }
 
-        removeEntity(block);
+        sceneManager.removeEntity(block);
     }
 
     private Entity spear;
@@ -476,20 +493,20 @@ public class ConsumeApp extends GameApplication {
         e.addControl(new PhysicsControl(physics));
         e.addFXGLEventHandler(Event.COLLIDED_PLATFORM, event -> {
             Entity platform = event.getSource();
-            removeEntity(e);
+            sceneManager.removeEntity(e);
 
             if (platform.getProperty(Property.SUB_TYPE) == Platform.DESTRUCTIBLE) {
                 destroyBlock(platform);
             }
         });
         e.addFXGLEventHandler(Event.DEATH, event -> {
-            removeEntity(event.getTarget());
+            sceneManager.removeEntity(event.getTarget());
         });
 
         switch(element){
         	case NEUTRAL:{
                 e.addControl(new SpearProjectileControl(player));
-                if(spear == null || !this.getAllEntities().contains(spear)){
+                if(spear == null || !sceneManager.getEntities().contains(spear)){
                 	spear = e;
                 }
                 else{
@@ -534,8 +551,8 @@ public class ConsumeApp extends GameApplication {
                 e.setPosition(p);
         		e.addControl(new SandProjectileControl(player, false));
         		e.setProperty(Property.ENABLE_GRAVITY, false);
- 
-                
+
+
                 Entity e2 = new Entity(Type.PLAYER_PROJECTILE);
                 e2.setProperty(Property.SUB_TYPE, element);
                 e2.setPosition(p);
@@ -544,19 +561,19 @@ public class ConsumeApp extends GameApplication {
                 e2.addControl(new PhysicsControl(physics));
                 e2.addFXGLEventHandler(Event.COLLIDED_PLATFORM, event -> {
                     Entity platform = event.getSource();
-                    removeEntity(e2);
+                    sceneManager.removeEntity(e2);
 
                     if (platform.getProperty(Property.SUB_TYPE) == Platform.DESTRUCTIBLE) {
                         destroyBlock(platform);
                     }
                 });
                 e2.addFXGLEventHandler(Event.DEATH, event -> {
-                    removeEntity(event.getTarget());
+                    sceneManager.removeEntity(event.getTarget());
                 });
                 e2.addControl(new SandProjectileControl(player, true));
         		e2.setProperty(Property.ENABLE_GRAVITY, false);
-                
-                addEntities(e2);
+
+        		sceneManager.addEntities(e2);
         		break;
         	}
         	case METAL:{
@@ -569,10 +586,10 @@ public class ConsumeApp extends GameApplication {
         		if(fired){
         			return;
         		}
-        		this.runOnceAfter(() -> fired = false, SECOND*3);
+        		timerManager.runOnceAfter(() -> fired = false, TimerManager.SECOND*3);
         		fired = true;
         		e.addControl(new BulletProjectileControl(player));
-                e.setProperty(Property.ENABLE_GRAVITY, false);             
+                e.setProperty(Property.ENABLE_GRAVITY, false);
         		break;
         	}
         	case LIGHTNING:{
@@ -597,11 +614,11 @@ public class ConsumeApp extends GameApplication {
         		}
         		p = p.add(0, player.getHeight());
                 e.setPosition(0,0);
-                
-                
+
+
                 g.getChildren().addAll(createBolt(new Point2D(p.getX(),-200),p, 5));
                 e.setGraphics(g);
- 
+
                 DropShadow shadow = new DropShadow(20, Color.PURPLE);
                 shadow.setInput(new Glow(0.7));
                 g.setEffect(shadow);
@@ -622,7 +639,7 @@ public class ConsumeApp extends GameApplication {
         	}
         }
 
-        addEntities(e);
+        sceneManager.addEntities(e);
     }
 
     private void aimedProjectile(Entity source, Entity target){
@@ -640,12 +657,12 @@ public class ConsumeApp extends GameApplication {
         e.addControl(new PhysicsControl(physics));
         e.addControl(new AimedProjectileControl(source, target));
         e.addFXGLEventHandler(Event.DEATH, event -> {
-            removeEntity(event.getTarget());
+            sceneManager.removeEntity(event.getTarget());
         });
 
         e.setProperty(Property.ENABLE_GRAVITY, false);
 
-        addEntities(e);
+        sceneManager.addEntities(e);
     }
 
     private void changePower(){
@@ -658,7 +675,7 @@ public class ConsumeApp extends GameApplication {
 
     	powerStatus.setGraphics(new Text(playerData.getCurrentPower().toString()));
     }
-    
+
     private List<Line> createBolt(Point2D src, Point2D dst, float thickness) {
         ArrayList<Line> results = new ArrayList<Line>();
 
@@ -711,7 +728,7 @@ public class ConsumeApp extends GameApplication {
 
         return results;
     }
-    
+
 
     public static void main(String[] args) {
         launch(args);

@@ -9,6 +9,7 @@ import com.almasb.fxgl.GameApplication;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.FXGLEvent;
 import com.almasb.fxgl.physics.CollisionHandler;
+import com.almasb.fxgl.time.TimerManager;
 import com.ergo21.consume.Player;
 
 import javafx.scene.text.Text;
@@ -20,11 +21,6 @@ public class PlayerEnemyHandler extends CollisionHandler {
     public PlayerEnemyHandler(GameApplication app) {
         super(Type.PLAYER, Type.ENEMY);
         this.app = app;
-    }
-
-    @Override
-    public void onCollision(Entity player, Entity enemy) {
-        
     }
 
     @Override
@@ -43,18 +39,18 @@ public class PlayerEnemyHandler extends CollisionHandler {
             e.translateXProperty().bind(player.translateXProperty());
             e.translateYProperty().bind(player.translateYProperty().subtract(20));
 
-            app.addEntities(e);
+            app.getSceneManager().addEntities(e);
 
-            app.runOnceAfter(() -> {
+            app.getTimerManager().runOnceAfter(() -> {
             	if(player.getControl(PhysicsControl.class).getVelocity().getX() == velocityX){
             		player.getControl(PhysicsControl.class).moveX(0);
                 }
-            }, GameApplication.SECOND/2);
+            }, TimerManager.SECOND/2);
 
-            app.runOnceAfter(() -> {
-                app.removeEntity(e);
+            app.getTimerManager().runOnceAfter(() -> {
+                app.getSceneManager().removeEntity(e);
                 player.setCollidable(true);
-            }, 2 * GameApplication.SECOND);
+            }, 2 * TimerManager.SECOND);
         }
         else{
         	enemy.fireFXGLEvent(new FXGLEvent(Event.ENEMY_HIT_PLAYER));
@@ -66,18 +62,12 @@ public class PlayerEnemyHandler extends CollisionHandler {
             e.translateXProperty().bind(player.translateXProperty());
             e.translateYProperty().bind(player.translateYProperty().subtract(20));
 
-            app.addEntities(e);
+            app.getSceneManager().addEntities(e);
 
-            app.runOnceAfter(() -> {
-                app.removeEntity(e);
+            app.getTimerManager().runOnceAfter(() -> {
+                app.getSceneManager().removeEntity(e);
                 player.setCollidable(true);
-            }, 2 * GameApplication.SECOND);
+            }, 2 * TimerManager.SECOND);
         }
-    }
-
-    @Override
-    public void onCollisionEnd(Entity a, Entity b) {
-        // TODO Auto-generated method stub
-
     }
 }

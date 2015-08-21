@@ -61,16 +61,4 @@ public class PlayerPowerupHandler extends CollisionHandler {
                 break;
         }
     }
-
-    @Override
-    public void onCollisionBegin(Entity a, Entity b) {
-        // TODO Auto-generated method stub
-
-    }
-
-    @Override
-    public void onCollisionEnd(Entity a, Entity b) {
-        // TODO Auto-generated method stub
-
-    }
 }
