@@ -49,7 +49,7 @@ public class GameScene extends Group{
 		c.setMinWidth(50);
 		c.setHalignment(HPos.CENTER);
 		grid.getColumnConstraints().add(c);
-		
+
 		for(String val : values){
 			if(val.equals("END")){
 				break;
@@ -79,12 +79,12 @@ public class GameScene extends Group{
 
 		return true;
 	}
-	
+
 	public void changeScene(List<String> values){
 		currentLine = 0;
 		script.clear();
-		app.getEntities(Type.PLAYER).get(0).getControl(PhysicsControl.class).moveX(0);
-		app.pause();		
+		app.getSceneManager().getEntities(Type.PLAYER).get(0).getControl(PhysicsControl.class).moveX(0);
+		app.pause();
 		for(String val : values){
 			if(val.equals("END")){
 				break;
@@ -97,7 +97,7 @@ public class GameScene extends Group{
 
 			script.add(new SceneLine(nam, assets.getTexture(icoNam), lin));
 		}
-		
+
 		setValues(script.get(currentLine));
 	}
 
@@ -107,7 +107,7 @@ public class GameScene extends Group{
 		//icon = sceneLine.getIcon();
 		icon.setImage(sceneLine.getIcon().getImage());
 	}
-	
+
 	public Assets getAssets(){
 		return assets;
 	}

@@ -32,8 +32,34 @@ public class ProjectileEnemyHandler extends CollisionHandler {
         List<Element> resists = enemyData.getResistances();
         List<Element> weaknesses = enemyData.getWeaknesses();
 
-        int damage = Config.POWER_DAMAGE;
-        String modifier = "x1";
+        int damage = Config.SPEAR_DAMAGE;
+        switch(element){
+        	case NEUTRAL2:{
+        		damage = Config.KNIFE_DAMAGE;
+        		break;
+        	}
+			case CONSUME:
+				damage = enemyData.getMaxHealth();
+				break;
+			case DEATH:
+				damage = Config.DEATH_DAMAGE;
+				break;
+			case EARTH:
+				damage = Config.SAND_DAMAGE;
+				break;
+			case FIRE:
+				damage = Config.FIREBALL_DAMAGE;
+				break;
+			case LIGHTNING:
+				damage = Config.LIGHTNING_DAMAGE;
+				break;
+			case METAL:
+				damage = Config.BULLET_DAMAGE;
+				break;
+			default:
+				break;
+        }
+        String modifier = " x1";
 
         if (resists.contains(element)) {
             damage = (int)(damage * 0.5);
@@ -48,33 +74,21 @@ public class ProjectileEnemyHandler extends CollisionHandler {
                     .setPosition(enemy.getTranslateX(), enemy.getTranslateY())
                     .setGraphics(new Text(damage + "!  " + modifier));
 
-        app.addEntities(e);
+        app.getSceneManager().addEntities(e);
 
         FadeTransition ft = new FadeTransition(Duration.seconds(1.5), e);
         ft.setToValue(0);
         ft.setOnFinished(event -> {
-            app.removeEntity(e);
+            app.getSceneManager().removeEntity(e);
         });
         ft.play();
 
         enemyData.takeDamage(damage);
 
-        app.removeEntity(projectile);
+        app.getSceneManager().removeEntity(projectile);
 
         if (enemyData.getCurrentHealth() <= 0) {
-            app.removeEntity(enemy);
+            app.getSceneManager().removeEntity(enemy);
         }
-    }
-
-    @Override
-    public void onCollisionBegin(Entity a, Entity b) {
-        // TODO Auto-generated method stub
-
-    }
-
-    @Override
-    public void onCollisionEnd(Entity a, Entity b) {
-        // TODO Auto-generated method stub
-
     }
 }

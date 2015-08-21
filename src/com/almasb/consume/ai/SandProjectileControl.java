@@ -14,8 +14,8 @@ public class SandProjectileControl extends AbstractControl {
     private boolean diagonal;
     private long created;
 
-    public SandProjectileControl(boolean facingRight, Entity player, boolean diag) {
-        this.facingRight = facingRight;
+    public SandProjectileControl(Entity player, boolean diag) {
+        this.facingRight = player.getProperty("facingRight");
         this.player = player;
         diagonal = diag;
         created = 0;

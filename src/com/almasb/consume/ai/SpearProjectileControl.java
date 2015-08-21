@@ -10,8 +10,8 @@ public class SpearProjectileControl extends AbstractControl {
 	private boolean facingRight;
     private Entity player;
 
-    public SpearProjectileControl(boolean fR, Entity pl) {
-        facingRight = fR;
+    public SpearProjectileControl(Entity pl) {
+        facingRight = pl.getProperty("facingRight");
     	player = pl;
     }
 
