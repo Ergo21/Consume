@@ -37,7 +37,30 @@ public class ProjectilePlayerHandler extends CollisionHandler {
         List<Element> resists = playerData.getResistances();
         List<Element> weaknesses = playerData.getWeaknesses();
 
-        int damage = Config.POWER_DAMAGE;
+        int damage = Config.SPEAR_DAMAGE;
+        switch(element){
+        	case NEUTRAL2:{
+    			damage = Config.KNIFE_DAMAGE;
+    			break;
+    		}
+			case DEATH:
+				damage = Config.DEATH_DAMAGE;
+				break;
+			case EARTH:
+				damage = Config.SAND_DAMAGE;
+				break;
+			case FIRE:
+				damage = Config.FIREBALL_DAMAGE;
+				break;
+			case LIGHTNING:
+				damage = Config.LIGHTNING_DAMAGE;
+				break;
+			case METAL:
+				damage = Config.BULLET_DAMAGE;
+				break;
+			default:
+				break;
+        }
         String modifier = "x1";
 
         if (resists.contains(element)) {
