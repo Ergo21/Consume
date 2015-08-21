@@ -1,5 +1,12 @@
 package com.almasb.consume.ai;
 
+import com.almasb.consume.ConsumeApp;
+import com.almasb.fxgl.GameApplication;
+import com.almasb.fxgl.asset.Texture;
+import com.almasb.fxgl.entity.Control;
+import com.almasb.fxgl.entity.Entity;
+import com.almasb.fxgl.time.TimerManager;
+
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
@@ -13,18 +20,12 @@ import javafx.scene.image.WritableImage;
 import javafx.scene.paint.Color;
 import javafx.util.Duration;
 
-import com.almasb.consume.ConsumeApp;
-import com.almasb.fxgl.GameApplication;
-import com.almasb.fxgl.asset.Texture;
-import com.almasb.fxgl.entity.Control;
-import com.almasb.fxgl.entity.Entity;
-
 public class AnimatedPlayerControl implements Control {
-    
+
     private Texture spritesheet;
-    
+
     private enum CurAnim{IDLER, IDLEL, MOVER, MOVEL};
-    
+
     private CurAnim current;
 
     public AnimatedPlayerControl(Texture t) {
@@ -38,13 +39,13 @@ public class AnimatedPlayerControl implements Control {
         	if(pc.getVelocity().getX() == 0){
         		if(current != CurAnim.IDLER && entity.<Boolean>getProperty("facingRight")){
         			ImageView t = subTexture(new Rectangle2D(150,0,90,30), spritesheet);
-        			LocalAnimatedTexture sAT = new LocalAnimatedTexture(t.getImage(), 3, ConsumeApp.SECOND);
+        			LocalAnimatedTexture sAT = new LocalAnimatedTexture(t.getImage(), 3, TimerManager.SECOND);
         			entity.setGraphics(sAT);
         			current = CurAnim.IDLER;
         		}
         		else if (current != CurAnim.IDLEL && !entity.<Boolean>getProperty("facingRight")){
         			ImageView t = subTexture(new Rectangle2D(60,0,90,30), spritesheet);
-        			LocalAnimatedTexture sAT = new LocalAnimatedTexture(t.getImage(), 3, ConsumeApp.SECOND);
+        			LocalAnimatedTexture sAT = new LocalAnimatedTexture(t.getImage(), 3, TimerManager.SECOND);
         			entity.setGraphics(sAT);
         			current = CurAnim.IDLEL;
         		}
@@ -52,21 +53,21 @@ public class AnimatedPlayerControl implements Control {
         	else if (pc.getVelocity().getX() != 0){
         		if(current != CurAnim.MOVER && entity.<Boolean>getProperty("facingRight")){
         			ImageView t = subTexture(new Rectangle2D(180,30,120,30), spritesheet);
-        			LocalAnimatedTexture sAT = new LocalAnimatedTexture(t.getImage(), 4, ConsumeApp.SECOND);
+        			LocalAnimatedTexture sAT = new LocalAnimatedTexture(t.getImage(), 4, TimerManager.SECOND);
         			entity.setGraphics(sAT);
         			current = CurAnim.MOVER;
         		}
         		else if (current != CurAnim.MOVEL && !entity.<Boolean>getProperty("facingRight")){
         			ImageView t = subTexture(new Rectangle2D(0,30,120,30), spritesheet);
-        			LocalAnimatedTexture sAT = new LocalAnimatedTexture(t.getImage(), 4, ConsumeApp.SECOND);
+        			LocalAnimatedTexture sAT = new LocalAnimatedTexture(t.getImage(), 4, TimerManager.SECOND);
         			entity.setGraphics(sAT);
         			current = CurAnim.MOVEL;
         		}
         	}
         }
-        
+
     }
-    
+
     public ImageView subTexture(Rectangle2D area, Texture ss) {
         int minX = (int) area.getMinX();
         int minY = (int) area.getMinY();
@@ -95,7 +96,7 @@ public class AnimatedPlayerControl implements Control {
 
         return new ImageView(image);
     }
-    
+
     public final class LocalAnimatedTexture extends ImageView {
 
         private Timeline timeline;
@@ -122,7 +123,7 @@ public class AnimatedPlayerControl implements Control {
                 this.setViewport(new Rectangle2D(newValue.intValue() * frameW, 0, frameW, image.getHeight()));
             });
 
-            timeline = new Timeline(new KeyFrame(Duration.seconds(duration / GameApplication.SECOND), new KeyValue(frameProperty, frames - 1)));
+            timeline = new Timeline(new KeyFrame(Duration.seconds(duration / TimerManager.SECOND), new KeyValue(frameProperty, frames - 1)));
             timeline.setCycleCount(Timeline.INDEFINITE);
             timeline.play();
         }

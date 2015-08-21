@@ -74,33 +74,21 @@ public class ProjectileEnemyHandler extends CollisionHandler {
                     .setPosition(enemy.getTranslateX(), enemy.getTranslateY())
                     .setGraphics(new Text(damage + "!  " + modifier));
 
-        app.addEntities(e);
+        app.getSceneManager().addEntities(e);
 
         FadeTransition ft = new FadeTransition(Duration.seconds(1.5), e);
         ft.setToValue(0);
         ft.setOnFinished(event -> {
-            app.removeEntity(e);
+            app.getSceneManager().removeEntity(e);
         });
         ft.play();
 
         enemyData.takeDamage(damage);
 
-        app.removeEntity(projectile);
+        app.getSceneManager().removeEntity(projectile);
 
         if (enemyData.getCurrentHealth() <= 0) {
-            app.removeEntity(enemy);
+            app.getSceneManager().removeEntity(enemy);
         }
-    }
-
-    @Override
-    public void onCollisionBegin(Entity a, Entity b) {
-        // TODO Auto-generated method stub
-
-    }
-
-    @Override
-    public void onCollisionEnd(Entity a, Entity b) {
-        // TODO Auto-generated method stub
-
     }
 }
