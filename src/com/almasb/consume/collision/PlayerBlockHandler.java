@@ -41,7 +41,7 @@ public class PlayerBlockHandler extends CollisionHandler {
 
     @Override
     public void onCollisionBegin(Entity player, Entity block) {
-    	if (block.getProperty(Property.SUB_TYPE) == Block.SCENE){
+    	if (block.getProperty(Property.SUB_TYPE) == Block.SCENE && !(boolean)block.getProperty("played")){
         	block.setProperty("played", true);
         	block.setVisible(false);
         	String sNam = block.getProperty("sceneName");

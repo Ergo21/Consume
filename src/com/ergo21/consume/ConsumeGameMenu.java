@@ -36,6 +36,8 @@ import com.almasb.fxgl.ui.Menu;
 import com.almasb.fxgl.util.Version;
 
 import javafx.beans.binding.Bindings;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Alert;
@@ -74,9 +76,11 @@ public final class ConsumeGameMenu extends Menu {
 
     private PowerGroup powerList;
     private AnchorPane contentViewer;
-
+    private ConsumeApp consApp;
+    
     public ConsumeGameMenu(ConsumeApp app) {
         super(app);
+        consApp = app;
         
         powerList = new PowerGroup();
         
@@ -219,23 +223,42 @@ public final class ConsumeGameMenu extends Menu {
         return new MenuBox(5, itemControls, itemVideo, itemAudio, itemCredits);
     }
 
-    public void createPowerMenu(Player playerData) {
+    public void updatePowerMenu(Player playerData) {
     	ArrayList<MenuItem> pItems = new ArrayList<MenuItem>();
     	
         for(Element power : playerData.getPowers()){
         	MenuItem itemPower = new MenuItem("" + power);
+        	itemPower.setElement(power);
             itemPower.setAction(() -> {
             	for(MenuItem item : pItems){
             		item.setHighlighted(false);
             	}
             	itemPower.setHighlighted(true);
-            	playerData.setCurrentPower(power);
+            	consApp.changePower(power);
+            	//playerData.setCurrentPower(power);
             });
             if(playerData.getCurrentPower() == power){
             	itemPower.setHighlighted(true);
             }
             pItems.add(itemPower);
         }
+        
+        playerData.ElementProperty().addListener(new ChangeListener<Element>(){
+			@Override
+			public void changed(ObservableValue<? extends Element> cha,
+					Element old, Element now) {
+				for(MenuItem item : pItems){
+					if(item.getElement() == old){
+						item.setHighlighted(false);
+					}
+					
+					if(item.getElement() == now){
+						item.setHighlighted(true);
+					}
+				}
+			}
+        	
+        });
         
         powerList.addItems(pItems);
         
@@ -314,6 +337,7 @@ public final class ConsumeGameMenu extends Menu {
     }
 
     private class MenuItem extends StackPane {
+    	private Element thiElement;
     	private boolean highlight;
     	
     	private Text text;
@@ -390,6 +414,14 @@ public final class ConsumeGameMenu extends Menu {
         public boolean getHighlighted(){
         	return highlight;
         }
+        
+        public Element getElement(){
+        	return thiElement;
+        }
+        
+        public void setElement(Element e){
+        	thiElement = e;
+        }
     }
     
     private class PowerGroup extends GridPane{
@@ -397,10 +429,10 @@ public final class ConsumeGameMenu extends Menu {
     		super();
     		this.setVgap(3);
     		this.setHgap(3);
-    		this.setGridLinesVisible(true);
     	}
     	
     	public void addItems(ArrayList<MenuItem> items){
+    		this.getChildren().clear();
     		int val = 0;
     		for(MenuItem item : items){
     			this.add(item, val%3, val/3);

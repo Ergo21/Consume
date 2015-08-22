@@ -108,8 +108,6 @@ public class ConsumeApp extends GameApplication {
         playerData.getPowers().add(Element.DEATH);
         playerData.getPowers().add(Element.CONSUME);
         fired = false;
-        
-        consGameMenu.createPowerMenu(playerData);
 
         initLevels();
 
@@ -245,6 +243,20 @@ public class ConsumeApp extends GameApplication {
     	
     	return consGameMenu;
     }
+    
+    @Override
+    protected void postInit(){
+    	hud.CurHealthProperty().bind(playerData.CurrentHealthProperty());
+    	hud.CurManaProperty().bind(playerData.CurrentManaProperty());
+    	hud.MaxHealthProperty().bind(playerData.MaxHealthProperty());
+    	hud.MaxManaProperty().bind(playerData.MaxManaProperty());
+    	
+    	Text tTex = new Text();
+    	tTex.textProperty().bind(playerData.ElementProperty().asString());
+    	powerStatus.setGraphics(tTex);
+    	
+    	consGameMenu.updatePowerMenu(playerData);
+    }
 
     @Override
     protected void onUpdate() {
@@ -258,12 +270,6 @@ public class ConsumeApp extends GameApplication {
             playerData.regenMana();
             regenTime = getNow();
         }
-
-        // leave manual update for now
-        hud.setCurHealth(playerData.getCurrentHealth());
-        hud.setCurMana(playerData.getCurrentMana());
-        hud.setMaxHealth(playerData.getMaxHealth());
-        hud.setMaxMana(playerData.getMaxMana());
 
         for (Entity e : sceneManager.getEntities(Type.BLOCK)) {
             if (e.getProperty(Property.SUB_TYPE) == Block.BARRIER
@@ -343,7 +349,7 @@ public class ConsumeApp extends GameApplication {
                 sceneManager.removeEntity(e);
             }, Config.ENEMY_CHARGE_DELAY);
         });
-
+        
         sceneManager.addEntities(testEnemy);
 
         Entity testEnemy2 = new Entity(Type.ENEMY);
@@ -392,7 +398,7 @@ public class ConsumeApp extends GameApplication {
 
 
 
-        powerStatus = Entity.noType().setGraphics(new Text(playerData.getCurrentPower().toString()));
+        powerStatus = Entity.noType();
         powerStatus.translateXProperty().bind(player.translateXProperty());
         powerStatus.translateYProperty().bind(player.translateYProperty().subtract(40));
 
@@ -678,15 +684,17 @@ public class ConsumeApp extends GameApplication {
         sceneManager.addEntities(e);
     }
 
-    private void changePower(){
+    public void changePower(){
     	int ind = playerData.getPowers().indexOf(playerData.getCurrentPower());
     	ind++;
     	if(ind >= playerData.getPowers().size()){
     		ind = 0;
     	}
     	playerData.setCurrentPower(playerData.getPowers().get(ind));
-
-    	powerStatus.setGraphics(new Text(playerData.getCurrentPower().toString()));
+    }
+    
+    public void changePower(Element e){
+    	playerData.setCurrentPower(e);
     }
 
     private List<Line> createBolt(Point2D src, Point2D dst, float thickness) {

@@ -12,35 +12,23 @@ public class Player extends Enemy {
     public Player(List<String> prop) {
         super(prop);
         powers.add(Element.NEUTRAL);
-        curElement = powers.get(0);
-    }
-
-    public void setMaxHealth(int mH) {
-        mHealth = mH;
-    }
-
-    public void setMaxMana(int mM) {
-        mMana = mM;
-    }
-
-    public void setManaRegenRate(int mR) {
-        manaR = mR;
+        curElement.set(powers.get(0));
     }
 
     public void increaseMaxHealth(int value) {
-        mHealth += value;
+        maxHealth.set(maxHealth.get() + value);
     }
 
     public void increaseMaxMana(int value) {
-        mMana += value;
+        maxMana.set(maxMana.get() + value);
     }
 
     public void increaseManaRegen(int value) {
-        manaR += value;
+        manaReg.set(manaReg.get() + value); 
     }
 
     public Element getCurrentPower() {
-        return curElement;
+        return curElement.get();
     }
 
     public ArrayList<Element> getPowers() {
@@ -48,8 +36,8 @@ public class Player extends Enemy {
     }
 
     public void setCurrentPower(Element p) {
-        curElement = p;
-        switch (curElement) {
+        curElement.set(p);
+        switch (curElement.get()) {
             case NEUTRAL: case NEUTRAL2: case CONSUME:{
                 resists.clear();
                 weaks.clear();
