@@ -40,6 +40,9 @@ import com.almasb.fxgl.entity.FXGLEvent;
 import com.almasb.fxgl.event.UserAction;
 import com.almasb.fxgl.physics.CollisionHandler;
 import com.almasb.fxgl.time.TimerManager;
+import com.almasb.fxgl.ui.FXGLGameMenu;
+import com.almasb.fxgl.ui.Menu;
+import com.ergo21.consume.ConsumeGameMenu;
 import com.ergo21.consume.Enemy;
 import com.ergo21.consume.GameScene;
 import com.ergo21.consume.Player;
@@ -69,6 +72,7 @@ public class ConsumeApp extends GameApplication {
     private int currentLevel = 0;
 
     private PlayerHUD hud;
+    private ConsumeGameMenu consGameMenu;
     private Text performance = new Text();
 
     private long regenTime = 0;
@@ -82,9 +86,9 @@ public class ConsumeApp extends GameApplication {
         settings.setWidth(640);
         settings.setHeight(360);
         settings.setIntroEnabled(false);
-        settings.setMenuEnabled(false);
+        settings.setMenuEnabled(true);
         settings.setIconFileName("app_icon.png");
-        settings.setShowFPS(true);
+        settings.setShowFPS(false);
     }
 
     @Override
@@ -104,6 +108,8 @@ public class ConsumeApp extends GameApplication {
         playerData.getPowers().add(Element.DEATH);
         playerData.getPowers().add(Element.CONSUME);
         fired = false;
+        
+        consGameMenu.createPowerMenu(playerData);
 
         initLevels();
 
@@ -231,6 +237,13 @@ public class ConsumeApp extends GameApplication {
                 changePower();
             }
         }, KeyCode.E);
+    }
+    
+    @Override
+    protected ConsumeGameMenu initGameMenu(){
+    	consGameMenu = new ConsumeGameMenu(this);
+    	
+    	return consGameMenu;
     }
 
     @Override
