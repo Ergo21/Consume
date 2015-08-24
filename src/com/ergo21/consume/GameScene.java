@@ -3,9 +3,9 @@ package com.ergo21.consume;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.almasb.consume.ConsumeApp;
 import com.almasb.consume.Types.Type;
 import com.almasb.consume.ai.PhysicsControl;
-import com.almasb.fxgl.GameApplication;
 import com.almasb.fxgl.asset.Assets;
 
 import javafx.geometry.HPos;
@@ -24,9 +24,9 @@ public class GameScene extends Group{
 	private Text line;
 	private ImageView icon;
 	private Assets assets;
-	private GameApplication app;
+	private ConsumeApp app;
 
-	public GameScene(List<String> values, Assets as, GameApplication a){
+	public GameScene(List<String> values, Assets as, ConsumeApp a){
 		super();
 		assets = as;
 		app = a;
@@ -68,7 +68,7 @@ public class GameScene extends Group{
 
 	public boolean updateScript(){
 		if(currentLine + 1 >= script.size()){
-			this.setVisible(false);
+			endScene();
 			return false;
 		}
 		else{
@@ -97,6 +97,16 @@ public class GameScene extends Group{
 		}
 
 		setValues(script.get(currentLine));
+	}
+	
+	public void playScene(){
+		this.setVisible(true);
+		app.player.setProperty("stunned", true);
+	}
+	
+	public void endScene(){
+		this.setVisible(false);
+		app.player.setProperty("stunned", false);
 	}
 
 	private void setValues(SceneLine sceneLine) {

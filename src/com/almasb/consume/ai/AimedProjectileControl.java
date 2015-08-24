@@ -35,4 +35,8 @@ public class AimedProjectileControl extends AbstractControl {
             entity.fireFXGLEvent(new FXGLEvent(Event.DEATH));
         }
     }
+    
+    public int getVelocityX(){
+    	return Math.round(-(float)Math.sin(angle)*Speed.PROJECTILE);
+    }
 }

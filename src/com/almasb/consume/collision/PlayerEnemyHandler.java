@@ -35,6 +35,7 @@ public class PlayerEnemyHandler extends CollisionHandler {
             enemy.fireFXGLEvent(new FXGLEvent(Event.ENEMY_HIT_PLAYER));
 
             player.setCollidable(false);
+            player.setProperty("stunned", true);
             Entity e = Entity.noType().setGraphics(new Text("INVINCIBLE"));
             e.translateXProperty().bind(player.translateXProperty());
             e.translateYProperty().bind(player.translateYProperty().subtract(20));
@@ -42,9 +43,8 @@ public class PlayerEnemyHandler extends CollisionHandler {
             app.getSceneManager().addEntities(e);
 
             app.getTimerManager().runOnceAfter(() -> {
-            	if(player.getControl(PhysicsControl.class).getVelocity().getX() == velocityX){
-            		player.getControl(PhysicsControl.class).moveX(0);
-                }
+            	player.getControl(PhysicsControl.class).moveX(0);
+            	player.setProperty("stunned", false);
             }, TimerManager.SECOND/2);
 
             app.getTimerManager().runOnceAfter(() -> {
@@ -58,11 +58,20 @@ public class PlayerEnemyHandler extends CollisionHandler {
         	playerData.setCurrentHealth(playerData.getCurrentHealth() - 1);
 
             player.setCollidable(false);
+            player.setProperty("stunned", true);
             Entity e = Entity.noType().setGraphics(new Text("INVINCIBLE"));
             e.translateXProperty().bind(player.translateXProperty());
             e.translateYProperty().bind(player.translateYProperty().subtract(20));
 
             app.getSceneManager().addEntities(e);
+            
+            int velocityX = (int) enemy.getControl(PhysicsControl.class).getVelocity().getX();
+            player.getControl(PhysicsControl.class).moveX(velocityX);
+            
+            app.getTimerManager().runOnceAfter(() -> {
+            	player.getControl(PhysicsControl.class).moveX(0);
+            	player.setProperty("stunned", false);
+            }, TimerManager.SECOND/2);
 
             app.getTimerManager().runOnceAfter(() -> {
                 app.getSceneManager().removeEntity(e);

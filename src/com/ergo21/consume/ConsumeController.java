@@ -54,7 +54,7 @@ public class ConsumeController {
 		consApp.getInputManager().addAction(new UserAction("Move Left") {
             @Override
             protected void onAction() {
-            	if(!consApp.gScene.isVisible()){
+            	if(!(boolean)consApp.player.getProperty("stunned")){
             		consApp.player.getControl(PhysicsControl.class).moveX(-Speed.PLAYER_MOVE);
                     consApp.player.setProperty("facingRight", false);
             	}          
@@ -62,7 +62,7 @@ public class ConsumeController {
 
             @Override
             protected void onActionEnd() {
-            	if(!consApp.gScene.isVisible()){
+            	if(!(boolean)consApp.player.getProperty("stunned")){
             		consApp.player.getControl(PhysicsControl.class).moveX(0);
             	}
             }
@@ -71,7 +71,7 @@ public class ConsumeController {
 		consApp.getInputManager().addAction(new UserAction("Move Right") {
             @Override
             protected void onAction() {
-            	if(!consApp.gScene.isVisible()){
+            	if(!(boolean)consApp.player.getProperty("stunned")){
             		consApp.player.getControl(PhysicsControl.class).moveX(Speed.PLAYER_MOVE);
             		consApp.player.setProperty("facingRight", true);
             	}
@@ -79,7 +79,7 @@ public class ConsumeController {
 
             @Override
             protected void onActionEnd() {
-            	if(!consApp.gScene.isVisible()){
+            	if(!(boolean)consApp.player.getProperty("stunned")){
             		consApp.player.getControl(PhysicsControl.class).moveX(0);
             	}
             }
@@ -88,7 +88,7 @@ public class ConsumeController {
 		consApp.getInputManager().addAction(new UserAction("Jump / Climb Up") {
             @Override
             protected void onAction() {
-            	if(!consApp.gScene.isVisible()){
+            	if(!(boolean)consApp.player.getProperty("stunned")){
             		if (consApp.player.<Boolean>getProperty("climbing"))
                     	consApp.player.getControl(PhysicsControl.class).climb(-5);
                 	else
@@ -100,7 +100,7 @@ public class ConsumeController {
 		consApp.getInputManager().addAction(new UserAction("Climb Down") {
             @Override
             protected void onAction() {
-            	if(!consApp.gScene.isVisible()){
+            	if(!(boolean)consApp.player.getProperty("stunned")){
             		if (consApp.player.<Boolean>getProperty("climbing")) {
             			consApp.player.getControl(PhysicsControl.class).climb(5);
             		}
@@ -111,7 +111,7 @@ public class ConsumeController {
 		consApp.getInputManager().addAction(new UserAction("Shoot") {
             @Override
             protected void onActionBegin() {
-            	if(!consApp.gScene.isVisible()){
+            	if(!(boolean)consApp.player.getProperty("stunned")){
             		shootProjectile();
             	}
             }
@@ -120,7 +120,7 @@ public class ConsumeController {
 		consApp.getInputManager().addAction(new UserAction("Change Power") {
             @Override
             protected void onActionBegin() {
-            	if(!consApp.gScene.isVisible()){
+            	if(!(boolean)consApp.player.getProperty("stunned")){
             		changePower();
             	}
             }

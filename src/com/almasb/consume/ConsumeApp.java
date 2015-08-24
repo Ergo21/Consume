@@ -108,7 +108,7 @@ public class ConsumeApp extends GameApplication {
         physicsManager.addCollisionHandler(new ProjectileEnemyHandler(this));
         physicsManager.addCollisionHandler(new PlayerBlockHandler((String scName)->{
         	gScene.changeScene(assets.getText(scName));
-        	gScene.setVisible(true);
+        	gScene.playScene();
         }));
         physicsManager.addCollisionHandler(new ProjectilePlayerHandler(this));
 
@@ -129,6 +129,7 @@ public class ConsumeApp extends GameApplication {
         gScene.setTranslateY(300);
         gScene.setScaleX(1.75);
         gScene.setScaleY(1.75);
+        gScene.playScene();
 
         hud = new PlayerHUD(player.<Player>getProperty(Property.DATA).getMaxHealth(),
                 player.<Player>getProperty(Property.DATA).getMaxMana());
@@ -315,6 +316,7 @@ public class ConsumeApp extends GameApplication {
             .setProperty("climb", false)
             .setProperty("climbing", false)
             .setProperty("facingRight", true)
+            .setProperty("stunned", false)
             .addControl(new PhysicsControl(physics));
 
         Rectangle graphics = new Rectangle(15, 30);

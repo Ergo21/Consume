@@ -7,6 +7,8 @@ import com.almasb.consume.Event;
 import com.almasb.consume.Types.Element;
 import com.almasb.consume.Types.Property;
 import com.almasb.consume.Types.Type;
+import com.almasb.consume.ai.AimedProjectileControl;
+import com.almasb.consume.ai.PhysicsControl;
 import com.almasb.fxgl.GameApplication;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.FXGLEvent;
@@ -88,14 +90,28 @@ public class ProjectilePlayerHandler extends CollisionHandler {
 
         playerData.takeDamage(damage);
 
+        int velocityX = (int) projectile.getControl(PhysicsControl.class).getVelocity().getX();
+        if(projectile.getControl(AimedProjectileControl.class) != null){
+        	velocityX = projectile.getControl(AimedProjectileControl.class).getVelocityX();
+        }
+        velocityX = velocityX/2;
+        player.getControl(PhysicsControl.class).moveX(velocityX);
+        
         projectile.fireFXGLEvent(new FXGLEvent(Event.ENEMY_HIT_PLAYER));
 
         player.setCollidable(false);
+        player.setProperty("stunned", true);
+        
         Entity e2 = Entity.noType().setGraphics(new Text("INVINCIBLE"));
         e2.translateXProperty().bind(player.translateXProperty());
         e2.translateYProperty().bind(player.translateYProperty().subtract(20));
 
         app.getSceneManager().addEntities(e2);
+        
+        app.getTimerManager().runOnceAfter(() -> {
+        	player.getControl(PhysicsControl.class).moveX(0);
+        	player.setProperty("stunned", false);
+        }, 0.5 * TimerManager.SECOND);
 
         app.getTimerManager().runOnceAfter(() -> {
             app.getSceneManager().removeEntity(e2);
