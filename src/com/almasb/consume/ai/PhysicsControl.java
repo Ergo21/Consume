@@ -20,9 +20,11 @@ public class PhysicsControl extends AbstractControl {
 
     private Physics physics;
     private Point2D velocity = new Point2D(0, 0);
+    private int jumpStr;
 
     public PhysicsControl(Physics physics) {
         this.physics = physics;
+        jumpStr = Speed.PLAYER_JUMP;
     }
 
     @Override
@@ -57,7 +59,15 @@ public class PhysicsControl extends AbstractControl {
             return;
 
         entity.setProperty("jumping", true);
-        velocity = new Point2D(velocity.getX(), -Speed.PLAYER_JUMP);
+        velocity = new Point2D(velocity.getX(), -jumpStr);
+    }
+    
+    public void setJump(int jump){
+    	jumpStr = jump;
+    }
+    
+    public int getJump(){
+    	return jumpStr;
     }
     
     public void climb(int clSpd) {

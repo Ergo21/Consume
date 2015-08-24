@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+import com.almasb.consume.Config.Speed;
 import com.almasb.consume.LevelParser.Level;
 import com.almasb.consume.LevelParser.LevelData;
 import com.almasb.consume.Types.Block;
@@ -17,6 +18,7 @@ import com.almasb.consume.Types.Type;
 import com.almasb.consume.ai.AnimatedPlayerControl;
 import com.almasb.consume.ai.ChargeControl;
 import com.almasb.consume.ai.PhysicsControl;
+import com.almasb.consume.ai.SimpleJumpControl;
 import com.almasb.consume.ai.SimpleMoveControl;
 import com.almasb.consume.collision.PlayerBlockHandler;
 import com.almasb.consume.collision.PlayerEnemyHandler;
@@ -286,6 +288,20 @@ public class ConsumeApp extends GameApplication {
         testEnemy2.addFXGLEventHandler(Event.DEATH, this::onEnemyDeath);
         testEnemy2.addFXGLEventHandler(Event.ENEMY_SAW_PLAYER, event -> consController.aimedProjectile(testEnemy2, player));
         sceneManager.addEntities(testEnemy2);
+        
+        Entity testEnemy3 = new Entity(Type.ENEMY);
+        Rectangle rect3 = new Rectangle(30, 30);
+        rect3.setFill(Color.RED);
+        testEnemy3.setGraphics(rect3);
+        testEnemy3.setCollidable(true);
+        testEnemy3.setProperty(Property.DATA, new Enemy(assets.getText("enemies/enemy_FireElemental.txt")));
+        testEnemy3.setProperty("physics", physics);
+        testEnemy3.setPosition(spawnPoint.getX() + 1000, spawnPoint.getY() - 90);
+        //testEnemy2.addControl(new AimedProjectileControl(player));
+        testEnemy3.addControl(new PhysicsControl(physics));
+        testEnemy3.addControl(new SimpleJumpControl(player, Speed.ENEMY_JUMP));
+        testEnemy3.addFXGLEventHandler(Event.DEATH, this::onEnemyDeath);
+        sceneManager.addEntities(testEnemy3);
     }
 
 	Entity powerStatus;
@@ -419,9 +435,6 @@ public class ConsumeApp extends GameApplication {
 
         sceneManager.removeEntity(block);
     }
-
-    
-
 
     public static void main(String[] args) {
         launch(args);

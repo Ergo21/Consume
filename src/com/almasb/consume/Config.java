@@ -9,13 +9,15 @@ public final class Config {
         public static final int GRAVITY_MAX = 10;
 
         public static final int PLAYER_MOVE = 3;
-        public static final int PLAYER_JUMP = 8;
+        public static final int PLAYER_JUMP = 6;
 
         public static final double ENEMY_SEEK_ACCEL = 1.5;
         public static final double ENEMY_SEEK_DECEL = 0.05;
         public static final int ENEMY_SEEK_MAX = PLAYER_MOVE * 3;
 
         public static final int ENEMY_PATROL = PLAYER_MOVE + 1;
+        
+        public static final int ENEMY_JUMP = 5;
 
         public static final int PROJECTILE = PLAYER_MOVE + 2;
     }
@@ -30,6 +32,8 @@ public final class Config {
 
     public static final int ENEMY_FIRE_RANGE = 7 * BLOCK_SIZE;
     public static final double ENEMY_FIRE_DELAY = 0.5 * TimerManager.SECOND;
+    
+    public static final double ENEMY_JUMP_DELAY = 1.5 * TimerManager.SECOND;
 
     public static final int MAX_HEALTH_INC = 10;
     public static final int MAX_MANA_INC = 10;
