@@ -69,7 +69,6 @@ public class GameScene extends Group{
 	public boolean updateScript(){
 		if(currentLine + 1 >= script.size()){
 			this.setVisible(false);
-			app.resume();
 			return false;
 		}
 		else{
@@ -84,7 +83,6 @@ public class GameScene extends Group{
 		currentLine = 0;
 		script.clear();
 		app.getSceneManager().getEntities(Type.PLAYER).get(0).getControl(PhysicsControl.class).moveX(0);
-		app.pause();
 		for(String val : values){
 			if(val.equals("END")){
 				break;

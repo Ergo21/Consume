@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-import com.almasb.consume.Config.Speed;
 import com.almasb.consume.LevelParser.Level;
 import com.almasb.consume.LevelParser.LevelData;
 import com.almasb.consume.Types.Block;
@@ -15,17 +14,10 @@ import com.almasb.consume.Types.Platform;
 import com.almasb.consume.Types.Powerup;
 import com.almasb.consume.Types.Property;
 import com.almasb.consume.Types.Type;
-import com.almasb.consume.ai.AimedProjectileControl;
 import com.almasb.consume.ai.AnimatedPlayerControl;
-import com.almasb.consume.ai.BulletProjectileControl;
 import com.almasb.consume.ai.ChargeControl;
-import com.almasb.consume.ai.ConsumeControl;
-import com.almasb.consume.ai.FireballProjectileControl;
-import com.almasb.consume.ai.LightningControl;
 import com.almasb.consume.ai.PhysicsControl;
-import com.almasb.consume.ai.SandProjectileControl;
 import com.almasb.consume.ai.SimpleMoveControl;
-import com.almasb.consume.ai.SpearProjectileControl;
 import com.almasb.consume.collision.PlayerBlockHandler;
 import com.almasb.consume.collision.PlayerEnemyHandler;
 import com.almasb.consume.collision.PlayerPowerupHandler;
@@ -37,11 +29,8 @@ import com.almasb.fxgl.asset.Assets;
 import com.almasb.fxgl.asset.Texture;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.FXGLEvent;
-import com.almasb.fxgl.event.UserAction;
 import com.almasb.fxgl.physics.CollisionHandler;
-import com.almasb.fxgl.time.TimerManager;
-import com.almasb.fxgl.ui.FXGLGameMenu;
-import com.almasb.fxgl.ui.Menu;
+import com.ergo21.consume.ConsumeController;
 import com.ergo21.consume.ConsumeGameMenu;
 import com.ergo21.consume.Enemy;
 import com.ergo21.consume.GameScene;
@@ -50,12 +39,7 @@ import com.ergo21.consume.PlayerHUD;
 
 import javafx.geometry.Point2D;
 import javafx.geometry.Rectangle2D;
-import javafx.scene.Group;
-import javafx.scene.effect.DropShadow;
-import javafx.scene.effect.Glow;
-import javafx.scene.input.KeyCode;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 
@@ -63,10 +47,10 @@ public class ConsumeApp extends GameApplication {
 
     private Assets assets;
 
-    private Entity player;
-    private Player playerData;
+    public Entity player;
+    public Player playerData;
 
-    private Physics physics = new Physics(this);
+    public Physics physics = new Physics(this);
 
     private List<Level> levels;
     private int currentLevel = 0;
@@ -77,7 +61,8 @@ public class ConsumeApp extends GameApplication {
 
     private long regenTime = 0;
 
-    private GameScene gScene;
+    public GameScene gScene;
+    public ConsumeController consController;
 
     @Override
     protected void initSettings(GameSettings settings) {
@@ -107,11 +92,11 @@ public class ConsumeApp extends GameApplication {
         playerData.getPowers().add(Element.METAL);
         playerData.getPowers().add(Element.DEATH);
         playerData.getPowers().add(Element.CONSUME);
-        fired = false;
 
         initLevels();
 
-        loadNextLevel();
+        currentLevel = 0;
+        loadLevel(currentLevel++);
     }
 
     @Override
@@ -128,7 +113,7 @@ public class ConsumeApp extends GameApplication {
         physicsManager.addCollisionHandler(new CollisionHandler(Type.PLAYER, Type.NEXT_LEVEL_POINT) {
             @Override
             public void onCollisionBegin(Entity a, Entity b) {
-                loadNextLevel();
+                loadLevel(currentLevel++);
             }
         });
     }
@@ -142,13 +127,6 @@ public class ConsumeApp extends GameApplication {
         gScene.setTranslateY(300);
         gScene.setScaleX(1.75);
         gScene.setScaleY(1.75);
-
-        inputManager.addAction(new UserAction("Update Script") {
-            @Override
-            protected void onActionBegin() {
-                gScene.updateScript();
-            }
-        }, KeyCode.ENTER);
 
         hud = new PlayerHUD(player.<Player>getProperty(Property.DATA).getMaxHealth(),
                 player.<Player>getProperty(Property.DATA).getMaxMana());
@@ -177,64 +155,8 @@ public class ConsumeApp extends GameApplication {
 
     @Override
     protected void initInput() {
-        inputManager.addAction(new UserAction("Move Left") {
-            @Override
-            protected void onAction() {
-                player.getControl(PhysicsControl.class).moveX(-Speed.PLAYER_MOVE);
-                player.setProperty("facingRight", false);
-            }
-
-            @Override
-            protected void onActionEnd() {
-                player.getControl(PhysicsControl.class).moveX(0);
-            }
-        }, KeyCode.A);
-
-        inputManager.addAction(new UserAction("Move Right") {
-            @Override
-            protected void onAction() {
-                player.getControl(PhysicsControl.class).moveX(Speed.PLAYER_MOVE);
-                player.setProperty("facingRight", true);
-            }
-
-            @Override
-            protected void onActionEnd() {
-                player.getControl(PhysicsControl.class).moveX(0);
-            }
-        }, KeyCode.D);
-
-        inputManager.addAction(new UserAction("Jump / Climb Up") {
-            @Override
-            protected void onAction() {
-                if (player.<Boolean>getProperty("climbing"))
-                    player.getControl(PhysicsControl.class).climb(-5);
-                else
-                    player.getControl(PhysicsControl.class).jump();
-            }
-        }, KeyCode.W);
-
-        inputManager.addAction(new UserAction("Climb Down") {
-            @Override
-            protected void onAction() {
-                if (player.<Boolean>getProperty("climbing")) {
-                    player.getControl(PhysicsControl.class).climb(5);
-                }
-            }
-        }, KeyCode.S);
-
-        inputManager.addAction(new UserAction("Shoot") {
-            @Override
-            protected void onActionBegin() {
-                shootProjectile();
-            }
-        }, KeyCode.Q);
-
-        inputManager.addAction(new UserAction("Change Power") {
-            @Override
-            protected void onActionBegin() {
-                changePower();
-            }
-        }, KeyCode.E);
+    	consController = new ConsumeController(this);
+    	consController.initControls();
     }
     
     @Override
@@ -250,10 +172,6 @@ public class ConsumeApp extends GameApplication {
     	hud.CurManaProperty().bind(playerData.CurrentManaProperty());
     	hud.MaxHealthProperty().bind(playerData.MaxHealthProperty());
     	hud.MaxManaProperty().bind(playerData.MaxManaProperty());
-    	
-    	Text tTex = new Text();
-    	tTex.textProperty().bind(playerData.ElementProperty().asString());
-    	powerStatus.setGraphics(tTex);
     	
     	consGameMenu.updatePowerMenu(playerData);
     }
@@ -306,10 +224,10 @@ public class ConsumeApp extends GameApplication {
         debug.setText("Debug text goes here");
     }
 
-	private void loadNextLevel() {
-	    sceneManager.getEntities().forEach(sceneManager::removeEntity);
-
-        Level level = levels.get(currentLevel++);
+	private void loadLevel(int lev) {
+		sceneManager.getEntities().forEach(sceneManager::removeEntity);
+		
+        Level level = levels.get(lev);
         Point2D spawnPoint = level.getSpawnPoint();
 
         // add level objects
@@ -322,8 +240,10 @@ public class ConsumeApp extends GameApplication {
 
             sceneManager.addEntities(e);
         }
+        
         // add player
         initPlayer(spawnPoint);
+        
 
         // TODO: remove after test
         Entity testEnemy = new Entity(Type.ENEMY);
@@ -364,7 +284,7 @@ public class ConsumeApp extends GameApplication {
         //testEnemy2.addControl(new AimedProjectileControl(player));
         testEnemy2.addControl(new SimpleMoveControl(player));
         testEnemy2.addFXGLEventHandler(Event.DEATH, this::onEnemyDeath);
-        testEnemy2.addFXGLEventHandler(Event.ENEMY_SAW_PLAYER, event -> aimedProjectile(testEnemy2, player));
+        testEnemy2.addFXGLEventHandler(Event.ENEMY_SAW_PLAYER, event -> consController.aimedProjectile(testEnemy2, player));
         sceneManager.addEntities(testEnemy2);
     }
 
@@ -396,11 +316,12 @@ public class ConsumeApp extends GameApplication {
 
 		sceneManager.bindViewportOrigin(player, 320, 180);
 
-
-
         powerStatus = Entity.noType();
         powerStatus.translateXProperty().bind(player.translateXProperty());
         powerStatus.translateYProperty().bind(player.translateYProperty().subtract(40));
+        Text tTex = new Text();
+    	tTex.textProperty().bind(playerData.ElementProperty().asString());
+    	powerStatus.setGraphics(tTex);
 
         sceneManager.addEntities(powerStatus);
 
@@ -482,7 +403,7 @@ public class ConsumeApp extends GameApplication {
         sceneManager.addEntities(e);
     }
 
-    private void destroyBlock(Entity block) {
+    public void destroyBlock(Entity block) {
         block.setProperty("state", "dying");
 
         for (Entity b : sceneManager.getEntitiesInRange(
@@ -499,256 +420,7 @@ public class ConsumeApp extends GameApplication {
         sceneManager.removeEntity(block);
     }
 
-    private Entity spear;
-    private boolean fired;
-    private void shootProjectile() {
-        Element element = playerData.getCurrentPower();
-
-        Entity e = new Entity(Type.PLAYER_PROJECTILE);
-        e.setProperty(Property.SUB_TYPE, element);
-        e.setPosition(player.getPosition().add((player.getWidth()/2), 0));
-        e.setCollidable(true);
-        e.setGraphics(new Rectangle(10, 1));
-        e.addControl(new PhysicsControl(physics));
-        e.addFXGLEventHandler(Event.COLLIDED_PLATFORM, event -> {
-            Entity platform = event.getSource();
-            sceneManager.removeEntity(e);
-
-            if (platform.getProperty(Property.SUB_TYPE) == Platform.DESTRUCTIBLE) {
-                destroyBlock(platform);
-            }
-        });
-        e.addFXGLEventHandler(Event.DEATH, event -> {
-            sceneManager.removeEntity(event.getTarget());
-        });
-
-        switch(element){
-        	case NEUTRAL:{
-                e.addControl(new SpearProjectileControl(player));
-                if(spear == null || !sceneManager.getEntities().contains(spear)){
-                	spear = e;
-                }
-                else{
-                	return;
-                }
-        		break;
-        	}
-        	case NEUTRAL2:{
-        		e.setVisible(true);
-        		e.setCollidable(true);
-        		e.setGraphics(new Rectangle(0, 0,
-        				player.getWidth()/2, player.getHeight()));
-        		e.setProperty(Property.ENABLE_GRAVITY, false);
-        		e.addControl(new ConsumeControl(player));
-        		break;
-        	}
-        	case FIRE:{
-                e.addControl(new FireballProjectileControl(player));
-                e.setProperty(Property.ENABLE_GRAVITY, false);
-                if(playerData.getCurrentMana() >= Config.FIREBALL_COST){
-                	playerData.setCurrentMana(playerData.getCurrentMana() - Config.FIREBALL_COST);
-                }
-                else {
-                	return;
-                }
-        		break;
-        	}
-        	case EARTH:{
-        		 if(playerData.getCurrentMana() >= Config.SAND_COST){
-                 	playerData.setCurrentMana(playerData.getCurrentMana() - Config.SAND_COST);
-                 }
-                 else {
-                 	return;
-                 }
-        		Point2D p = player.getPosition();
-        		if((boolean)player.getProperty("facingRight")){
-        			p = p.add(player.getWidth(), 0);
-        		}
-        		else{
-        			p = p.add(-e.getWidth(), 0);
-        		}
-                e.setPosition(p);
-        		e.addControl(new SandProjectileControl(player, false));
-        		e.setProperty(Property.ENABLE_GRAVITY, false);
-
-
-                Entity e2 = new Entity(Type.PLAYER_PROJECTILE);
-                e2.setProperty(Property.SUB_TYPE, element);
-                e2.setPosition(p);
-                e2.setCollidable(true);
-                e2.setGraphics(new Rectangle(10, 1));
-                e2.addControl(new PhysicsControl(physics));
-                e2.addFXGLEventHandler(Event.COLLIDED_PLATFORM, event -> {
-                    Entity platform = event.getSource();
-                    sceneManager.removeEntity(e2);
-
-                    if (platform.getProperty(Property.SUB_TYPE) == Platform.DESTRUCTIBLE) {
-                        destroyBlock(platform);
-                    }
-                });
-                e2.addFXGLEventHandler(Event.DEATH, event -> {
-                    sceneManager.removeEntity(event.getTarget());
-                });
-                e2.addControl(new SandProjectileControl(player, true));
-        		e2.setProperty(Property.ENABLE_GRAVITY, false);
-
-        		sceneManager.addEntities(e2);
-        		break;
-        	}
-        	case METAL:{
-        		if(playerData.getCurrentMana() >= Config.BULLET_COST){
-                	playerData.setCurrentMana(playerData.getCurrentMana() - Config.BULLET_COST);
-                }
-                else {
-                	return;
-                }
-        		if(fired){
-        			return;
-        		}
-        		timerManager.runOnceAfter(() -> fired = false, TimerManager.SECOND*3);
-        		fired = true;
-        		e.addControl(new BulletProjectileControl(player));
-                e.setProperty(Property.ENABLE_GRAVITY, false);
-        		break;
-        	}
-        	case LIGHTNING:{
-        		if(playerData.getCurrentMana() >= Config.LIGHTNING_COST){
-                	playerData.setCurrentMana(playerData.getCurrentMana() - Config.LIGHTNING_COST);
-                }
-                else {
-                	return;
-                }
-                e.setVisible(false);
-            	e.setCollidable(false);
-            	Group g = new Group();
-                e.addControl(new PhysicsControl(physics));
-                LightningControl lc = new LightningControl(g);
-                e.addControl(lc);
-        		Point2D p = player.getPosition();
-        		if((boolean)player.getProperty("facingRight")){
-        			p = p.add(player.getWidth() + 30, 0);
-        		}
-        		else{
-        			p = p.add(-e.getWidth() -30, 0);
-        		}
-        		p = p.add(0, player.getHeight());
-                e.setPosition(0,0);
-
-
-                g.getChildren().addAll(createBolt(new Point2D(p.getX(),-200),p, 5));
-                e.setGraphics(g);
-
-                DropShadow shadow = new DropShadow(20, Color.PURPLE);
-                shadow.setInput(new Glow(0.7));
-                g.setEffect(shadow);
-        		e.setProperty(Property.ENABLE_GRAVITY, false);
-        		break;
-        	}
-        	case DEATH:{
-        		break;
-        	}
-        	case CONSUME:{
-        		//e.setVisible(true);
-        		e.setCollidable(true);
-        		e.setGraphics(new Rectangle(0, 0,
-        				player.getWidth()/2, player.getHeight()));
-        		e.setProperty(Property.ENABLE_GRAVITY, false);
-        		e.addControl(new ConsumeControl(player));
-        		break;
-        	}
-        }
-
-        sceneManager.addEntities(e);
-    }
-
-    private void aimedProjectile(Entity source, Entity target){
-    	Enemy sourceData = source.getProperty(Property.DATA);
-    	Type t = Type.ENEMY_PROJECTILE;
-    	if(source == player){
-    		t = Type.PLAYER_PROJECTILE;
-    	}
-
-    	Entity e = new Entity(t);
-    	e.setProperty(Property.SUB_TYPE, sourceData.getElement());
-    	e.setPosition(source.getPosition().add(0, source.getHeight()/2));
-    	e.setCollidable(true);
-        e.setGraphics(new Rectangle(10, 1));
-        e.addControl(new PhysicsControl(physics));
-        e.addControl(new AimedProjectileControl(source, target));
-        e.addFXGLEventHandler(Event.DEATH, event -> {
-            sceneManager.removeEntity(event.getTarget());
-        });
-
-        e.setProperty(Property.ENABLE_GRAVITY, false);
-
-        sceneManager.addEntities(e);
-    }
-
-    public void changePower(){
-    	int ind = playerData.getPowers().indexOf(playerData.getCurrentPower());
-    	ind++;
-    	if(ind >= playerData.getPowers().size()){
-    		ind = 0;
-    	}
-    	playerData.setCurrentPower(playerData.getPowers().get(ind));
-    }
     
-    public void changePower(Element e){
-    	playerData.setCurrentPower(e);
-    }
-
-    private List<Line> createBolt(Point2D src, Point2D dst, float thickness) {
-        ArrayList<Line> results = new ArrayList<Line>();
-
-        Point2D tangent = dst.subtract(src);
-        Point2D normal = new Point2D(tangent.getY(), -tangent.getX()).normalize();
-
-        double length = tangent.magnitude();
-
-        ArrayList<Float> positions = new ArrayList<Float>();
-        positions.add(0.0f);
-
-        for (int i = 0; i < length / 4; i++)
-            positions.add((float)Math.random());
-
-        Collections.sort(positions);
-
-        float sway = 80;
-        float jaggedness = 1 / sway;
-
-        Point2D prevPoint = src;
-        float prevDisplacement = 0;
-        Color c = Color.rgb(245, 230, 250);
-        for (int i = 1; i < positions.size(); i++) {
-            float pos = positions.get(i);
-
-            // used to prevent sharp angles by ensuring very close positions also have small perpendicular variation.
-            double scale = (length * jaggedness) * (pos - positions.get(i - 1));
-
-            // defines an envelope. Points near the middle of the bolt can be further from the central line.
-            float envelope = pos > 0.95f ? 20 * (1 - pos) : 1;
-
-            float displacement = (float)(sway * (Math.random() * 2 - 1));
-            displacement -= (displacement - prevDisplacement) * (1 - scale);
-            displacement *= envelope;
-
-            Point2D point = src.add(tangent.multiply(pos)).add(normal.multiply(displacement));
-
-            Line line = new Line(prevPoint.getX(), prevPoint.getY(), point.getX(), point.getY());
-            line.setStrokeWidth(thickness);
-            line.setStroke(c);
-            results.add(line);
-            prevPoint = point;
-            prevDisplacement = displacement;
-        }
-
-        Line line = new Line(prevPoint.getX(), prevPoint.getY(), dst.getX(), dst.getY());
-        line.setStrokeWidth(thickness);
-        line.setStroke(c);
-        results.add(line);
-
-        return results;
-    }
 
 
     public static void main(String[] args) {

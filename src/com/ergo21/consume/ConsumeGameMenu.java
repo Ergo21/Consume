@@ -234,7 +234,7 @@ public final class ConsumeGameMenu extends Menu {
             		item.setHighlighted(false);
             	}
             	itemPower.setHighlighted(true);
-            	consApp.changePower(power);
+            	consApp.consController.changePower(power);
             	//playerData.setCurrentPower(power);
             });
             if(playerData.getCurrentPower() == power){

@@ -8,12 +8,12 @@ import com.almasb.fxgl.entity.AbstractControl;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.FXGLEvent;
 
-public class ConsumeControl extends AbstractControl {
+public class IngestControl extends AbstractControl {
 
     private Entity player;
     private long created;
 
-    public ConsumeControl(Entity player) {
+    public IngestControl(Entity player) {
         this.player = player;
         created = 0;
     }
