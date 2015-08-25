@@ -1,25 +1,19 @@
 package com.almasb.consume;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
+import java.util.Random;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-import com.almasb.consume.Config.Speed;
 import com.almasb.consume.LevelParser.Level;
 import com.almasb.consume.LevelParser.LevelData;
 import com.almasb.consume.Types.Block;
 import com.almasb.consume.Types.Element;
 import com.almasb.consume.Types.Platform;
-import com.almasb.consume.Types.Powerup;
 import com.almasb.consume.Types.Property;
 import com.almasb.consume.Types.Type;
 import com.almasb.consume.ai.AnimatedPlayerControl;
-import com.almasb.consume.ai.ChargeControl;
 import com.almasb.consume.ai.PhysicsControl;
-import com.almasb.consume.ai.SimpleJumpControl;
-import com.almasb.consume.ai.SimpleMoveControl;
 import com.almasb.consume.collision.PlayerBlockHandler;
 import com.almasb.consume.collision.PlayerEnemyHandler;
 import com.almasb.consume.collision.PlayerPowerupHandler;
@@ -30,29 +24,31 @@ import com.almasb.fxgl.GameSettings;
 import com.almasb.fxgl.asset.Assets;
 import com.almasb.fxgl.asset.Texture;
 import com.almasb.fxgl.entity.Entity;
-import com.almasb.fxgl.entity.FXGLEvent;
+import com.almasb.fxgl.event.UserAction;
 import com.almasb.fxgl.physics.CollisionHandler;
 import com.ergo21.consume.ConsumeController;
 import com.ergo21.consume.ConsumeGameMenu;
-import com.ergo21.consume.Enemy;
+import com.ergo21.consume.EntitySpawner;
 import com.ergo21.consume.GameScene;
 import com.ergo21.consume.Player;
 import com.ergo21.consume.PlayerHUD;
 
 import javafx.geometry.Point2D;
 import javafx.geometry.Rectangle2D;
+import javafx.scene.input.KeyCode;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 
 public class ConsumeApp extends GameApplication {
 
-    private Assets assets;
+    public Assets assets;
 
     public Entity player;
     public Player playerData;
 
     public Physics physics = new Physics(this);
+    public EntitySpawner eSpawner;
 
     private List<Level> levels;
     private int currentLevel = 0;
@@ -247,62 +243,28 @@ public class ConsumeApp extends GameApplication {
         // add player
         initPlayer(spawnPoint);
         
-
-        // TODO: remove after test
-        Entity testEnemy = new Entity(Type.ENEMY);
-
-        Rectangle rect = new Rectangle(30, 30);
-        rect.setFill(Color.RED);
-
-        testEnemy.setGraphics(rect);
-        testEnemy.setCollidable(true);
-        testEnemy.setProperty(Property.DATA, new Enemy(assets.getText("enemies/enemy_FireElemental.txt")));
-        testEnemy.setProperty("physics", physics);
-        testEnemy.setPosition(spawnPoint.getX() + 640, spawnPoint.getY() + 10);
-        testEnemy.addControl(new ChargeControl(player));
-        testEnemy.addControl(new PhysicsControl(physics));
-        testEnemy.addFXGLEventHandler(Event.DEATH, this::onEnemyDeath);
-        testEnemy.addFXGLEventHandler(Event.ENEMY_SAW_PLAYER, event -> {
-            Entity enemy = event.getTarget();
-
-            Entity e = Entity.noType().setGraphics(new Text("!"));
-            e.setPosition(enemy.getTranslateX(), enemy.getTranslateY());
-            sceneManager.addEntities(e);
-            timerManager.runOnceAfter(() -> {
-                sceneManager.removeEntity(e);
-            }, Config.ENEMY_CHARGE_DELAY);
-        });
+        eSpawner = new EntitySpawner(this);
         
-        sceneManager.addEntities(testEnemy);
-
-        Entity testEnemy2 = new Entity(Type.ENEMY);
-        Rectangle rect2 = new Rectangle(30, 30);
-        rect2.setFill(Color.RED);
-
-        testEnemy2.setGraphics(rect2);
-        testEnemy2.setCollidable(true);
-        testEnemy2.setProperty(Property.DATA, new Enemy(assets.getText("enemies/enemy_FireElemental.txt")));
-        testEnemy2.setProperty("physics", physics);
-        testEnemy2.setPosition(spawnPoint.getX() + 640, spawnPoint.getY() - 90);
-        //testEnemy2.addControl(new AimedProjectileControl(player));
-        testEnemy2.addControl(new SimpleMoveControl(player));
-        testEnemy2.addFXGLEventHandler(Event.DEATH, this::onEnemyDeath);
-        testEnemy2.addFXGLEventHandler(Event.ENEMY_SAW_PLAYER, event -> consController.aimedProjectile(testEnemy2, player));
-        sceneManager.addEntities(testEnemy2);
+        inputManager.addAction(new UserAction("Spawn Flyer") {
+            @Override
+            protected void onActionBegin() {
+            	sceneManager.addEntities(eSpawner.spawnEnemy(spawnPoint.add(1000, -90)));  
+            }
+        }, KeyCode.DIGIT1);
         
-        Entity testEnemy3 = new Entity(Type.ENEMY);
-        Rectangle rect3 = new Rectangle(30, 30);
-        rect3.setFill(Color.RED);
-        testEnemy3.setGraphics(rect3);
-        testEnemy3.setCollidable(true);
-        testEnemy3.setProperty(Property.DATA, new Enemy(assets.getText("enemies/enemy_FireElemental.txt")));
-        testEnemy3.setProperty("physics", physics);
-        testEnemy3.setPosition(spawnPoint.getX() + 1000, spawnPoint.getY() - 90);
-        //testEnemy2.addControl(new AimedProjectileControl(player));
-        testEnemy3.addControl(new PhysicsControl(physics));
-        testEnemy3.addControl(new SimpleJumpControl(player, Speed.ENEMY_JUMP));
-        testEnemy3.addFXGLEventHandler(Event.DEATH, this::onEnemyDeath);
-        sceneManager.addEntities(testEnemy3);
+        inputManager.addAction(new UserAction("Spawn Dog") {
+            @Override
+            protected void onActionBegin() {
+            	sceneManager.addEntities(eSpawner.spawnDog(spawnPoint.add(1000, 0)));  
+            }
+        }, KeyCode.DIGIT2);
+        inputManager.addAction(new UserAction("Spawn Scarab") {
+            @Override
+            protected void onActionBegin() {
+            	sceneManager.addEntities(eSpawner.spawnScarab(spawnPoint.add(1000, 00)));  
+            }
+        }, KeyCode.DIGIT3);
+        
     }
 
 	Entity powerStatus;
@@ -346,56 +308,7 @@ public class ConsumeApp extends GameApplication {
         sceneManager.addEntities(player);
     }
 
-    private void onEnemyDeath(FXGLEvent event) {
-        Entity enemy = event.getTarget();
-        sceneManager.removeEntity(enemy);
-
-        // chance based drop logic
-        if (random.nextInt(100) <= 33) {    // check if dropping
-            ArrayList<Powerup> drops = new ArrayList<>();
-            drops.add(Powerup.RESTORE_HEALTH_12);
-            drops.add(Powerup.RESTORE_MANA_12);
-
-            Player p = player.getProperty(Property.DATA);
-            double hpPercent = p.getCurrentHealth() * 1.0 / p.getMaxHealth();
-            double manaPercent = p.getCurrentMana() * 1.0 / p.getMaxMana();
-
-            if (hpPercent < 0.75)
-                drops.add(Powerup.RESTORE_HEALTH_25);
-
-            if (hpPercent < 0.5)
-                drops.add(Powerup.RESTORE_HEALTH_50);
-
-            if (manaPercent < 0.75)
-                drops.add(Powerup.RESTORE_MANA_25);
-
-            if (hpPercent < 0.5)
-                drops.add(Powerup.RESTORE_MANA_50);
-
-            if (hpPercent > manaPercent) {
-                drops.remove(Powerup.RESTORE_HEALTH_12);
-                drops.remove(Powerup.RESTORE_HEALTH_25);
-                drops.remove(Powerup.RESTORE_HEALTH_50);
-            }
-            else {
-                drops.remove(Powerup.RESTORE_MANA_12);
-                drops.remove(Powerup.RESTORE_MANA_25);
-                drops.remove(Powerup.RESTORE_MANA_50);
-            }
-
-            Collections.shuffle(drops);
-
-            Entity e = new Entity(Type.POWERUP);
-            e.setCollidable(true);
-            e.setPosition(enemy.getTranslateX(), enemy.getTranslateY());
-            e.setProperty(Property.SUB_TYPE, drops.get(0));
-            Rectangle r = new Rectangle(30, 30);
-            r.setFill(Color.PINK);
-            e.setGraphics(r);
-
-            sceneManager.addEntities(e);
-        }
-    }
+    
 
     private void activateBarrier(Entity block) {
         block.setProperty("state", "dying");
@@ -436,6 +349,10 @@ public class ConsumeApp extends GameApplication {
         }
 
         sceneManager.removeEntity(block);
+    }
+    
+    public Random getRandom(){
+    	return random;
     }
 
     public static void main(String[] args) {

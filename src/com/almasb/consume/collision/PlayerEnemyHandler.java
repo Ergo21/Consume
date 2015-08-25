@@ -27,7 +27,7 @@ public class PlayerEnemyHandler extends CollisionHandler {
     public void onCollisionBegin(Entity player, Entity enemy) {
     	if (enemy.getControl(ChargeControl.class) != null) {
         	Player playerData = player.getProperty(Property.DATA);
-        	playerData.setCurrentHealth(playerData.getCurrentHealth() - 1);
+        	playerData.setCurrentHealth(playerData.getCurrentHealth() - 3);
 
             int velocityX = enemy.getControl(ChargeControl.class).getVelocity();
             player.getControl(PhysicsControl.class).moveX(velocityX);

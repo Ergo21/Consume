@@ -3,11 +3,13 @@ package com.almasb.consume.collision;
 import java.util.List;
 
 import com.almasb.consume.Config;
+import com.almasb.consume.Event;
 import com.almasb.consume.Types.Element;
 import com.almasb.consume.Types.Property;
 import com.almasb.consume.Types.Type;
 import com.almasb.fxgl.GameApplication;
 import com.almasb.fxgl.entity.Entity;
+import com.almasb.fxgl.entity.FXGLEvent;
 import com.almasb.fxgl.physics.CollisionHandler;
 import com.ergo21.consume.Enemy;
 
@@ -88,7 +90,7 @@ public class ProjectileEnemyHandler extends CollisionHandler {
         app.getSceneManager().removeEntity(projectile);
 
         if (enemyData.getCurrentHealth() <= 0) {
-            app.getSceneManager().removeEntity(enemy);
+        	enemy.fireFXGLEvent(new FXGLEvent(Event.DEATH));
         }
     }
 }
