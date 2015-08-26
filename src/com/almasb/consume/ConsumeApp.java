@@ -245,6 +245,8 @@ public class ConsumeApp extends GameApplication {
         
         eSpawner = new EntitySpawner(this);
         
+        
+        //TODO Remove manual spawn
         inputManager.addAction(new UserAction("Spawn Flyer") {
             @Override
             protected void onActionBegin() {
@@ -261,9 +263,15 @@ public class ConsumeApp extends GameApplication {
         inputManager.addAction(new UserAction("Spawn Scarab") {
             @Override
             protected void onActionBegin() {
-            	sceneManager.addEntities(eSpawner.spawnScarab(spawnPoint.add(1000, 00)));  
+            	sceneManager.addEntities(eSpawner.spawnScarab(spawnPoint.add(1000, 0)));  
             }
         }, KeyCode.DIGIT3);
+        inputManager.addAction(new UserAction("Spawn Locust") {
+            @Override
+            protected void onActionBegin() {
+            	sceneManager.addEntities(eSpawner.spawnLocust(spawnPoint.add(1000, -90)));  
+            }
+        }, KeyCode.DIGIT4);
         
     }
 

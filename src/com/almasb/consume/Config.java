@@ -33,6 +33,8 @@ public final class Config {
     public static final int ENEMY_FIRE_RANGE = 7 * BLOCK_SIZE;
     public static final double ENEMY_FIRE_DELAY = 0.5 * TimerManager.SECOND;
     
+    public static final double ENEMY_DIVEBOMB_ACC = 0.1;
+    
     public static final double ENEMY_JUMP_DELAY = 1.5 * TimerManager.SECOND;
 
     public static final int MAX_HEALTH_INC = 10;

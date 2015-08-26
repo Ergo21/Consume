@@ -16,6 +16,7 @@ import com.almasb.consume.Types.Powerup;
 import com.almasb.consume.Types.Property;
 import com.almasb.consume.Types.Type;
 import com.almasb.consume.ai.ChargeControl;
+import com.almasb.consume.ai.DiveBombControl;
 import com.almasb.consume.ai.PhysicsControl;
 import com.almasb.consume.ai.SimpleJumpControl;
 import com.almasb.consume.ai.SimpleMoveControl;
@@ -41,10 +42,11 @@ public class EntitySpawner{
         enemy.setProperty(Property.DATA, new Enemy(consApp.assets.getText("enemies/enemy_FireElemental.txt")));
         enemy.setProperty("physics", consApp.physics);
         enemy.setPosition(spawnPoint.getX(), spawnPoint.getY());
-        //testEnemy2.addControl(new AimedProjectileControl(player));
+        enemy.addControl(new PhysicsControl(consApp.physics));
         enemy.addControl(new SimpleMoveControl(consApp.player));
         enemy.addFXGLEventHandler(Event.DEATH, this::onEnemyDeath);
-        enemy.addFXGLEventHandler(Event.ENEMY_SAW_PLAYER, event -> consApp.consController.aimedProjectile(enemy, consApp.player));
+        enemy.addFXGLEventHandler(Event.ENEMY_SAW_PLAYER, event -> consApp.consController.aimedProjectile(enemy, consApp.player));     
+        enemy.setProperty(Property.ENABLE_GRAVITY, false);
         
         return enemy;
 	}
@@ -95,12 +97,30 @@ public class EntitySpawner{
         return enemy;
 	}
 	
+	public Entity spawnLocust(Point2D spawnPoint){
+		Entity enemy = new Entity(Type.ENEMY);
+        Rectangle rect = new Rectangle(30, 30);
+        rect.setFill(Color.RED);
+
+        enemy.setGraphics(rect);
+        enemy.setCollidable(true);
+        enemy.setProperty(Property.DATA, new Enemy(consApp.assets.getText("enemies/enemy_FireElemental.txt")));
+        enemy.setProperty("physics", consApp.physics);
+        enemy.setPosition(spawnPoint.getX(), spawnPoint.getY());
+        enemy.addControl(new PhysicsControl(consApp.physics));
+        enemy.addControl(new DiveBombControl(consApp.player, enemy.getPosition().getY()));
+        enemy.addFXGLEventHandler(Event.DEATH, this::onEnemyDeath);
+        enemy.setProperty(Property.ENABLE_GRAVITY, false);
+        
+        return enemy;
+	}
+	
 	private void onEnemyDeath(FXGLEvent event) {
         Entity enemy = event.getTarget();
         consApp.getSceneManager().removeEntity(enemy);
 
         // chance based drop logic
-        if (consApp.getRandom().nextInt(100) <= 33) {    // check if dropping
+        if (true){//(consApp.getRandom().nextInt(100) <= 33) {    // check if dropping
             ArrayList<Powerup> drops = new ArrayList<>();
             drops.add(Powerup.RESTORE_HEALTH_12);
             drops.add(Powerup.RESTORE_MANA_12);
@@ -135,13 +155,13 @@ public class EntitySpawner{
             Collections.shuffle(drops);
 
             Entity e = new Entity(Type.POWERUP);
-            e.setCollidable(true);
-            e.setPosition(enemy.getTranslateX(), enemy.getTranslateY());
+            e.setPosition(enemy.getPosition().getX(), enemy.getPosition().getY());
             e.setProperty(Property.SUB_TYPE, drops.get(0));
             Rectangle r = new Rectangle(30, 30);
             r.setFill(Color.PINK);
             e.setGraphics(r);
             e.addControl(new PhysicsControl(consApp.physics));
+            e.setCollidable(true);
             
             e.addFXGLEventHandler(Event.DEATH, new FXGLEventHandler(){
 				@Override
