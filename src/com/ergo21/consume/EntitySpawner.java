@@ -120,7 +120,7 @@ public class EntitySpawner{
         consApp.getSceneManager().removeEntity(enemy);
 
         // chance based drop logic
-        if (true){//(consApp.getRandom().nextInt(100) <= 33) {    // check if dropping
+        if (consApp.getRandom().nextInt(100) <= 33) {    // check if dropping
             ArrayList<Powerup> drops = new ArrayList<>();
             drops.add(Powerup.RESTORE_HEALTH_12);
             drops.add(Powerup.RESTORE_MANA_12);
@@ -155,7 +155,7 @@ public class EntitySpawner{
             Collections.shuffle(drops);
 
             Entity e = new Entity(Type.POWERUP);
-            e.setPosition(enemy.getPosition().getX(), enemy.getPosition().getY());
+            e.setPosition((int)enemy.getPosition().getX(), (int)enemy.getPosition().getY());
             e.setProperty(Property.SUB_TYPE, drops.get(0));
             Rectangle r = new Rectangle(30, 30);
             r.setFill(Color.PINK);
