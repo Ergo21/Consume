@@ -1,21 +1,21 @@
 package com.ergo21.consume;
 
-public class Powerups{
-	
+public class Powerups {
+
 	private boolean healthIncrease;
-	
+
 	private double restoreValue;
-	
-	public Powerups(boolean helInc, double resVal){
+
+	public Powerups(boolean helInc, double resVal) {
 		healthIncrease = helInc;
 		restoreValue = resVal;
 	}
-	
-	public boolean isIncreaseHealth(){
+
+	public boolean isIncreaseHealth() {
 		return healthIncrease;
 	}
-	
-	public double restoreValue(){
+
+	public double restoreValue() {
 		return restoreValue;
 	}
 }

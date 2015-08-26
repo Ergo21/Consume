@@ -16,7 +16,7 @@ import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.text.Text;
 
-public class GameScene extends Group{
+public class GameScene extends Group {
 
 	private ArrayList<SceneLine> script;
 	private int currentLine;
@@ -26,7 +26,7 @@ public class GameScene extends Group{
 	private Assets assets;
 	private ConsumeApp app;
 
-	public GameScene(List<String> values, Assets as, ConsumeApp a){
+	public GameScene(List<String> values, Assets as, ConsumeApp a) {
 		super();
 		assets = as;
 		app = a;
@@ -40,7 +40,7 @@ public class GameScene extends Group{
 		icon = new ImageView();
 		grid.setVgap(2);
 		grid.setHgap(2);
-		grid.setPadding(new Insets(5,5,5,5));
+		grid.setPadding(new Insets(5, 5, 5, 5));
 		grid.add(name, 0, 0);
 		grid.add(line, 1, 0, 1, 2);
 		grid.add(icon, 0, 1);
@@ -50,8 +50,8 @@ public class GameScene extends Group{
 		c.setHalignment(HPos.CENTER);
 		grid.getColumnConstraints().add(c);
 
-		for(String val : values){
-			if(val.equals("END")){
+		for (String val : values) {
+			if (val.equals("END")) {
 				break;
 			}
 			String nam = val.substring(0, val.indexOf('('));
@@ -66,12 +66,11 @@ public class GameScene extends Group{
 		setValues(script.get(currentLine));
 	}
 
-	public boolean updateScript(){
-		if(currentLine + 1 >= script.size()){
+	public boolean updateScript() {
+		if (currentLine + 1 >= script.size()) {
 			endScene();
 			return false;
-		}
-		else{
+		} else {
 			currentLine += 1;
 			setValues(script.get(currentLine));
 		}
@@ -79,12 +78,12 @@ public class GameScene extends Group{
 		return true;
 	}
 
-	public void changeScene(List<String> values){
+	public void changeScene(List<String> values) {
 		currentLine = 0;
 		script.clear();
 		app.getSceneManager().getEntities(Type.PLAYER).get(0).getControl(PhysicsControl.class).moveX(0);
-		for(String val : values){
-			if(val.equals("END")){
+		for (String val : values) {
+			if (val.equals("END")) {
 				break;
 			}
 			String nam = val.substring(0, val.indexOf('('));
@@ -98,13 +97,13 @@ public class GameScene extends Group{
 
 		setValues(script.get(currentLine));
 	}
-	
-	public void playScene(){
+
+	public void playScene() {
 		this.setVisible(true);
 		app.player.setProperty("stunned", true);
 	}
-	
-	public void endScene(){
+
+	public void endScene() {
 		this.setVisible(false);
 		app.player.setProperty("stunned", false);
 	}
@@ -112,11 +111,11 @@ public class GameScene extends Group{
 	private void setValues(SceneLine sceneLine) {
 		name.setText(sceneLine.getName());
 		line.setText(sceneLine.getSentence());
-		//icon = sceneLine.getIcon();
+		// icon = sceneLine.getIcon();
 		icon.setImage(sceneLine.getIcon().getImage());
 	}
 
-	public Assets getAssets(){
+	public Assets getAssets() {
 		return assets;
 	}
 }

@@ -12,8 +12,8 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.transform.Rotate;
 import javafx.scene.transform.Translate;
 
-public class PlayerHUD extends Group{
-	
+public class PlayerHUD extends Group {
+
 	protected IntegerProperty maxHealth = new SimpleIntegerProperty();
 	protected IntegerProperty maxMana = new SimpleIntegerProperty();
 	protected IntegerProperty curHealth = new SimpleIntegerProperty();
@@ -24,39 +24,35 @@ public class PlayerHUD extends Group{
 	private Label healthLab;
 	private Label manaLab;
 
-	public PlayerHUD(int mHel, int mMan){
+	public PlayerHUD(int mHel, int mMan) {
 		super();
 		maxHealth.set(mHel);
-		maxHealth.addListener(new ChangeListener<Number>(){
+		maxHealth.addListener(new ChangeListener<Number>() {
 			@Override
-			public void changed(ObservableValue<? extends Number> arg0,
-					Number arg1, Number arg2) {
+			public void changed(ObservableValue<? extends Number> arg0, Number arg1, Number arg2) {
 				updateValues();
-			}		
+			}
 		});
 		maxMana.set(mMan);
-		maxMana.addListener(new ChangeListener<Number>(){
+		maxMana.addListener(new ChangeListener<Number>() {
 			@Override
-			public void changed(ObservableValue<? extends Number> arg0,
-					Number arg1, Number arg2) {
+			public void changed(ObservableValue<? extends Number> arg0, Number arg1, Number arg2) {
 				updateValues();
-			}		
+			}
 		});
 		curHealth.set(mHel);
-		curHealth.addListener(new ChangeListener<Number>(){
+		curHealth.addListener(new ChangeListener<Number>() {
 			@Override
-			public void changed(ObservableValue<? extends Number> arg0,
-					Number arg1, Number arg2) {
+			public void changed(ObservableValue<? extends Number> arg0, Number arg1, Number arg2) {
 				updateValues();
-			}		
+			}
 		});
 		curMana.set(mMan);
-		curMana.addListener(new ChangeListener<Number>(){
+		curMana.addListener(new ChangeListener<Number>() {
 			@Override
-			public void changed(ObservableValue<? extends Number> arg0,
-					Number arg1, Number arg2) {
+			public void changed(ObservableValue<? extends Number> arg0, Number arg1, Number arg2) {
 				updateValues();
-			}		
+			}
 		});
 		healthBar = new ProgressBar();
 		healthBar.getTransforms().add(new Rotate(270));
@@ -69,7 +65,7 @@ public class PlayerHUD extends Group{
 		GridPane grid = new GridPane();
 		grid.setVgap(2);
 		grid.setHgap(2);
-		grid.setPadding(new Insets(5,5,5,5));
+		grid.setPadding(new Insets(5, 5, 5, 5));
 		grid.add(healthLab, 0, 1);
 		grid.add(manaLab, 1, 1);
 
@@ -78,54 +74,62 @@ public class PlayerHUD extends Group{
 		updateValues();
 	}
 
-	public IntegerProperty MaxHealthProperty(){
+	public IntegerProperty MaxHealthProperty() {
 		return maxHealth;
 	}
-	public int getMaxHealth(){
+
+	public int getMaxHealth() {
 		return maxHealth.get();
 	}
-	public void setMaxHealth(int newMHealth){
+
+	public void setMaxHealth(int newMHealth) {
 		maxHealth.set(newMHealth);
 		updateValues();
 	}
 
-	public IntegerProperty CurHealthProperty(){
+	public IntegerProperty CurHealthProperty() {
 		return curHealth;
 	}
-	public int getCurHealth(){
+
+	public int getCurHealth() {
 		return curHealth.get();
 	}
-	public void setCurHealth(int newCHealth){
+
+	public void setCurHealth(int newCHealth) {
 		curHealth.set(newCHealth);
 		updateValues();
 	}
 
-	public IntegerProperty MaxManaProperty(){
+	public IntegerProperty MaxManaProperty() {
 		return maxMana;
 	}
-	public int getMaxMana(){
+
+	public int getMaxMana() {
 		return maxMana.get();
 	}
-	public void setMaxMana(int newMMana){
+
+	public void setMaxMana(int newMMana) {
 		maxMana.set(newMMana);
 		updateValues();
 	}
 
-	public IntegerProperty CurManaProperty(){
+	public IntegerProperty CurManaProperty() {
 		return curMana;
 	}
-	public int getCurMana(){
+
+	public int getCurMana() {
 		return curMana.get();
 	}
-	public void setCurMana(int newCMana){
+
+	public void setCurMana(int newCMana) {
 		curMana.set(newCMana);
 		updateValues();
 	}
 
-	private void updateValues(){
-		healthBar.setProgress(curHealth.get() * 1.0 /maxHealth.get());
+	private void updateValues() {
+		healthBar.setProgress(curHealth.get() * 1.0 / maxHealth.get());
 		if (maxMana.get() != 0)
-		    manaBar.setProgress(curMana.get() * 1.0 /maxMana.get());
+			manaBar.setProgress(curMana.get() * 1.0 / maxMana.get());
 
 		healthLab.setText(curHealth.get() + "/" + maxHealth.get());
 		manaLab.setText(curMana.get() + "/" + maxMana.get());

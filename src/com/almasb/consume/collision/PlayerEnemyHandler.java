@@ -16,67 +16,66 @@ import javafx.scene.text.Text;
 
 public class PlayerEnemyHandler extends CollisionHandler {
 
-    private GameApplication app;
+	private GameApplication app;
 
-    public PlayerEnemyHandler(GameApplication app) {
-        super(Type.PLAYER, Type.ENEMY);
-        this.app = app;
-    }
+	public PlayerEnemyHandler(GameApplication app) {
+		super(Type.PLAYER, Type.ENEMY);
+		this.app = app;
+	}
 
-    @Override
-    public void onCollisionBegin(Entity player, Entity enemy) {
-    	if (enemy.getControl(ChargeControl.class) != null) {
-        	Player playerData = player.getProperty(Property.DATA);
-        	playerData.setCurrentHealth(playerData.getCurrentHealth() - 3);
+	@Override
+	public void onCollisionBegin(Entity player, Entity enemy) {
+		if (enemy.getControl(ChargeControl.class) != null) {
+			Player playerData = player.getProperty(Property.DATA);
+			playerData.setCurrentHealth(playerData.getCurrentHealth() - 3);
 
-            int velocityX = enemy.getControl(ChargeControl.class).getVelocity();
-            player.getControl(PhysicsControl.class).moveX(velocityX);
+			int velocityX = enemy.getControl(ChargeControl.class).getVelocity();
+			player.getControl(PhysicsControl.class).moveX(velocityX);
 
-            enemy.fireFXGLEvent(new FXGLEvent(Event.ENEMY_HIT_PLAYER));
+			enemy.fireFXGLEvent(new FXGLEvent(Event.ENEMY_HIT_PLAYER));
 
-            player.setCollidable(false);
-            player.setProperty("stunned", true);
-            Entity e = Entity.noType().setGraphics(new Text("INVINCIBLE"));
-            e.translateXProperty().bind(player.translateXProperty());
-            e.translateYProperty().bind(player.translateYProperty().subtract(20));
+			player.setCollidable(false);
+			player.setProperty("stunned", true);
+			Entity e = Entity.noType().setGraphics(new Text("INVINCIBLE"));
+			e.translateXProperty().bind(player.translateXProperty());
+			e.translateYProperty().bind(player.translateYProperty().subtract(20));
 
-            app.getSceneManager().addEntities(e);
+			app.getSceneManager().addEntities(e);
 
-            app.getTimerManager().runOnceAfter(() -> {
-            	player.getControl(PhysicsControl.class).moveX(0);
-            	player.setProperty("stunned", false);
-            }, TimerManager.SECOND/2);
+			app.getTimerManager().runOnceAfter(() -> {
+				player.getControl(PhysicsControl.class).moveX(0);
+				player.setProperty("stunned", false);
+			} , TimerManager.SECOND / 2);
 
-            app.getTimerManager().runOnceAfter(() -> {
-                app.getSceneManager().removeEntity(e);
-                player.setCollidable(true);
-            }, 2 * TimerManager.SECOND);
-        }
-        else{
-        	enemy.fireFXGLEvent(new FXGLEvent(Event.ENEMY_HIT_PLAYER));
-        	Player playerData = player.getProperty(Property.DATA);
-        	playerData.setCurrentHealth(playerData.getCurrentHealth() - 1);
+			app.getTimerManager().runOnceAfter(() -> {
+				app.getSceneManager().removeEntity(e);
+				player.setCollidable(true);
+			} , 2 * TimerManager.SECOND);
+		} else {
+			enemy.fireFXGLEvent(new FXGLEvent(Event.ENEMY_HIT_PLAYER));
+			Player playerData = player.getProperty(Property.DATA);
+			playerData.setCurrentHealth(playerData.getCurrentHealth() - 1);
 
-            player.setCollidable(false);
-            player.setProperty("stunned", true);
-            Entity e = Entity.noType().setGraphics(new Text("INVINCIBLE"));
-            e.translateXProperty().bind(player.translateXProperty());
-            e.translateYProperty().bind(player.translateYProperty().subtract(20));
+			player.setCollidable(false);
+			player.setProperty("stunned", true);
+			Entity e = Entity.noType().setGraphics(new Text("INVINCIBLE"));
+			e.translateXProperty().bind(player.translateXProperty());
+			e.translateYProperty().bind(player.translateYProperty().subtract(20));
 
-            app.getSceneManager().addEntities(e);
-            
-            int velocityX = (int) enemy.getControl(PhysicsControl.class).getVelocity().getX();
-            player.getControl(PhysicsControl.class).moveX(velocityX);
-            
-            app.getTimerManager().runOnceAfter(() -> {
-            	player.getControl(PhysicsControl.class).moveX(0);
-            	player.setProperty("stunned", false);
-            }, TimerManager.SECOND/2);
+			app.getSceneManager().addEntities(e);
 
-            app.getTimerManager().runOnceAfter(() -> {
-                app.getSceneManager().removeEntity(e);
-                player.setCollidable(true);
-            }, 2 * TimerManager.SECOND);
-        }
-    }
+			int velocityX = (int) enemy.getControl(PhysicsControl.class).getVelocity().getX();
+			player.getControl(PhysicsControl.class).moveX(velocityX);
+
+			app.getTimerManager().runOnceAfter(() -> {
+				player.getControl(PhysicsControl.class).moveX(0);
+				player.setProperty("stunned", false);
+			} , TimerManager.SECOND / 2);
+
+			app.getTimerManager().runOnceAfter(() -> {
+				app.getSceneManager().removeEntity(e);
+				player.setCollidable(true);
+			} , 2 * TimerManager.SECOND);
+		}
+	}
 }
