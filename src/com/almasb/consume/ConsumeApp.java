@@ -24,6 +24,7 @@ import com.almasb.fxgl.GameSettings;
 import com.almasb.fxgl.asset.Assets;
 import com.almasb.fxgl.asset.Texture;
 import com.almasb.fxgl.entity.Entity;
+import com.almasb.fxgl.entity.FXGLEvent;
 import com.almasb.fxgl.event.UserAction;
 import com.almasb.fxgl.physics.CollisionHandler;
 import com.ergo21.consume.ConsumeController;
@@ -58,6 +59,8 @@ public class ConsumeApp extends GameApplication {
 	private Text performance = new Text();
 
 	private long regenTime = 0;
+	
+	private boolean playerDied = false;
 
 	public GameScene gScene;
 	public ConsumeController consController;
@@ -90,11 +93,12 @@ public class ConsumeApp extends GameApplication {
 		playerData.getPowers().add(Element.METAL);
 		playerData.getPowers().add(Element.DEATH);
 		playerData.getPowers().add(Element.CONSUME);
+		eSpawner = new EntitySpawner(this);
 
 		initLevels();
 
 		currentLevel = 0;
-		loadLevel(currentLevel++);
+		loadLevel(currentLevel);
 	}
 
 	@Override
@@ -111,7 +115,8 @@ public class ConsumeApp extends GameApplication {
 		physicsManager.addCollisionHandler(new CollisionHandler(Type.PLAYER, Type.NEXT_LEVEL_POINT) {
 			@Override
 			public void onCollisionBegin(Entity a, Entity b) {
-				loadLevel(currentLevel++);
+				currentLevel++;
+				loadLevel(currentLevel);
 			}
 		});
 	}
@@ -186,6 +191,11 @@ public class ConsumeApp extends GameApplication {
 			playerData.regenMana();
 			regenTime = getNow();
 		}
+		
+		if(playerData.getCurrentHealth() <= 0){
+			playerData.setCurrentHealth(0);
+			player.fireFXGLEvent(new FXGLEvent(Event.PLAYER_DEATH));
+		}
 
 		for (Entity e : sceneManager.getEntities(Type.BLOCK)) {
 			if (e.getProperty(Property.SUB_TYPE) == Block.BARRIER && "idle".equals(e.getProperty("state"))
@@ -238,9 +248,9 @@ public class ConsumeApp extends GameApplication {
 
 		// add player
 		initPlayer(spawnPoint);
-
-		eSpawner = new EntitySpawner(this);
-
+		playerDied = false;
+		sceneManager.addEntities(eSpawner.spawnEnemy(spawnPoint.add(1000, -90)));
+		
 		// TODO Remove manual spawn
 		inputManager.addAction(new UserAction("Spawn Flyer") {
 			@Override
@@ -267,7 +277,7 @@ public class ConsumeApp extends GameApplication {
 				sceneManager.addEntities(eSpawner.spawnLocust(spawnPoint.add(1000, -90)));
 			}
 		}, KeyCode.DIGIT4);
-
+		
 	}
 
 	Entity powerStatus;
@@ -277,7 +287,9 @@ public class ConsumeApp extends GameApplication {
 		player = new Entity(Type.PLAYER).setPosition(point.getX(), point.getY()).setCollidable(true)
 				.setProperty(Property.DATA, playerData).setProperty("climb", false).setProperty("climbing", false)
 				.setProperty("facingRight", true).setProperty("stunned", false).addControl(new PhysicsControl(physics));
-
+		
+		player.addFXGLEventHandler(Event.PLAYER_DEATH, this::playerDied);
+		
 		Rectangle graphics = new Rectangle(15, 30);
 		graphics.setFill(Color.YELLOW);
 		try {
@@ -303,6 +315,18 @@ public class ConsumeApp extends GameApplication {
 		sceneManager.addEntities(powerStatus);
 
 		sceneManager.addEntities(player);
+	}
+	
+	private void playerDied(FXGLEvent e){
+		if(!playerDied){
+			System.out.println("Player died");
+			player.setProperty("stunned", true);
+			playerDied = true;
+			playerData.setCurrentHealth(playerData.getMaxHealth());
+			playerData.setCurrentMana(playerData.getMaxMana());
+			loadLevel(currentLevel);
+		}
+		
 	}
 
 	private void activateBarrier(Entity block) {

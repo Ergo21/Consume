@@ -88,33 +88,34 @@ public class ProjectilePlayerHandler extends CollisionHandler {
 
 		playerData.takeDamage(damage);
 
-		int velocityX = (int) projectile.getControl(PhysicsControl.class).getVelocity().getX();
-		if (projectile.getControl(AimedProjectileControl.class) != null) {
-			velocityX = projectile.getControl(AimedProjectileControl.class).getVelocityX();
-		}
-		velocityX = velocityX / 2;
-		player.getControl(PhysicsControl.class).moveX(velocityX);
-
 		projectile.fireFXGLEvent(new FXGLEvent(Event.ENEMY_HIT_PLAYER));
+		if(playerData.getCurrentHealth() > 0){
+			int velocityX = (int) projectile.getControl(PhysicsControl.class).getVelocity().getX();
+			if (projectile.getControl(AimedProjectileControl.class) != null) {
+				velocityX = projectile.getControl(AimedProjectileControl.class).getVelocityX();
+			}
+			velocityX = velocityX / 2;
+			player.getControl(PhysicsControl.class).moveX(velocityX);
+			
+			player.setCollidable(false);
+			player.setProperty("stunned", true);
 
-		player.setCollidable(false);
-		player.setProperty("stunned", true);
+			Entity e2 = Entity.noType().setGraphics(new Text("INVINCIBLE"));
+			e2.translateXProperty().bind(player.translateXProperty());
+			e2.translateYProperty().bind(player.translateYProperty().subtract(20));
 
-		Entity e2 = Entity.noType().setGraphics(new Text("INVINCIBLE"));
-		e2.translateXProperty().bind(player.translateXProperty());
-		e2.translateYProperty().bind(player.translateYProperty().subtract(20));
+			app.getSceneManager().addEntities(e2);
 
-		app.getSceneManager().addEntities(e2);
+			app.getTimerManager().runOnceAfter(() -> {
+				player.getControl(PhysicsControl.class).moveX(0);
+				player.setProperty("stunned", false);
+			} , 0.5 * TimerManager.SECOND);
 
-		app.getTimerManager().runOnceAfter(() -> {
-			player.getControl(PhysicsControl.class).moveX(0);
-			player.setProperty("stunned", false);
-		} , 0.5 * TimerManager.SECOND);
-
-		app.getTimerManager().runOnceAfter(() -> {
-			app.getSceneManager().removeEntity(e2);
-			player.setCollidable(true);
-		} , 2 * TimerManager.SECOND);
+			app.getTimerManager().runOnceAfter(() -> {
+				app.getSceneManager().removeEntity(e2);
+				player.setCollidable(true);
+			} , 2 * TimerManager.SECOND);
+		}
 
 		app.getSceneManager().removeEntity(projectile);
 

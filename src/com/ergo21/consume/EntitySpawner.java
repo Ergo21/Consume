@@ -60,6 +60,7 @@ public class EntitySpawner {
 		enemy.setCollidable(true);
 		enemy.setProperty(Property.DATA, new Enemy(consApp.assets.getText("enemies/enemy_FireElemental.txt")));
 		enemy.setProperty("physics", consApp.physics);
+		enemy.setProperty("shover", true);
 		enemy.setPosition(spawnPoint.getX(), spawnPoint.getY());
 		enemy.addControl(new ChargeControl(consApp.player));
 		enemy.addControl(new PhysicsControl(consApp.physics));
@@ -87,6 +88,7 @@ public class EntitySpawner {
 		enemy.setCollidable(true);
 		enemy.setProperty(Property.DATA, new Enemy(consApp.assets.getText("enemies/enemy_FireElemental.txt")));
 		enemy.setProperty("physics", consApp.physics);
+		enemy.setProperty("shover", true);
 		enemy.setPosition(spawnPoint.getX(), spawnPoint.getY());
 		enemy.addControl(new PhysicsControl(consApp.physics));
 		enemy.addControl(new SimpleJumpControl(consApp.player, Speed.ENEMY_JUMP));
@@ -104,6 +106,7 @@ public class EntitySpawner {
 		enemy.setCollidable(true);
 		enemy.setProperty(Property.DATA, new Enemy(consApp.assets.getText("enemies/enemy_FireElemental.txt")));
 		enemy.setProperty("physics", consApp.physics);
+		enemy.setProperty("shover", true);
 		enemy.setPosition(spawnPoint.getX(), spawnPoint.getY());
 		enemy.addControl(new PhysicsControl(consApp.physics));
 		enemy.addControl(new DiveBombControl(consApp.player, enemy.getPosition().getY()));

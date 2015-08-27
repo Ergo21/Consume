@@ -3,8 +3,9 @@ package com.almasb.consume.collision;
 import com.almasb.consume.Event;
 import com.almasb.consume.Types.Property;
 import com.almasb.consume.Types.Type;
-import com.almasb.consume.ai.ChargeControl;
+import com.almasb.consume.ai.DiveBombControl;
 import com.almasb.consume.ai.PhysicsControl;
+import com.almasb.consume.ai.SimpleMoveControl;
 import com.almasb.fxgl.GameApplication;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.FXGLEvent;
@@ -25,37 +26,26 @@ public class PlayerEnemyHandler extends CollisionHandler {
 
 	@Override
 	public void onCollisionBegin(Entity player, Entity enemy) {
-		if (enemy.getControl(ChargeControl.class) != null) {
-			Player playerData = player.getProperty(Property.DATA);
+		enemy.fireFXGLEvent(new FXGLEvent(Event.ENEMY_HIT_PLAYER));
+		Player playerData = player.getProperty(Property.DATA);
+		if(enemy.<Boolean>getProperty("shover") != null && enemy.<Boolean>getProperty("shover")){
 			playerData.setCurrentHealth(playerData.getCurrentHealth() - 3);
-
-			int velocityX = enemy.getControl(ChargeControl.class).getVelocity();
-			player.getControl(PhysicsControl.class).moveX(velocityX);
-
-			enemy.fireFXGLEvent(new FXGLEvent(Event.ENEMY_HIT_PLAYER));
-
-			player.setCollidable(false);
-			player.setProperty("stunned", true);
-			Entity e = Entity.noType().setGraphics(new Text("INVINCIBLE"));
-			e.translateXProperty().bind(player.translateXProperty());
-			e.translateYProperty().bind(player.translateYProperty().subtract(20));
-
-			app.getSceneManager().addEntities(e);
-
-			app.getTimerManager().runOnceAfter(() -> {
-				player.getControl(PhysicsControl.class).moveX(0);
-				player.setProperty("stunned", false);
-			} , TimerManager.SECOND / 2);
-
-			app.getTimerManager().runOnceAfter(() -> {
-				app.getSceneManager().removeEntity(e);
-				player.setCollidable(true);
-			} , 2 * TimerManager.SECOND);
-		} else {
-			enemy.fireFXGLEvent(new FXGLEvent(Event.ENEMY_HIT_PLAYER));
-			Player playerData = player.getProperty(Property.DATA);
+		}
+		else{
 			playerData.setCurrentHealth(playerData.getCurrentHealth() - 1);
-
+		}
+		
+		if(playerData.getCurrentHealth() > 0){
+		
+			int velocityX = (int) enemy.getControl(PhysicsControl.class).getVelocity().getX();
+			if(enemy.getControl(DiveBombControl.class) != null){
+				velocityX = enemy.getControl(DiveBombControl.class).getVelocity();
+			}
+			else if(enemy.getControl(SimpleMoveControl.class) != null){
+				velocityX = enemy.getControl(SimpleMoveControl.class).getVelocity();
+			}
+			player.getControl(PhysicsControl.class).moveX(velocityX);
+		
 			player.setCollidable(false);
 			player.setProperty("stunned", true);
 			Entity e = Entity.noType().setGraphics(new Text("INVINCIBLE"));
@@ -63,9 +53,6 @@ public class PlayerEnemyHandler extends CollisionHandler {
 			e.translateYProperty().bind(player.translateYProperty().subtract(20));
 
 			app.getSceneManager().addEntities(e);
-
-			int velocityX = (int) enemy.getControl(PhysicsControl.class).getVelocity().getX();
-			player.getControl(PhysicsControl.class).moveX(velocityX);
 
 			app.getTimerManager().runOnceAfter(() -> {
 				player.getControl(PhysicsControl.class).moveX(0);

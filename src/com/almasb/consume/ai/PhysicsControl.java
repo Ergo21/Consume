@@ -5,7 +5,6 @@ import javafx.geometry.Point2D;
 import com.almasb.consume.Config.Speed;
 import com.almasb.consume.Physics;
 import com.almasb.consume.Types.Property;
-import com.almasb.consume.Types.Type;
 import com.almasb.fxgl.entity.AbstractControl;
 import com.almasb.fxgl.entity.Entity;
 
@@ -44,10 +43,6 @@ public class PhysicsControl extends AbstractControl {
 
 		}
 		physics.moveY(entity, (int) velocity.getY());
-
-		if (entity.isType(Type.POWERUP)) {
-			System.out.println("Gravity: " + entity.<Boolean> getProperty(Property.ENABLE_GRAVITY) + ", " + velocity);
-		}
 	}
 
 	public void moveX(int value) {
