@@ -10,6 +10,7 @@ import com.almasb.consume.LevelParser.LevelData;
 import com.almasb.consume.Types.Block;
 import com.almasb.consume.Types.Element;
 import com.almasb.consume.Types.Platform;
+import com.almasb.consume.Types.Powerup;
 import com.almasb.consume.Types.Property;
 import com.almasb.consume.Types.Type;
 import com.almasb.consume.ai.AnimatedPlayerControl;
@@ -279,6 +280,60 @@ public class ConsumeApp extends GameApplication {
 		}, KeyCode.DIGIT4);
 		
 	}
+	
+	//TODO FIX loadLevel to allow resetting a level.
+	private void loadLevel2(int lev) {
+		//sceneManager.getEntities().forEach(sceneManager::removeEntity);
+		sceneManager.getEntities(Type.ENEMY).forEach(sceneManager::removeEntity);
+		sceneManager.getEntities(Type.ENEMY_PROJECTILE).forEach(sceneManager::removeEntity);
+		sceneManager.getEntities(Type.PLAYER).forEach(sceneManager::removeEntity);
+		sceneManager.getEntities(Type.PLAYER_PROJECTILE).forEach(sceneManager::removeEntity);
+		sceneManager.removeEntity(powerStatus);
+		
+		List<Entity> tEnt = sceneManager.getEntities(Type.POWERUP);
+		for(Entity enti : tEnt){
+			Powerup type = enti.getProperty(Property.SUB_TYPE);
+			if(type != Powerup.INC_MAX_HEALTH && type != Powerup.INC_MAX_MANA && type != Powerup.INC_MANA_REGEN){
+				sceneManager.removeEntity(enti);
+			}
+		}
+
+		Level level = levels.get(lev);
+		Point2D spawnPoint = level.getSpawnPoint();
+
+		// add player
+		initPlayer(spawnPoint);
+		playerDied = false;
+		sceneManager.addEntities(eSpawner.spawnEnemy(spawnPoint.add(1000, -90)));
+		
+		// TODO Remove manual spawn
+		inputManager.addAction(new UserAction("Spawn Flyer") {
+			@Override
+			protected void onActionBegin() {
+				sceneManager.addEntities(eSpawner.spawnEnemy(spawnPoint.add(1000, -90)));
+			}
+		}, KeyCode.DIGIT1);
+
+		inputManager.addAction(new UserAction("Spawn Dog") {
+			@Override
+			protected void onActionBegin() {
+				sceneManager.addEntities(eSpawner.spawnDog(spawnPoint.add(1000, 0)));
+			}
+		}, KeyCode.DIGIT2);
+		inputManager.addAction(new UserAction("Spawn Scarab") {
+			@Override
+			protected void onActionBegin() {
+				sceneManager.addEntities(eSpawner.spawnScarab(spawnPoint.add(1000, 0)));
+			}
+		}, KeyCode.DIGIT3);
+		inputManager.addAction(new UserAction("Spawn Locust") {
+			@Override
+			protected void onActionBegin() {
+				sceneManager.addEntities(eSpawner.spawnLocust(spawnPoint.add(1000, -90)));
+			}
+		}, KeyCode.DIGIT4);
+		
+	}
 
 	Entity powerStatus;
 
@@ -298,7 +353,6 @@ public class ConsumeApp extends GameApplication {
 			t.setViewport(new Rectangle2D(150, 0, 30, 30));
 			player.setGraphics(t);
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 			player.setGraphics(graphics);
 		}
@@ -324,7 +378,7 @@ public class ConsumeApp extends GameApplication {
 			playerDied = true;
 			playerData.setCurrentHealth(playerData.getMaxHealth());
 			playerData.setCurrentMana(playerData.getMaxMana());
-			loadLevel(currentLevel);
+			loadLevel2(currentLevel);
 		}
 		
 	}
