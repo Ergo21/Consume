@@ -10,7 +10,6 @@ import com.almasb.consume.LevelParser.LevelData;
 import com.almasb.consume.Types.Block;
 import com.almasb.consume.Types.Element;
 import com.almasb.consume.Types.Platform;
-import com.almasb.consume.Types.Powerup;
 import com.almasb.consume.Types.Property;
 import com.almasb.consume.Types.Type;
 import com.almasb.consume.ai.AnimatedPlayerControl;
@@ -28,6 +27,7 @@ import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.FXGLEvent;
 import com.almasb.fxgl.event.UserAction;
 import com.almasb.fxgl.physics.CollisionHandler;
+import com.almasb.fxgl.time.TimerManager;
 import com.ergo21.consume.ConsumeController;
 import com.ergo21.consume.ConsumeGameMenu;
 import com.ergo21.consume.EntitySpawner;
@@ -45,6 +45,7 @@ import javafx.scene.text.Text;
 public class ConsumeApp extends GameApplication {
 
 	public Assets assets;
+	private LevelParser parser;
 
 	public Entity player;
 	public Player playerData;
@@ -152,8 +153,8 @@ public class ConsumeApp extends GameApplication {
 		List<LevelData> levelData = IntStream.range(0, Config.MAX_LEVELS)
 				.mapToObj(i -> new LevelData(assets.getText("levels/level_" + i + ".txt")))
 				.collect(Collectors.toList());
-
-		LevelParser parser = new LevelParser(levelData);
+		
+		parser = new LevelParser(levelData);
 		levels = parser.parseAll();
 	}
 
@@ -182,7 +183,7 @@ public class ConsumeApp extends GameApplication {
 
 	@Override
 	protected void onUpdate() {
-		if (!player.<Boolean> getProperty("climb")) {
+		if (player.<Boolean>getProperty("climb") != null && !player.<Boolean> getProperty("climb")) {
 			// here player is no longer touching the ladder
 			player.setProperty("climbing", false);
 			player.setProperty(Property.ENABLE_GRAVITY, true);
@@ -280,60 +281,6 @@ public class ConsumeApp extends GameApplication {
 		}, KeyCode.DIGIT4);
 		
 	}
-	
-	//TODO FIX loadLevel to allow resetting a level.
-	private void loadLevel2(int lev) {
-		//sceneManager.getEntities().forEach(sceneManager::removeEntity);
-		sceneManager.getEntities(Type.ENEMY).forEach(sceneManager::removeEntity);
-		sceneManager.getEntities(Type.ENEMY_PROJECTILE).forEach(sceneManager::removeEntity);
-		sceneManager.getEntities(Type.PLAYER).forEach(sceneManager::removeEntity);
-		sceneManager.getEntities(Type.PLAYER_PROJECTILE).forEach(sceneManager::removeEntity);
-		sceneManager.removeEntity(powerStatus);
-		
-		List<Entity> tEnt = sceneManager.getEntities(Type.POWERUP);
-		for(Entity enti : tEnt){
-			Powerup type = enti.getProperty(Property.SUB_TYPE);
-			if(type != Powerup.INC_MAX_HEALTH && type != Powerup.INC_MAX_MANA && type != Powerup.INC_MANA_REGEN){
-				sceneManager.removeEntity(enti);
-			}
-		}
-
-		Level level = levels.get(lev);
-		Point2D spawnPoint = level.getSpawnPoint();
-
-		// add player
-		initPlayer(spawnPoint);
-		playerDied = false;
-		sceneManager.addEntities(eSpawner.spawnEnemy(spawnPoint.add(1000, -90)));
-		
-		// TODO Remove manual spawn
-		inputManager.addAction(new UserAction("Spawn Flyer") {
-			@Override
-			protected void onActionBegin() {
-				sceneManager.addEntities(eSpawner.spawnEnemy(spawnPoint.add(1000, -90)));
-			}
-		}, KeyCode.DIGIT1);
-
-		inputManager.addAction(new UserAction("Spawn Dog") {
-			@Override
-			protected void onActionBegin() {
-				sceneManager.addEntities(eSpawner.spawnDog(spawnPoint.add(1000, 0)));
-			}
-		}, KeyCode.DIGIT2);
-		inputManager.addAction(new UserAction("Spawn Scarab") {
-			@Override
-			protected void onActionBegin() {
-				sceneManager.addEntities(eSpawner.spawnScarab(spawnPoint.add(1000, 0)));
-			}
-		}, KeyCode.DIGIT3);
-		inputManager.addAction(new UserAction("Spawn Locust") {
-			@Override
-			protected void onActionBegin() {
-				sceneManager.addEntities(eSpawner.spawnLocust(spawnPoint.add(1000, -90)));
-			}
-		}, KeyCode.DIGIT4);
-		
-	}
 
 	Entity powerStatus;
 
@@ -378,7 +325,15 @@ public class ConsumeApp extends GameApplication {
 			playerDied = true;
 			playerData.setCurrentHealth(playerData.getMaxHealth());
 			playerData.setCurrentMana(playerData.getMaxMana());
-			loadLevel2(currentLevel);
+			sceneManager.getEntities().forEach(sceneManager::removeEntity);
+			levels.set(currentLevel, parser.parse(currentLevel));
+			timerManager.runOnceAfter(new Runnable(){
+				@Override
+				public void run() {
+					loadLevel(currentLevel);
+					System.out.println("Level Reset");
+				}}, TimerManager.SECOND/2);
+			
 		}
 		
 	}

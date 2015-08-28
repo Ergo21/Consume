@@ -22,12 +22,15 @@ public class LevelParser {
 	public LevelParser(List<LevelData> levels) {
 		this.levels = levels;
 	}
-
+	
 	public List<Level> parseAll() {
 		return IntStream.range(0, levels.size()).mapToObj(this::parse).collect(Collectors.toList());
 	}
 
-	private Level parse(int levelNumber) {
+	public Level parse(int levelNumber) {
+		if(levels.get(levelNumber) == null){
+			return null;
+		}
 		List<String> data = levels.get(levelNumber).data;
 
 		// TODO: range checks

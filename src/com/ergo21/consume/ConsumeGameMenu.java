@@ -390,10 +390,14 @@ public final class ConsumeGameMenu extends Menu {
 			});
 		}
 
-		public void setEnabled(boolean b) {
+		/*public void setEnabled(boolean b) {
 			this.setDisable(!b);
 			this.setOpacity(b ? 1 : 0.33);
 		}
+		
+		public boolean getHighlighted() {
+			return highlight;
+		}*/
 
 		public void setHighlighted(boolean b) {
 			highlight = b;
@@ -406,10 +410,6 @@ public final class ConsumeGameMenu extends Menu {
 			}
 			this.setBackground(defBack);
 			text.setFill(defTexFill);
-		}
-
-		public boolean getHighlighted() {
-			return highlight;
 		}
 
 		public Element getElement() {
