@@ -34,18 +34,22 @@ import com.ergo21.consume.EntitySpawner;
 import com.ergo21.consume.GameScene;
 import com.ergo21.consume.Player;
 import com.ergo21.consume.PlayerHUD;
+import com.ergo21.consume.SoundManager;
 
+import javafx.animation.FadeTransition;
 import javafx.geometry.Point2D;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.input.KeyCode;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
+import javafx.util.Duration;
 
 public class ConsumeApp extends GameApplication {
 
 	public Assets assets;
 	private LevelParser parser;
+	public SoundManager soundManager;
 
 	public Entity player;
 	public Player playerData;
@@ -66,6 +70,9 @@ public class ConsumeApp extends GameApplication {
 
 	public GameScene gScene;
 	public ConsumeController consController;
+	
+	public double backMusicVolume;
+	public double sfxVolume;
 
 	@Override
 	protected void initSettings(GameSettings settings) {
@@ -77,6 +84,7 @@ public class ConsumeApp extends GameApplication {
 		settings.setMenuEnabled(true);
 		settings.setIconFileName("app_icon.png");
 		settings.setShowFPS(false);
+		sfxVolume = 0.75;
 	}
 
 	@Override
@@ -117,8 +125,10 @@ public class ConsumeApp extends GameApplication {
 		physicsManager.addCollisionHandler(new CollisionHandler(Type.PLAYER, Type.NEXT_LEVEL_POINT) {
 			@Override
 			public void onCollisionBegin(Entity a, Entity b) {
-				currentLevel++;
-				loadLevel(currentLevel);
+				a.setProperty("inDoor", true);
+			}
+			public void onCollisionEnd(Entity a, Entity b) {
+				a.setProperty("inDoor", false);
 			}
 		});
 	}
@@ -179,6 +189,9 @@ public class ConsumeApp extends GameApplication {
 		hud.MaxManaProperty().bind(playerData.MaxManaProperty());
 
 		consGameMenu.updatePowerMenu(playerData);
+		soundManager = new SoundManager(this);
+		soundManager.setBackgroundMusic("07 Festival.mp3");
+		soundManager.getBackgroundMusic().loop();
 	}
 
 	@Override
@@ -251,7 +264,6 @@ public class ConsumeApp extends GameApplication {
 		// add player
 		initPlayer(spawnPoint);
 		playerDied = false;
-		sceneManager.addEntities(eSpawner.spawnEnemy(spawnPoint.add(1000, -90)));
 		
 		// TODO Remove manual spawn
 		inputManager.addAction(new UserAction("Spawn Flyer") {
@@ -279,7 +291,47 @@ public class ConsumeApp extends GameApplication {
 				sceneManager.addEntities(eSpawner.spawnLocust(spawnPoint.add(1000, -90)));
 			}
 		}, KeyCode.DIGIT4);
+		inputManager.addAction(new UserAction("Play Background Music") {
+			@Override
+			protected void onActionBegin() {
+				soundManager.getBackgroundMusic().stop();
+				soundManager.setBackgroundMusic("06 Pyramid.mp3");
+				soundManager.getBackgroundMusic().loop();
+			}
+		}, KeyCode.P);
 		
+	}
+	
+	public void changeLevel(boolean reset) {
+		pause();
+		Rectangle bg = new Rectangle(this.getWidth(), this.getHeight());
+		bg.setFill(Color.rgb(10, 1, 1));
+		bg.setOpacity(0);
+		sceneManager.addUINodes(bg);
+		FadeTransition ft = new FadeTransition(Duration.seconds(0.5), bg);
+		ft.setFromValue(0);
+		ft.setToValue(1);
+		FadeTransition ft2 = new FadeTransition(Duration.seconds(0.5), bg);
+		ft2.setFromValue(1);
+		ft2.setToValue(0);
+		ft.setOnFinished(evt -> {
+			if(reset){
+				playerData.setCurrentHealth(playerData.getMaxHealth());
+				playerData.setCurrentMana(playerData.getMaxMana());
+				sceneManager.getEntities().forEach(sceneManager::removeEntity);
+				levels.set(currentLevel, parser.parse(currentLevel));
+			}
+			else{
+				currentLevel++;
+			}	
+			resume();
+			loadLevel(currentLevel);
+			ft2.play();
+		});	
+		ft2.setOnFinished(evt -> {
+			sceneManager.removeUINode(bg);
+		});
+		ft.play();
 	}
 
 	Entity powerStatus;
@@ -320,20 +372,15 @@ public class ConsumeApp extends GameApplication {
 	
 	private void playerDied(FXGLEvent e){
 		if(!playerDied){
-			System.out.println("Player died");
 			player.setProperty("stunned", true);
 			playerDied = true;
-			playerData.setCurrentHealth(playerData.getMaxHealth());
-			playerData.setCurrentMana(playerData.getMaxMana());
-			sceneManager.getEntities().forEach(sceneManager::removeEntity);
-			levels.set(currentLevel, parser.parse(currentLevel));
 			timerManager.runOnceAfter(new Runnable(){
+
 				@Override
 				public void run() {
-					loadLevel(currentLevel);
-					System.out.println("Level Reset");
-				}}, TimerManager.SECOND/2);
-			
+					changeLevel(true);
+					
+				}}, TimerManager.SECOND/2);	
 		}
 		
 	}

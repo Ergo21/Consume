@@ -89,14 +89,15 @@ public class ProjectilePlayerHandler extends CollisionHandler {
 		playerData.takeDamage(damage);
 
 		projectile.fireFXGLEvent(new FXGLEvent(Event.ENEMY_HIT_PLAYER));
-		if(playerData.getCurrentHealth() > 0){
-			int velocityX = (int) projectile.getControl(PhysicsControl.class).getVelocity().getX();
-			if (projectile.getControl(AimedProjectileControl.class) != null) {
-				velocityX = projectile.getControl(AimedProjectileControl.class).getVelocityX();
-			}
-			velocityX = velocityX / 2;
-			player.getControl(PhysicsControl.class).moveX(velocityX);
-			
+		
+		int velocityX = (int) projectile.getControl(PhysicsControl.class).getVelocity().getX();
+		if (projectile.getControl(AimedProjectileControl.class) != null) {
+			velocityX = projectile.getControl(AimedProjectileControl.class).getVelocityX();
+		}
+		velocityX = velocityX / 2;
+		player.getControl(PhysicsControl.class).moveX(velocityX);
+		
+		if(playerData.getCurrentHealth() > 0){	
 			player.setCollidable(false);
 			player.setProperty("stunned", true);
 

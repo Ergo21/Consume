@@ -27,6 +27,10 @@ public class PlayerPowerupHandler extends CollisionHandler {
 
 		Powerup type = powerup.getProperty(Property.SUB_TYPE);
 		Player playerData = player.getProperty(Property.DATA);
+		
+		if(playerData.getCurrentHealth() <= 0){
+			return;
+		}
 
 		switch (type) {
 		case INC_MANA_REGEN:

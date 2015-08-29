@@ -35,17 +35,16 @@ public class PlayerEnemyHandler extends CollisionHandler {
 			playerData.setCurrentHealth(playerData.getCurrentHealth() - 1);
 		}
 		
+		int velocityX = (int) enemy.getControl(PhysicsControl.class).getVelocity().getX();
+		if(enemy.getControl(DiveBombControl.class) != null){
+			velocityX = enemy.getControl(DiveBombControl.class).getVelocity();
+		}
+		else if(enemy.getControl(SimpleMoveControl.class) != null){
+			velocityX = enemy.getControl(SimpleMoveControl.class).getVelocity();
+		}
+		player.getControl(PhysicsControl.class).moveX(velocityX);
+		
 		if(playerData.getCurrentHealth() > 0){
-		
-			int velocityX = (int) enemy.getControl(PhysicsControl.class).getVelocity().getX();
-			if(enemy.getControl(DiveBombControl.class) != null){
-				velocityX = enemy.getControl(DiveBombControl.class).getVelocity();
-			}
-			else if(enemy.getControl(SimpleMoveControl.class) != null){
-				velocityX = enemy.getControl(SimpleMoveControl.class).getVelocity();
-			}
-			player.getControl(PhysicsControl.class).moveX(velocityX);
-		
 			player.setCollidable(false);
 			player.setProperty("stunned", true);
 			Entity e = Entity.noType().setGraphics(new Text("INVINCIBLE"));
