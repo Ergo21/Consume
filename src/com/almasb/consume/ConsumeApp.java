@@ -32,6 +32,7 @@ import com.ergo21.consume.ConsumeController;
 import com.ergo21.consume.ConsumeGameMenu;
 import com.ergo21.consume.EntitySpawner;
 import com.ergo21.consume.GameScene;
+import com.ergo21.consume.IndependentLoop;
 import com.ergo21.consume.Player;
 import com.ergo21.consume.PlayerHUD;
 import com.ergo21.consume.SoundManager;
@@ -56,6 +57,7 @@ public class ConsumeApp extends GameApplication {
 
 	public Physics physics = new Physics(this);
 	public EntitySpawner eSpawner;
+	public IndependentLoop indiLoop;
 
 	private List<Level> levels;
 	private int currentLevel = 0;
@@ -84,6 +86,7 @@ public class ConsumeApp extends GameApplication {
 		settings.setMenuEnabled(true);
 		settings.setIconFileName("app_icon.png");
 		settings.setShowFPS(false);
+		backMusicVolume = 0.75;
 		sfxVolume = 0.75;
 	}
 
@@ -192,6 +195,8 @@ public class ConsumeApp extends GameApplication {
 		soundManager = new SoundManager(this);
 		soundManager.setBackgroundMusic("07 Festival.mp3");
 		soundManager.getBackgroundMusic().loop();
+		indiLoop = new IndependentLoop(this);
+		indiLoop.start();
 	}
 
 	@Override
@@ -241,6 +246,12 @@ public class ConsumeApp extends GameApplication {
 		player.setProperty("climb", false);
 
 		debug.setText("Debug text goes here");
+	}
+	
+	@Override
+	public void onExit(){
+		indiLoop.stop();
+		soundManager.stopAll();
 	}
 
 	private void loadLevel(int lev) {

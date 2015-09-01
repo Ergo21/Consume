@@ -11,6 +11,8 @@
 .settings/
 /bin
 /target
+/assets/audio
+/assets/music
 
 # maven #
 dependency-reduced-pom.xml

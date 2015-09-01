@@ -27,8 +27,10 @@ package com.ergo21.consume;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import com.almasb.consume.ConsumeApp;
+import com.almasb.consume.Types.Actions;
 import com.almasb.consume.Types.Element;
 import com.almasb.fxgl.asset.AssetManager;
 import com.almasb.fxgl.asset.SaveLoadManager;
@@ -36,18 +38,30 @@ import com.almasb.fxgl.ui.Menu;
 import com.almasb.fxgl.util.Version;
 
 import javafx.beans.binding.Bindings;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ListView;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.TextInputDialog;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.Border;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.BorderStroke;
 import javafx.scene.layout.BorderStrokeStyle;
 import javafx.scene.layout.BorderWidths;
@@ -154,7 +168,14 @@ public final class ConsumeGameMenu extends Menu {
 		});
 
 		MenuItem itemExit = new MenuItem("Main Menu");
-		itemExit.setAction(app.getSceneManager()::exitToMainMenu);
+		itemExit.setAction(new Runnable(){
+			@Override
+			public void run() {
+				consApp.indiLoop.stop();
+				consApp.soundManager.stopAll();
+				app.getSceneManager().exitToMainMenu();
+			}	
+		});
 
 		MenuBox menu = new MenuBox(5, itemPowers, itemSave, itemLoad, itemOptions, itemExit);
 
@@ -211,7 +232,11 @@ public final class ConsumeGameMenu extends Menu {
 	}
 
 	private MenuBox createOptionsMenu() {
-		MenuItem itemControls = new MenuItem("CONTROLS");
+		MenuItem itemControls = new MenuItem("Controls");
+		itemControls.setAction(() -> {
+			contentViewer.getChildren().clear();
+			contentViewer.getChildren().add(createContentControls());
+		});
 		MenuItem itemVideo = new MenuItem("VIDEO");
 		MenuItem itemAudio = new MenuItem("AUDIO");
 		MenuItem itemCredits = new MenuItem("Credits");
@@ -260,6 +285,78 @@ public final class ConsumeGameMenu extends Menu {
 
 		powerList.addItems(pItems);
 
+	}
+	
+	private BorderPane createContentControls() {
+		TableView<TabItem> center = new TableView<TabItem>();
+		center.setMaxHeight(consApp.getHeight()/2);
+		center.setPrefWidth(consApp.getWidth()/2);
+		//center.getC
+		TableColumn<TabItem, String> action = new TableColumn<TabItem, String>("Action");
+		action.setResizable(false); //<TabItem, String>
+		action.setPrefWidth(consApp.getWidth()/4);
+		action.setCellValueFactory(new PropertyValueFactory<>("itAction"));
+		
+		TableColumn<TabItem, String> key = new TableColumn<TabItem, String>("Key");
+		key.setResizable(false);
+		key.setPrefWidth(consApp.getWidth()/4);
+		key.setCellValueFactory(new PropertyValueFactory<>("itKey"));
+		
+		HashMap<Actions, KeyCode> tKeys = consApp.consController.getCurrentKeys();
+		ObservableList<TabItem> items = FXCollections.observableArrayList();
+		for(Actions actionItem : Actions.values()){
+			items.add(new TabItem(actionItem, tKeys.get(actionItem)));
+		}
+		center.setItems(items);
+		center.setOnMouseClicked(new EventHandler<MouseEvent>(){
+			@Override
+			public void handle(MouseEvent event) {
+				if(event.getClickCount() > 1){
+					center.getItems().get(center.getFocusModel().getFocusedCell().getRow()).setKey(KeyCode.UNDEFINED);
+				}		
+			}
+		});
+		center.setOnKeyPressed(new EventHandler<KeyEvent>(){
+			@Override
+			public void handle(KeyEvent ke) {
+				if(center.getItems().get(center.getFocusModel().getFocusedCell().getRow()).getKey() == KeyCode.UNDEFINED){
+					center.getItems().get(center.getFocusModel().getFocusedCell().getRow()).setKey(ke.getCode());
+				}
+				
+			}
+		});
+		center.getColumns().add(action);
+		center.getColumns().add(key);
+		
+		
+		MenuItem itemSave = new MenuItem("Save");
+		itemSave.setOnMouseClicked(new EventHandler<MouseEvent>(){
+			@Override
+			public void handle(MouseEvent event) {
+				HashMap<Actions, KeyCode> newKeyMap = new HashMap<Actions, KeyCode>();
+				for(TabItem item : items){
+					newKeyMap.put(item.getAction(), item.getKey());
+				}
+				consApp.consController.initControls(newKeyMap);
+			}
+		});
+		MenuItem itemRestore = new MenuItem("Restore to Default");
+		itemRestore.setOnMouseClicked(new EventHandler<MouseEvent>(){
+			@Override
+			public void handle(MouseEvent event) {
+				HashMap<Actions, KeyCode> dKeys = consApp.consController.getDefaultKeys();
+				items.clear();
+				for(Actions actionItem : Actions.values()){
+					items.add(new TabItem(actionItem, dKeys.get(actionItem)));
+				}
+			}
+		});
+		VBox bottom = new VBox(itemSave, itemRestore);
+		
+		BorderPane view = new BorderPane();
+		view.setCenter(center);
+		view.setRight(bottom);
+		return view;
 	}
 
 	private VBox createContentCredits() {
@@ -437,4 +534,51 @@ public final class ConsumeGameMenu extends Menu {
 			}
 		}
 	}
+	
+	public class TabItem{
+    	private StringProperty itAction;
+    	private StringProperty itKey;
+    	private Actions action;
+    	private KeyCode itKeyCode;
+    	
+    	private TabItem(Actions act, KeyCode ke){
+    		action = act;
+    		itKeyCode = ke;
+    		if(act == Actions.CHPOWN){
+    			itAction = new SimpleStringProperty("PREVIOUS POWER");
+    		}
+    		else if(act == Actions.CHPOWP){
+    			itAction = new SimpleStringProperty("NEXT POWER");
+    		}
+    		else{
+    			itAction = new SimpleStringProperty(act.toString());
+    		}  	
+    		itKey = new SimpleStringProperty(ke.toString());
+    	}
+    	
+    	public StringProperty itActionProperty() {
+            return itAction;
+        }
+    	
+        public void setAction(String action) {
+            itAction.set(action);
+        }
+        
+        public StringProperty itKeyProperty() {
+            return itKey;
+        }
+        
+        public void setKey(KeyCode k) {
+            itKey.set(k.toString());
+            itKeyCode = k;
+        }
+        
+        public KeyCode getKey(){
+        	return itKeyCode;
+        }
+        
+        public Actions getAction(){
+        	return action;
+        }
+    }
 }

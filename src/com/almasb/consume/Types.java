@@ -32,4 +32,8 @@ public class Types {
 	public enum Element {
 		NEUTRAL, NEUTRAL2, FIRE, EARTH, LIGHTNING, METAL, DEATH, CONSUME
 	}
+	
+	public enum Actions {
+		LEFT, RIGHT, UP, DOWN, JUMP, INTERACT, SHOOT, CHPOWP, CHPOWN
+	}
 }

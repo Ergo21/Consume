@@ -2,6 +2,7 @@ package com.ergo21.consume;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 
 import javafx.geometry.Point2D;
@@ -17,6 +18,7 @@ import com.almasb.consume.Config;
 import com.almasb.consume.ConsumeApp;
 import com.almasb.consume.Event;
 import com.almasb.consume.Config.Speed;
+import com.almasb.consume.Types.Actions;
 import com.almasb.consume.Types.Element;
 import com.almasb.consume.Types.Platform;
 import com.almasb.consume.Types.Property;
@@ -35,14 +37,39 @@ import com.almasb.fxgl.time.TimerManager;
 
 public class ConsumeController {
 	private ConsumeApp consApp;
+	private HashMap<Actions, KeyCode> defaultKeys;
+	private HashMap<Actions, KeyCode> currentKeys;
+	private HashMap<Actions, UserAction> allActions;
+	private UserAction none;
 
 	public ConsumeController(ConsumeApp a) {
 		consApp = a;
+		defaultKeys = new HashMap<Actions, KeyCode>();
+		currentKeys = new HashMap<Actions, KeyCode>();
+		allActions = new HashMap<Actions, UserAction>();
+		none = new UserAction("Nothing") {};
+		defaultKeys.put(Actions.INTERACT, KeyCode.ENTER);
+		defaultKeys.put(Actions.LEFT, KeyCode.A);
+		defaultKeys.put(Actions.RIGHT, KeyCode.D);
+		defaultKeys.put(Actions.UP, KeyCode.W);
+		defaultKeys.put(Actions.JUMP, KeyCode.W);
+		defaultKeys.put(Actions.DOWN, KeyCode.S);
+		defaultKeys.put(Actions.SHOOT, KeyCode.Q);
+		defaultKeys.put(Actions.CHPOWP, KeyCode.E);
+		defaultKeys.put(Actions.CHPOWN, KeyCode.R);
+		
+		currentKeys.put(Actions.INTERACT, KeyCode.ENTER);
+		currentKeys.put(Actions.LEFT, KeyCode.A);
+		currentKeys.put(Actions.RIGHT, KeyCode.D);
+		currentKeys.put(Actions.UP, KeyCode.W);
+		currentKeys.put(Actions.JUMP, KeyCode.W);
+		currentKeys.put(Actions.DOWN, KeyCode.S);
+		currentKeys.put(Actions.SHOOT, KeyCode.Q);
+		currentKeys.put(Actions.CHPOWP, KeyCode.E);
+		currentKeys.put(Actions.CHPOWN, KeyCode.R);
+	
 		fired = false;
-	}
-
-	public void initControls() {
-		consApp.getInputManager().addAction(new UserAction("Update Script") {
+		allActions.put(Actions.INTERACT, new UserAction("Interact") {
 			@Override
 			protected void onActionBegin() {
 				if (consApp.gScene.isVisible()) {
@@ -53,9 +80,8 @@ public class ConsumeController {
 				}
 					
 			}
-		}, KeyCode.ENTER);
-
-		consApp.getInputManager().addAction(new UserAction("Move Left") {
+		});
+		allActions.put(Actions.LEFT, new UserAction("Left") {
 			@Override
 			protected void onAction() {
 				if (consApp.player != null && consApp.player.getProperty("stunned") != null && !(boolean) consApp.player.getProperty("stunned")) {
@@ -70,9 +96,8 @@ public class ConsumeController {
 					consApp.player.getControl(PhysicsControl.class).moveX(0);
 				}
 			}
-		}, KeyCode.A);
-
-		consApp.getInputManager().addAction(new UserAction("Move Right") {
+		});
+		allActions.put(Actions.RIGHT, new UserAction("Move Right") {
 			@Override
 			protected void onAction() {
 				if (consApp.player != null && consApp.player.getProperty("stunned") != null &&  !(boolean) consApp.player.getProperty("stunned")) {
@@ -87,9 +112,17 @@ public class ConsumeController {
 					consApp.player.getControl(PhysicsControl.class).moveX(0);
 				}
 			}
-		}, KeyCode.D);
-
-		consApp.getInputManager().addAction(new UserAction("Jump / Climb Up") {
+		});
+		allActions.put(Actions.UP, new UserAction("Up") {
+			@Override
+			protected void onAction() {
+				if (consApp.player != null && consApp.player.getProperty("stunned") != null && !(boolean) consApp.player.getProperty("stunned")) {
+					if (consApp.player.<Boolean> getProperty("climbing"))
+						consApp.player.getControl(PhysicsControl.class).climb(-5);
+				}
+			}
+		});
+		allActions.put(Actions.JUMP, new UserAction("Jump / Climb Up") {
 			@Override
 			protected void onAction() {
 				if (consApp.player != null && consApp.player.getProperty("stunned") != null && !(boolean) consApp.player.getProperty("stunned")) {
@@ -99,9 +132,8 @@ public class ConsumeController {
 						consApp.player.getControl(PhysicsControl.class).jump();
 				}
 			}
-		}, KeyCode.W);
-
-		consApp.getInputManager().addAction(new UserAction("Climb Down") {
+		});
+		allActions.put(Actions.DOWN, new UserAction("Down") {
 			@Override
 			protected void onAction() {
 				if (consApp.player != null && consApp.player.getProperty("stunned") != null && !(boolean) consApp.player.getProperty("stunned")) {
@@ -110,25 +142,58 @@ public class ConsumeController {
 					}
 				}
 			}
-		}, KeyCode.S);
-
-		consApp.getInputManager().addAction(new UserAction("Shoot") {
+		});
+		allActions.put(Actions.SHOOT, new UserAction("Shoot") {
 			@Override
 			protected void onActionBegin() {
 				if (consApp.player != null && consApp.player.getProperty("stunned") != null && !(boolean) consApp.player.getProperty("stunned")) {
 					shootProjectile();
 				}
 			}
-		}, KeyCode.Q);
-
-		consApp.getInputManager().addAction(new UserAction("Change Power") {
+		});
+		allActions.put(Actions.CHPOWP, new UserAction("Change Power +") {
 			@Override
 			protected void onActionBegin() {
 				if (consApp.player != null && consApp.player.getProperty("stunned") != null && !(boolean) consApp.player.getProperty("stunned")) {
-					changePower();
+					changePower(1);
 				}
 			}
-		}, KeyCode.E);
+		});
+		allActions.put(Actions.CHPOWN, new UserAction("Change Power -") {
+			@Override
+			protected void onActionBegin() {
+				if (consApp.player != null && consApp.player.getProperty("stunned") != null && !(boolean) consApp.player.getProperty("stunned")) {
+					changePower(-1);
+				}
+			}
+		});
+		
+	}
+	
+	public void initControls(){
+		for(Actions action : Actions.values()){
+			consApp.getInputManager().addAction(allActions.get(action), defaultKeys.get(action));
+		}
+	}
+
+	public void initControls(HashMap<Actions, KeyCode> newKeyMap) {
+		clearInputValues();
+		
+		for(Actions action : Actions.values()){
+			if(newKeyMap.containsKey(action) && newKeyMap.get(action) != KeyCode.UNDEFINED){
+				consApp.getInputManager().addAction(allActions.get(action), newKeyMap.get(action));
+				currentKeys.put(action, newKeyMap.get(action));
+			}
+			else{
+				consApp.getInputManager().addAction(allActions.get(action), defaultKeys.get(action));
+			}
+		}
+	}
+	
+	public void clearInputValues(){
+		for(KeyCode key : consApp.getInputManager().getKeyBindings().keySet()){
+			consApp.getInputManager().addAction(none, key);
+		}
 	}
 
 	private Entity spear;
@@ -306,17 +371,34 @@ public class ConsumeController {
 		consApp.getSceneManager().addEntities(e);
 	}
 
-	public void changePower() {
+	public void changePower(int posi) {
 		int ind = consApp.playerData.getPowers().indexOf(consApp.playerData.getCurrentPower());
-		ind++;
+		if(posi > 0){
+			ind++;
+		}
+		else{
+			ind--;
+		}
+		
 		if (ind >= consApp.playerData.getPowers().size()) {
 			ind = 0;
+		}
+		else if(ind < 0){
+			ind = consApp.playerData.getPowers().size() - 1;
 		}
 		consApp.playerData.setCurrentPower(consApp.playerData.getPowers().get(ind));
 	}
 
 	public void changePower(Element e) {
 		consApp.playerData.setCurrentPower(e);
+	}
+	
+	public HashMap<Actions, KeyCode> getCurrentKeys(){
+		return currentKeys;
+	}
+	
+	public HashMap<Actions, KeyCode> getDefaultKeys(){
+		return defaultKeys;
 	}
 
 	private List<Line> createBolt(Point2D src, Point2D dst, float thickness) {
