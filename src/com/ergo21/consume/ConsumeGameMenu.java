@@ -28,6 +28,7 @@ package com.ergo21.consume;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Optional;
 
 import com.almasb.consume.ConsumeApp;
 import com.almasb.consume.Types.Actions;
@@ -48,6 +49,7 @@ import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TableColumn;
@@ -135,27 +137,7 @@ public final class ConsumeGameMenu extends Menu {
 			contentViewer.getChildren().add(powerList);
 		});
 
-		MenuItem itemSave = new MenuItem("Save");
-		itemSave.setAction(() -> {
-			Serializable data = app.saveState();
-
-			if (data == null)
-				return;
-
-			TextInputDialog dialog = new TextInputDialog();
-			dialog.setContentText("Enter name for save file");
-			dialog.showAndWait().ifPresent(fileName -> {
-				try {
-					SaveLoadManager.INSTANCE.save(data, fileName);
-				} catch (Exception e) {
-					Alert alert = new Alert(AlertType.ERROR);
-					alert.setContentText("Failed to save file: " + fileName + ". Error: " + e.getMessage());
-					alert.showAndWait();
-				}
-			});
-		});
-
-		MenuItem itemLoad = new MenuItem("Load");
+		MenuItem itemLoad = new MenuItem("Load & Save");
 		itemLoad.setAction(() -> {
 			contentViewer.getChildren().clear();
 			contentViewer.getChildren().add(createContentLoad());
@@ -165,6 +147,16 @@ public final class ConsumeGameMenu extends Menu {
 		itemOptions.setAction(() -> {
 			contentViewer.getChildren().clear();
 			contentViewer.getChildren().add(createOptionsMenu());
+		});
+		
+		MenuItem itemLevel = new MenuItem("Level Menu");
+		itemLevel.setAction(new Runnable(){
+			@Override
+			public void run() {
+				consApp.indiLoop.stop();
+				consApp.soundManager.stopAll();
+				consApp.showLevelScreen();
+			}	
 		});
 
 		MenuItem itemExit = new MenuItem("Main Menu");
@@ -177,15 +169,15 @@ public final class ConsumeGameMenu extends Menu {
 			}	
 		});
 
-		MenuBox menu = new MenuBox(5, itemPowers, itemSave, itemLoad, itemOptions, itemExit);
+		MenuBox menu = new MenuBox(5, itemPowers, itemLoad, itemOptions, itemLevel, itemExit);
 
 		menu.setTranslateX(0);
 		menu.setTranslateY(app.getHeight() / 2 - menu.getLayoutHeight() / 2);
 		return menu;
 	}
 
-	private MenuBox createContentLoad() {
-		ListView<String> list = new ListView<>();
+	private BorderPane createContentLoad() {
+		ListView<String> list = new ListView<String>();
 		SaveLoadManager.INSTANCE.loadFileNames().ifPresent(names -> list.getItems().setAll(names));
 		list.prefHeightProperty().bind(Bindings.size(list.getItems()).multiply(36));
 
@@ -198,6 +190,36 @@ public final class ConsumeGameMenu extends Menu {
 		if (list.getItems().size() > 0) {
 			list.getSelectionModel().selectFirst();
 		}
+		
+		MenuItem btnSave = new MenuItem("SAVE");
+		btnSave.setAction(() -> {
+			Serializable data = app.saveState();
+
+			if (data == null)
+				return;
+
+			TextInputDialog dialog = new TextInputDialog();
+			dialog.setTitle("Naming");
+			dialog.setHeaderText("Enter name for save file");
+			dialog.showAndWait().ifPresent(fileName -> {
+				if(SaveLoadManager.INSTANCE.loadFileNames().get().contains(fileName)){
+					Alert alert = new Alert(AlertType.CONFIRMATION);
+					alert.setHeaderText("File already exists. Do you want to overwrite?");
+					Optional<ButtonType> result = alert.showAndWait();
+					if(result.isPresent() && result.get() == ButtonType.CANCEL){
+						return;
+					}
+				}
+				try {
+					SaveLoadManager.INSTANCE.save(data, fileName);
+					SaveLoadManager.INSTANCE.loadFileNames().ifPresent(names -> list.getItems().setAll(names));
+				} catch (Exception e) {
+					Alert alert = new Alert(AlertType.ERROR);
+					alert.setContentText("Failed to save file: " + fileName + ". Error: " + e.getMessage());
+					alert.showAndWait();
+				}
+			});
+		});
 
 		MenuItem btnLoad = new MenuItem("LOAD");
 		btnLoad.setAction(() -> {
@@ -208,11 +230,16 @@ public final class ConsumeGameMenu extends Menu {
 			try {
 				Serializable data = SaveLoadManager.INSTANCE.load(fileName);
 				app.loadState(data);
+				Alert alert = new Alert(AlertType.INFORMATION);
+				alert.setTitle("Loaded");
+				alert.setHeaderText("Save loaded successfully");
+				alert.showAndWait();
 			} catch (Exception e) {
 				Alert alert = new Alert(AlertType.ERROR);
 				alert.setContentText("Failed to load file: " + fileName + ". Error: " + e.getMessage());
 				alert.showAndWait();
 			}
+			
 		});
 		MenuItem btnDelete = new MenuItem("DELETE");
 		btnDelete.setAction(() -> {
@@ -220,15 +247,23 @@ public final class ConsumeGameMenu extends Menu {
 			if (fileName == null)
 				return;
 
-			Alert alert = new Alert(AlertType.INFORMATION);
-			alert.setContentText(
-					SaveLoadManager.INSTANCE.delete(fileName) ? "File was deleted" : "File couldn't be deleted");
-			alert.showAndWait();
-
-			list.getItems().remove(fileName);
+			Alert alert = new Alert(AlertType.CONFIRMATION);
+			alert.setTitle("Please confirm");
+			alert.setHeaderText("Are you sure you want to delete file: " + fileName);
+			Optional<ButtonType> result = alert.showAndWait();
+			if(result.isPresent() && result.get() == ButtonType.CANCEL){
+				return;
+			}
+			SaveLoadManager.INSTANCE.delete(fileName);
+			SaveLoadManager.INSTANCE.loadFileNames().ifPresent(names -> list.getItems().setAll(names));
 		});
+		
+		BorderPane bp = new BorderPane();
+		bp.setCenter(list);
+		VBox right= new VBox(btnSave, btnLoad, btnDelete);
+		bp.setRight(right);
 
-		return new MenuBox(5, btnLoad, btnDelete);
+		return bp;
 	}
 
 	private MenuBox createOptionsMenu() {
@@ -251,7 +286,16 @@ public final class ConsumeGameMenu extends Menu {
 		ArrayList<MenuItem> pItems = new ArrayList<MenuItem>();
 
 		for (Element power : playerData.getPowers()) {
-			MenuItem itemPower = new MenuItem("" + power);
+			MenuItem itemPower;
+			if(power == Element.NEUTRAL){
+				itemPower = new MenuItem("SPEAR");
+			}
+			else if(power == Element.NEUTRAL2){
+				itemPower = new MenuItem("KNIFE");
+			}
+			else{
+				itemPower = new MenuItem("" + power);
+			}
 			itemPower.setElement(power);
 			itemPower.setAction(() -> {
 				for (MenuItem item : pItems) {
@@ -351,11 +395,11 @@ public final class ConsumeGameMenu extends Menu {
 				}
 			}
 		});
-		VBox bottom = new VBox(itemSave, itemRestore);
+		VBox right= new VBox(itemSave, itemRestore);
 		
 		BorderPane view = new BorderPane();
 		view.setCenter(center);
-		view.setRight(bottom);
+		view.setRight(right);
 		return view;
 	}
 

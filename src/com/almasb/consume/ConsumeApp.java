@@ -1,5 +1,6 @@
 package com.almasb.consume;
 
+import java.io.Serializable;
 import java.util.List;
 import java.util.Random;
 import java.util.stream.Collectors;
@@ -10,6 +11,7 @@ import com.almasb.consume.LevelParser.LevelData;
 import com.almasb.consume.Types.Block;
 import com.almasb.consume.Types.Element;
 import com.almasb.consume.Types.Platform;
+import com.almasb.consume.Types.Powerup;
 import com.almasb.consume.Types.Property;
 import com.almasb.consume.Types.Type;
 import com.almasb.consume.ai.AnimatedPlayerControl;
@@ -31,6 +33,7 @@ import com.almasb.fxgl.time.TimerManager;
 import com.ergo21.consume.ConsumeController;
 import com.ergo21.consume.ConsumeGameMenu;
 import com.ergo21.consume.EntitySpawner;
+import com.ergo21.consume.GameSave;
 import com.ergo21.consume.GameScene;
 import com.ergo21.consume.IndependentLoop;
 import com.ergo21.consume.Player;
@@ -60,7 +63,6 @@ public class ConsumeApp extends GameApplication {
 	public IndependentLoop indiLoop;
 
 	private List<Level> levels;
-	private int currentLevel = 0;
 
 	private PlayerHUD hud;
 	private ConsumeGameMenu consGameMenu;
@@ -100,7 +102,7 @@ public class ConsumeApp extends GameApplication {
 	protected void initGame() {
 		playerData = new Player(assets.getText("player.txt"));
 		playerData.getPowers().add(Element.NEUTRAL2);
-		playerData.getPowers().add(Element.FIRE);
+		//playerData.getPowers().add(Element.FIRE);
 		playerData.getPowers().add(Element.EARTH);
 		playerData.getPowers().add(Element.LIGHTNING);
 		playerData.getPowers().add(Element.METAL);
@@ -110,13 +112,12 @@ public class ConsumeApp extends GameApplication {
 
 		initLevels();
 
-		currentLevel = 0;
-		loadLevel(currentLevel);
+		loadLevel(playerData.getCurrentLevel());
 	}
 
 	@Override
 	protected void initPhysics() {
-		physicsManager.addCollisionHandler(new PlayerPowerupHandler());
+		physicsManager.addCollisionHandler(new PlayerPowerupHandler(this));
 		physicsManager.addCollisionHandler(new PlayerEnemyHandler(this));
 		physicsManager.addCollisionHandler(new ProjectileEnemyHandler(this));
 		physicsManager.addCollisionHandler(new PlayerBlockHandler((String scName) -> {
@@ -250,8 +251,12 @@ public class ConsumeApp extends GameApplication {
 	
 	@Override
 	public void onExit(){
-		indiLoop.stop();
-		soundManager.stopAll();
+		if(indiLoop != null){
+			indiLoop.stop();
+		}
+		if(soundManager != null){
+			soundManager.stopAll();
+		}	
 	}
 
 	private void loadLevel(int lev) {
@@ -259,7 +264,7 @@ public class ConsumeApp extends GameApplication {
 
 		Level level = levels.get(lev);
 		Point2D spawnPoint = level.getSpawnPoint();
-
+		
 		// add level objects
 		for (Entity e : level.getEntitiesAsArray()) {
 			// TODO: currently we don't have death animations/handlers for other
@@ -268,10 +273,21 @@ public class ConsumeApp extends GameApplication {
 			if (e.isType(Type.POWERUP)) {
 				e.addFXGLEventHandler(Event.DEATH, event -> sceneManager.removeEntity(e));
 			}
-
-			sceneManager.addEntities(e);
+			if(playerData.getUpgrades().contains(lev) && (e.getProperty(Property.SUB_TYPE) == Powerup.INC_MANA_REGEN
+														|| e.getProperty(Property.SUB_TYPE) == Powerup.INC_MAX_MANA
+														|| e.getProperty(Property.SUB_TYPE) == Powerup.INC_MAX_HEALTH)){
+				
+			}	
+			else{
+				sceneManager.addEntities(e);
+			}
+			
 		}
-
+		
+		if(gScene != null){
+			gScene.endScene();
+		}
+		
 		// add player
 		initPlayer(spawnPoint);
 		playerDied = false;
@@ -302,6 +318,12 @@ public class ConsumeApp extends GameApplication {
 				sceneManager.addEntities(eSpawner.spawnLocust(spawnPoint.add(1000, -90)));
 			}
 		}, KeyCode.DIGIT4);
+		inputManager.addAction(new UserAction("Spawn Boss") {
+			@Override
+			protected void onActionBegin() {
+				sceneManager.addEntities(eSpawner.spawnBoss(spawnPoint.add(1000, 0)));
+			}
+		}, KeyCode.DIGIT5);
 		inputManager.addAction(new UserAction("Play Background Music") {
 			@Override
 			protected void onActionBegin() {
@@ -313,7 +335,7 @@ public class ConsumeApp extends GameApplication {
 		
 	}
 	
-	public void changeLevel(boolean reset) {
+	public void changeLevel() {
 		pause();
 		Rectangle bg = new Rectangle(this.getWidth(), this.getHeight());
 		bg.setFill(Color.rgb(10, 1, 1));
@@ -326,23 +348,66 @@ public class ConsumeApp extends GameApplication {
 		ft2.setFromValue(1);
 		ft2.setToValue(0);
 		ft.setOnFinished(evt -> {
-			if(reset){
+			if(playerData.getCurrentHealth() <= 0){
 				playerData.setCurrentHealth(playerData.getMaxHealth());
 				playerData.setCurrentMana(playerData.getMaxMana());
-				sceneManager.getEntities().forEach(sceneManager::removeEntity);
-				levels.set(currentLevel, parser.parse(currentLevel));
 			}
-			else{
-				currentLevel++;
-			}	
+			sceneManager.getEntities().forEach(sceneManager::removeEntity);
+			levels.set(playerData.getCurrentLevel(), parser.parse(playerData.getCurrentLevel()));
 			resume();
-			loadLevel(currentLevel);
+			loadLevel(playerData.getCurrentLevel());
 			ft2.play();
 		});	
 		ft2.setOnFinished(evt -> {
 			sceneManager.removeUINode(bg);
 		});
 		ft.play();
+	}
+	
+	public void showLevelScreen(){
+		//TODO
+		System.out.println("Show level screen");
+		consGameMenu.updatePowerMenu(playerData);
+		
+	}
+	
+	@Override
+	public Serializable saveState(){
+		return new GameSave(playerData);
+	}
+	
+	@Override 
+	public void loadState(Serializable d){
+		if(d.getClass() == GameSave.class){
+			if(playerData != null){
+				GameSave g = (GameSave) d;
+				playerData.setElement(g.getCurElement());
+				playerData.setCurrentHealth(g.getCurHealth());
+				playerData.setCurrentLevel(g.getCurLevel());
+				playerData.setCurrentMana(g.getCurMana());
+				playerData.setManaRegenRate(g.getManaReg());
+				playerData.setMaxHealth(g.getMaxHealth());
+				playerData.setMaxMana(g.getMaxMana());
+				playerData.setName(g.getName());
+				playerData.getPowers().clear();
+				playerData.getPowers().addAll(g.getPowers());
+				playerData.getResistances().clear();
+				playerData.getResistances().addAll(g.getResists());
+				playerData.setSpritesheet(g.getSSheet());
+				playerData.getWeaknesses().clear();
+				playerData.getWeaknesses().addAll(g.getWeaks());
+				playerData.getUpgrades().clear();
+				playerData.getUpgrades().addAll(g.getUpgrades());
+				playerData.getLevsComp().clear();
+				playerData.getLevsComp().addAll(g.getLevsComp());
+				consGameMenu.updatePowerMenu(playerData);
+				changeLevel();
+			}		
+			System.out.println("Loaded");
+		}
+		else{
+			System.out.println(d.getClass());
+		}
 	}
 
 	Entity powerStatus;
@@ -386,11 +451,9 @@ public class ConsumeApp extends GameApplication {
 			player.setProperty("stunned", true);
 			playerDied = true;
 			timerManager.runOnceAfter(new Runnable(){
-
 				@Override
 				public void run() {
-					changeLevel(true);
-					
+					changeLevel();
 				}}, TimerManager.SECOND/2);	
 		}
 		

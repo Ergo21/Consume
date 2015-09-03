@@ -12,6 +12,7 @@ import com.almasb.consume.Config;
 import com.almasb.consume.ConsumeApp;
 import com.almasb.consume.Event;
 import com.almasb.consume.Config.Speed;
+import com.almasb.consume.Types.Element;
 import com.almasb.consume.Types.Powerup;
 import com.almasb.consume.Types.Property;
 import com.almasb.consume.Types.Type;
@@ -115,13 +116,32 @@ public class EntitySpawner {
 
 		return enemy;
 	}
+	
+	public Entity spawnBoss(Point2D spawnPoint) {
+		Entity enemy = new Entity(Type.ENEMY);
+		Rectangle rect = new Rectangle(30, 30);
+		rect.setFill(Color.RED);
+
+		enemy.setGraphics(rect);
+		enemy.setCollidable(true);
+		enemy.setProperty(Property.DATA, new Enemy(consApp.assets.getText("enemies/enemy_FireElemental.txt")));
+		enemy.setProperty(Property.SUB_TYPE, Type.BOSS);
+		enemy.setProperty("physics", consApp.physics);
+		enemy.setProperty("shover", true);
+		enemy.setPosition(spawnPoint.getX(), spawnPoint.getY());
+		enemy.addControl(new PhysicsControl(consApp.physics));
+		enemy.addControl(new SimpleJumpControl(consApp.player, Speed.ENEMY_JUMP));
+		enemy.addFXGLEventHandler(Event.DEATH, this::onEnemyDeath);
+
+		return enemy;
+	}
 
 	private void onEnemyDeath(FXGLEvent event) {
 		Entity enemy = event.getTarget();
 		consApp.getSceneManager().removeEntity(enemy);
 
 		// chance based drop logic
-		if (consApp.getRandom().nextInt(100) <= 33) { // check if dropping
+		if (consApp.getRandom().nextInt(100) <= 33 || enemy.getProperty(Property.SUB_TYPE) == Type.BOSS) { // check if dropping
 			ArrayList<Powerup> drops = new ArrayList<>();
 			drops.add(Powerup.RESTORE_HEALTH_12);
 			drops.add(Powerup.RESTORE_MANA_12);
@@ -156,7 +176,14 @@ public class EntitySpawner {
 
 			Entity e = new Entity(Type.POWERUP);
 			e.setPosition((int) enemy.getPosition().getX(), (int) enemy.getPosition().getY());
-			e.setProperty(Property.SUB_TYPE, drops.get(0));
+			if(enemy.getProperty(Property.SUB_TYPE) == Type.BOSS){
+				Enemy ed = enemy.getProperty(Property.DATA);
+				e.setProperty(Property.SUB_TYPE, getPowerup(ed.curElement.getValue()));
+			}
+			else{
+				e.setProperty(Property.SUB_TYPE, drops.get(0));
+			}
+			
 			Rectangle r = new Rectangle(30, 30);
 			r.setFill(Color.PINK);
 			e.setGraphics(r);
@@ -171,6 +198,35 @@ public class EntitySpawner {
 			});
 
 			consApp.getSceneManager().addEntities(e);
+		}
+	}
+
+	private Powerup getPowerup(Element cur) {
+		switch(cur){
+			case NEUTRAL2:{
+				return Powerup.NEUTRAL2;
+			}
+			case FIRE:{
+				return Powerup.FIRE;
+			}
+			case EARTH:{
+				return Powerup.EARTH;
+			}
+			case LIGHTNING:{
+				return Powerup.LIGHTNING;
+			}
+			case METAL:{
+				return Powerup.METAL;
+			}
+			case DEATH:{
+				return Powerup.DEATH;
+			}
+			case CONSUME:{
+				return Powerup.CONSUME;
+			}
+			default:{
+				return Powerup.NEUTRAL;
+			}
 		}
 	}
 }

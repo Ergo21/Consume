@@ -5,16 +5,43 @@ import java.util.List;
 
 import com.almasb.consume.Types.Element;
 
-public class Player extends Enemy {
+import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.property.SimpleObjectProperty;
+
+public class Player extends Enemy{
 
 	private ArrayList<Element> powers = new ArrayList<Element>();
+	private ArrayList<Integer> upgradesCollected;
+	private ArrayList<Integer> levelsCompleted;
+	private int currentLevel;
 
 	public Player(List<String> prop) {
 		super(prop);
 		powers.add(Element.NEUTRAL);
 		curElement.set(powers.get(0));
+		currentLevel = 0;
+		upgradesCollected = new ArrayList<Integer>();
+		levelsCompleted = new ArrayList<Integer>();
 	}
-
+	
+	public Player(GameSave g){
+		super();
+		curElement = new SimpleObjectProperty<Element>(g.getCurElement());
+		curHealth = new SimpleIntegerProperty(g.getCurHealth());
+		currentLevel = g.getCurLevel();
+		curMana = new SimpleIntegerProperty(g.getCurMana());
+		manaReg = new SimpleIntegerProperty(g.getManaReg());
+		maxHealth = new SimpleIntegerProperty(g.getMaxHealth());
+		maxMana = new SimpleIntegerProperty(g.getMaxMana());
+		name = g.getName();
+		powers = g.getPowers();
+		resists = g.getResists();
+		sSheet = g.getSSheet();
+		weaks = g.getWeaks();
+		upgradesCollected = g.getUpgrades();
+		levelsCompleted = g.getLevsComp();
+	}
+	
 	public void increaseMaxHealth(int value) {
 		maxHealth.set(maxHealth.get() + value);
 	}
@@ -86,6 +113,22 @@ public class Player extends Enemy {
 			break;
 		}
 		}
+	}
+	
+	public int getCurrentLevel(){
+		return currentLevel;
+	}
+	
+	public void setCurrentLevel(int l){
+		currentLevel = l;
+	}
+
+	public ArrayList<Integer> getUpgrades() {
+		return upgradesCollected;
+	}
+
+	public ArrayList<Integer> getLevsComp() {
+		return levelsCompleted;
 	}
 
 }

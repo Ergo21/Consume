@@ -76,7 +76,8 @@ public class ConsumeController {
 					consApp.gScene.updateScript();
 				}
 				else if(consApp.player != null && consApp.player.getProperty("inDoor") != null && (boolean) consApp.player.getProperty("inDoor")){
-					consApp.changeLevel(false);
+					consApp.playerData.setCurrentLevel(consApp.playerData.getCurrentLevel() + 1);
+					consApp.changeLevel();
 				}
 					
 			}

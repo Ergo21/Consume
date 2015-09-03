@@ -23,6 +23,9 @@ public class Enemy {
 	protected ObjectProperty<Element> curElement = new SimpleObjectProperty<Element>();
 	protected ArrayList<Element> resists;
 	protected ArrayList<Element> weaks;
+	
+	protected Enemy(){
+	}
 
 	public Enemy(List<String> prop) {
 		for (String p : prop) {
@@ -101,32 +104,31 @@ public class Enemy {
 			String val = p.substring(0, p.indexOf('"'));
 			p = p.substring(p.indexOf('"') + 1);
 			switch (val) {
-			case "FIRE": {
-				rws.add(Element.FIRE);
-				break;
+				case "FIRE": {
+					rws.add(Element.FIRE);
+					break;
+				}
+				case "EARTH": {
+					rws.add(Element.EARTH);
+					break;
+				}
+				case "METAL": {
+					rws.add(Element.METAL);
+					break;
+				}
+				case "LIGHTING": {
+					rws.add(Element.LIGHTNING);
+					break;
+				}
+				case "DEATH": {
+					rws.add(Element.DEATH);
+					break;
+				}
+				case "CONSUME": {
+					rws.add(Element.CONSUME);
+					break;
+				}
 			}
-			case "EARTH": {
-				rws.add(Element.EARTH);
-				break;
-			}
-			case "METAL": {
-				rws.add(Element.METAL);
-				break;
-			}
-			case "LIGHTING": {
-				rws.add(Element.LIGHTNING);
-				break;
-			}
-			case "DEATH": {
-				rws.add(Element.DEATH);
-				break;
-			}
-			case "CONSUME": {
-				rws.add(Element.CONSUME);
-				break;
-			}
-			}
-
 		}
 
 		return rws;
@@ -135,9 +137,17 @@ public class Enemy {
 	public String getName() {
 		return name;
 	}
+	
+	public void setName(String s){
+		name = s;
+	}
 
 	public String getSpritesheet() {
 		return sSheet;
+	}
+	
+	public void setSpritesheet(String s){
+		sSheet = s;
 	}
 
 	public IntegerProperty MaxHealthProperty() {
@@ -212,11 +222,11 @@ public class Enemy {
 		curElement.set(e);
 	}
 
-	public List<Element> getResistances() {
+	public ArrayList<Element> getResistances() {
 		return resists;
 	}
 
-	public List<Element> getWeaknesses() {
+	public ArrayList<Element> getWeaknesses() {
 		return weaks;
 	}
 
