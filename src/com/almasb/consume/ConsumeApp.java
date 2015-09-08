@@ -24,6 +24,7 @@ import com.almasb.consume.collision.ProjectilePlayerHandler;
 import com.almasb.fxgl.GameApplication;
 import com.almasb.fxgl.GameSettings;
 import com.almasb.fxgl.asset.Assets;
+import com.almasb.fxgl.asset.SaveLoadManager;
 import com.almasb.fxgl.asset.Texture;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.FXGLEvent;
@@ -38,6 +39,7 @@ import com.ergo21.consume.GameScene;
 import com.ergo21.consume.IndependentLoop;
 import com.ergo21.consume.Player;
 import com.ergo21.consume.PlayerHUD;
+import com.ergo21.consume.SavedSettings;
 import com.ergo21.consume.SoundManager;
 
 import javafx.animation.FadeTransition;
@@ -75,8 +77,7 @@ public class ConsumeApp extends GameApplication {
 	public GameScene gScene;
 	public ConsumeController consController;
 	
-	public double backMusicVolume;
-	public double sfxVolume;
+	public SavedSettings sSettings;
 
 	@Override
 	protected void initSettings(GameSettings settings) {
@@ -88,8 +89,28 @@ public class ConsumeApp extends GameApplication {
 		settings.setMenuEnabled(true);
 		settings.setIconFileName("app_icon.png");
 		settings.setShowFPS(false);
-		backMusicVolume = 0.75;
-		sfxVolume = 0.75;
+		
+		if(SaveLoadManager.INSTANCE.loadFileNames().isPresent() && SaveLoadManager.INSTANCE.loadFileNames().get().contains("settings.set")){
+			try {
+				sSettings = (SavedSettings)SaveLoadManager.INSTANCE.load("settings.set");
+			} catch (Exception e) {
+				System.out.println("Unable to load settings");
+				e.printStackTrace();
+				sSettings = new SavedSettings();
+			}
+		}
+		else{
+			sSettings = new SavedSettings();
+			try {
+				SaveLoadManager.INSTANCE.save(sSettings, "settings.set");
+			} catch (Exception e) {
+				System.out.println("Unable to save settings");
+				e.printStackTrace();
+			}
+		}
+		
+		
+		
 	}
 
 	@Override
@@ -257,6 +278,12 @@ public class ConsumeApp extends GameApplication {
 		if(soundManager != null){
 			soundManager.stopAll();
 		}	
+		try {
+			SaveLoadManager.INSTANCE.save(sSettings, "settings.set");
+		} catch (Exception e) {
+			System.out.println("Unable to save settings");
+			e.printStackTrace();
+		}
 	}
 
 	private void loadLevel(int lev) {
@@ -403,7 +430,6 @@ public class ConsumeApp extends GameApplication {
 				consGameMenu.updatePowerMenu(playerData);
 				changeLevel();
 			}		
-			System.out.println("Loaded");
 		}
 		else{
 			System.out.println(d.getClass());

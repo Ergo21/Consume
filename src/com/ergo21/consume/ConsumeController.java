@@ -58,15 +58,21 @@ public class ConsumeController {
 		defaultKeys.put(Actions.CHPOWP, KeyCode.E);
 		defaultKeys.put(Actions.CHPOWN, KeyCode.R);
 		
-		currentKeys.put(Actions.INTERACT, KeyCode.ENTER);
-		currentKeys.put(Actions.LEFT, KeyCode.A);
-		currentKeys.put(Actions.RIGHT, KeyCode.D);
-		currentKeys.put(Actions.UP, KeyCode.W);
-		currentKeys.put(Actions.JUMP, KeyCode.W);
-		currentKeys.put(Actions.DOWN, KeyCode.S);
-		currentKeys.put(Actions.SHOOT, KeyCode.Q);
-		currentKeys.put(Actions.CHPOWP, KeyCode.E);
-		currentKeys.put(Actions.CHPOWN, KeyCode.R);
+		if(consApp.sSettings.getControls().isEmpty()){
+			currentKeys.put(Actions.INTERACT, KeyCode.ENTER);
+			currentKeys.put(Actions.LEFT, KeyCode.A);
+			currentKeys.put(Actions.RIGHT, KeyCode.D);
+			currentKeys.put(Actions.UP, KeyCode.W);
+			currentKeys.put(Actions.JUMP, KeyCode.W);
+			currentKeys.put(Actions.DOWN, KeyCode.S);
+			currentKeys.put(Actions.SHOOT, KeyCode.Q);
+			currentKeys.put(Actions.CHPOWP, KeyCode.E);
+			currentKeys.put(Actions.CHPOWN, KeyCode.R);
+			consApp.sSettings.setControls(currentKeys);
+		}
+		else{
+			currentKeys = consApp.sSettings.getControls();
+		}
 	
 		fired = false;
 		allActions.put(Actions.INTERACT, new UserAction("Interact") {
@@ -173,7 +179,7 @@ public class ConsumeController {
 	
 	public void initControls(){
 		for(Actions action : Actions.values()){
-			consApp.getInputManager().addAction(allActions.get(action), defaultKeys.get(action));
+			consApp.getInputManager().addAction(allActions.get(action), currentKeys.get(action));
 		}
 	}
 
@@ -189,6 +195,7 @@ public class ConsumeController {
 				consApp.getInputManager().addAction(allActions.get(action), defaultKeys.get(action));
 			}
 		}
+		consApp.sSettings.setControls(currentKeys);
 	}
 	
 	public void clearInputValues(){

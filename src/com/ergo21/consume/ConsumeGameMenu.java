@@ -52,6 +52,7 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ListView;
+import javafx.scene.control.ProgressBar;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
@@ -179,6 +180,14 @@ public final class ConsumeGameMenu extends Menu {
 	private BorderPane createContentLoad() {
 		ListView<String> list = new ListView<String>();
 		SaveLoadManager.INSTANCE.loadFileNames().ifPresent(names -> list.getItems().setAll(names));
+		ArrayList<String> removes = new ArrayList<String>();
+		for(String item : list.getItems()){
+			if(item.endsWith(".set")){
+				removes.add(item);
+			}
+		}
+		list.getItems().removeAll(removes);
+		removes.clear();
 		list.prefHeightProperty().bind(Bindings.size(list.getItems()).multiply(36));
 
 		try {
@@ -191,7 +200,7 @@ public final class ConsumeGameMenu extends Menu {
 			list.getSelectionModel().selectFirst();
 		}
 		
-		MenuItem btnSave = new MenuItem("SAVE");
+		MenuItem btnSave = new MenuItem("Save");
 		btnSave.setAction(() -> {
 			Serializable data = app.saveState();
 
@@ -202,6 +211,12 @@ public final class ConsumeGameMenu extends Menu {
 			dialog.setTitle("Naming");
 			dialog.setHeaderText("Enter name for save file");
 			dialog.showAndWait().ifPresent(fileName -> {
+				if(fileName.endsWith(".set")){
+					Alert alert = new Alert(AlertType.ERROR);
+					alert.setContentText("File extension reserved. File not saved.");
+					alert.showAndWait();
+					return;
+				}
 				if(SaveLoadManager.INSTANCE.loadFileNames().get().contains(fileName)){
 					Alert alert = new Alert(AlertType.CONFIRMATION);
 					alert.setHeaderText("File already exists. Do you want to overwrite?");
@@ -213,6 +228,13 @@ public final class ConsumeGameMenu extends Menu {
 				try {
 					SaveLoadManager.INSTANCE.save(data, fileName);
 					SaveLoadManager.INSTANCE.loadFileNames().ifPresent(names -> list.getItems().setAll(names));
+					for(String item : list.getItems()){
+						if(item.endsWith(".set")){
+							removes.add(item);
+						}
+					}
+					list.getItems().removeAll(removes);
+					removes.clear();
 				} catch (Exception e) {
 					Alert alert = new Alert(AlertType.ERROR);
 					alert.setContentText("Failed to save file: " + fileName + ". Error: " + e.getMessage());
@@ -221,7 +243,7 @@ public final class ConsumeGameMenu extends Menu {
 			});
 		});
 
-		MenuItem btnLoad = new MenuItem("LOAD");
+		MenuItem btnLoad = new MenuItem("Load");
 		btnLoad.setAction(() -> {
 			String fileName = list.getSelectionModel().getSelectedItem();
 			if (fileName == null)
@@ -241,7 +263,7 @@ public final class ConsumeGameMenu extends Menu {
 			}
 			
 		});
-		MenuItem btnDelete = new MenuItem("DELETE");
+		MenuItem btnDelete = new MenuItem("Delete");
 		btnDelete.setAction(() -> {
 			String fileName = list.getSelectionModel().getSelectedItem();
 			if (fileName == null)
@@ -256,6 +278,13 @@ public final class ConsumeGameMenu extends Menu {
 			}
 			SaveLoadManager.INSTANCE.delete(fileName);
 			SaveLoadManager.INSTANCE.loadFileNames().ifPresent(names -> list.getItems().setAll(names));
+			for(String item : list.getItems()){
+				if(item.endsWith(".set")){
+					removes.add(item);
+				}
+			}
+			list.getItems().removeAll(removes);
+			removes.clear();
 		});
 		
 		BorderPane bp = new BorderPane();
@@ -273,7 +302,11 @@ public final class ConsumeGameMenu extends Menu {
 			contentViewer.getChildren().add(createContentControls());
 		});
 		MenuItem itemVideo = new MenuItem("VIDEO");
-		MenuItem itemAudio = new MenuItem("AUDIO");
+		MenuItem itemAudio = new MenuItem("Audio");
+		itemAudio.setAction(() ->{
+			contentViewer.getChildren().clear();
+			contentViewer.getChildren().add(createContentAudio());
+		});
 		MenuItem itemCredits = new MenuItem("Credits");
 		itemCredits.setAction(() -> {
 			contentViewer.getChildren().clear();
@@ -329,6 +362,96 @@ public final class ConsumeGameMenu extends Menu {
 
 		powerList.addItems(pItems);
 
+	}
+	
+	private VBox createContentAudio(){
+		Text musTex = new Text("Music Volume");
+		musTex.setStroke(Color.WHITE);
+		musTex.setFill(Color.WHITE);
+		musTex.setFont(new Font(20));
+		Text musTexVal = new Text();
+		musTexVal.setStroke(Color.WHITE);
+		musTexVal.setFill(Color.WHITE);
+		ProgressBar musBar = new ProgressBar();
+		musBar.setProgress(consApp.sSettings.getBackMusicVolume());
+		musBar.setPadding(new Insets(0,5,20,0));
+		musBar.setPrefSize(200, 15);
+		musBar.setOnMouseClicked(new EventHandler<MouseEvent>(){
+			@Override
+			public void handle(MouseEvent me) {
+				musBar.setProgress((me.getX()+8)/200);
+				musTexVal.setText(Math.round(musBar.getProgress() * 100) + "%");
+			}
+			
+		});
+		musBar.setOnMouseDragged(new EventHandler<MouseEvent>(){
+			@Override
+			public void handle(MouseEvent me) {
+				double val = (me.getX()+8)/200;
+				if(val < 0){
+					val = 0;
+				}
+				else if(val > 1){
+					val = 1;
+				}
+				musBar.setProgress(val);
+				musTexVal.setText(Math.round(musBar.getProgress() * 100) + "%");
+			}
+			
+		});
+		musTexVal.setText(Math.round(musBar.getProgress() * 100) + "%");
+		
+		HBox musBlock = new HBox(musBar, musTexVal); 
+		
+		
+		Text sfxTex = new Text("Sound Effects Volume");
+		sfxTex.setStroke(Color.WHITE);
+		sfxTex.setFill(Color.WHITE);
+		sfxTex.setFont(new Font(20));
+		Text sfxTexVal = new Text();
+		sfxTexVal.setStroke(Color.WHITE);
+		sfxTexVal.setFill(Color.WHITE);
+		ProgressBar sfxBar = new ProgressBar();
+		sfxBar.setProgress(consApp.sSettings.getSFXVolume());
+		sfxBar.setPadding(new Insets(0,5,20,0));
+		sfxBar.setPrefSize(200, 15);
+		sfxBar.setOnMouseClicked(new EventHandler<MouseEvent>(){
+			@Override
+			public void handle(MouseEvent me) {
+				sfxBar.setProgress((me.getX()+8)/200);
+				sfxTexVal.setText(Math.round(sfxBar.getProgress() * 100) + "%");
+			}
+			
+		});
+		sfxBar.setOnMouseDragged(new EventHandler<MouseEvent>(){
+			@Override
+			public void handle(MouseEvent me) {
+				double val = (me.getX()+8)/200;
+				if(val < 0){
+					val = 0;
+				}
+				else if(val > 1){
+					val = 1;
+				}
+				sfxBar.setProgress(val);
+				sfxTexVal.setText(Math.round(sfxBar.getProgress() * 100) + "%");
+			}
+			
+		});
+		sfxTexVal.setText(Math.round(sfxBar.getProgress() * 100) + "%");
+		HBox sfxBlock = new HBox(sfxBar, sfxTexVal); 
+		
+		MenuItem savAud = new MenuItem("Save");
+		savAud.setOnMouseClicked(new EventHandler<MouseEvent>(){
+			@Override
+			public void handle(MouseEvent event) {
+				consApp.sSettings.setBackMusicVolume(musBar.getProgress());
+				consApp.sSettings.setSFXVolume(sfxBar.getProgress());
+			}
+		});
+		
+		VBox vb = new VBox(musTex, musBlock, sfxTex, sfxBlock, savAud);
+		return vb;
 	}
 	
 	private BorderPane createContentControls() {

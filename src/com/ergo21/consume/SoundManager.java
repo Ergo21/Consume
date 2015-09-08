@@ -32,11 +32,11 @@ public class SoundManager{
 	
 	public void playSFX(String name){
 		if(loadedEffects.containsKey(name)){
-			loadedEffects.get(name).play(app.sfxVolume);
+			loadedEffects.get(name).play(app.sSettings.getSFXVolume());
 		}
 		else if(app.assets.getAudio(name) != null){
 			loadedEffects.put(name, app.assets.getAudio(name));
-			loadedEffects.get(name).play(app.sfxVolume);
+			loadedEffects.get(name).play(app.sSettings.getSFXVolume());
 		}
 	}
 	
