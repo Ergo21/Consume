@@ -37,16 +37,20 @@ import com.almasb.fxgl.util.Version;
 
 import javafx.animation.FadeTransition;
 import javafx.beans.binding.Bindings;
+import javafx.event.EventHandler;
 import javafx.event.EventType;
 import javafx.geometry.HPos;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ListView;
+import javafx.scene.control.ProgressBar;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.ScrollPane.ScrollBarPolicy;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
@@ -251,7 +255,8 @@ public final class ConsumeMainMenu extends Menu {
        itemControls.setMenuContent(createContentControls());
 
        MenuItem itemVideo = new MenuItem(mainWidth, "VIDEO");
-       MenuItem itemAudio = new MenuItem(mainWidth, "AUDIO");
+       MenuItem itemAudio = new MenuItem(mainWidth, "Audio");
+       itemAudio.setMenuContent(createContentAudio());
 
        return new MenuBox(mainWidth, itemControls, itemVideo, itemAudio);
    }
@@ -288,6 +293,77 @@ public final class ConsumeMainMenu extends Menu {
 
        return new MenuContent(textHead, textJFX, textJBOX, textAuthor, textDev);
    }
+   
+   private MenuContent createContentAudio(){
+		Text musTex = new Text("Music Volume");
+		musTex.setStroke(Color.WHITE);
+		musTex.setFill(Color.WHITE);
+		musTex.setFont(new Font(20));
+		Text musTexVal = new Text();
+		musTexVal.setStroke(Color.WHITE);
+		musTexVal.setFill(Color.WHITE);
+		ProgressBar musBar = new ProgressBar();
+		musBar.setProgress(consApp.sSettings.getBackMusicVolume());
+		musBar.setPadding(new Insets(0,5,20,0));
+		musBar.setPrefSize(200, 15);
+		musBar.setOnMouseClicked(event -> {
+				musBar.setProgress((event.getX()+8)/200);
+				musTexVal.setText(Math.round(musBar.getProgress() * 100) + "%");
+		});
+		musBar.setOnMouseDragged(event -> {
+				double val = (event.getX()+8)/200;
+				if(val < 0){
+					val = 0;
+				}
+				else if(val > 1){
+					val = 1;
+				}
+				musBar.setProgress(val);
+				musTexVal.setText(Math.round(musBar.getProgress() * 100) + "%");			
+		});
+		musTexVal.setText(Math.round(musBar.getProgress() * 100) + "%");
+		
+		HBox musBlock = new HBox(musBar, musTexVal); 
+		
+		
+		Text sfxTex = new Text("Sound Effects Volume");
+		sfxTex.setStroke(Color.WHITE);
+		sfxTex.setFill(Color.WHITE);
+		sfxTex.setFont(new Font(20));
+		Text sfxTexVal = new Text();
+		sfxTexVal.setStroke(Color.WHITE);
+		sfxTexVal.setFill(Color.WHITE);
+		ProgressBar sfxBar = new ProgressBar();
+		sfxBar.setProgress(consApp.sSettings.getSFXVolume());
+		sfxBar.setPadding(new Insets(0,5,20,0));
+		sfxBar.setPrefSize(200, 15);
+		sfxBar.setOnMouseClicked(event -> {
+				sfxBar.setProgress((event.getX()+8)/200);
+				sfxTexVal.setText(Math.round(sfxBar.getProgress() * 100) + "%");			
+		});
+		sfxBar.setOnMouseDragged(event -> {
+				double val = (event.getX()+8)/200;
+				if(val < 0){
+					val = 0;
+				}
+				else if(val > 1){
+					val = 1;
+				}
+				sfxBar.setProgress(val);
+				sfxTexVal.setText(Math.round(sfxBar.getProgress() * 100) + "%");
+		});
+		sfxTexVal.setText(Math.round(sfxBar.getProgress() * 100) + "%");
+		HBox sfxBlock = new HBox(sfxBar, sfxTexVal); 
+		
+		MenuItem savAud = new MenuItem(subWidth, "Save");
+		savAud.setOnMouseClicked(event -> {
+				consApp.sSettings.setBackMusicVolume(musBar.getProgress());
+				consApp.sSettings.setSFXVolume(sfxBar.getProgress());
+		});
+		
+		MenuContent mc = new MenuContent(musTex, musBlock, sfxTex, sfxBlock, savAud);
+		return mc;
+	}
 
    private MenuContent createContentControls() {
        Font font = Font.font(18);
