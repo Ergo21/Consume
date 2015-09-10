@@ -151,23 +151,21 @@ public final class ConsumeGameMenu extends Menu {
 		});
 		
 		MenuItem itemLevel = new MenuItem("Level Menu");
-		itemLevel.setAction(new Runnable(){
-			@Override
-			public void run() {
-				consApp.indiLoop.stop();
-				consApp.soundManager.stopAll();
-				consApp.showLevelScreen();
-			}	
+		itemLevel.setAction(() -> {
+			consApp.indiLoop.stop();
+			consApp.soundManager.stopAll();
+			consApp.showLevelScreen();
+			contentViewer.getChildren().clear();
+			contentViewer.getChildren().add(powerList);
 		});
 
 		MenuItem itemExit = new MenuItem("Main Menu");
-		itemExit.setAction(new Runnable(){
-			@Override
-			public void run() {
-				consApp.indiLoop.stop();
-				consApp.soundManager.stopAll();
-				app.getSceneManager().exitToMainMenu();
-			}	
+		itemExit.setAction(() -> {
+			consApp.indiLoop.stop();
+			consApp.soundManager.stopAll();
+			app.getSceneManager().exitToMainMenu();
+			contentViewer.getChildren().clear();
+			contentViewer.getChildren().add(powerList);	
 		});
 
 		MenuBox menu = new MenuBox(5, itemPowers, itemLoad, itemOptions, itemLevel, itemExit);

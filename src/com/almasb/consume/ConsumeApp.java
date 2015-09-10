@@ -367,7 +367,6 @@ public class ConsumeApp extends GameApplication {
 				soundManager.getBackgroundMusic().loop();
 			}
 		}, KeyCode.P);
-		
 	}
 	
 	public void changeLevel() {
@@ -382,6 +381,9 @@ public class ConsumeApp extends GameApplication {
 		FadeTransition ft2 = new FadeTransition(Duration.seconds(0.5), bg);
 		ft2.setFromValue(1);
 		ft2.setToValue(0);
+		FadeTransition ft3 = new FadeTransition(Duration.seconds(1), bg);
+		ft3.setFromValue(1);
+		ft3.setToValue(1);
 		ft.setOnFinished(evt -> {
 			if(playerData.getCurrentHealth() <= 0){
 				playerData.setCurrentHealth(playerData.getMaxHealth());
@@ -390,19 +392,14 @@ public class ConsumeApp extends GameApplication {
 			sceneManager.getEntities().forEach(sceneManager::removeEntity);
 			levels.set(playerData.getCurrentLevel(), parser.parse(playerData.getCurrentLevel()));
 			resume();
-			System.out.println("Change 1 Finished");
-			timerManager.runOnceAfter(new Runnable(){
-				@Override
-				public void run() {
-					System.out.println("Change 2 Started");
-					loadLevel(playerData.getCurrentLevel());
-					ft2.play();
-				}}, TimerManager.SECOND);
-			
+			ft3.play();
 		});	
 		ft2.setOnFinished(evt -> {
 			sceneManager.removeUINode(bg);
-			System.out.println("Change 2 Finished");
+		});
+		ft3.setOnFinished(evt -> {
+			loadLevel(playerData.getCurrentLevel());
+			ft2.play();
 		});
 		ft.play();
 	}

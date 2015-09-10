@@ -25,16 +25,19 @@
 package com.ergo21.consume;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 
 import com.almasb.consume.ConsumeApp;
 import com.almasb.fxgl.GameApplication;
 import com.almasb.fxgl.asset.AssetManager;
 import com.almasb.fxgl.asset.SaveLoadManager;
+import com.almasb.fxgl.time.TimerManager;
 import com.almasb.fxgl.ui.Menu;
 import com.almasb.fxgl.util.Version;
 
 import javafx.animation.FadeTransition;
 import javafx.beans.binding.Bindings;
+import javafx.event.EventType;
 import javafx.geometry.HPos;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
@@ -73,30 +76,36 @@ public final class ConsumeMainMenu extends Menu {
 
    private double menuX, menuY;
    private ConsumeApp consApp;
+   private int mainWidth = 200;
+   private int subWidth = 100;
+   private ListView<String> saveList;
+   private MenuItem itemContinue;
+   private MenuContent emptyMenu;
 
    public ConsumeMainMenu(ConsumeApp app) {
        super(app);
        consApp = app;
-
+       saveList = new ListView<String>();
+       emptyMenu = new MenuContent();
        MenuBox menu = createMainMenu();
        menuX = 50;
-       menuY = app.getHeight() / 2 - menu.getLayoutHeight() / 2;
+       menuY = consApp.getHeight() / 2 - menu.getLayoutHeight() / 2;
 
        // just a placeholder
-       MenuBox menuContent = new MenuBox((int)app.getWidth() - 300 - 50);
+       MenuBox menuContent = new MenuBox((int)consApp.getWidth() - 300 - 50);
        menuContent.setTranslateX(300);
        menuContent.setTranslateY(menu.getTranslateY());
        menuContent.setVisible(false);
 
-       Rectangle bg = new Rectangle(app.getWidth(), app.getHeight());
+       Rectangle bg = new Rectangle(consApp.getWidth(), consApp.getHeight());
        bg.setFill(Color.rgb(10, 1, 1));
 
-       Title title = new Title(app.getTitle());
-       title.setTranslateX(app.getWidth() / 2 - title.getLayoutWidth() / 2);
+       Title title = new Title(consApp.getTitle());
+       title.setTranslateX(consApp.getWidth() / 2 - title.getLayoutWidth() / 2);
        title.setTranslateY(menu.getTranslateY() / 2 - title.getLayoutHeight() / 2);
 
-       Text version = new Text("v" + app.getVersion());
-       version.setTranslateY(app.getHeight() - 2);
+       Text version = new Text("v" + consApp.getVersion());
+       version.setTranslateY(consApp.getHeight() - 2);
        version.setFill(Color.WHITE);
        version.setFont(Font.font(18));
 
@@ -104,76 +113,112 @@ public final class ConsumeMainMenu extends Menu {
    }
 
    private MenuBox createMainMenu() {
-       MenuItem itemContinue = new MenuItem("Continue");
+       itemContinue = new MenuItem(mainWidth, "Continue");
        itemContinue.setEnabled(SaveLoadManager.INSTANCE.loadFileNames().isPresent() && 
     		   SaveLoadManager.INSTANCE.loadFileNames().get().contains(consApp.sSettings.getLastSave()));
        itemContinue.setAction(() -> {
     	   try {
+    		   if(!SaveLoadManager.INSTANCE.loadFileNames().get().contains(consApp.sSettings.getLastSave())){
+    			   itemContinue.setEnabled(SaveLoadManager.INSTANCE.loadFileNames().isPresent() && 
+    		    		   SaveLoadManager.INSTANCE.loadFileNames().get().contains(consApp.sSettings.getLastSave()));
+    			   return;
+    		   }
     		   GameSave data = SaveLoadManager.INSTANCE.load(consApp.sSettings.getLastSave());
-    		   Rectangle bg = new Rectangle(app.getWidth(), app.getHeight());
+    		   Rectangle bg = new Rectangle(consApp.getWidth(), consApp.getHeight());
     		   bg.setFill(Color.rgb(10, 1, 1));
     		   bg.setOpacity(1);
     		   FadeTransition ft = new FadeTransition(Duration.seconds(1), bg);
     		   ft.setFromValue(1);
     		   ft.setToValue(1);
-    		   ft.setOnFinished(evt ->{app.getSceneManager().removeUINode(bg);});   		   
-    		   app.startNewGame();
+    		   ft.setOnFinished(evt ->{consApp.getSceneManager().removeUINode(bg);});   		   
+    		   consApp.startNewGame();
     		   consApp.loadState(data);
     		   ft.play();
-    		   app.getSceneManager().addUINodes(bg);
+    		   consApp.getSceneManager().addUINodes(bg);
     		   consApp.soundManager.getBackgroundMusic().loop();
-    		   
+    		   switchMenuContentTo(emptyMenu);
     	   } catch (Exception e) {
     		   e.printStackTrace();
     	   }
        });
 
-       MenuItem itemNewGame = new MenuItem("New Game");
-       itemNewGame.setAction(app::startNewGame);
+       MenuItem itemNewGame = new MenuItem(mainWidth, "New Game");
+       itemNewGame.setAction(() -> {
+    	   switchMenuContentTo(emptyMenu);
+    	   Rectangle bg = new Rectangle(consApp.getWidth(), consApp.getHeight());
+		   bg.setFill(Color.rgb(10, 1, 1));
+		   bg.setOpacity(1);
+		   FadeTransition ft = new FadeTransition(Duration.seconds(1), bg);
+		   ft.setFromValue(1);
+		   ft.setToValue(0);
+		   ft.setOnFinished(evt -> consApp.getSceneManager().removeUINode(bg));   		   
+		   consApp.startNewGame();
+		   FadeTransition ft2 = new FadeTransition(Duration.seconds(1), bg);
+		   ft2.setFromValue(1);
+		   ft2.setToValue(1);
+		   ft2.setOnFinished(evt -> ft.play());
+		   ft2.play();
+		   consApp.getSceneManager().addUINodes(bg);
+       });
 
-       MenuItem itemLoad = new MenuItem("LOAD");
+       MenuItem itemLoad = new MenuItem(mainWidth, "Load");
        itemLoad.setMenuContent(createContentLoad());
+       itemLoad.setOnMouseClicked(event -> {
+    	   refreshSaveList();
+    	   switchMenuContentTo(itemLoad.getMenuContent());
+       });
 
-       MenuItem itemOptions = new MenuItem("OPTIONS");
+       MenuItem itemOptions = new MenuItem(mainWidth, "OPTIONS");
        itemOptions.setChild(createOptionsMenu());
 
-       MenuItem itemExtra = new MenuItem("EXTRA");
+       MenuItem itemExtra = new MenuItem(mainWidth, "EXTRA");
        itemExtra.setChild(createExtraMenu());
 
-       MenuItem itemExit = new MenuItem("EXIT");
-       itemExit.setAction(app::exit);
+       MenuItem itemExit = new MenuItem(mainWidth, "Exit");
+       itemExit.setAction(consApp::exit);
 
-       MenuBox menu = new MenuBox(200, itemContinue, itemNewGame, itemLoad, itemOptions, itemExtra, itemExit);
+       MenuBox menu = new MenuBox(mainWidth, itemContinue, itemNewGame, itemLoad, itemOptions, itemExtra, itemExit);
        menu.setTranslateX(50);
-       menu.setTranslateY(app.getHeight() / 2 - menu.getLayoutHeight() / 2);
+       menu.setTranslateY(consApp.getHeight() / 2 - menu.getLayoutHeight() / 2);
        return menu;
    }
 
    private MenuContent createContentLoad() {
-       ListView<String> list = new ListView<>();
-       SaveLoadManager.INSTANCE.loadFileNames().ifPresent(names -> list.getItems().setAll(names));
-       list.prefHeightProperty().bind(Bindings.size(list.getItems()).multiply(36));
+	   refreshSaveList();
+       saveList.prefHeightProperty().bind(Bindings.size(saveList.getItems()).multiply(36));
 
        try {
            String css = AssetManager.INSTANCE.loadCSS("listview.css");
-           list.getStylesheets().add(css);
+           saveList.getStylesheets().add(css);
        }
        catch (Exception e) {}
 
-       if (list.getItems().size() > 0) {
-           list.getSelectionModel().selectFirst();
+       if (saveList.getItems().size() > 0) {
+           saveList.getSelectionModel().selectFirst();
        }
 
-       MenuItem btnLoad = new MenuItem("LOAD");
+       MenuItem btnLoad = new MenuItem(subWidth, "Load");
        btnLoad.setAction(() -> {
-           String fileName = list.getSelectionModel().getSelectedItem();
+           String fileName = saveList.getSelectionModel().getSelectedItem();
            if (fileName == null)
                return;
 
            try {
-               Serializable data = SaveLoadManager.INSTANCE.load(fileName);
-               app.loadState(data);
-               consApp.sSettings.setLastSave(fileName);
+               GameSave data = SaveLoadManager.INSTANCE.load(fileName);      
+    		   Rectangle bg = new Rectangle(consApp.getWidth(), consApp.getHeight());
+    		   bg.setFill(Color.rgb(10, 1, 1));
+    		   bg.setOpacity(1);
+    		   FadeTransition ft = new FadeTransition(Duration.seconds(1), bg);
+    		   ft.setFromValue(1);
+    		   ft.setToValue(1);
+    		   ft.setOnFinished(evt ->{consApp.getSceneManager().removeUINode(bg);});   		   
+    		   consApp.startNewGame();
+    		   consApp.loadState(data);
+    		   ft.play();
+    		   consApp.getSceneManager().addUINodes(bg);
+    		   consApp.soundManager.getBackgroundMusic().loop();
+    		   consApp.sSettings.setLastSave(fileName);
+    		   switchMenuContentTo(emptyMenu);
            }
            catch (Exception e) {
                // TODO: use custom stages, as alerts will kick users from the fullscreen
@@ -182,9 +227,9 @@ public final class ConsumeMainMenu extends Menu {
                alert.showAndWait();
            }
        });
-       MenuItem btnDelete = new MenuItem("DELETE");
+       MenuItem btnDelete = new MenuItem(subWidth, "Delete");
        btnDelete.setAction(() -> {
-           String fileName = list.getSelectionModel().getSelectedItem();
+           String fileName = saveList.getSelectionModel().getSelectedItem();
            if (fileName == null)
                return;
 
@@ -192,30 +237,30 @@ public final class ConsumeMainMenu extends Menu {
            alert.setContentText(SaveLoadManager.INSTANCE.delete(fileName) ? "File was deleted" : "File couldn't be deleted");
            alert.showAndWait();
 
-           list.getItems().remove(fileName);
+           refreshSaveList();
        });
 
        HBox hbox = new HBox(50, btnLoad, btnDelete);
        hbox.setAlignment(Pos.CENTER);
 
-       return new MenuContent(list, hbox);
+       return new MenuContent(saveList, hbox);
    }
 
    private MenuBox createOptionsMenu() {
-       MenuItem itemControls = new MenuItem("CONTROLS");
+       MenuItem itemControls = new MenuItem(mainWidth, "CONTROLS");
        itemControls.setMenuContent(createContentControls());
 
-       MenuItem itemVideo = new MenuItem("VIDEO");
-       MenuItem itemAudio = new MenuItem("AUDIO");
+       MenuItem itemVideo = new MenuItem(mainWidth, "VIDEO");
+       MenuItem itemAudio = new MenuItem(mainWidth, "AUDIO");
 
-       return new MenuBox(200, itemControls, itemVideo, itemAudio);
+       return new MenuBox(mainWidth, itemControls, itemVideo, itemAudio);
    }
 
    private MenuBox createExtraMenu() {
-       MenuItem itemCredits = new MenuItem("CREDITS");
+       MenuItem itemCredits = new MenuItem(mainWidth, "CREDITS");
        itemCredits.setMenuContent(createContentCredits());
 
-       return new MenuBox(200, itemCredits);
+       return new MenuBox(mainWidth, itemCredits);
    }
 
    private MenuContent createContentCredits() {
@@ -252,7 +297,7 @@ public final class ConsumeMainMenu extends Menu {
        grid.setHgap(50);
 
        int i = 0;
-       /*for (InputBinding binding : app.getInputManager().getBindings()) {
+       /*for (InputBinding binding : consApp.getInputManager().getBindings()) {
            Text actionName = new Text(binding.getAction().getName());
            actionName.setFont(font);
            actionName.setFill(Color.WHITE);
@@ -273,11 +318,11 @@ public final class ConsumeMainMenu extends Menu {
 
                Scene scene = new Scene(new StackPane(rect, text));
                scene.setOnKeyPressed(e -> {
-                   app.getInputManager().rebind(binding.getAction(), e.getCode());
+                   consApp.getInputManager().rebind(binding.getAction(), e.getCode());
                    stage.close();
                });
                scene.setOnMouseClicked(e -> {
-                   app.getInputManager().rebind(binding.getAction(), e.getButton());
+                   consApp.getInputManager().rebind(binding.getAction(), e.getButton());
                    stage.close();
                });
 
@@ -293,13 +338,26 @@ public final class ConsumeMainMenu extends Menu {
 
        ScrollPane scroll = new ScrollPane(grid);
        scroll.setVbarPolicy(ScrollBarPolicy.ALWAYS);
-       scroll.setMaxHeight(app.getHeight() / 2);
+       scroll.setMaxHeight(consApp.getHeight() / 2);
        scroll.setStyle("-fx-background: black;");
 
        HBox hbox = new HBox(scroll);
        hbox.setAlignment(Pos.CENTER);
 
        return new MenuContent(hbox);
+   }
+   
+   private void refreshSaveList(){
+	   itemContinue.setEnabled(SaveLoadManager.INSTANCE.loadFileNames().isPresent() && 
+	    		   SaveLoadManager.INSTANCE.loadFileNames().get().contains(consApp.sSettings.getLastSave()));
+	   SaveLoadManager.INSTANCE.loadFileNames().ifPresent(names -> saveList.getItems().setAll(names));
+       ArrayList<String> removes = new ArrayList<String>();
+       for(String item : saveList.getItems()){
+    	   if(item.endsWith(".set")){
+    		   removes.add(item);
+    	   }
+       }
+       saveList.getItems().removeAll(removes);
    }
 
    private void switchMenuTo(MenuBox menu) {
@@ -387,13 +445,13 @@ public final class ConsumeMainMenu extends Menu {
 
        private Text text = new Text();
 
-       public MenuItem(String name) {
+       public MenuItem(int width, String name) {
            LinearGradient gradient = new LinearGradient(0, 0, 1, 0, true, CycleMethod.NO_CYCLE, new Stop[] {
                    new Stop(0.5, Color.hsb(33, 0.7, 0.7)),
                    new Stop(1, Color.hsb(100, 0.8, 1))
            });
 
-           Rectangle bg = new Rectangle(200, 30);
+           Rectangle bg = new Rectangle(width, 30);
            bg.setOpacity(0.4);
 
            text.setText(name);
@@ -436,8 +494,8 @@ public final class ConsumeMainMenu extends Menu {
        public void setChild(MenuBox menu) {
            child = menu;
 
-           MenuItem back = new MenuItem("BACK");
-           menu.getChildren().add(0, back);
+           MenuItem back = new MenuItem(mainWidth, "BACK");
+           menu.getChildren().add(back);
 
            back.setOnMouseClicked(evt -> {
                switchMenuTo(MenuItem.this.parent);
@@ -470,10 +528,11 @@ public final class ConsumeMainMenu extends Menu {
 
    private class MenuContent extends VBox {
        public MenuContent(Node... items) {
-           getChildren().add(createSeparator((int)app.getWidth() - 300 - 50));
-
-           for (Node item : items) {
-               getChildren().addAll(item, createSeparator((int)app.getWidth() - 300 - 50));
+           if(items.length != 0){
+        	   getChildren().add(createSeparator((int)consApp.getWidth() - 300 - 50));
+        	   for (Node item : items) {
+                   getChildren().addAll(item, createSeparator((int)consApp.getWidth() - 300 - 50));
+               }
            }
        }
 
