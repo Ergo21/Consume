@@ -33,6 +33,7 @@ import com.almasb.fxgl.physics.CollisionHandler;
 import com.almasb.fxgl.time.TimerManager;
 import com.ergo21.consume.ConsumeController;
 import com.ergo21.consume.ConsumeGameMenu;
+import com.ergo21.consume.ConsumeMainMenu;
 import com.ergo21.consume.EntitySpawner;
 import com.ergo21.consume.GameSave;
 import com.ergo21.consume.GameScene;
@@ -68,6 +69,7 @@ public class ConsumeApp extends GameApplication {
 
 	private PlayerHUD hud;
 	private ConsumeGameMenu consGameMenu;
+	private ConsumeMainMenu consMainMenu;
 	private Text performance = new Text();
 
 	private long regenTime = 0;
@@ -204,6 +206,12 @@ public class ConsumeApp extends GameApplication {
 		consGameMenu = new ConsumeGameMenu(this);
 
 		return consGameMenu;
+	}
+	
+	@Override
+	protected ConsumeMainMenu initMainMenu(){
+		consMainMenu = new ConsumeMainMenu(this);
+		return consMainMenu;
 	}
 
 	@Override
@@ -382,11 +390,19 @@ public class ConsumeApp extends GameApplication {
 			sceneManager.getEntities().forEach(sceneManager::removeEntity);
 			levels.set(playerData.getCurrentLevel(), parser.parse(playerData.getCurrentLevel()));
 			resume();
-			loadLevel(playerData.getCurrentLevel());
-			ft2.play();
+			System.out.println("Change 1 Finished");
+			timerManager.runOnceAfter(new Runnable(){
+				@Override
+				public void run() {
+					System.out.println("Change 2 Started");
+					loadLevel(playerData.getCurrentLevel());
+					ft2.play();
+				}}, TimerManager.SECOND);
+			
 		});	
 		ft2.setOnFinished(evt -> {
 			sceneManager.removeUINode(bg);
+			System.out.println("Change 2 Finished");
 		});
 		ft.play();
 	}
@@ -406,30 +422,33 @@ public class ConsumeApp extends GameApplication {
 	@Override 
 	public void loadState(Serializable d){
 		if(d.getClass() == GameSave.class){
-			if(playerData != null){
-				GameSave g = (GameSave) d;
-				playerData.setElement(g.getCurElement());
-				playerData.setCurrentHealth(g.getCurHealth());
-				playerData.setCurrentLevel(g.getCurLevel());
-				playerData.setCurrentMana(g.getCurMana());
-				playerData.setManaRegenRate(g.getManaReg());
-				playerData.setMaxHealth(g.getMaxHealth());
-				playerData.setMaxMana(g.getMaxMana());
-				playerData.setName(g.getName());
-				playerData.getPowers().clear();
-				playerData.getPowers().addAll(g.getPowers());
-				playerData.getResistances().clear();
-				playerData.getResistances().addAll(g.getResists());
-				playerData.setSpritesheet(g.getSSheet());
-				playerData.getWeaknesses().clear();
-				playerData.getWeaknesses().addAll(g.getWeaks());
-				playerData.getUpgrades().clear();
-				playerData.getUpgrades().addAll(g.getUpgrades());
-				playerData.getLevsComp().clear();
-				playerData.getLevsComp().addAll(g.getLevsComp());
-				consGameMenu.updatePowerMenu(playerData);
-				changeLevel();
-			}		
+			if(playerData == null){
+				this.startNewGame();
+			}
+			soundManager.stopAll();
+			GameSave g = (GameSave) d;
+			playerData.setElement(g.getCurElement());
+			playerData.setCurrentHealth(g.getCurHealth());
+			playerData.setCurrentLevel(g.getCurLevel());
+			playerData.setCurrentMana(g.getCurMana());
+			playerData.setManaRegenRate(g.getManaReg());
+			playerData.setMaxHealth(g.getMaxHealth());
+			playerData.setMaxMana(g.getMaxMana());
+			playerData.setName(g.getName());
+			playerData.getPowers().clear();
+			playerData.getPowers().addAll(g.getPowers());
+			playerData.getResistances().clear();
+			playerData.getResistances().addAll(g.getResists());
+			playerData.setSpritesheet(g.getSSheet());
+			playerData.getWeaknesses().clear();
+			playerData.getWeaknesses().addAll(g.getWeaks());
+			playerData.getUpgrades().clear();
+			playerData.getUpgrades().addAll(g.getUpgrades());
+			playerData.getLevsComp().clear();
+			playerData.getLevsComp().addAll(g.getLevsComp());
+			consGameMenu.updatePowerMenu(playerData);
+			
+			changeLevel();
 		}
 		else{
 			System.out.println(d.getClass());

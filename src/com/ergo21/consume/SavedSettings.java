@@ -16,11 +16,13 @@ public class SavedSettings implements Serializable{
 	private double backVol;
 	private double sfxVol;
 	private HashMap<Actions, KeyCode> controls;
+	private String lastSave;
 	
 	public SavedSettings(){
 		backVol = 0.75;
 		sfxVol = 0.75;
 		controls = new HashMap<Actions, KeyCode>(); 
+		lastSave = "";
 	}
 	
 	public double getBackMusicVolume(){
@@ -43,5 +45,13 @@ public class SavedSettings implements Serializable{
 	
 	public void setControls(HashMap<Actions, KeyCode> c){
 		controls = c;
+	}
+	
+	public String getLastSave(){
+		return lastSave;
+	}
+	
+	public void setLastSave(String ls){
+		lastSave = ls;
 	}
 }

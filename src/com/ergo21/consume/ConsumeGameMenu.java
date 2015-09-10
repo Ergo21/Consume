@@ -235,6 +235,7 @@ public final class ConsumeGameMenu extends Menu {
 					}
 					list.getItems().removeAll(removes);
 					removes.clear();
+					consApp.sSettings.setLastSave(fileName);
 				} catch (Exception e) {
 					Alert alert = new Alert(AlertType.ERROR);
 					alert.setContentText("Failed to save file: " + fileName + ". Error: " + e.getMessage());
@@ -256,12 +257,12 @@ public final class ConsumeGameMenu extends Menu {
 				alert.setTitle("Loaded");
 				alert.setHeaderText("Save loaded successfully");
 				alert.showAndWait();
+				consApp.sSettings.setLastSave(fileName);
 			} catch (Exception e) {
 				Alert alert = new Alert(AlertType.ERROR);
 				alert.setContentText("Failed to load file: " + fileName + ". Error: " + e.getMessage());
 				alert.showAndWait();
 			}
-			
 		});
 		MenuItem btnDelete = new MenuItem("Delete");
 		btnDelete.setAction(() -> {
