@@ -296,7 +296,7 @@ public class ConsumeApp extends GameApplication {
 
 	private void loadLevel(int lev) {
 		sceneManager.getEntities().forEach(sceneManager::removeEntity);
-
+		System.out.println("Level number: " + lev);
 		Level level = levels.get(lev);
 		Point2D spawnPoint = level.getSpawnPoint();
 		
