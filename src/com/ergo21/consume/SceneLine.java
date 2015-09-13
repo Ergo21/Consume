@@ -2,25 +2,26 @@ package com.ergo21.consume;
 
 import com.almasb.fxgl.asset.Texture;
 
-
-public class SceneLine{
-	private String name; 
-	private Texture icon; 
+public class SceneLine {
+	private String name;
+	private Texture icon;
 	private String sentence;
-	
-	public SceneLine(String nam, Texture texture, String sen){
+
+	public SceneLine(String nam, Texture texture, String sen) {
 		name = nam;
 		icon = texture;
 		sentence = sen;
 	}
-	
-	public String getName(){
+
+	public String getName() {
 		return name;
 	}
-	public Texture getIcon(){
+
+	public Texture getIcon() {
 		return icon;
 	}
-	public String getSentence(){
+
+	public String getSentence() {
 		return sentence;
 	}
 }

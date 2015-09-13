@@ -11,6 +11,7 @@
 .settings/
 /bin
 /target
+/saves
 
 # maven #
 dependency-reduced-pom.xml

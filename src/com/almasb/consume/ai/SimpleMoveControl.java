@@ -7,32 +7,30 @@ import com.almasb.fxgl.entity.AbstractControl;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.FXGLEvent;
 
-public class SimpleMoveControl extends AbstractControl{
-	
-	private Entity target;
-    private int vel = 0;
-    private long firstTimeSaw = -1;		//Stores when the enemy first sees the player
-    private boolean notFired = true;
+public class SimpleMoveControl extends AbstractControl {
 
-    public SimpleMoveControl(Entity target) {
-        this.target = target;
-    }
+	private Entity target;
+	private int vel = 0;
+	private long firstTimeSaw = -1; // Stores when the enemy first sees the
+									// player
+	private boolean notFired = true;
+
+	public SimpleMoveControl(Entity target) {
+		this.target = target;
+	}
 
 	@Override
 	public void onUpdate(Entity entity, long now) {
-		if(isTargetInRange() && firstTimeSaw == -1){
+		if (isTargetInRange() && firstTimeSaw == -1) {
 			firstTimeSaw = now;
 			vel = 0;
-		}
-		else if(firstTimeSaw != -1 && now - firstTimeSaw >= Config.ENEMY_FIRE_DELAY && notFired){
+		} else if (firstTimeSaw != -1 && now - firstTimeSaw >= Config.ENEMY_FIRE_DELAY && notFired) {
 			entity.fireFXGLEvent(new FXGLEvent(Event.ENEMY_SAW_PLAYER));
 			vel = 0;
 			notFired = false;
-		}
-		else if(firstTimeSaw != -1 && now - firstTimeSaw < Config.ENEMY_FIRE_DELAY*2){
+		} else if (firstTimeSaw != -1 && now - firstTimeSaw < Config.ENEMY_FIRE_DELAY * 2) {
 			vel = 0;
-		}		
-		else {
+		} else {
 			vel = -Speed.ENEMY_PATROL;
 		}
 
@@ -41,21 +39,21 @@ public class SimpleMoveControl extends AbstractControl{
 			firstTimeSaw = -1;
 			entity.setTranslateX(target.getTranslateX() + 400);
 			notFired = true;
-        }
+		}
 	}
 
 	@Override
 	protected void initEntity(Entity entity) {
 		// TODO Auto-generated method stub
-		
+
 	}
-	
+
 	private boolean isTargetInRange() {
-        return target.getPosition().distance(entity.getPosition()) <= Config.ENEMY_FIRE_RANGE;
-    }
-	
+		return target.getPosition().distance(entity.getPosition()) <= Config.ENEMY_FIRE_RANGE;
+	}
+
 	public int getVelocity() {
-        return vel;
-    }
-	
+		return vel;
+	}
+
 }

@@ -8,19 +8,19 @@ import com.almasb.fxgl.entity.FXGLEvent;
 
 public class SpearProjectileControl extends AbstractControl {
 	private boolean facingRight;
-    private Entity player;
+	private Entity player;
 
-    public SpearProjectileControl(Entity pl) {
-        facingRight = pl.getProperty("facingRight");
-    	player = pl;
-    }
+	public SpearProjectileControl(Entity pl) {
+		facingRight = pl.getProperty("facingRight");
+		player = pl;
+	}
 
-    @Override
-    public void onUpdate(Entity entity, long now) {    	
-        if (Math.abs(entity.getTranslateX() - player.getTranslateX()) >= 350) {
-            entity.fireFXGLEvent(new FXGLEvent(Event.DEATH));
-        }
-    }
+	@Override
+	public void onUpdate(Entity entity, long now) {
+		if (Math.abs(entity.getTranslateX() - player.getTranslateX()) >= 350) {
+			entity.fireFXGLEvent(new FXGLEvent(Event.DEATH));
+		}
+	}
 
 	@Override
 	protected void initEntity(Entity entity) {
