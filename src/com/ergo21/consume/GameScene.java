@@ -3,9 +3,9 @@ package com.ergo21.consume;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.almasb.consume.ConsumeApp;
 import com.almasb.consume.Types.Type;
 import com.almasb.consume.ai.PhysicsControl;
-import com.almasb.fxgl.GameApplication;
 import com.almasb.fxgl.asset.Assets;
 
 import javafx.geometry.HPos;
@@ -16,7 +16,7 @@ import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.text.Text;
 
-public class GameScene extends Group{
+public class GameScene extends Group {
 
 	private ArrayList<SceneLine> script;
 	private int currentLine;
@@ -24,9 +24,9 @@ public class GameScene extends Group{
 	private Text line;
 	private ImageView icon;
 	private Assets assets;
-	private GameApplication app;
+	private ConsumeApp app;
 
-	public GameScene(List<String> values, Assets as, GameApplication a){
+	public GameScene(List<String> values, Assets as, ConsumeApp a) {
 		super();
 		assets = as;
 		app = a;
@@ -40,7 +40,7 @@ public class GameScene extends Group{
 		icon = new ImageView();
 		grid.setVgap(2);
 		grid.setHgap(2);
-		grid.setPadding(new Insets(5,5,5,5));
+		grid.setPadding(new Insets(5, 5, 5, 5));
 		grid.add(name, 0, 0);
 		grid.add(line, 1, 0, 1, 2);
 		grid.add(icon, 0, 1);
@@ -50,8 +50,8 @@ public class GameScene extends Group{
 		c.setHalignment(HPos.CENTER);
 		grid.getColumnConstraints().add(c);
 
-		for(String val : values){
-			if(val.equals("END")){
+		for (String val : values) {
+			if (val.equals("END")) {
 				break;
 			}
 			String nam = val.substring(0, val.indexOf('('));
@@ -66,13 +66,11 @@ public class GameScene extends Group{
 		setValues(script.get(currentLine));
 	}
 
-	public boolean updateScript(){
-		if(currentLine + 1 >= script.size()){
-			this.setVisible(false);
-			app.resume();
+	public boolean updateScript() {
+		if (currentLine + 1 >= script.size()) {
+			endScene();
 			return false;
-		}
-		else{
+		} else {
 			currentLine += 1;
 			setValues(script.get(currentLine));
 		}
@@ -80,13 +78,12 @@ public class GameScene extends Group{
 		return true;
 	}
 
-	public void changeScene(List<String> values){
+	public void changeScene(List<String> values) {
 		currentLine = 0;
 		script.clear();
 		app.getSceneManager().getEntities(Type.PLAYER).get(0).getControl(PhysicsControl.class).moveX(0);
-		app.pause();
-		for(String val : values){
-			if(val.equals("END")){
+		for (String val : values) {
+			if (val.equals("END")) {
 				break;
 			}
 			String nam = val.substring(0, val.indexOf('('));
@@ -101,14 +98,24 @@ public class GameScene extends Group{
 		setValues(script.get(currentLine));
 	}
 
+	public void playScene() {
+		this.setVisible(true);
+		app.player.setProperty("stunned", true);
+	}
+
+	public void endScene() {
+		this.setVisible(false);
+		app.player.setProperty("stunned", false);
+	}
+
 	private void setValues(SceneLine sceneLine) {
 		name.setText(sceneLine.getName());
 		line.setText(sceneLine.getSentence());
-		//icon = sceneLine.getIcon();
+		// icon = sceneLine.getIcon();
 		icon.setImage(sceneLine.getIcon().getImage());
 	}
 
-	public Assets getAssets(){
+	public Assets getAssets() {
 		return assets;
 	}
 }

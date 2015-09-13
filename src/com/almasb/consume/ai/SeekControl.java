@@ -7,21 +7,21 @@ import com.almasb.fxgl.entity.Entity;
 
 public class SeekControl implements Control {
 
-    private Entity target;
+	private Entity target;
 
-    public SeekControl(Entity target) {
-        this.target = target;
-    }
+	public SeekControl(Entity target) {
+		this.target = target;
+	}
 
-    @Override
-    public void onUpdate(Entity entity, long now) {
-        if (target.getPosition().distance(entity.getPosition()) <= 200) {
-            if (Math.abs(target.getTranslateY() - entity.getTranslateY()) <= 10) {
-                boolean right = target.getTranslateX() - entity.getTranslateX() > 0;
+	@Override
+	public void onUpdate(Entity entity, long now) {
+		if (target.getPosition().distance(entity.getPosition()) <= 200) {
+			if (Math.abs(target.getTranslateY() - entity.getTranslateY()) <= 10) {
+				boolean right = target.getTranslateX() - entity.getTranslateX() > 0;
 
-                Physics physics = entity.getProperty("physics");
-                physics.moveX(entity, right ? Speed.ENEMY_PATROL : -Speed.ENEMY_PATROL);
-            }
-        }
-    }
+				Physics physics = entity.getProperty("physics");
+				physics.moveX(entity, right ? Speed.ENEMY_PATROL : -Speed.ENEMY_PATROL);
+			}
+		}
+	}
 }
