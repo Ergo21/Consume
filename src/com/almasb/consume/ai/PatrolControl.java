@@ -10,20 +10,20 @@ import com.almasb.fxgl.entity.Entity;
 
 public class PatrolControl implements Control {
 
-    private boolean movingRight = true;
-    private Point2D patrolPoint;
+	private boolean movingRight = true;
+	private Point2D patrolPoint;
 
-    public PatrolControl(Point2D patrolPoint) {
-        this.patrolPoint = patrolPoint;
-    }
+	public PatrolControl(Point2D patrolPoint) {
+		this.patrolPoint = patrolPoint;
+	}
 
-    @Override
-    public void onUpdate(Entity entity, long now) {
-        Physics physics = entity.getProperty("physics");
-        boolean canMove = physics.moveX(entity, movingRight ? Speed.ENEMY_PATROL : -Speed.ENEMY_PATROL);
+	@Override
+	public void onUpdate(Entity entity, long now) {
+		Physics physics = entity.getProperty("physics");
+		boolean canMove = physics.moveX(entity, movingRight ? Speed.ENEMY_PATROL : -Speed.ENEMY_PATROL);
 
-        if (!canMove || patrolPoint.distance(entity.getPosition()) >= Config.PATROL_RADIUS) {
-            movingRight = !movingRight;
-        }
-    }
+		if (!canMove || patrolPoint.distance(entity.getPosition()) >= Config.PATROL_RADIUS) {
+			movingRight = !movingRight;
+		}
+	}
 }
