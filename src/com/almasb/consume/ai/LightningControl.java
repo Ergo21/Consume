@@ -9,6 +9,7 @@ import com.almasb.consume.Event;
 import com.almasb.fxgl.entity.AbstractControl;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.FXGLEvent;
+import com.almasb.fxgl.time.TimerManager;
 
 public class LightningControl extends AbstractControl {
 
@@ -34,7 +35,7 @@ public class LightningControl extends AbstractControl {
 			created = now;
 		}
 
-		if (now - created > Config.LIGHTNING_DECAY && nPlayed) {
+		if (now - created > TimerManager.toNanos(Config.LIGHTNING_DECAY) && nPlayed) {
 			nPlayed = false;
 			FadeTransition ft = new FadeTransition(Duration.seconds(0.5), ligGraphics);
 			ft.setFromValue(1);
@@ -43,7 +44,7 @@ public class LightningControl extends AbstractControl {
 				entity.fireFXGLEvent(new FXGLEvent(Event.DEATH));
 			});
 			ft.play();
-		} else if (now - created > Config.LIGHTNING_DELAY) {
+		} else if (now - created > TimerManager.toNanos(Config.LIGHTNING_DELAY)) {
 			entity.setVisible(true);
 			entity.setCollidable(true);
 		}

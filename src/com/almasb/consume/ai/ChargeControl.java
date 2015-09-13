@@ -6,6 +6,7 @@ import com.almasb.consume.Event;
 import com.almasb.fxgl.entity.AbstractControl;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.FXGLEvent;
+import com.almasb.fxgl.time.TimerManager;
 
 public class ChargeControl extends AbstractControl {
 
@@ -40,18 +41,18 @@ public class ChargeControl extends AbstractControl {
 		} else {
 			firstTimeSaw = -1;
 		}
-		
+
 		vel = (int)entity.getControl(PhysicsControl.class).getVelocity().getX();
-		
+
 		if(firstHitPlayer == -1 && hitPlayer){
 			firstHitPlayer = now;
 		}
-		else if(now - firstHitPlayer > Config.ENEMY_CHARGE_DELAY*2){
+		else if(now - firstHitPlayer > TimerManager.toNanos(Config.ENEMY_CHARGE_DELAY) * 2){
 			firstHitPlayer = -1;
 			hitPlayer = false;
 		}
 
-		if (firstTimeSaw != -1 && now - firstTimeSaw >= Config.ENEMY_CHARGE_DELAY) {
+		if (firstTimeSaw != -1 && now - firstTimeSaw >= TimerManager.toNanos(Config.ENEMY_CHARGE_DELAY)) {
 			boolean right = target.getTranslateX() - entity.getTranslateX() > 0;
 
 			vel += right ? Speed.ENEMY_SEEK_ACCEL : -Speed.ENEMY_SEEK_ACCEL;
@@ -60,8 +61,8 @@ public class ChargeControl extends AbstractControl {
 				vel = (int) Math.signum(vel) * Speed.ENEMY_SEEK_MAX;
 
 			entity.getControl(PhysicsControl.class).moveX(vel);
-			
-		} else if (now - lastTimeSaw < Config.ENEMY_CHARGE_DELAY / 2 && vel != 0 && !hitPlayer) {
+
+		} else if (now - lastTimeSaw < TimerManager.toNanos(Config.ENEMY_CHARGE_DELAY) / 2 && vel != 0 && !hitPlayer) {
 			boolean right = vel > 0;
 
 			vel += right ? Speed.ENEMY_SEEK_ACCEL : -Speed.ENEMY_SEEK_ACCEL;

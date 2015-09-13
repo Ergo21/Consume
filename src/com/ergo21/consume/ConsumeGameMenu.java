@@ -119,11 +119,11 @@ public final class ConsumeGameMenu extends Menu {
 		bg.setFill(Color.rgb(10, 1, 1));
 		// bg.setOpacity(0.5);
 
-		Title title = new Title(app.getTitle());
+		Title title = new Title(app.getSettings().getTitle());
 		title.setTranslateX(app.getWidth() / 2 - title.getLayoutWidth() / 2);
 		title.setTranslateY(menu.getTranslateY() / 2 - title.getLayoutHeight() / 2);
 
-		Text version = new Text("v" + app.getVersion());
+		Text version = new Text("v" + app.getSettings().getVersion());
 		version.setTranslateY(app.getHeight() - 2);
 		version.setFill(Color.WHITE);
 		version.setFont(Font.font(18));
@@ -149,7 +149,7 @@ public final class ConsumeGameMenu extends Menu {
 			contentViewer.getChildren().clear();
 			contentViewer.getChildren().add(createOptionsMenu());
 		});
-		
+
 		MenuItem itemLevel = new MenuItem("Level Menu");
 		itemLevel.setAction(() -> {
 			consApp.indiLoop.stop();
@@ -165,7 +165,7 @@ public final class ConsumeGameMenu extends Menu {
 			consApp.soundManager.stopAll();
 			app.getSceneManager().exitToMainMenu();
 			contentViewer.getChildren().clear();
-			contentViewer.getChildren().add(powerList);	
+			contentViewer.getChildren().add(powerList);
 		});
 
 		MenuBox menu = new MenuBox(5, itemPowers, itemLoad, itemOptions, itemLevel, itemExit);
@@ -197,7 +197,7 @@ public final class ConsumeGameMenu extends Menu {
 		if (list.getItems().size() > 0) {
 			list.getSelectionModel().selectFirst();
 		}
-		
+
 		MenuItem btnSave = new MenuItem("Save");
 		btnSave.setAction(() -> {
 			Serializable data = app.saveState();
@@ -285,7 +285,7 @@ public final class ConsumeGameMenu extends Menu {
 			list.getItems().removeAll(removes);
 			removes.clear();
 		});
-		
+
 		BorderPane bp = new BorderPane();
 		bp.setCenter(list);
 		VBox right= new VBox(btnSave, btnLoad, btnDelete);
@@ -362,7 +362,7 @@ public final class ConsumeGameMenu extends Menu {
 		powerList.addItems(pItems);
 
 	}
-	
+
 	private VBox createContentAudio(){
 		Text musTex = new Text("Music Volume");
 		musTex.setStroke(Color.WHITE);
@@ -381,7 +381,7 @@ public final class ConsumeGameMenu extends Menu {
 				musBar.setProgress((me.getX()+8)/200);
 				musTexVal.setText(Math.round(musBar.getProgress() * 100) + "%");
 			}
-			
+
 		});
 		musBar.setOnMouseDragged(new EventHandler<MouseEvent>(){
 			@Override
@@ -396,13 +396,13 @@ public final class ConsumeGameMenu extends Menu {
 				musBar.setProgress(val);
 				musTexVal.setText(Math.round(musBar.getProgress() * 100) + "%");
 			}
-			
+
 		});
 		musTexVal.setText(Math.round(musBar.getProgress() * 100) + "%");
-		
-		HBox musBlock = new HBox(musBar, musTexVal); 
-		
-		
+
+		HBox musBlock = new HBox(musBar, musTexVal);
+
+
 		Text sfxTex = new Text("Sound Effects Volume");
 		sfxTex.setStroke(Color.WHITE);
 		sfxTex.setFill(Color.WHITE);
@@ -420,7 +420,7 @@ public final class ConsumeGameMenu extends Menu {
 				sfxBar.setProgress((me.getX()+8)/200);
 				sfxTexVal.setText(Math.round(sfxBar.getProgress() * 100) + "%");
 			}
-			
+
 		});
 		sfxBar.setOnMouseDragged(new EventHandler<MouseEvent>(){
 			@Override
@@ -435,11 +435,11 @@ public final class ConsumeGameMenu extends Menu {
 				sfxBar.setProgress(val);
 				sfxTexVal.setText(Math.round(sfxBar.getProgress() * 100) + "%");
 			}
-			
+
 		});
 		sfxTexVal.setText(Math.round(sfxBar.getProgress() * 100) + "%");
-		HBox sfxBlock = new HBox(sfxBar, sfxTexVal); 
-		
+		HBox sfxBlock = new HBox(sfxBar, sfxTexVal);
+
 		MenuItem savAud = new MenuItem("Save");
 		savAud.setOnMouseClicked(new EventHandler<MouseEvent>(){
 			@Override
@@ -448,11 +448,11 @@ public final class ConsumeGameMenu extends Menu {
 				consApp.sSettings.setSFXVolume(sfxBar.getProgress());
 			}
 		});
-		
+
 		VBox vb = new VBox(musTex, musBlock, sfxTex, sfxBlock, savAud);
 		return vb;
 	}
-	
+
 	private BorderPane createContentControls() {
 		TableView<TabItem> center = new TableView<TabItem>();
 		center.setMaxHeight(consApp.getHeight()/2);
@@ -462,12 +462,12 @@ public final class ConsumeGameMenu extends Menu {
 		action.setResizable(false); //<TabItem, String>
 		action.setPrefWidth(consApp.getWidth()/4);
 		action.setCellValueFactory(new PropertyValueFactory<>("itAction"));
-		
+
 		TableColumn<TabItem, String> key = new TableColumn<TabItem, String>("Key");
 		key.setResizable(false);
 		key.setPrefWidth(consApp.getWidth()/4);
 		key.setCellValueFactory(new PropertyValueFactory<>("itKey"));
-		
+
 		HashMap<Actions, KeyCode> tKeys = consApp.consController.getCurrentKeys();
 		ObservableList<TabItem> items = FXCollections.observableArrayList();
 		for(Actions actionItem : Actions.values()){
@@ -479,7 +479,7 @@ public final class ConsumeGameMenu extends Menu {
 			public void handle(MouseEvent event) {
 				if(event.getClickCount() > 1){
 					center.getItems().get(center.getFocusModel().getFocusedCell().getRow()).setKey(KeyCode.UNDEFINED);
-				}		
+				}
 			}
 		});
 		center.setOnKeyPressed(new EventHandler<KeyEvent>(){
@@ -488,13 +488,13 @@ public final class ConsumeGameMenu extends Menu {
 				if(center.getItems().get(center.getFocusModel().getFocusedCell().getRow()).getKey() == KeyCode.UNDEFINED){
 					center.getItems().get(center.getFocusModel().getFocusedCell().getRow()).setKey(ke.getCode());
 				}
-				
+
 			}
 		});
 		center.getColumns().add(action);
 		center.getColumns().add(key);
-		
-		
+
+
 		MenuItem itemSave = new MenuItem("Save");
 		itemSave.setOnMouseClicked(new EventHandler<MouseEvent>(){
 			@Override
@@ -518,7 +518,7 @@ public final class ConsumeGameMenu extends Menu {
 			}
 		});
 		VBox right= new VBox(itemSave, itemRestore);
-		
+
 		BorderPane view = new BorderPane();
 		view.setCenter(center);
 		view.setRight(right);
@@ -657,7 +657,7 @@ public final class ConsumeGameMenu extends Menu {
 			this.setDisable(!b);
 			this.setOpacity(b ? 1 : 0.33);
 		}
-		
+
 		public boolean getHighlighted() {
 			return highlight;
 		}*/
@@ -700,13 +700,13 @@ public final class ConsumeGameMenu extends Menu {
 			}
 		}
 	}
-	
+
 	public class TabItem{
     	private StringProperty itAction;
     	private StringProperty itKey;
     	private Actions action;
     	private KeyCode itKeyCode;
-    	
+
     	private TabItem(Actions act, KeyCode ke){
     		action = act;
     		itKeyCode = ke;
@@ -718,31 +718,31 @@ public final class ConsumeGameMenu extends Menu {
     		}
     		else{
     			itAction = new SimpleStringProperty(act.toString());
-    		}  	
+    		}
     		itKey = new SimpleStringProperty(ke.toString());
     	}
-    	
+
     	public StringProperty itActionProperty() {
             return itAction;
         }
-    	
+
         public void setAction(String action) {
             itAction.set(action);
         }
-        
+
         public StringProperty itKeyProperty() {
             return itKey;
         }
-        
+
         public void setKey(KeyCode k) {
             itKey.set(k.toString());
             itKeyCode = k;
         }
-        
+
         public KeyCode getKey(){
         	return itKeyCode;
         }
-        
+
         public Actions getAction(){
         	return action;
         }

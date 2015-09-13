@@ -10,10 +10,10 @@ import com.almasb.fxgl.GameApplication;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.FXGLEvent;
 import com.almasb.fxgl.physics.CollisionHandler;
-import com.almasb.fxgl.time.TimerManager;
 import com.ergo21.consume.Player;
 
 import javafx.scene.text.Text;
+import javafx.util.Duration;
 
 public class PlayerEnemyHandler extends CollisionHandler {
 
@@ -34,7 +34,7 @@ public class PlayerEnemyHandler extends CollisionHandler {
 		else{
 			playerData.setCurrentHealth(playerData.getCurrentHealth() - 1);
 		}
-		
+
 		int velocityX = (int) enemy.getControl(PhysicsControl.class).getVelocity().getX();
 		if(enemy.getControl(DiveBombControl.class) != null){
 			velocityX = enemy.getControl(DiveBombControl.class).getVelocity();
@@ -43,7 +43,7 @@ public class PlayerEnemyHandler extends CollisionHandler {
 			velocityX = enemy.getControl(SimpleMoveControl.class).getVelocity();
 		}
 		player.getControl(PhysicsControl.class).moveX(velocityX);
-		
+
 		if(playerData.getCurrentHealth() > 0){
 			player.setCollidable(false);
 			player.setProperty("stunned", true);
@@ -56,12 +56,12 @@ public class PlayerEnemyHandler extends CollisionHandler {
 			app.getTimerManager().runOnceAfter(() -> {
 				player.getControl(PhysicsControl.class).moveX(0);
 				player.setProperty("stunned", false);
-			} , TimerManager.SECOND / 2);
+			} , Duration.seconds(0.5));
 
 			app.getTimerManager().runOnceAfter(() -> {
 				app.getSceneManager().removeEntity(e);
 				player.setCollidable(true);
-			} , 2 * TimerManager.SECOND);
+			} , Duration.seconds(2));
 		}
 	}
 }

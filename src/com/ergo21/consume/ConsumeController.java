@@ -5,6 +5,26 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
+import com.almasb.consume.Config;
+import com.almasb.consume.Config.Speed;
+import com.almasb.consume.ConsumeApp;
+import com.almasb.consume.Event;
+import com.almasb.consume.Types.Actions;
+import com.almasb.consume.Types.Element;
+import com.almasb.consume.Types.Platform;
+import com.almasb.consume.Types.Property;
+import com.almasb.consume.Types.Type;
+import com.almasb.consume.ai.AimedProjectileControl;
+import com.almasb.consume.ai.BulletProjectileControl;
+import com.almasb.consume.ai.FireballProjectileControl;
+import com.almasb.consume.ai.IngestControl;
+import com.almasb.consume.ai.LightningControl;
+import com.almasb.consume.ai.PhysicsControl;
+import com.almasb.consume.ai.SandProjectileControl;
+import com.almasb.consume.ai.SpearProjectileControl;
+import com.almasb.fxgl.entity.Entity;
+import com.almasb.fxgl.event.UserAction;
+
 import javafx.geometry.Point2D;
 import javafx.scene.Group;
 import javafx.scene.effect.DropShadow;
@@ -13,27 +33,7 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
-
-import com.almasb.consume.Config;
-import com.almasb.consume.ConsumeApp;
-import com.almasb.consume.Event;
-import com.almasb.consume.Config.Speed;
-import com.almasb.consume.Types.Actions;
-import com.almasb.consume.Types.Element;
-import com.almasb.consume.Types.Platform;
-import com.almasb.consume.Types.Property;
-import com.almasb.consume.Types.Type;
-import com.almasb.consume.ai.AimedProjectileControl;
-import com.almasb.consume.ai.BulletProjectileControl;
-import com.almasb.consume.ai.IngestControl;
-import com.almasb.consume.ai.FireballProjectileControl;
-import com.almasb.consume.ai.LightningControl;
-import com.almasb.consume.ai.PhysicsControl;
-import com.almasb.consume.ai.SandProjectileControl;
-import com.almasb.consume.ai.SpearProjectileControl;
-import com.almasb.fxgl.entity.Entity;
-import com.almasb.fxgl.event.UserAction;
-import com.almasb.fxgl.time.TimerManager;
+import javafx.util.Duration;
 
 public class ConsumeController {
 	private ConsumeApp consApp;
@@ -52,18 +52,18 @@ public class ConsumeController {
 		defaultKeys.put(Actions.LEFT, KeyCode.A);
 		defaultKeys.put(Actions.RIGHT, KeyCode.D);
 		defaultKeys.put(Actions.UP, KeyCode.W);
-		defaultKeys.put(Actions.JUMP, KeyCode.W);
+		defaultKeys.put(Actions.JUMP, KeyCode.SPACE);
 		defaultKeys.put(Actions.DOWN, KeyCode.S);
 		defaultKeys.put(Actions.SHOOT, KeyCode.Q);
 		defaultKeys.put(Actions.CHPOWP, KeyCode.E);
 		defaultKeys.put(Actions.CHPOWN, KeyCode.R);
-		
+
 		if(consApp.sSettings.getControls().isEmpty()){
 			currentKeys.put(Actions.INTERACT, KeyCode.ENTER);
 			currentKeys.put(Actions.LEFT, KeyCode.A);
 			currentKeys.put(Actions.RIGHT, KeyCode.D);
 			currentKeys.put(Actions.UP, KeyCode.W);
-			currentKeys.put(Actions.JUMP, KeyCode.W);
+			currentKeys.put(Actions.JUMP, KeyCode.SPACE);
 			currentKeys.put(Actions.DOWN, KeyCode.S);
 			currentKeys.put(Actions.SHOOT, KeyCode.Q);
 			currentKeys.put(Actions.CHPOWP, KeyCode.E);
@@ -73,7 +73,7 @@ public class ConsumeController {
 		else{
 			currentKeys = consApp.sSettings.getControls();
 		}
-	
+
 		fired = false;
 		allActions.put(Actions.INTERACT, new UserAction("Interact") {
 			@Override
@@ -85,7 +85,7 @@ public class ConsumeController {
 					consApp.playerData.setCurrentLevel(consApp.playerData.getCurrentLevel() + 1);
 					consApp.changeLevel();
 				}
-					
+
 			}
 		});
 		allActions.put(Actions.LEFT, new UserAction("Left") {
@@ -174,9 +174,9 @@ public class ConsumeController {
 				}
 			}
 		});
-		
+
 	}
-	
+
 	public void initControls(){
 		for(Actions action : Actions.values()){
 			consApp.getInputManager().addAction(allActions.get(action), currentKeys.get(action));
@@ -185,7 +185,7 @@ public class ConsumeController {
 
 	public void initControls(HashMap<Actions, KeyCode> newKeyMap) {
 		clearInputValues();
-		
+
 		for(Actions action : Actions.values()){
 			if(newKeyMap.containsKey(action) && newKeyMap.get(action) != KeyCode.UNDEFINED){
 				consApp.getInputManager().addAction(allActions.get(action), newKeyMap.get(action));
@@ -197,11 +197,11 @@ public class ConsumeController {
 		}
 		consApp.sSettings.setControls(currentKeys);
 	}
-	
+
 	public void clearInputValues(){
-		for(KeyCode key : consApp.getInputManager().getKeyBindings().keySet()){
-			consApp.getInputManager().addAction(none, key);
-		}
+//		for(KeyCode key : consApp.getInputManager().getKeyBindings().keySet()){
+//			consApp.getInputManager().addAction(none, key);
+//		}
 	}
 
 	private Entity spear;
@@ -304,7 +304,7 @@ public class ConsumeController {
 			if (fired) {
 				return;
 			}
-			consApp.getTimerManager().runOnceAfter(() -> fired = false, TimerManager.SECOND * 3);
+			consApp.getTimerManager().runOnceAfter(() -> fired = false, Duration.seconds(3));
 			fired = true;
 			e.addControl(new BulletProjectileControl(consApp.player));
 			e.setProperty(Property.ENABLE_GRAVITY, false);
@@ -387,7 +387,7 @@ public class ConsumeController {
 		else{
 			ind--;
 		}
-		
+
 		if (ind >= consApp.playerData.getPowers().size()) {
 			ind = 0;
 		}
@@ -400,11 +400,11 @@ public class ConsumeController {
 	public void changePower(Element e) {
 		consApp.playerData.setCurrentPower(e);
 	}
-	
+
 	public HashMap<Actions, KeyCode> getCurrentKeys(){
 		return currentKeys;
 	}
-	
+
 	public HashMap<Actions, KeyCode> getDefaultKeys(){
 		return defaultKeys;
 	}

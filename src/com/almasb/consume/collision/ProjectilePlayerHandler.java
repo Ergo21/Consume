@@ -13,7 +13,6 @@ import com.almasb.fxgl.GameApplication;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.FXGLEvent;
 import com.almasb.fxgl.physics.CollisionHandler;
-import com.almasb.fxgl.time.TimerManager;
 import com.ergo21.consume.Enemy;
 
 import javafx.animation.FadeTransition;
@@ -89,15 +88,15 @@ public class ProjectilePlayerHandler extends CollisionHandler {
 		playerData.takeDamage(damage);
 
 		projectile.fireFXGLEvent(new FXGLEvent(Event.ENEMY_HIT_PLAYER));
-		
+
 		int velocityX = (int) projectile.getControl(PhysicsControl.class).getVelocity().getX();
 		if (projectile.getControl(AimedProjectileControl.class) != null) {
 			velocityX = projectile.getControl(AimedProjectileControl.class).getVelocityX();
 		}
 		velocityX = velocityX / 2;
 		player.getControl(PhysicsControl.class).moveX(velocityX);
-		
-		if(playerData.getCurrentHealth() > 0){	
+
+		if(playerData.getCurrentHealth() > 0){
 			player.setCollidable(false);
 			player.setProperty("stunned", true);
 
@@ -110,12 +109,12 @@ public class ProjectilePlayerHandler extends CollisionHandler {
 			app.getTimerManager().runOnceAfter(() -> {
 				player.getControl(PhysicsControl.class).moveX(0);
 				player.setProperty("stunned", false);
-			} , 0.5 * TimerManager.SECOND);
+			} , Duration.seconds(0.5));
 
 			app.getTimerManager().runOnceAfter(() -> {
 				app.getSceneManager().removeEntity(e2);
 				player.setCollidable(true);
-			} , 2 * TimerManager.SECOND);
+			} , Duration.seconds(2));
 		}
 
 		app.getSceneManager().removeEntity(projectile);

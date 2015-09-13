@@ -12,12 +12,12 @@ public class IndependentLoop extends AnimationTimer{
 
 	@Override
 	public void handle(long now) {
-		if(consApp.isGameMenuOpen() && !consApp.soundManager.isBackMusicPaused()){
+		if(consApp.getSceneManager().isGameMenuOpen() && !consApp.soundManager.isBackMusicPaused()){
 			consApp.soundManager.pauseBackMusic();
 		}
-		else if(!consApp.isGameMenuOpen() && consApp.soundManager.isBackMusicPaused()){
+		else if(!consApp.getSceneManager().isGameMenuOpen() && consApp.soundManager.isBackMusicPaused()){
 			consApp.soundManager.resumeBackMusic();
 		}
 	}
-	
+
 }

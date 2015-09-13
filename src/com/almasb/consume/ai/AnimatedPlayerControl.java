@@ -6,9 +6,9 @@ import java.util.Map;
 import com.almasb.fxgl.asset.Texture;
 import com.almasb.fxgl.entity.Control;
 import com.almasb.fxgl.entity.Entity;
-import com.almasb.fxgl.time.TimerManager;
 
 import javafx.geometry.Rectangle2D;
+import javafx.util.Duration;
 
 public class AnimatedPlayerControl implements Control {
 
@@ -32,7 +32,7 @@ public class AnimatedPlayerControl implements Control {
 	public AnimatedPlayerControl(Texture spritesheet) {
 		for (AnimationChannel channel : AnimationChannel.values()) {
 			animationTextures.put(channel,
-					spritesheet.subTexture(channel.area).toStaticAnimatedTexture(channel.frames, TimerManager.SECOND));
+					spritesheet.subTexture(channel.area).toStaticAnimatedTexture(channel.frames, Duration.seconds(1)));
 		}
 	}
 

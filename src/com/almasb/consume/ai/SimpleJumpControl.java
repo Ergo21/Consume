@@ -4,6 +4,7 @@ import com.almasb.consume.Config;
 import com.almasb.consume.Config.Speed;
 import com.almasb.fxgl.entity.AbstractControl;
 import com.almasb.fxgl.entity.Entity;
+import com.almasb.fxgl.time.TimerManager;
 
 public class SimpleJumpControl extends AbstractControl {
 
@@ -26,7 +27,7 @@ public class SimpleJumpControl extends AbstractControl {
 			lastJumped = now;
 		}
 
-		if (now - lastJumped > Config.ENEMY_JUMP_DELAY) {
+		if (now - lastJumped > TimerManager.toNanos(Config.ENEMY_JUMP_DELAY)) {
 			if (entity.getPosition().getX() > target.getPosition().getX()) {
 				entity.getControl(PhysicsControl.class).moveX(-Speed.ENEMY_PATROL);
 			} else {

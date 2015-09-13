@@ -24,33 +24,26 @@
 */
 package com.ergo21.consume;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 
 import com.almasb.consume.ConsumeApp;
-import com.almasb.fxgl.GameApplication;
 import com.almasb.fxgl.asset.AssetManager;
+import com.almasb.fxgl.asset.Music;
 import com.almasb.fxgl.asset.SaveLoadManager;
-import com.almasb.fxgl.time.TimerManager;
 import com.almasb.fxgl.ui.Menu;
 import com.almasb.fxgl.util.Version;
 
 import javafx.animation.FadeTransition;
 import javafx.beans.binding.Bindings;
-import javafx.event.EventHandler;
-import javafx.event.EventType;
-import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
-import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ListView;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.ScrollPane.ScrollBarPolicy;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
@@ -64,9 +57,6 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
-import javafx.stage.Modality;
-import javafx.stage.Stage;
-import javafx.stage.StageStyle;
 import javafx.util.Duration;
 
 /**
@@ -104,11 +94,11 @@ public final class ConsumeMainMenu extends Menu {
        Rectangle bg = new Rectangle(consApp.getWidth(), consApp.getHeight());
        bg.setFill(Color.rgb(10, 1, 1));
 
-       Title title = new Title(consApp.getTitle());
+       Title title = new Title(consApp.getSettings().getTitle());
        title.setTranslateX(consApp.getWidth() / 2 - title.getLayoutWidth() / 2);
        title.setTranslateY(menu.getTranslateY() / 2 - title.getLayoutHeight() / 2);
 
-       Text version = new Text("v" + consApp.getVersion());
+       Text version = new Text("v" + consApp.getSettings().getVersion());
        version.setTranslateY(consApp.getHeight() - 2);
        version.setFill(Color.WHITE);
        version.setFont(Font.font(18));
@@ -118,12 +108,12 @@ public final class ConsumeMainMenu extends Menu {
 
    private MenuBox createMainMenu() {
        itemContinue = new MenuItem(mainWidth, "Continue");
-       itemContinue.setEnabled(SaveLoadManager.INSTANCE.loadFileNames().isPresent() && 
+       itemContinue.setEnabled(SaveLoadManager.INSTANCE.loadFileNames().isPresent() &&
     		   SaveLoadManager.INSTANCE.loadFileNames().get().contains(consApp.sSettings.getLastSave()));
        itemContinue.setAction(() -> {
     	   try {
     		   if(!SaveLoadManager.INSTANCE.loadFileNames().get().contains(consApp.sSettings.getLastSave())){
-    			   itemContinue.setEnabled(SaveLoadManager.INSTANCE.loadFileNames().isPresent() && 
+    			   itemContinue.setEnabled(SaveLoadManager.INSTANCE.loadFileNames().isPresent() &&
     		    		   SaveLoadManager.INSTANCE.loadFileNames().get().contains(consApp.sSettings.getLastSave()));
     			   return;
     		   }
@@ -134,12 +124,16 @@ public final class ConsumeMainMenu extends Menu {
     		   FadeTransition ft = new FadeTransition(Duration.seconds(1), bg);
     		   ft.setFromValue(1);
     		   ft.setToValue(1);
-    		   ft.setOnFinished(evt ->{consApp.getSceneManager().removeUINode(bg);});   		   
+    		   ft.setOnFinished(evt ->{consApp.getSceneManager().removeUINode(bg);});
     		   consApp.startNewGame();
     		   consApp.loadState(data);
     		   ft.play();
     		   consApp.getSceneManager().addUINodes(bg);
-    		   consApp.soundManager.getBackgroundMusic().loop();
+
+    		   Music bgm = consApp.soundManager.getBackgroundMusic();
+    		   bgm.setCycleCount(Integer.MAX_VALUE);
+    		   app.getAudioManager().playMusic(bgm);
+
     		   switchMenuContentTo(emptyMenu);
     	   } catch (Exception e) {
     		   e.printStackTrace();
@@ -155,7 +149,7 @@ public final class ConsumeMainMenu extends Menu {
 		   FadeTransition ft = new FadeTransition(Duration.seconds(1), bg);
 		   ft.setFromValue(1);
 		   ft.setToValue(0);
-		   ft.setOnFinished(evt -> consApp.getSceneManager().removeUINode(bg));   		   
+		   ft.setOnFinished(evt -> consApp.getSceneManager().removeUINode(bg));
 		   consApp.startNewGame();
 		   FadeTransition ft2 = new FadeTransition(Duration.seconds(1), bg);
 		   ft2.setFromValue(1);
@@ -208,19 +202,23 @@ public final class ConsumeMainMenu extends Menu {
                return;
 
            try {
-               GameSave data = SaveLoadManager.INSTANCE.load(fileName);      
+               GameSave data = SaveLoadManager.INSTANCE.load(fileName);
     		   Rectangle bg = new Rectangle(consApp.getWidth(), consApp.getHeight());
     		   bg.setFill(Color.rgb(10, 1, 1));
     		   bg.setOpacity(1);
     		   FadeTransition ft = new FadeTransition(Duration.seconds(1), bg);
     		   ft.setFromValue(1);
     		   ft.setToValue(1);
-    		   ft.setOnFinished(evt ->{consApp.getSceneManager().removeUINode(bg);});   		   
+    		   ft.setOnFinished(evt ->{consApp.getSceneManager().removeUINode(bg);});
     		   consApp.startNewGame();
     		   consApp.loadState(data);
     		   ft.play();
     		   consApp.getSceneManager().addUINodes(bg);
-    		   consApp.soundManager.getBackgroundMusic().loop();
+
+               Music bgm = consApp.soundManager.getBackgroundMusic();
+               bgm.setCycleCount(Integer.MAX_VALUE);
+               app.getAudioManager().playMusic(bgm);
+
     		   consApp.sSettings.setLastSave(fileName);
     		   switchMenuContentTo(emptyMenu);
            }
@@ -293,7 +291,7 @@ public final class ConsumeMainMenu extends Menu {
 
        return new MenuContent(textHead, textJFX, textJBOX, textAuthor, textDev);
    }
-   
+
    private MenuContent createContentAudio(){
 		Text musTex = new Text("Music Volume");
 		musTex.setStroke(Color.WHITE);
@@ -319,13 +317,13 @@ public final class ConsumeMainMenu extends Menu {
 					val = 1;
 				}
 				musBar.setProgress(val);
-				musTexVal.setText(Math.round(musBar.getProgress() * 100) + "%");			
+				musTexVal.setText(Math.round(musBar.getProgress() * 100) + "%");
 		});
 		musTexVal.setText(Math.round(musBar.getProgress() * 100) + "%");
-		
-		HBox musBlock = new HBox(musBar, musTexVal); 
-		
-		
+
+		HBox musBlock = new HBox(musBar, musTexVal);
+
+
 		Text sfxTex = new Text("Sound Effects Volume");
 		sfxTex.setStroke(Color.WHITE);
 		sfxTex.setFill(Color.WHITE);
@@ -339,7 +337,7 @@ public final class ConsumeMainMenu extends Menu {
 		sfxBar.setPrefSize(200, 15);
 		sfxBar.setOnMouseClicked(event -> {
 				sfxBar.setProgress((event.getX()+8)/200);
-				sfxTexVal.setText(Math.round(sfxBar.getProgress() * 100) + "%");			
+				sfxTexVal.setText(Math.round(sfxBar.getProgress() * 100) + "%");
 		});
 		sfxBar.setOnMouseDragged(event -> {
 				double val = (event.getX()+8)/200;
@@ -353,14 +351,14 @@ public final class ConsumeMainMenu extends Menu {
 				sfxTexVal.setText(Math.round(sfxBar.getProgress() * 100) + "%");
 		});
 		sfxTexVal.setText(Math.round(sfxBar.getProgress() * 100) + "%");
-		HBox sfxBlock = new HBox(sfxBar, sfxTexVal); 
-		
+		HBox sfxBlock = new HBox(sfxBar, sfxTexVal);
+
 		MenuItem savAud = new MenuItem(subWidth, "Save");
 		savAud.setOnMouseClicked(event -> {
 				consApp.sSettings.setBackMusicVolume(musBar.getProgress());
 				consApp.sSettings.setSFXVolume(sfxBar.getProgress());
 		});
-		
+
 		MenuContent mc = new MenuContent(musTex, musBlock, sfxTex, sfxBlock, savAud);
 		return mc;
 	}
@@ -422,9 +420,9 @@ public final class ConsumeMainMenu extends Menu {
 
        return new MenuContent(hbox);
    }
-   
+
    private void refreshSaveList(){
-	   itemContinue.setEnabled(SaveLoadManager.INSTANCE.loadFileNames().isPresent() && 
+	   itemContinue.setEnabled(SaveLoadManager.INSTANCE.loadFileNames().isPresent() &&
 	    		   SaveLoadManager.INSTANCE.loadFileNames().get().contains(consApp.sSettings.getLastSave()));
 	   SaveLoadManager.INSTANCE.loadFileNames().ifPresent(names -> saveList.getItems().setAll(names));
        ArrayList<String> removes = new ArrayList<String>();

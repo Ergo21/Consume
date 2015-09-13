@@ -6,6 +6,7 @@ import com.almasb.consume.Config.Speed;
 import com.almasb.fxgl.entity.AbstractControl;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.FXGLEvent;
+import com.almasb.fxgl.time.TimerManager;
 
 public class SimpleMoveControl extends AbstractControl {
 
@@ -24,11 +25,11 @@ public class SimpleMoveControl extends AbstractControl {
 		if (isTargetInRange() && firstTimeSaw == -1) {
 			firstTimeSaw = now;
 			vel = 0;
-		} else if (firstTimeSaw != -1 && now - firstTimeSaw >= Config.ENEMY_FIRE_DELAY && notFired) {
+		} else if (firstTimeSaw != -1 && now - firstTimeSaw >= TimerManager.toNanos(Config.ENEMY_FIRE_DELAY) && notFired) {
 			entity.fireFXGLEvent(new FXGLEvent(Event.ENEMY_SAW_PLAYER));
 			vel = 0;
 			notFired = false;
-		} else if (firstTimeSaw != -1 && now - firstTimeSaw < Config.ENEMY_FIRE_DELAY * 2) {
+		} else if (firstTimeSaw != -1 && now - firstTimeSaw < TimerManager.toNanos(Config.ENEMY_FIRE_DELAY) * 2) {
 			vel = 0;
 		} else {
 			vel = -Speed.ENEMY_PATROL;

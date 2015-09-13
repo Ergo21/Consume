@@ -6,6 +6,7 @@ import com.almasb.consume.Event;
 import com.almasb.fxgl.entity.AbstractControl;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.FXGLEvent;
+import com.almasb.fxgl.time.TimerManager;
 
 public class SandProjectileControl extends AbstractControl {
 
@@ -32,7 +33,7 @@ public class SandProjectileControl extends AbstractControl {
 		if (created == 0) {
 			created = now;
 		}
-		if (now - created > Config.SAND_DELAY) {
+		if (now - created > TimerManager.toNanos(Config.SAND_DELAY)) {
 			if (diagonal) {
 				control.moveX(facingRight ? (Speed.PLAYER_MOVE + 1) : -(Speed.PLAYER_MOVE + 1));
 				control.moveY(-Speed.PROJECTILE / 4);
@@ -41,7 +42,7 @@ public class SandProjectileControl extends AbstractControl {
 			}
 		}
 
-		if (Math.abs(entity.getTranslateX() - player.getTranslateX()) >= 350 || now - created > Config.SAND_DECAY) {
+		if (Math.abs(entity.getTranslateX() - player.getTranslateX()) >= 350 || now - created > TimerManager.toNanos(Config.SAND_DECAY)) {
 			entity.fireFXGLEvent(new FXGLEvent(Event.DEATH));
 		}
 	}

@@ -24,6 +24,7 @@ import com.almasb.consume.collision.ProjectilePlayerHandler;
 import com.almasb.fxgl.GameApplication;
 import com.almasb.fxgl.GameSettings;
 import com.almasb.fxgl.asset.Assets;
+import com.almasb.fxgl.asset.Music;
 import com.almasb.fxgl.asset.SaveLoadManager;
 import com.almasb.fxgl.asset.Texture;
 import com.almasb.fxgl.entity.Entity;
@@ -73,12 +74,12 @@ public class ConsumeApp extends GameApplication {
 	private Text performance = new Text();
 
 	private long regenTime = 0;
-	
+
 	private boolean playerDied = false;
 
 	public GameScene gScene;
 	public ConsumeController consController;
-	
+
 	public SavedSettings sSettings;
 
 	@Override
@@ -91,7 +92,7 @@ public class ConsumeApp extends GameApplication {
 		settings.setMenuEnabled(true);
 		settings.setIconFileName("app_icon.png");
 		settings.setShowFPS(false);
-		
+
 		if(SaveLoadManager.INSTANCE.loadFileNames().isPresent() && SaveLoadManager.INSTANCE.loadFileNames().get().contains("settings.set")){
 			try {
 				sSettings = (SavedSettings)SaveLoadManager.INSTANCE.load("settings.set");
@@ -110,9 +111,9 @@ public class ConsumeApp extends GameApplication {
 				e.printStackTrace();
 			}
 		}
-		
-		
-		
+
+
+
 	}
 
 	@Override
@@ -154,7 +155,8 @@ public class ConsumeApp extends GameApplication {
 			public void onCollisionBegin(Entity a, Entity b) {
 				a.setProperty("inDoor", true);
 			}
-			public void onCollisionEnd(Entity a, Entity b) {
+			@Override
+            public void onCollisionEnd(Entity a, Entity b) {
 				a.setProperty("inDoor", false);
 			}
 		});
@@ -184,13 +186,28 @@ public class ConsumeApp extends GameApplication {
 		debug.setTranslateX(450);
 		debug.setTranslateY(100);
 		sceneManager.addUINodes(gScene, hud, performance, debug);
+
+        hud.CurHealthProperty().bind(playerData.CurrentHealthProperty());
+        hud.CurManaProperty().bind(playerData.CurrentManaProperty());
+        hud.MaxHealthProperty().bind(playerData.MaxHealthProperty());
+        hud.MaxManaProperty().bind(playerData.MaxManaProperty());
+
+        consGameMenu.updatePowerMenu(playerData);
+        soundManager = new SoundManager(this);
+        soundManager.setBackgroundMusic("07 Festival.mp3");
+        Music bgm = soundManager.getBackgroundMusic();
+        bgm.setCycleCount(Integer.MAX_VALUE);
+        getAudioManager().playMusic(bgm);
+
+        indiLoop = new IndependentLoop(this);
+        indiLoop.start();
 	}
 
 	private void initLevels() {
 		List<LevelData> levelData = IntStream.range(0, Config.MAX_LEVELS)
 				.mapToObj(i -> new LevelData(assets.getText("levels/level_" + i + ".txt")))
 				.collect(Collectors.toList());
-		
+
 		parser = new LevelParser(levelData);
 		levels = parser.parseAll();
 	}
@@ -207,26 +224,11 @@ public class ConsumeApp extends GameApplication {
 
 		return consGameMenu;
 	}
-	
+
 	@Override
 	protected ConsumeMainMenu initMainMenu(){
 		consMainMenu = new ConsumeMainMenu(this);
 		return consMainMenu;
-	}
-
-	@Override
-	protected void postInit() {
-		hud.CurHealthProperty().bind(playerData.CurrentHealthProperty());
-		hud.CurManaProperty().bind(playerData.CurrentManaProperty());
-		hud.MaxHealthProperty().bind(playerData.MaxHealthProperty());
-		hud.MaxManaProperty().bind(playerData.MaxManaProperty());
-
-		consGameMenu.updatePowerMenu(playerData);
-		soundManager = new SoundManager(this);
-		soundManager.setBackgroundMusic("07 Festival.mp3");
-		soundManager.getBackgroundMusic().loop();
-		indiLoop = new IndependentLoop(this);
-		indiLoop.start();
 	}
 
 	@Override
@@ -237,11 +239,11 @@ public class ConsumeApp extends GameApplication {
 			player.setProperty(Property.ENABLE_GRAVITY, true);
 		}
 
-		if (getNow() - regenTime >= Config.REGEN_TIME_INTERVAL) {
+		if (getNow() - regenTime >= TimerManager.toNanos(Config.REGEN_TIME_INTERVAL)) {
 			playerData.regenMana();
 			regenTime = getNow();
 		}
-		
+
 		if(playerData.getCurrentHealth() <= 0){
 			playerData.setCurrentHealth(0);
 			player.fireFXGLEvent(new FXGLEvent(Event.PLAYER_DEATH));
@@ -277,7 +279,7 @@ public class ConsumeApp extends GameApplication {
 
 		debug.setText("Debug text goes here");
 	}
-	
+
 	@Override
 	public void onExit(){
 		if(indiLoop != null){
@@ -285,7 +287,7 @@ public class ConsumeApp extends GameApplication {
 		}
 		if(soundManager != null){
 			soundManager.stopAll();
-		}	
+		}
 		try {
 			SaveLoadManager.INSTANCE.save(sSettings, "settings.set");
 		} catch (Exception e) {
@@ -299,7 +301,7 @@ public class ConsumeApp extends GameApplication {
 		System.out.println("Level number: " + lev);
 		Level level = levels.get(lev);
 		Point2D spawnPoint = level.getSpawnPoint();
-		
+
 		// add level objects
 		for (Entity e : level.getEntitiesAsArray()) {
 			// TODO: currently we don't have death animations/handlers for other
@@ -311,22 +313,22 @@ public class ConsumeApp extends GameApplication {
 			if(playerData.getUpgrades().contains(lev) && (e.getProperty(Property.SUB_TYPE) == Powerup.INC_MANA_REGEN
 														|| e.getProperty(Property.SUB_TYPE) == Powerup.INC_MAX_MANA
 														|| e.getProperty(Property.SUB_TYPE) == Powerup.INC_MAX_HEALTH)){
-				
-			}	
+
+			}
 			else{
 				sceneManager.addEntities(e);
 			}
-			
+
 		}
-		
+
 		if(gScene != null){
 			gScene.endScene();
 		}
-		
+
 		// add player
 		initPlayer(spawnPoint);
 		playerDied = false;
-		
+
 		// TODO Remove manual spawn
 		inputManager.addAction(new UserAction("Spawn Flyer") {
 			@Override
@@ -362,13 +364,18 @@ public class ConsumeApp extends GameApplication {
 		inputManager.addAction(new UserAction("Play Background Music") {
 			@Override
 			protected void onActionBegin() {
-				soundManager.getBackgroundMusic().stop();
+	            Music bgm = soundManager.getBackgroundMusic();
+	            getAudioManager().stopMusic(bgm);
+
 				soundManager.setBackgroundMusic("06 Pyramid.mp3");
-				soundManager.getBackgroundMusic().loop();
+
+				bgm = soundManager.getBackgroundMusic();
+				bgm.setCycleCount(Integer.MAX_VALUE);
+				getAudioManager().playMusic(bgm);
 			}
 		}, KeyCode.P);
 	}
-	
+
 	public void changeLevel() {
 		pause();
 		Rectangle bg = new Rectangle(this.getWidth(), this.getHeight());
@@ -393,7 +400,7 @@ public class ConsumeApp extends GameApplication {
 			levels.set(playerData.getCurrentLevel(), parser.parse(playerData.getCurrentLevel()));
 			resume();
 			ft3.play();
-		});	
+		});
 		ft2.setOnFinished(evt -> {
 			sceneManager.removeUINode(bg);
 		});
@@ -403,20 +410,20 @@ public class ConsumeApp extends GameApplication {
 		});
 		ft.play();
 	}
-	
+
 	public void showLevelScreen(){
 		//TODO
 		System.out.println("Show level screen");
 		consGameMenu.updatePowerMenu(playerData);
-		
+
 	}
-	
+
 	@Override
 	public Serializable saveState(){
 		return new GameSave(playerData);
 	}
-	
-	@Override 
+
+	@Override
 	public void loadState(Serializable d){
 		if(d.getClass() == GameSave.class){
 			if(playerData == null){
@@ -444,7 +451,7 @@ public class ConsumeApp extends GameApplication {
 			playerData.getLevsComp().clear();
 			playerData.getLevsComp().addAll(g.getLevsComp());
 			consGameMenu.updatePowerMenu(playerData);
-			
+
 			changeLevel();
 		}
 		else{
@@ -459,9 +466,9 @@ public class ConsumeApp extends GameApplication {
 		player = new Entity(Type.PLAYER).setPosition(point.getX(), point.getY()).setCollidable(true)
 				.setProperty(Property.DATA, playerData).setProperty("climb", false).setProperty("climbing", false)
 				.setProperty("facingRight", true).setProperty("stunned", false).addControl(new PhysicsControl(physics));
-		
+
 		player.addFXGLEventHandler(Event.PLAYER_DEATH, this::playerDied);
-		
+
 		Rectangle graphics = new Rectangle(15, 30);
 		graphics.setFill(Color.YELLOW);
 		try {
@@ -487,18 +494,13 @@ public class ConsumeApp extends GameApplication {
 
 		sceneManager.addEntities(player);
 	}
-	
+
 	private void playerDied(FXGLEvent e){
-		if(!playerDied){
+		if (!playerDied){
 			player.setProperty("stunned", true);
 			playerDied = true;
-			timerManager.runOnceAfter(new Runnable(){
-				@Override
-				public void run() {
-					changeLevel();
-				}}, TimerManager.SECOND/2);	
+			timerManager.runOnceAfter(this::changeLevel, Duration.seconds(0.5));
 		}
-		
 	}
 
 	private void activateBarrier(Entity block) {

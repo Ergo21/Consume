@@ -7,6 +7,7 @@ import com.almasb.consume.Event;
 import com.almasb.fxgl.entity.AbstractControl;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.FXGLEvent;
+import com.almasb.fxgl.time.TimerManager;
 
 public class IngestControl extends AbstractControl {
 
@@ -38,7 +39,7 @@ public class IngestControl extends AbstractControl {
 		}
 		entity.setPosition(nPos);
 
-		if (Math.abs(entity.getTranslateX() - player.getTranslateX()) >= 350 || now - created > Config.CONSUME_DECAY) {
+		if (Math.abs(entity.getTranslateX() - player.getTranslateX()) >= 350 || now - created > TimerManager.toNanos(Config.CONSUME_DECAY)) {
 			entity.fireFXGLEvent(new FXGLEvent(Event.DEATH));
 		}
 	}
