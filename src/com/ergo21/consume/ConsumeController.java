@@ -40,14 +40,12 @@ public class ConsumeController {
 	private HashMap<Actions, KeyCode> defaultKeys;
 	private HashMap<Actions, KeyCode> currentKeys;
 	private HashMap<Actions, UserAction> allActions;
-	private UserAction none;
 
 	public ConsumeController(ConsumeApp a) {
 		consApp = a;
 		defaultKeys = new HashMap<Actions, KeyCode>();
 		currentKeys = new HashMap<Actions, KeyCode>();
 		allActions = new HashMap<Actions, UserAction>();
-		none = new UserAction("Nothing") {};
 		defaultKeys.put(Actions.INTERACT, KeyCode.ENTER);
 		defaultKeys.put(Actions.LEFT, KeyCode.A);
 		defaultKeys.put(Actions.RIGHT, KeyCode.D);
@@ -184,11 +182,10 @@ public class ConsumeController {
 	}
 
 	public void initControls(HashMap<Actions, KeyCode> newKeyMap) {
-		clearInputValues();
 
 		for(Actions action : Actions.values()){
 			if(newKeyMap.containsKey(action) && newKeyMap.get(action) != KeyCode.UNDEFINED){
-				consApp.getInputManager().addAction(allActions.get(action), newKeyMap.get(action));
+				consApp.getInputManager().rebind(allActions.get(action), newKeyMap.get(action));
 				currentKeys.put(action, newKeyMap.get(action));
 			}
 			else{
@@ -196,12 +193,6 @@ public class ConsumeController {
 			}
 		}
 		consApp.sSettings.setControls(currentKeys);
-	}
-
-	public void clearInputValues(){
-//		for(KeyCode key : consApp.getInputManager().getKeyBindings().keySet()){
-//			consApp.getInputManager().addAction(none, key);
-//		}
 	}
 
 	private Entity spear;

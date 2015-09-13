@@ -501,7 +501,15 @@ public final class ConsumeGameMenu extends Menu {
 			public void handle(MouseEvent event) {
 				HashMap<Actions, KeyCode> newKeyMap = new HashMap<Actions, KeyCode>();
 				for(TabItem item : items){
-					newKeyMap.put(item.getAction(), item.getKey());
+					if(newKeyMap.values().contains(item.getKey()) && item.getKey() != KeyCode.UNDEFINED){
+						Alert alert = new Alert(AlertType.ERROR);
+						alert.setContentText("Duplicate keys found. Changes not saved.");
+						alert.showAndWait();
+						return;
+					}
+					else{
+						newKeyMap.put(item.getAction(), item.getKey());
+					}
 				}
 				consApp.consController.initControls(newKeyMap);
 			}
