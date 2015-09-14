@@ -195,9 +195,8 @@ public class ConsumeApp extends GameApplication {
         consGameMenu.updatePowerMenu(playerData);
         soundManager = new SoundManager(this);
         soundManager.setBackgroundMusic("07 Festival.mp3");
-        Music bgm = soundManager.getBackgroundMusic();
-        bgm.setCycleCount(Integer.MAX_VALUE);
-        getAudioManager().playMusic(bgm);
+        soundManager.getBackgroundMusic().setCycleCount(Integer.MAX_VALUE);
+        soundManager.playBackgroundMusic();
 
         indiLoop = new IndependentLoop(this);
         indiLoop.start();
@@ -295,7 +294,17 @@ public class ConsumeApp extends GameApplication {
 			e.printStackTrace();
 		}
 	}
+	
+	@Override
+	public void onMenuOpen(){
+		soundManager.pauseBackgroundMusic();
+	}
 
+	@Override
+	public void onMenuClose(){
+		soundManager.playBackgroundMusic();
+	}
+	
 	private void loadLevel(int lev) {
 		sceneManager.getEntities().forEach(sceneManager::removeEntity);
 		System.out.println("Level number: " + lev);
@@ -364,14 +373,12 @@ public class ConsumeApp extends GameApplication {
 		inputManager.addAction(new UserAction("Play Background Music") {
 			@Override
 			protected void onActionBegin() {
-	            Music bgm = soundManager.getBackgroundMusic();
-	            getAudioManager().stopMusic(bgm);
+				System.out.println("P pressed");
+	            soundManager.stopAll();
 
 				soundManager.setBackgroundMusic("06 Pyramid.mp3");
-
-				bgm = soundManager.getBackgroundMusic();
-				bgm.setCycleCount(Integer.MAX_VALUE);
-				getAudioManager().playMusic(bgm);
+				soundManager.getBackgroundMusic().setCycleCount(Integer.MAX_VALUE);
+				soundManager.playBackgroundMusic();
 			}
 		}, KeyCode.P);
 	}

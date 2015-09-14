@@ -446,6 +446,8 @@ public final class ConsumeGameMenu extends Menu {
 			public void handle(MouseEvent event) {
 				consApp.sSettings.setBackMusicVolume(musBar.getProgress());
 				consApp.sSettings.setSFXVolume(sfxBar.getProgress());
+				consApp.getAudioManager().setGlobalMusicVolume(consApp.sSettings.getBackMusicVolume());
+				consApp.getAudioManager().setGlobalSoundVolume(consApp.sSettings.getSFXVolume());
 			}
 		});
 

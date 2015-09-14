@@ -130,9 +130,8 @@ public final class ConsumeMainMenu extends Menu {
     		   ft.play();
     		   consApp.getSceneManager().addUINodes(bg);
 
-    		   Music bgm = consApp.soundManager.getBackgroundMusic();
-    		   bgm.setCycleCount(Integer.MAX_VALUE);
-    		   app.getAudioManager().playMusic(bgm);
+    		   consApp.soundManager.getBackgroundMusic().setCycleCount(Integer.MAX_VALUE);
+    		   consApp.soundManager.playBackgroundMusic();
 
     		   switchMenuContentTo(emptyMenu);
     	   } catch (Exception e) {
@@ -215,9 +214,8 @@ public final class ConsumeMainMenu extends Menu {
     		   ft.play();
     		   consApp.getSceneManager().addUINodes(bg);
 
-               Music bgm = consApp.soundManager.getBackgroundMusic();
-               bgm.setCycleCount(Integer.MAX_VALUE);
-               app.getAudioManager().playMusic(bgm);
+               consApp.soundManager.getBackgroundMusic().setCycleCount(Integer.MAX_VALUE);
+               consApp.soundManager.playBackgroundMusic();
 
     		   consApp.sSettings.setLastSave(fileName);
     		   switchMenuContentTo(emptyMenu);

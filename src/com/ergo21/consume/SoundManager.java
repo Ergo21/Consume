@@ -37,8 +37,16 @@ public class SoundManager {
 			app.getAudioManager().playSound(loadedEffects.get(name));
 		}
 	}
+	
+	public void playBackgroundMusic(){
+		if(backgroundMusic == null){
+			return;
+		}
+		
+		app.getAudioManager().playMusic(backgroundMusic);
+	}
 
-	public void pauseBackMusic(){
+	public void pauseBackgroundMusic(){
 		if(backgroundMusic == null){
 			return;
 		}
@@ -47,7 +55,7 @@ public class SoundManager {
 		backPaused = true;
 	}
 
-	public void resumeBackMusic(){
+	public void resumeBackgroundMusic(){
 		if(backgroundMusic == null){
 			return;
 		}
@@ -55,12 +63,12 @@ public class SoundManager {
 		backPaused = false;
 	}
 
-	public boolean isBackMusicPaused() {
+	public boolean isBackgroundMusicPaused() {
 		return backPaused;
 	}
 
 	public void stopAll(){
-	    app.getAudioManager().stopMusic(backgroundMusic);
-		loadedEffects.forEach((name, sound) -> app.getAudioManager().stopSound(sound));
+	    app.getAudioManager().stopAllMusic();
+		app.getAudioManager().stopAllSounds();
 	}
 }
