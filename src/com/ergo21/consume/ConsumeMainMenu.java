@@ -25,16 +25,22 @@
 package com.ergo21.consume;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import com.almasb.consume.ConsumeApp;
+import com.almasb.consume.Types.Actions;
 import com.almasb.fxgl.asset.AssetManager;
-import com.almasb.fxgl.asset.Music;
 import com.almasb.fxgl.asset.SaveLoadManager;
 import com.almasb.fxgl.ui.Menu;
 import com.almasb.fxgl.util.Version;
 
 import javafx.animation.FadeTransition;
 import javafx.beans.binding.Bindings;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
@@ -42,9 +48,12 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ListView;
 import javafx.scene.control.ProgressBar;
-import javafx.scene.control.ScrollPane;
-import javafx.scene.control.ScrollPane.ScrollBarPolicy;
-import javafx.scene.layout.GridPane;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
+import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
@@ -362,61 +371,81 @@ public final class ConsumeMainMenu extends Menu {
 	}
 
    private MenuContent createContentControls() {
-       Font font = Font.font(18);
+	   TableView<TabItem> center = new TableView<TabItem>();
+	   center.setMaxHeight(consApp.getHeight()/2);
+	   center.setPrefWidth(consApp.getWidth()/2);
+		//center.getC
+		
+	   TableColumn<TabItem, String> action = new TableColumn<TabItem, String>("Action");
+	   action.setResizable(false); 
+	   action.setPrefWidth(consApp.getWidth()/4);
+	   action.setCellValueFactory(new PropertyValueFactory<>("itAction"));
 
-       GridPane grid = new GridPane();
-       grid.setAlignment(Pos.CENTER);
-       grid.setHgap(50);
+	   TableColumn<TabItem, String> key = new TableColumn<TabItem, String>("Key");
+	   key.setResizable(false);
+	   key.setPrefWidth(consApp.getWidth()/4);
+	   key.setCellValueFactory(new PropertyValueFactory<>("itKey"));
 
-       int i = 0;
-       /*for (InputBinding binding : consApp.getInputManager().getBindings()) {
-           Text actionName = new Text(binding.getAction().getName());
-           actionName.setFont(font);
-           actionName.setFill(Color.WHITE);
+	   HashMap<Actions, KeyCode> tKeys = consApp.consController.getCurrentKeys();
+	   ObservableList<TabItem> items = FXCollections.observableArrayList();
+	   for(Actions actionItem : Actions.values()){
+		   items.add(new TabItem(actionItem, tKeys.get(actionItem)));
+	   }
+	   center.setItems(items);
+	   center.setOnMouseClicked(new EventHandler<MouseEvent>(){
+		   @Override
+		   public void handle(MouseEvent event) {
+			   if(event.getClickCount() > 1){
+				   center.getItems().get(center.getFocusModel().getFocusedCell().getRow()).setKey(KeyCode.UNDEFINED);
+			   }
+		   }
+	   });
+	   center.setOnKeyPressed(new EventHandler<KeyEvent>(){
+		   @Override
+		   public void handle(KeyEvent ke) {
+			   if(center.getItems().get(center.getFocusModel().getFocusedCell().getRow()).getKey() == KeyCode.UNDEFINED){
+				   center.getItems().get(center.getFocusModel().getFocusedCell().getRow()).setKey(ke.getCode());
+			   }
 
-           MenuItem triggerName = new MenuItem("");
-           triggerName.text.textProperty().bind(binding.triggerNameProperty());
-           triggerName.setOnMouseClicked(event -> {
-               Rectangle rect = new Rectangle(250, 100);
-               rect.setStroke(Color.AZURE);
+		   }
+	   });
+	   center.getColumns().add(action);
+	   center.getColumns().add(key);
+	   center.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
 
-               Text text = new Text("PRESS ANY KEY");
-               text.setFill(Color.WHITE);
-               text.setFont(Font.font(24));
 
-               Stage stage = new Stage(StageStyle.TRANSPARENT);
-               stage.initModality(Modality.WINDOW_MODAL);
-               stage.initOwner(root.getScene().getWindow());
+	   MenuItem itemSave = new MenuItem(subWidth, "Save");
+	   itemSave.setOnMouseClicked(new EventHandler<MouseEvent>(){
+		   @Override
+		   public void handle(MouseEvent event) {
+			   HashMap<Actions, KeyCode> newKeyMap = new HashMap<Actions, KeyCode>();
+			   for(TabItem item : items){
+				   if(newKeyMap.values().contains(item.getKey()) && item.getKey() != KeyCode.UNDEFINED){
+					   Alert alert = new Alert(AlertType.ERROR);
+					   alert.setContentText("Duplicate keys found. Changes not saved.");
+					   alert.showAndWait();
+					   return;
+				   }
+				   else{
+					   newKeyMap.put(item.getAction(), item.getKey());
+				   }
+			   }
+			   consApp.consController.initControls(newKeyMap);
+		   }
+	   });
+	   MenuItem itemRestore = new MenuItem(subWidth, "Restore to Default");
+	   itemRestore.setOnMouseClicked(new EventHandler<MouseEvent>(){
+		   @Override
+		   public void handle(MouseEvent event) {
+			   HashMap<Actions, KeyCode> dKeys = consApp.consController.getDefaultKeys();
+			   items.clear();
+			   for(Actions actionItem : Actions.values()){
+				   items.add(new TabItem(actionItem, dKeys.get(actionItem)));
+			   }
+		   }
+	   });
 
-               Scene scene = new Scene(new StackPane(rect, text));
-               scene.setOnKeyPressed(e -> {
-                   consApp.getInputManager().rebind(binding.getAction(), e.getCode());
-                   stage.close();
-               });
-               scene.setOnMouseClicked(e -> {
-                   consApp.getInputManager().rebind(binding.getAction(), e.getButton());
-                   stage.close();
-               });
-
-               stage.setScene(scene);
-               stage.show();
-           });
-
-           grid.addRow(i++, actionName, triggerName);
-
-           GridPane.setHalignment(actionName, HPos.RIGHT);
-           GridPane.setHalignment(triggerName, HPos.LEFT);
-       }*/
-
-       ScrollPane scroll = new ScrollPane(grid);
-       scroll.setVbarPolicy(ScrollBarPolicy.ALWAYS);
-       scroll.setMaxHeight(consApp.getHeight() / 2);
-       scroll.setStyle("-fx-background: black;");
-
-       HBox hbox = new HBox(scroll);
-       hbox.setAlignment(Pos.CENTER);
-
-       return new MenuContent(hbox);
+       return new MenuContent(center, itemSave, itemRestore);
    }
 
    private void refreshSaveList(){
@@ -613,6 +642,53 @@ public final class ConsumeMainMenu extends Menu {
            sep.setEndX(width);
            sep.setStroke(Color.DARKGREY);
            return sep;
+       }
+   }
+   
+   public class TabItem{
+   	private StringProperty itAction;
+   	private StringProperty itKey;
+   	private Actions action;
+   	private KeyCode itKeyCode;
+
+   	private TabItem(Actions act, KeyCode ke){
+   		action = act;
+   		itKeyCode = ke;
+   		if(act == Actions.CHPOWN){
+   			itAction = new SimpleStringProperty("PREVIOUS POWER");
+   		}
+   		else if(act == Actions.CHPOWP){
+   			itAction = new SimpleStringProperty("NEXT POWER");
+   		}
+   		else{
+   			itAction = new SimpleStringProperty(act.toString());
+   		}
+   		itKey = new SimpleStringProperty(ke.toString());
+   	}
+
+   	public StringProperty itActionProperty() {
+           return itAction;
+       }
+
+       public void setAction(String action) {
+           itAction.set(action);
+       }
+
+       public StringProperty itKeyProperty() {
+           return itKey;
+       }
+
+       public void setKey(KeyCode k) {
+           itKey.set(k.toString());
+           itKeyCode = k;
+       }
+
+       public KeyCode getKey(){
+       	return itKeyCode;
+       }
+
+       public Actions getAction(){
+       	return action;
        }
    }
 }

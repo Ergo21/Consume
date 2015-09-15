@@ -495,6 +495,7 @@ public final class ConsumeGameMenu extends Menu {
 		});
 		center.getColumns().add(action);
 		center.getColumns().add(key);
+		center.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
 
 
 		MenuItem itemSave = new MenuItem("Save");

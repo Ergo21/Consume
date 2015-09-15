@@ -24,7 +24,6 @@ import com.almasb.consume.collision.ProjectilePlayerHandler;
 import com.almasb.fxgl.GameApplication;
 import com.almasb.fxgl.GameSettings;
 import com.almasb.fxgl.asset.Assets;
-import com.almasb.fxgl.asset.Music;
 import com.almasb.fxgl.asset.SaveLoadManager;
 import com.almasb.fxgl.asset.Texture;
 import com.almasb.fxgl.entity.Entity;
@@ -373,7 +372,6 @@ public class ConsumeApp extends GameApplication {
 		inputManager.addAction(new UserAction("Play Background Music") {
 			@Override
 			protected void onActionBegin() {
-				System.out.println("P pressed");
 	            soundManager.stopAll();
 
 				soundManager.setBackgroundMusic("06 Pyramid.mp3");
