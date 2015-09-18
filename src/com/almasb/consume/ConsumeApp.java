@@ -35,9 +35,11 @@ import com.ergo21.consume.ConsumeController;
 import com.ergo21.consume.ConsumeGameMenu;
 import com.ergo21.consume.ConsumeMainMenu;
 import com.ergo21.consume.EntitySpawner;
+import com.ergo21.consume.FileNames;
 import com.ergo21.consume.GameSave;
 import com.ergo21.consume.GameScene;
 import com.ergo21.consume.IndependentLoop;
+import com.ergo21.consume.LevelMenu;
 import com.ergo21.consume.Player;
 import com.ergo21.consume.PlayerHUD;
 import com.ergo21.consume.SavedSettings;
@@ -80,6 +82,8 @@ public class ConsumeApp extends GameApplication {
 	public ConsumeController consController;
 
 	public SavedSettings sSettings;
+	
+	private LevelMenu levelMenu;
 
 	@Override
 	protected void initSettings(GameSettings settings) {
@@ -92,9 +96,9 @@ public class ConsumeApp extends GameApplication {
 		settings.setIconFileName("app_icon.png");
 		settings.setShowFPS(false);
 
-		if(SaveLoadManager.INSTANCE.loadFileNames().isPresent() && SaveLoadManager.INSTANCE.loadFileNames().get().contains("settings.set")){
+		if(SaveLoadManager.INSTANCE.loadFileNames().isPresent() && SaveLoadManager.INSTANCE.loadFileNames().get().contains(FileNames.SETTINGS)){
 			try {
-				sSettings = (SavedSettings)SaveLoadManager.INSTANCE.load("settings.set");
+				sSettings = (SavedSettings)SaveLoadManager.INSTANCE.load(FileNames.SETTINGS);
 			} catch (Exception e) {
 				System.out.println("Unable to load settings");
 				e.printStackTrace();
@@ -104,14 +108,12 @@ public class ConsumeApp extends GameApplication {
 		else{
 			sSettings = new SavedSettings();
 			try {
-				SaveLoadManager.INSTANCE.save(sSettings, "settings.set");
+				SaveLoadManager.INSTANCE.save(sSettings, FileNames.SETTINGS);
 			} catch (Exception e) {
 				System.out.println("Unable to save settings");
 				e.printStackTrace();
 			}
 		}
-
-
 
 	}
 
@@ -130,7 +132,7 @@ public class ConsumeApp extends GameApplication {
 		playerData.getPowers().add(Element.LIGHTNING);
 		playerData.getPowers().add(Element.METAL);
 		playerData.getPowers().add(Element.DEATH);
-		playerData.getPowers().add(Element.CONSUME);
+		//playerData.getPowers().add(Element.CONSUME);
 		eSpawner = new EntitySpawner(this);
 
 		initLevels();
@@ -193,7 +195,7 @@ public class ConsumeApp extends GameApplication {
 
         consGameMenu.updatePowerMenu(playerData);
         soundManager = new SoundManager(this);
-        soundManager.setBackgroundMusic("07 Festival.mp3");
+        soundManager.setBackgroundMusic(FileNames.FESTIVAL_MUSIC);
         soundManager.getBackgroundMusic().setCycleCount(Integer.MAX_VALUE);
         soundManager.playBackgroundMusic();
 
@@ -218,6 +220,7 @@ public class ConsumeApp extends GameApplication {
 
 	@Override
 	protected ConsumeGameMenu initGameMenu() {
+		levelMenu = new LevelMenu(this);
 		consGameMenu = new ConsumeGameMenu(this);
 
 		return consGameMenu;
@@ -287,7 +290,7 @@ public class ConsumeApp extends GameApplication {
 			soundManager.stopAll();
 		}
 		try {
-			SaveLoadManager.INSTANCE.save(sSettings, "settings.set");
+			SaveLoadManager.INSTANCE.save(sSettings, FileNames.SETTINGS);
 		} catch (Exception e) {
 			System.out.println("Unable to save settings");
 			e.printStackTrace();
@@ -374,7 +377,7 @@ public class ConsumeApp extends GameApplication {
 			protected void onActionBegin() {
 	            soundManager.stopAll();
 
-				soundManager.setBackgroundMusic("06 Pyramid.mp3");
+				soundManager.setBackgroundMusic(FileNames.PYRAMID_MUSIC);
 				soundManager.getBackgroundMusic().setCycleCount(Integer.MAX_VALUE);
 				soundManager.playBackgroundMusic();
 			}
@@ -411,6 +414,7 @@ public class ConsumeApp extends GameApplication {
 		});
 		ft3.setOnFinished(evt -> {
 			loadLevel(playerData.getCurrentLevel());
+			this.sceneManager.removeUINode(levelMenu);
 			ft2.play();
 		});
 		ft.play();
@@ -420,7 +424,16 @@ public class ConsumeApp extends GameApplication {
 		//TODO
 		System.out.println("Show level screen");
 		consGameMenu.updatePowerMenu(playerData);
-
+		
+		this.sceneManager.closeGameMenu();
+		if(playerData.getPowers().size() > 6){
+			levelMenu.setFinalLevelVisible(true);
+		}
+		else{
+			levelMenu.setFinalLevelVisible(false);
+		}
+		this.sceneManager.removeUINode(levelMenu);
+		this.sceneManager.addUINodes(levelMenu);
 	}
 
 	@Override
@@ -456,6 +469,7 @@ public class ConsumeApp extends GameApplication {
 			playerData.getLevsComp().clear();
 			playerData.getLevsComp().addAll(g.getLevsComp());
 			consGameMenu.updatePowerMenu(playerData);
+			
 
 			changeLevel();
 		}

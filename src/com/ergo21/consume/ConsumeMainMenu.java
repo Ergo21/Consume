@@ -256,7 +256,7 @@ public final class ConsumeMainMenu extends Menu {
    }
 
    private MenuBox createOptionsMenu() {
-       MenuItem itemControls = new MenuItem(mainWidth, "CONTROLS");
+       MenuItem itemControls = new MenuItem(mainWidth, "Controls");
        itemControls.setMenuContent(createContentControls());
 
        MenuItem itemVideo = new MenuItem(mainWidth, "VIDEO");
@@ -433,7 +433,7 @@ public final class ConsumeMainMenu extends Menu {
 			   consApp.consController.initControls(newKeyMap);
 		   }
 	   });
-	   MenuItem itemRestore = new MenuItem(subWidth, "Restore to Default");
+	   MenuItem itemRestore = new MenuItem(mainWidth, "Restore to Default");
 	   itemRestore.setOnMouseClicked(new EventHandler<MouseEvent>(){
 		   @Override
 		   public void handle(MouseEvent event) {
