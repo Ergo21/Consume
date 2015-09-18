@@ -484,7 +484,8 @@ public class ConsumeApp extends GameApplication {
 
 		player = new Entity(Type.PLAYER).setPosition(point.getX(), point.getY()).setCollidable(true)
 				.setProperty(Property.DATA, playerData).setProperty("climb", false).setProperty("climbing", false)
-				.setProperty("facingRight", true).setProperty("stunned", false).addControl(new PhysicsControl(physics));
+				.setProperty("facingRight", true).setProperty("stunned", false).setProperty("eating", false).setProperty("eaten",  false)
+				.addControl(new PhysicsControl(physics));
 
 		player.addFXGLEventHandler(Event.PLAYER_DEATH, this::playerDied);
 
