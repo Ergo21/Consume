@@ -1,7 +1,6 @@
 package com.ergo21.consume;
 
 import com.almasb.consume.ConsumeApp;
-import com.almasb.consume.Types.Element;
 
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -18,7 +17,6 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.CycleMethod;
 import javafx.scene.paint.LinearGradient;
-import javafx.scene.paint.Paint;
 import javafx.scene.paint.Stop;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
@@ -38,19 +36,49 @@ public class LevelMenu extends Group{
 		
 		GridPane gp = new GridPane();
 		
-		for(int i = 0; i < 9; i++){
+		for(int i = 0; i < 7; i++){
 			MenuItem but = new MenuItem(String.valueOf(i));
-			int lev = i; //(i+1)*3
+			int lev = (i+1)*3;
 			but.setAction(() -> {
 				consApp.playerData.setCurrentLevel(lev);
+				consApp.soundManager.setBackgroundMusic(consApp.getBackgroundMusic());
+				consApp.soundManager.getBackgroundMusic().setCycleCount(Integer.MAX_VALUE);
 				consApp.changeLevel();
+				consApp.soundManager.playBackgroundMusic();
 			}); 
 			
-			gp.add(but, i%3, i/3);
-			
-			if(i%3 == 1 && i/3 == 1){
-				finalLevel = but;
-				but.setVisible(false);
+			switch(i){
+				case 0:{
+					gp.add(but, 1, 0);
+					break;
+				}
+				case 1:{
+					gp.add(but, 2, 0);
+					break;
+				}
+				case 2:{
+					gp.add(but, 0, 1);
+					break;
+				}
+				case 3:{
+					gp.add(but, 1, 1);
+					finalLevel = but;
+					but.setVisible(false);
+					break;
+				}
+				case 4:{
+					gp.add(but, 2, 1);
+					break;
+				}
+				case 5:{
+					gp.add(but, 0, 2);
+					break;
+				}
+				case 6:{
+					gp.add(but, 1, 2);
+					break;
+				}
+				
 			}
 		}
 		gp.setHgap(40);
@@ -67,9 +95,6 @@ public class LevelMenu extends Group{
 	}
 	
 	private class MenuItem extends StackPane {
-		private Element thiElement;
-		private boolean highlight;
-
 		private Text text;
 
 		private Background defBack;
@@ -79,7 +104,6 @@ public class LevelMenu extends Group{
 			LinearGradient gradient = new LinearGradient(0, 0, 1, 0, true, CycleMethod.NO_CYCLE,
 					new Stop[] { new Stop(0.5, Color.hsb(33, 0.7, 0.7)), new Stop(1, Color.hsb(100, 0.8, 1)) });
 
-			highlight = false;
 			defBack = new Background(new BackgroundFill(new Color(0,0,0,0.4), new CornerRadii(7), new Insets(1)));
 			defTexFill = Color.WHITE;
 			this.setBackground(defBack);
@@ -120,36 +144,6 @@ public class LevelMenu extends Group{
 			this.setOnMouseClicked(event -> {
 				action.run();
 			});
-		}
-
-		/*public void setEnabled(boolean b) {
-			this.setDisable(!b);
-			this.setOpacity(b ? 1 : 0.33);
-		}
-
-		public boolean getHighlighted() {
-			return highlight;
-		}*/
-
-		public void setHighlighted(boolean b) {
-			highlight = b;
-			if (highlight) {
-				defBack = new Background(new BackgroundFill(Color.YELLOW, new CornerRadii(5), new Insets(1)));
-				defTexFill = Color.BLACK;
-			} else {
-				defBack = new Background(new BackgroundFill(Color.BLACK, new CornerRadii(5), new Insets(1)));
-				defTexFill = Color.WHITE;
-			}
-			this.setBackground(defBack);
-			text.setFill(defTexFill);
-		}
-
-		public Element getElement() {
-			return thiElement;
-		}
-
-		public void setElement(Element e) {
-			thiElement = e;
 		}
 	}
 }

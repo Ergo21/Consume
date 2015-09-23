@@ -30,6 +30,7 @@ import java.util.HashMap;
 import com.almasb.consume.ConsumeApp;
 import com.almasb.consume.Types.Actions;
 import com.almasb.fxgl.asset.AssetManager;
+import com.almasb.fxgl.asset.Music;
 import com.almasb.fxgl.asset.SaveLoadManager;
 import com.almasb.fxgl.ui.Menu;
 import com.almasb.fxgl.util.Version;
@@ -113,6 +114,16 @@ public final class ConsumeMainMenu extends Menu {
        version.setFont(Font.font(18));
 
        root.getChildren().addAll(bg, title, version, menu, menuContent);
+       
+       try {
+    	   Music m = consApp.getAssetManager().loadMusic(FileNames.THEME_MUSIC);
+    	   m.setCycleCount(Integer.MAX_VALUE);
+    	   consApp.getAudioManager().playMusic(m);
+       } catch (Exception e) {
+    	   // TODO Auto-generated catch block
+    	   e.printStackTrace();
+       }
+       
    }
 
    private MenuBox createMainMenu() {

@@ -24,7 +24,7 @@ public final class Config {
 
 	public static final int BLOCK_SIZE = 40;
 
-	public static final int MAX_LEVELS = 4;
+	public static final int MAX_LEVELS = 24;
 
 	public static final int PATROL_RADIUS = 3 * BLOCK_SIZE;
 	public static final int ENEMY_CHARGE_RANGE = 7 * BLOCK_SIZE;

@@ -195,7 +195,8 @@ public class ConsumeApp extends GameApplication {
 
         consGameMenu.updatePowerMenu(playerData);
         soundManager = new SoundManager(this);
-        soundManager.setBackgroundMusic(FileNames.FESTIVAL_MUSIC);
+        soundManager.stopAll();
+        soundManager.setBackgroundMusic(FileNames.FOREST1_MUSIC);
         soundManager.getBackgroundMusic().setCycleCount(Integer.MAX_VALUE);
         soundManager.playBackgroundMusic();
 
@@ -300,6 +301,12 @@ public class ConsumeApp extends GameApplication {
 	@Override
 	public void onMenuOpen(){
 		soundManager.pauseBackgroundMusic();
+		if(playerData.getCurrentLevel() < 3){
+			consGameMenu.levelMenuItem.setVisible(false);
+		}
+		else{
+			consGameMenu.levelMenuItem.setVisible(true);
+		}
 	}
 
 	@Override
@@ -426,6 +433,7 @@ public class ConsumeApp extends GameApplication {
 		consGameMenu.updatePowerMenu(playerData);
 		
 		this.sceneManager.closeGameMenu();
+		this.soundManager.stopAll();
 		if(playerData.getPowers().size() > 6){
 			levelMenu.setFinalLevelVisible(true);
 		}
@@ -469,12 +477,45 @@ public class ConsumeApp extends GameApplication {
 			playerData.getLevsComp().clear();
 			playerData.getLevsComp().addAll(g.getLevsComp());
 			consGameMenu.updatePowerMenu(playerData);
-			
+			soundManager.setBackgroundMusic(getBackgroundMusic());
+			soundManager.getBackgroundMusic().setCycleCount(Integer.MAX_VALUE);
 
 			changeLevel();
 		}
 		else{
 			System.out.println(d.getClass());
+		}
+	}
+	
+	public String getBackgroundMusic(){
+		switch(playerData.getCurrentLevel()/3){
+			case 0:{
+				return FileNames.FOREST1_MUSIC;
+			}
+			case 1:{
+				return FileNames.DESERT_MUSIC;
+			}
+			case 2:{
+				return FileNames.PYRAMID_MUSIC;
+			}
+			case 3:{
+				return FileNames.FESTIVAL_MUSIC;
+			}
+			case 4:{
+				return FileNames.FOREST2_MUSIC;
+			}
+			case 5:{
+				return FileNames.MOUNTAIN_MUSIC;
+			}
+			case 6:{
+				return FileNames.COLONY_MUSIC;
+			}
+			case 7:{
+				return FileNames.EMPIRE_MUSIC;
+			}
+			default:{
+				return FileNames.FESTIVAL_MUSIC;
+			}
 		}
 	}
 
