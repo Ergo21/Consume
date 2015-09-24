@@ -43,7 +43,7 @@ public class LevelParser {
 		for (int i = 0; i < data.size(); i++) {
 			String line = data.get(i);
 			for (int j = 0; j < line.length(); j++) {
-				Rectangle rect = new Rectangle(40, 40);
+				Rectangle rect = new Rectangle(Config.BLOCK_SIZE, Config.BLOCK_SIZE);
 				Entity e = null;
 
 				switch (line.charAt(j)) {

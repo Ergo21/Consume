@@ -27,6 +27,10 @@ public class PlayerPowerupHandler extends CollisionHandler {
 
 	@Override
 	public void onCollision(Entity player, Entity powerup) {
+		if(player.getProperty("eaten") == null || player.<Boolean>getProperty("eaten") == false){
+			return;
+		}
+		
 		powerup.fireFXGLEvent(new FXGLEvent(Event.DEATH));
 
 		Powerup type = powerup.getProperty(Property.SUB_TYPE);

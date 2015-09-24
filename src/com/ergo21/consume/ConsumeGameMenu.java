@@ -94,6 +94,8 @@ public final class ConsumeGameMenu extends Menu {
 	private PowerGroup powerList;
 	private AnchorPane contentViewer;
 	private ConsumeApp consApp;
+	
+	public MenuItem levelMenuItem; 
 
 	public ConsumeGameMenu(ConsumeApp app) {
 		super(app);
@@ -150,10 +152,8 @@ public final class ConsumeGameMenu extends Menu {
 			contentViewer.getChildren().add(createOptionsMenu());
 		});
 
-		MenuItem itemLevel = new MenuItem("Level Menu");
-		itemLevel.setAction(() -> {
-			consApp.indiLoop.stop();
-			consApp.soundManager.stopAll();
+		levelMenuItem = new MenuItem("Level Menu");
+		levelMenuItem.setAction(() -> {
 			consApp.showLevelScreen();
 			contentViewer.getChildren().clear();
 			contentViewer.getChildren().add(powerList);
@@ -163,12 +163,15 @@ public final class ConsumeGameMenu extends Menu {
 		itemExit.setAction(() -> {
 			consApp.indiLoop.stop();
 			consApp.soundManager.stopAll();
+			consApp.soundManager.setBackgroundMusic(FileNames.THEME_MUSIC);
+	        consApp.soundManager.getBackgroundMusic().setCycleCount(Integer.MAX_VALUE);
+	        consApp.soundManager.playBackgroundMusic();
 			app.getSceneManager().exitToMainMenu();
 			contentViewer.getChildren().clear();
 			contentViewer.getChildren().add(powerList);
 		});
 
-		MenuBox menu = new MenuBox(5, itemPowers, itemLoad, itemOptions, itemLevel, itemExit);
+		MenuBox menu = new MenuBox(5, itemPowers, itemLoad, itemOptions, levelMenuItem, itemExit);
 
 		menu.setTranslateX(0);
 		menu.setTranslateY(app.getHeight() / 2 - menu.getLayoutHeight() / 2);
@@ -446,6 +449,8 @@ public final class ConsumeGameMenu extends Menu {
 			public void handle(MouseEvent event) {
 				consApp.sSettings.setBackMusicVolume(musBar.getProgress());
 				consApp.sSettings.setSFXVolume(sfxBar.getProgress());
+				consApp.getAudioManager().setGlobalMusicVolume(consApp.sSettings.getBackMusicVolume());
+				consApp.getAudioManager().setGlobalSoundVolume(consApp.sSettings.getSFXVolume());
 			}
 		});
 
@@ -493,6 +498,7 @@ public final class ConsumeGameMenu extends Menu {
 		});
 		center.getColumns().add(action);
 		center.getColumns().add(key);
+		center.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
 
 
 		MenuItem itemSave = new MenuItem("Save");
@@ -501,7 +507,15 @@ public final class ConsumeGameMenu extends Menu {
 			public void handle(MouseEvent event) {
 				HashMap<Actions, KeyCode> newKeyMap = new HashMap<Actions, KeyCode>();
 				for(TabItem item : items){
-					newKeyMap.put(item.getAction(), item.getKey());
+					if(newKeyMap.values().contains(item.getKey()) && item.getKey() != KeyCode.UNDEFINED){
+						Alert alert = new Alert(AlertType.ERROR);
+						alert.setContentText("Duplicate keys found. Changes not saved.");
+						alert.showAndWait();
+						return;
+					}
+					else{
+						newKeyMap.put(item.getAction(), item.getKey());
+					}
 				}
 				consApp.consController.initControls(newKeyMap);
 			}
@@ -597,7 +611,7 @@ public final class ConsumeGameMenu extends Menu {
 		}
 	}
 
-	private class MenuItem extends StackPane {
+	public class MenuItem extends StackPane {
 		private Element thiElement;
 		private boolean highlight;
 

@@ -24,7 +24,6 @@ import com.almasb.consume.collision.ProjectilePlayerHandler;
 import com.almasb.fxgl.GameApplication;
 import com.almasb.fxgl.GameSettings;
 import com.almasb.fxgl.asset.Assets;
-import com.almasb.fxgl.asset.Music;
 import com.almasb.fxgl.asset.SaveLoadManager;
 import com.almasb.fxgl.asset.Texture;
 import com.almasb.fxgl.entity.Entity;
@@ -36,9 +35,11 @@ import com.ergo21.consume.ConsumeController;
 import com.ergo21.consume.ConsumeGameMenu;
 import com.ergo21.consume.ConsumeMainMenu;
 import com.ergo21.consume.EntitySpawner;
+import com.ergo21.consume.FileNames;
 import com.ergo21.consume.GameSave;
 import com.ergo21.consume.GameScene;
 import com.ergo21.consume.IndependentLoop;
+import com.ergo21.consume.LevelMenu;
 import com.ergo21.consume.Player;
 import com.ergo21.consume.PlayerHUD;
 import com.ergo21.consume.SavedSettings;
@@ -81,6 +82,8 @@ public class ConsumeApp extends GameApplication {
 	public ConsumeController consController;
 
 	public SavedSettings sSettings;
+	
+	private LevelMenu levelMenu;
 
 	@Override
 	protected void initSettings(GameSettings settings) {
@@ -88,14 +91,15 @@ public class ConsumeApp extends GameApplication {
 		settings.setVersion("dev version");
 		settings.setWidth(640);
 		settings.setHeight(360);
+		settings.setFullScreen(false);
 		settings.setIntroEnabled(false);
 		settings.setMenuEnabled(true);
 		settings.setIconFileName("app_icon.png");
 		settings.setShowFPS(false);
 
-		if(SaveLoadManager.INSTANCE.loadFileNames().isPresent() && SaveLoadManager.INSTANCE.loadFileNames().get().contains("settings.set")){
+		if(SaveLoadManager.INSTANCE.loadFileNames().isPresent() && SaveLoadManager.INSTANCE.loadFileNames().get().contains(FileNames.SETTINGS)){
 			try {
-				sSettings = (SavedSettings)SaveLoadManager.INSTANCE.load("settings.set");
+				sSettings = (SavedSettings)SaveLoadManager.INSTANCE.load(FileNames.SETTINGS);
 			} catch (Exception e) {
 				System.out.println("Unable to load settings");
 				e.printStackTrace();
@@ -105,14 +109,12 @@ public class ConsumeApp extends GameApplication {
 		else{
 			sSettings = new SavedSettings();
 			try {
-				SaveLoadManager.INSTANCE.save(sSettings, "settings.set");
+				SaveLoadManager.INSTANCE.save(sSettings, FileNames.SETTINGS);
 			} catch (Exception e) {
 				System.out.println("Unable to save settings");
 				e.printStackTrace();
 			}
 		}
-
-
 
 	}
 
@@ -131,7 +133,7 @@ public class ConsumeApp extends GameApplication {
 		playerData.getPowers().add(Element.LIGHTNING);
 		playerData.getPowers().add(Element.METAL);
 		playerData.getPowers().add(Element.DEATH);
-		playerData.getPowers().add(Element.CONSUME);
+		//playerData.getPowers().add(Element.CONSUME);
 		eSpawner = new EntitySpawner(this);
 
 		initLevels();
@@ -194,10 +196,10 @@ public class ConsumeApp extends GameApplication {
 
         consGameMenu.updatePowerMenu(playerData);
         soundManager = new SoundManager(this);
-        soundManager.setBackgroundMusic("07 Festival.mp3");
-        Music bgm = soundManager.getBackgroundMusic();
-        bgm.setCycleCount(Integer.MAX_VALUE);
-        getAudioManager().playMusic(bgm);
+        soundManager.stopAll();
+        soundManager.setBackgroundMusic(FileNames.FOREST1_MUSIC);
+        soundManager.getBackgroundMusic().setCycleCount(Integer.MAX_VALUE);
+        soundManager.playBackgroundMusic();
 
         indiLoop = new IndependentLoop(this);
         indiLoop.start();
@@ -220,6 +222,7 @@ public class ConsumeApp extends GameApplication {
 
 	@Override
 	protected ConsumeGameMenu initGameMenu() {
+		levelMenu = new LevelMenu(this);
 		consGameMenu = new ConsumeGameMenu(this);
 
 		return consGameMenu;
@@ -289,13 +292,29 @@ public class ConsumeApp extends GameApplication {
 			soundManager.stopAll();
 		}
 		try {
-			SaveLoadManager.INSTANCE.save(sSettings, "settings.set");
+			SaveLoadManager.INSTANCE.save(sSettings, FileNames.SETTINGS);
 		} catch (Exception e) {
 			System.out.println("Unable to save settings");
 			e.printStackTrace();
 		}
 	}
+	
+	@Override
+	public void onMenuOpen(){
+		soundManager.pauseBackgroundMusic();
+		if(playerData.getCurrentLevel() < 3){
+			consGameMenu.levelMenuItem.setVisible(false);
+		}
+		else{
+			consGameMenu.levelMenuItem.setVisible(true);
+		}
+	}
 
+	@Override
+	public void onMenuClose(){
+		soundManager.playBackgroundMusic();
+	}
+	
 	private void loadLevel(int lev) {
 		sceneManager.getEntities().forEach(sceneManager::removeEntity);
 		System.out.println("Level number: " + lev);
@@ -364,14 +383,11 @@ public class ConsumeApp extends GameApplication {
 		inputManager.addAction(new UserAction("Play Background Music") {
 			@Override
 			protected void onActionBegin() {
-	            Music bgm = soundManager.getBackgroundMusic();
-	            getAudioManager().stopMusic(bgm);
+	            soundManager.stopAll();
 
-				soundManager.setBackgroundMusic("06 Pyramid.mp3");
-
-				bgm = soundManager.getBackgroundMusic();
-				bgm.setCycleCount(Integer.MAX_VALUE);
-				getAudioManager().playMusic(bgm);
+				soundManager.setBackgroundMusic(FileNames.PYRAMID_MUSIC);
+				soundManager.getBackgroundMusic().setCycleCount(Integer.MAX_VALUE);
+				soundManager.playBackgroundMusic();
 			}
 		}, KeyCode.P);
 	}
@@ -406,6 +422,7 @@ public class ConsumeApp extends GameApplication {
 		});
 		ft3.setOnFinished(evt -> {
 			loadLevel(playerData.getCurrentLevel());
+			this.sceneManager.removeUINode(levelMenu);
 			ft2.play();
 		});
 		ft.play();
@@ -415,7 +432,17 @@ public class ConsumeApp extends GameApplication {
 		//TODO
 		System.out.println("Show level screen");
 		consGameMenu.updatePowerMenu(playerData);
-
+		
+		this.sceneManager.closeGameMenu();
+		this.soundManager.stopAll();
+		if(playerData.getPowers().size() > 6){
+			levelMenu.setFinalLevelVisible(true);
+		}
+		else{
+			levelMenu.setFinalLevelVisible(false);
+		}
+		this.sceneManager.removeUINode(levelMenu);
+		this.sceneManager.addUINodes(levelMenu);
 	}
 
 	@Override
@@ -451,11 +478,45 @@ public class ConsumeApp extends GameApplication {
 			playerData.getLevsComp().clear();
 			playerData.getLevsComp().addAll(g.getLevsComp());
 			consGameMenu.updatePowerMenu(playerData);
+			soundManager.setBackgroundMusic(getBackgroundMusic());
+			soundManager.getBackgroundMusic().setCycleCount(Integer.MAX_VALUE);
 
 			changeLevel();
 		}
 		else{
 			System.out.println(d.getClass());
+		}
+	}
+	
+	public String getBackgroundMusic(){
+		switch(playerData.getCurrentLevel()/3){
+			case 0:{
+				return FileNames.FOREST1_MUSIC;
+			}
+			case 1:{
+				return FileNames.DESERT_MUSIC;
+			}
+			case 2:{
+				return FileNames.PYRAMID_MUSIC;
+			}
+			case 3:{
+				return FileNames.FESTIVAL_MUSIC;
+			}
+			case 4:{
+				return FileNames.FOREST2_MUSIC;
+			}
+			case 5:{
+				return FileNames.MOUNTAIN_MUSIC;
+			}
+			case 6:{
+				return FileNames.COLONY_MUSIC;
+			}
+			case 7:{
+				return FileNames.EMPIRE_MUSIC;
+			}
+			default:{
+				return FileNames.FESTIVAL_MUSIC;
+			}
 		}
 	}
 
@@ -465,7 +526,8 @@ public class ConsumeApp extends GameApplication {
 
 		player = new Entity(Type.PLAYER).setPosition(point.getX(), point.getY()).setCollidable(true)
 				.setProperty(Property.DATA, playerData).setProperty("climb", false).setProperty("climbing", false)
-				.setProperty("facingRight", true).setProperty("stunned", false).addControl(new PhysicsControl(physics));
+				.setProperty("facingRight", true).setProperty("stunned", false).setProperty("eating", false).setProperty("eaten",  false)
+				.addControl(new PhysicsControl(physics));
 
 		player.addFXGLEventHandler(Event.PLAYER_DEATH, this::playerDied);
 

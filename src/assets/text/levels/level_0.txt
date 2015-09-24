@@ -1,6 +1,6 @@
-i                                        i0		DEMO LEVEL
+i                                        i0
+i iiiii                                  i0		
 i                                        i0		
-i                                        i0		Used only to test stuff and should not be in final game.
 i                                        i0
 iiii                                     i0 
 iiip  1                                  i0 

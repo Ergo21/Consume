@@ -1,5 +1,6 @@
 package com.ergo21.consume;
 
+import java.sql.Time;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -40,14 +41,12 @@ public class ConsumeController {
 	private HashMap<Actions, KeyCode> defaultKeys;
 	private HashMap<Actions, KeyCode> currentKeys;
 	private HashMap<Actions, UserAction> allActions;
-	private UserAction none;
 
 	public ConsumeController(ConsumeApp a) {
 		consApp = a;
 		defaultKeys = new HashMap<Actions, KeyCode>();
 		currentKeys = new HashMap<Actions, KeyCode>();
 		allActions = new HashMap<Actions, UserAction>();
-		none = new UserAction("Nothing") {};
 		defaultKeys.put(Actions.INTERACT, KeyCode.ENTER);
 		defaultKeys.put(Actions.LEFT, KeyCode.A);
 		defaultKeys.put(Actions.RIGHT, KeyCode.D);
@@ -85,13 +84,24 @@ public class ConsumeController {
 					consApp.playerData.setCurrentLevel(consApp.playerData.getCurrentLevel() + 1);
 					consApp.changeLevel();
 				}
-
+				else{	
+					consApp.player.setProperty("eating", true);
+					consApp.player.getControl(PhysicsControl.class).moveX(0);
+					consApp.getTimerManager().runOnceAfter(() ->{
+						consApp.player.setProperty("eating", false);
+						consApp.player.setProperty("eaten", true);
+					}, Duration.seconds(1));
+					consApp.getTimerManager().runOnceAfter(() ->{
+						consApp.player.setProperty("eaten", false);
+					}, Duration.seconds(1.1));
+				}
 			}
 		});
 		allActions.put(Actions.LEFT, new UserAction("Left") {
 			@Override
 			protected void onAction() {
-				if (consApp.player != null && consApp.player.getProperty("stunned") != null && !(boolean) consApp.player.getProperty("stunned")) {
+				if (consApp.player != null && consApp.player.getProperty("stunned") != null && !(boolean) consApp.player.getProperty("stunned") &&
+												consApp.player.getProperty("eating") != null && !(boolean) consApp.player.getProperty("eating")) {
 					consApp.player.getControl(PhysicsControl.class).moveX(-Speed.PLAYER_MOVE);
 					consApp.player.setProperty("facingRight", false);
 				}
@@ -99,7 +109,8 @@ public class ConsumeController {
 
 			@Override
 			protected void onActionEnd() {
-				if (consApp.player != null && consApp.player.getProperty("stunned") != null && !(boolean) consApp.player.getProperty("stunned")) {
+				if (consApp.player != null && consApp.player.getProperty("stunned") != null && !(boolean) consApp.player.getProperty("stunned") &&
+						consApp.player.getProperty("eating") != null && !(boolean) consApp.player.getProperty("eating")) {
 					consApp.player.getControl(PhysicsControl.class).moveX(0);
 				}
 			}
@@ -107,7 +118,8 @@ public class ConsumeController {
 		allActions.put(Actions.RIGHT, new UserAction("Move Right") {
 			@Override
 			protected void onAction() {
-				if (consApp.player != null && consApp.player.getProperty("stunned") != null &&  !(boolean) consApp.player.getProperty("stunned")) {
+				if (consApp.player != null && consApp.player.getProperty("stunned") != null &&  !(boolean) consApp.player.getProperty("stunned") &&
+						consApp.player.getProperty("eating") != null && !(boolean) consApp.player.getProperty("eating")) {
 					consApp.player.getControl(PhysicsControl.class).moveX(Speed.PLAYER_MOVE);
 					consApp.player.setProperty("facingRight", true);
 				}
@@ -115,7 +127,8 @@ public class ConsumeController {
 
 			@Override
 			protected void onActionEnd() {
-				if (consApp.player != null && consApp.player.getProperty("stunned") != null && !(boolean) consApp.player.getProperty("stunned")) {
+				if (consApp.player != null && consApp.player.getProperty("stunned") != null && !(boolean) consApp.player.getProperty("stunned") &&
+						consApp.player.getProperty("eating") != null && !(boolean) consApp.player.getProperty("eating")) {
 					consApp.player.getControl(PhysicsControl.class).moveX(0);
 				}
 			}
@@ -123,7 +136,8 @@ public class ConsumeController {
 		allActions.put(Actions.UP, new UserAction("Up") {
 			@Override
 			protected void onAction() {
-				if (consApp.player != null && consApp.player.getProperty("stunned") != null && !(boolean) consApp.player.getProperty("stunned")) {
+				if (consApp.player != null && consApp.player.getProperty("stunned") != null && !(boolean) consApp.player.getProperty("stunned") &&
+						consApp.player.getProperty("eating") != null && !(boolean) consApp.player.getProperty("eating")) {
 					if (consApp.player.<Boolean> getProperty("climbing"))
 						consApp.player.getControl(PhysicsControl.class).climb(-5);
 				}
@@ -132,7 +146,8 @@ public class ConsumeController {
 		allActions.put(Actions.JUMP, new UserAction("Jump / Climb Up") {
 			@Override
 			protected void onAction() {
-				if (consApp.player != null && consApp.player.getProperty("stunned") != null && !(boolean) consApp.player.getProperty("stunned")) {
+				if (consApp.player != null && consApp.player.getProperty("stunned") != null && !(boolean) consApp.player.getProperty("stunned") &&
+						consApp.player.getProperty("eating") != null && !(boolean) consApp.player.getProperty("eating")) {
 					if (consApp.player.<Boolean> getProperty("climbing"))
 						consApp.player.getControl(PhysicsControl.class).climb(-5);
 					else
@@ -143,7 +158,8 @@ public class ConsumeController {
 		allActions.put(Actions.DOWN, new UserAction("Down") {
 			@Override
 			protected void onAction() {
-				if (consApp.player != null && consApp.player.getProperty("stunned") != null && !(boolean) consApp.player.getProperty("stunned")) {
+				if (consApp.player != null && consApp.player.getProperty("stunned") != null && !(boolean) consApp.player.getProperty("stunned") &&
+						consApp.player.getProperty("eating") != null && !(boolean) consApp.player.getProperty("eating")) {
 					if (consApp.player.<Boolean> getProperty("climbing")) {
 						consApp.player.getControl(PhysicsControl.class).climb(5);
 					}
@@ -153,7 +169,8 @@ public class ConsumeController {
 		allActions.put(Actions.SHOOT, new UserAction("Shoot") {
 			@Override
 			protected void onActionBegin() {
-				if (consApp.player != null && consApp.player.getProperty("stunned") != null && !(boolean) consApp.player.getProperty("stunned")) {
+				if (consApp.player != null && consApp.player.getProperty("stunned") != null && !(boolean) consApp.player.getProperty("stunned") &&
+						consApp.player.getProperty("eating") != null && !(boolean) consApp.player.getProperty("eating")) {
 					shootProjectile();
 				}
 			}
@@ -161,7 +178,8 @@ public class ConsumeController {
 		allActions.put(Actions.CHPOWP, new UserAction("Change Power +") {
 			@Override
 			protected void onActionBegin() {
-				if (consApp.player != null && consApp.player.getProperty("stunned") != null && !(boolean) consApp.player.getProperty("stunned")) {
+				if (consApp.player != null && consApp.player.getProperty("stunned") != null && !(boolean) consApp.player.getProperty("stunned") &&
+						consApp.player.getProperty("eating") != null && !(boolean) consApp.player.getProperty("eating")) {
 					changePower(1);
 				}
 			}
@@ -169,7 +187,8 @@ public class ConsumeController {
 		allActions.put(Actions.CHPOWN, new UserAction("Change Power -") {
 			@Override
 			protected void onActionBegin() {
-				if (consApp.player != null && consApp.player.getProperty("stunned") != null && !(boolean) consApp.player.getProperty("stunned")) {
+				if (consApp.player != null && consApp.player.getProperty("stunned") != null && !(boolean) consApp.player.getProperty("stunned") &&
+						consApp.player.getProperty("eating") != null && !(boolean) consApp.player.getProperty("eating")) {
 					changePower(-1);
 				}
 			}
@@ -184,11 +203,10 @@ public class ConsumeController {
 	}
 
 	public void initControls(HashMap<Actions, KeyCode> newKeyMap) {
-		clearInputValues();
 
 		for(Actions action : Actions.values()){
 			if(newKeyMap.containsKey(action) && newKeyMap.get(action) != KeyCode.UNDEFINED){
-				consApp.getInputManager().addAction(allActions.get(action), newKeyMap.get(action));
+				consApp.getInputManager().rebind(allActions.get(action), newKeyMap.get(action));
 				currentKeys.put(action, newKeyMap.get(action));
 			}
 			else{
@@ -196,12 +214,6 @@ public class ConsumeController {
 			}
 		}
 		consApp.sSettings.setControls(currentKeys);
-	}
-
-	public void clearInputValues(){
-//		for(KeyCode key : consApp.getInputManager().getKeyBindings().keySet()){
-//			consApp.getInputManager().addAction(none, key);
-//		}
 	}
 
 	private Entity spear;
