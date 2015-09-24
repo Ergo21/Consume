@@ -271,6 +271,7 @@ public final class ConsumeMainMenu extends Menu {
        itemControls.setMenuContent(createContentControls());
 
        MenuItem itemVideo = new MenuItem(mainWidth, "VIDEO");
+       itemVideo.setMenuContent(createContentVideo());
        MenuItem itemAudio = new MenuItem(mainWidth, "Audio");
        itemAudio.setMenuContent(createContentAudio());
 
@@ -310,6 +311,12 @@ public final class ConsumeMainMenu extends Menu {
        return new MenuContent(textHead, textJFX, textJBOX, textAuthor, textDev);
    }
 
+   private MenuContent createContentVideo(){
+	   //consApp.getSettings().
+	   MenuContent mc = new MenuContent();
+	   return mc;
+   }
+   
    private MenuContent createContentAudio(){
 		Text musTex = new Text("Music Volume");
 		musTex.setStroke(Color.WHITE);
@@ -606,7 +613,7 @@ public final class ConsumeMainMenu extends Menu {
        public void setChild(MenuBox menu) {
            child = menu;
 
-           MenuItem back = new MenuItem(mainWidth, "BACK");
+           MenuItem back = new MenuItem(mainWidth, "Back");
            menu.getChildren().add(back);
 
            back.setOnMouseClicked(evt -> {

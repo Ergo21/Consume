@@ -91,6 +91,7 @@ public class ConsumeApp extends GameApplication {
 		settings.setVersion("dev version");
 		settings.setWidth(640);
 		settings.setHeight(360);
+		settings.setFullScreen(false);
 		settings.setIntroEnabled(false);
 		settings.setMenuEnabled(true);
 		settings.setIconFileName("app_icon.png");
