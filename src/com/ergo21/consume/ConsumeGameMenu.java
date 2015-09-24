@@ -1,28 +1,4 @@
-/*
- * The MIT License (MIT)
- *
- * FXGL - JavaFX Game Library
- *
- * Copyright (c) 2015 AlmasB (almaslvl@gmail.com)
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE.
- */
+
 package com.ergo21.consume;
 
 import java.io.Serializable;
@@ -35,7 +11,8 @@ import com.almasb.consume.Types.Actions;
 import com.almasb.consume.Types.Element;
 import com.almasb.fxgl.asset.AssetManager;
 import com.almasb.fxgl.asset.SaveLoadManager;
-import com.almasb.fxgl.ui.Menu;
+import com.almasb.fxgl.event.MenuEvent;
+import com.almasb.fxgl.ui.FXGLMenu;
 import com.almasb.fxgl.util.Version;
 
 import javafx.beans.binding.Bindings;
@@ -49,14 +26,14 @@ import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Alert;
-import javafx.scene.control.ButtonType;
 import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.ListView;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
-import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.TextInputDialog;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
@@ -89,13 +66,13 @@ import javafx.scene.text.Text;
  * @author Almas Baimagambetov (AlmasB) (almaslvl@gmail.com)
  *
  */
-public final class ConsumeGameMenu extends Menu {
+public final class ConsumeGameMenu extends FXGLMenu {
 
 	private PowerGroup powerList;
 	private AnchorPane contentViewer;
 	private ConsumeApp consApp;
-	
-	public MenuItem levelMenuItem; 
+
+	public MenuItem levelMenuItem;
 
 	public ConsumeGameMenu(ConsumeApp app) {
 		super(app);
@@ -130,7 +107,7 @@ public final class ConsumeGameMenu extends Menu {
 		version.setFill(Color.WHITE);
 		version.setFont(Font.font(18));
 
-		root.getChildren().addAll(bg, title, version, menu, menuContent, contentViewer);
+		getChildren().setAll(bg, title, version, menu, menuContent, contentViewer);
 	}
 
 	private MenuBox createMainMenu() {
@@ -143,13 +120,13 @@ public final class ConsumeGameMenu extends Menu {
 		MenuItem itemLoad = new MenuItem("Load & Save");
 		itemLoad.setAction(() -> {
 			contentViewer.getChildren().clear();
-			contentViewer.getChildren().add(createContentLoad());
+			contentViewer.getChildren().add(createContentLoadConsume());
 		});
 
 		MenuItem itemOptions = new MenuItem("Options");
 		itemOptions.setAction(() -> {
 			contentViewer.getChildren().clear();
-			contentViewer.getChildren().add(createOptionsMenu());
+			contentViewer.getChildren().add(createOptionsMenuConsume());
 		});
 
 		levelMenuItem = new MenuItem("Level Menu");
@@ -166,7 +143,9 @@ public final class ConsumeGameMenu extends Menu {
 			consApp.soundManager.setBackgroundMusic(FileNames.THEME_MUSIC);
 	        consApp.soundManager.getBackgroundMusic().setCycleCount(Integer.MAX_VALUE);
 	        consApp.soundManager.playBackgroundMusic();
-			app.getSceneManager().exitToMainMenu();
+
+	        itemExit.fireEvent(new MenuEvent(MenuEvent.EXIT));
+
 			contentViewer.getChildren().clear();
 			contentViewer.getChildren().add(powerList);
 		});
@@ -178,7 +157,7 @@ public final class ConsumeGameMenu extends Menu {
 		return menu;
 	}
 
-	private BorderPane createContentLoad() {
+	private BorderPane createContentLoadConsume() {
 		ListView<String> list = new ListView<String>();
 		SaveLoadManager.INSTANCE.loadFileNames().ifPresent(names -> list.getItems().setAll(names));
 		ArrayList<String> removes = new ArrayList<String>();
@@ -297,7 +276,7 @@ public final class ConsumeGameMenu extends Menu {
 		return bp;
 	}
 
-	private MenuBox createOptionsMenu() {
+	private MenuBox createOptionsMenuConsume() {
 		MenuItem itemControls = new MenuItem("Controls");
 		itemControls.setAction(() -> {
 			contentViewer.getChildren().clear();
@@ -760,5 +739,10 @@ public final class ConsumeGameMenu extends Menu {
         public Actions getAction(){
         	return action;
         }
+    }
+
+    @Override
+    protected com.almasb.fxgl.ui.FXGLMenu.MenuBox createMenuBody() {
+        return new com.almasb.fxgl.ui.FXGLMenu.MenuBox(200);
     }
 }

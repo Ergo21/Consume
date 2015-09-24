@@ -22,7 +22,6 @@ import com.almasb.consume.collision.PlayerPowerupHandler;
 import com.almasb.consume.collision.ProjectileEnemyHandler;
 import com.almasb.consume.collision.ProjectilePlayerHandler;
 import com.almasb.fxgl.GameApplication;
-import com.almasb.fxgl.GameSettings;
 import com.almasb.fxgl.asset.Assets;
 import com.almasb.fxgl.asset.SaveLoadManager;
 import com.almasb.fxgl.asset.Texture;
@@ -30,7 +29,11 @@ import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.FXGLEvent;
 import com.almasb.fxgl.event.UserAction;
 import com.almasb.fxgl.physics.CollisionHandler;
+import com.almasb.fxgl.physics.PhysicsManager;
+import com.almasb.fxgl.settings.GameSettings;
 import com.almasb.fxgl.time.TimerManager;
+import com.almasb.fxgl.ui.FXGLMenu;
+import com.almasb.fxgl.ui.FXGLMenuFactory;
 import com.ergo21.consume.ConsumeController;
 import com.ergo21.consume.ConsumeGameMenu;
 import com.ergo21.consume.ConsumeMainMenu;
@@ -82,7 +85,7 @@ public class ConsumeApp extends GameApplication {
 	public ConsumeController consController;
 
 	public SavedSettings sSettings;
-	
+
 	private LevelMenu levelMenu;
 
 	@Override
@@ -120,7 +123,7 @@ public class ConsumeApp extends GameApplication {
 
 	@Override
 	protected void initAssets() throws Exception {
-		assets = assetManager.cache();
+		assets = getAssetManager().cache();
 		assets.logCached();
 	}
 
@@ -143,6 +146,8 @@ public class ConsumeApp extends GameApplication {
 
 	@Override
 	protected void initPhysics() {
+	    PhysicsManager physicsManager = getPhysicsManager();
+
 		physicsManager.addCollisionHandler(new PlayerPowerupHandler(this));
 		physicsManager.addCollisionHandler(new PlayerEnemyHandler(this));
 		physicsManager.addCollisionHandler(new ProjectileEnemyHandler(this));
@@ -187,7 +192,7 @@ public class ConsumeApp extends GameApplication {
 
 		debug.setTranslateX(450);
 		debug.setTranslateY(100);
-		sceneManager.addUINodes(gScene, hud, performance, debug);
+		getSceneManager().addUINodes(gScene, hud, performance, debug);
 
         hud.CurHealthProperty().bind(playerData.CurrentHealthProperty());
         hud.CurManaProperty().bind(playerData.CurrentManaProperty());
@@ -221,17 +226,21 @@ public class ConsumeApp extends GameApplication {
 	}
 
 	@Override
-	protected ConsumeGameMenu initGameMenu() {
-		levelMenu = new LevelMenu(this);
-		consGameMenu = new ConsumeGameMenu(this);
+    protected FXGLMenuFactory initMenuFactory() {
+	    return new FXGLMenuFactory() {
+            @Override
+            public FXGLMenu newMainMenu(GameApplication app) {
+                consMainMenu = new ConsumeMainMenu(ConsumeApp.this);
+                return consMainMenu;
+            }
 
-		return consGameMenu;
-	}
-
-	@Override
-	protected ConsumeMainMenu initMainMenu(){
-		consMainMenu = new ConsumeMainMenu(this);
-		return consMainMenu;
+            @Override
+            public FXGLMenu newGameMenu(GameApplication app) {
+                levelMenu = new LevelMenu(ConsumeApp.this);
+                consGameMenu = new ConsumeGameMenu(ConsumeApp.this);
+                return consGameMenu;
+            }
+	    };
 	}
 
 	@Override
@@ -252,7 +261,7 @@ public class ConsumeApp extends GameApplication {
 			player.fireFXGLEvent(new FXGLEvent(Event.PLAYER_DEATH));
 		}
 
-		for (Entity e : sceneManager.getEntities(Type.BLOCK)) {
+		for (Entity e : getSceneManager().getEntities(Type.BLOCK)) {
 			if (e.getProperty(Property.SUB_TYPE) == Block.BARRIER && "idle".equals(e.getProperty("state"))
 					&& !"none".equals(e.getProperty("start"))) {
 
@@ -298,15 +307,15 @@ public class ConsumeApp extends GameApplication {
 			e.printStackTrace();
 		}
 	}
-	
+
 	@Override
 	public void onMenuOpen(){
 		soundManager.pauseBackgroundMusic();
 		if(playerData.getCurrentLevel() < 3){
-			consGameMenu.levelMenuItem.setVisible(false);
+			//consGameMenu.levelMenuItem.setVisible(false);
 		}
 		else{
-			consGameMenu.levelMenuItem.setVisible(true);
+			//consGameMenu.levelMenuItem.setVisible(true);
 		}
 	}
 
@@ -314,9 +323,9 @@ public class ConsumeApp extends GameApplication {
 	public void onMenuClose(){
 		soundManager.playBackgroundMusic();
 	}
-	
+
 	private void loadLevel(int lev) {
-		sceneManager.getEntities().forEach(sceneManager::removeEntity);
+	    getSceneManager().getEntities().forEach(getSceneManager()::removeEntity);
 		System.out.println("Level number: " + lev);
 		Level level = levels.get(lev);
 		Point2D spawnPoint = level.getSpawnPoint();
@@ -327,7 +336,7 @@ public class ConsumeApp extends GameApplication {
 			// types
 			// when we will, this might move to another class
 			if (e.isType(Type.POWERUP)) {
-				e.addFXGLEventHandler(Event.DEATH, event -> sceneManager.removeEntity(e));
+				e.addFXGLEventHandler(Event.DEATH, event -> getSceneManager().removeEntity(e));
 			}
 			if(playerData.getUpgrades().contains(lev) && (e.getProperty(Property.SUB_TYPE) == Powerup.INC_MANA_REGEN
 														|| e.getProperty(Property.SUB_TYPE) == Powerup.INC_MAX_MANA
@@ -335,7 +344,7 @@ public class ConsumeApp extends GameApplication {
 
 			}
 			else{
-				sceneManager.addEntities(e);
+			    getSceneManager().addEntities(e);
 			}
 
 		}
@@ -349,38 +358,38 @@ public class ConsumeApp extends GameApplication {
 		playerDied = false;
 
 		// TODO Remove manual spawn
-		inputManager.addAction(new UserAction("Spawn Flyer") {
+		getInputManager().addAction(new UserAction("Spawn Flyer") {
 			@Override
 			protected void onActionBegin() {
-				sceneManager.addEntities(eSpawner.spawnEnemy(spawnPoint.add(1000, -90)));
+				getSceneManager().addEntities(eSpawner.spawnEnemy(spawnPoint.add(1000, -90)));
 			}
 		}, KeyCode.DIGIT1);
 
-		inputManager.addAction(new UserAction("Spawn Dog") {
+		getInputManager().addAction(new UserAction("Spawn Dog") {
 			@Override
 			protected void onActionBegin() {
-				sceneManager.addEntities(eSpawner.spawnDog(spawnPoint.add(1000, 0)));
+				getSceneManager().addEntities(eSpawner.spawnDog(spawnPoint.add(1000, 0)));
 			}
 		}, KeyCode.DIGIT2);
-		inputManager.addAction(new UserAction("Spawn Scarab") {
+		getInputManager().addAction(new UserAction("Spawn Scarab") {
 			@Override
 			protected void onActionBegin() {
-				sceneManager.addEntities(eSpawner.spawnScarab(spawnPoint.add(1000, 0)));
+				getSceneManager().addEntities(eSpawner.spawnScarab(spawnPoint.add(1000, 0)));
 			}
 		}, KeyCode.DIGIT3);
-		inputManager.addAction(new UserAction("Spawn Locust") {
+		getInputManager().addAction(new UserAction("Spawn Locust") {
 			@Override
 			protected void onActionBegin() {
-				sceneManager.addEntities(eSpawner.spawnLocust(spawnPoint.add(1000, -90)));
+				getSceneManager().addEntities(eSpawner.spawnLocust(spawnPoint.add(1000, -90)));
 			}
 		}, KeyCode.DIGIT4);
-		inputManager.addAction(new UserAction("Spawn Boss") {
+		getInputManager().addAction(new UserAction("Spawn Boss") {
 			@Override
 			protected void onActionBegin() {
-				sceneManager.addEntities(eSpawner.spawnBoss(spawnPoint.add(1000, 0)));
+				getSceneManager().addEntities(eSpawner.spawnBoss(spawnPoint.add(1000, 0)));
 			}
 		}, KeyCode.DIGIT5);
-		inputManager.addAction(new UserAction("Play Background Music") {
+		getInputManager().addAction(new UserAction("Play Background Music") {
 			@Override
 			protected void onActionBegin() {
 	            soundManager.stopAll();
@@ -393,11 +402,11 @@ public class ConsumeApp extends GameApplication {
 	}
 
 	public void changeLevel() {
-		pause();
+		getInputManager().setProcessActions(false);
 		Rectangle bg = new Rectangle(this.getWidth(), this.getHeight());
 		bg.setFill(Color.rgb(10, 1, 1));
 		bg.setOpacity(0);
-		sceneManager.addUINodes(bg);
+		getSceneManager().addUINodes(bg);
 		FadeTransition ft = new FadeTransition(Duration.seconds(0.5), bg);
 		ft.setFromValue(0);
 		ft.setToValue(1);
@@ -412,17 +421,17 @@ public class ConsumeApp extends GameApplication {
 				playerData.setCurrentHealth(playerData.getMaxHealth());
 				playerData.setCurrentMana(playerData.getMaxMana());
 			}
-			sceneManager.getEntities().forEach(sceneManager::removeEntity);
+			getSceneManager().getEntities().forEach(getSceneManager()::removeEntity);
 			levels.set(playerData.getCurrentLevel(), parser.parse(playerData.getCurrentLevel()));
-			resume();
+			getInputManager().setProcessActions(true);
 			ft3.play();
 		});
 		ft2.setOnFinished(evt -> {
-			sceneManager.removeUINode(bg);
+			getSceneManager().removeUINode(bg);
 		});
 		ft3.setOnFinished(evt -> {
 			loadLevel(playerData.getCurrentLevel());
-			this.sceneManager.removeUINode(levelMenu);
+			this.getSceneManager().removeUINode(levelMenu);
 			ft2.play();
 		});
 		ft.play();
@@ -432,8 +441,8 @@ public class ConsumeApp extends GameApplication {
 		//TODO
 		System.out.println("Show level screen");
 		consGameMenu.updatePowerMenu(playerData);
-		
-		this.sceneManager.closeGameMenu();
+
+		//this.getSceneManager().closeGameMenu();
 		this.soundManager.stopAll();
 		if(playerData.getPowers().size() > 6){
 			levelMenu.setFinalLevelVisible(true);
@@ -441,8 +450,8 @@ public class ConsumeApp extends GameApplication {
 		else{
 			levelMenu.setFinalLevelVisible(false);
 		}
-		this.sceneManager.removeUINode(levelMenu);
-		this.sceneManager.addUINodes(levelMenu);
+		this.getSceneManager().removeUINode(levelMenu);
+		this.getSceneManager().addUINodes(levelMenu);
 	}
 
 	@Override
@@ -453,9 +462,7 @@ public class ConsumeApp extends GameApplication {
 	@Override
 	public void loadState(Serializable d){
 		if(d.getClass() == GameSave.class){
-			if(playerData == null){
-				this.startNewGame();
-			}
+
 			soundManager.stopAll();
 			GameSave g = (GameSave) d;
 			playerData.setElement(g.getCurElement());
@@ -487,7 +494,7 @@ public class ConsumeApp extends GameApplication {
 			System.out.println(d.getClass());
 		}
 	}
-	
+
 	public String getBackgroundMusic(){
 		switch(playerData.getCurrentLevel()/3){
 			case 0:{
@@ -531,19 +538,13 @@ public class ConsumeApp extends GameApplication {
 
 		player.addFXGLEventHandler(Event.PLAYER_DEATH, this::playerDied);
 
-		Rectangle graphics = new Rectangle(15, 30);
-		graphics.setFill(Color.YELLOW);
-		try {
-			Texture t = this.assetManager.loadTexture("MC Unarmed.png");
-			player.addControl(new AnimatedPlayerControl(t));
-			t.setViewport(new Rectangle2D(150, 0, 30, 30));
-			player.setGraphics(t);
-		} catch (Exception e) {
-			e.printStackTrace();
-			player.setGraphics(graphics);
-		}
+		Texture t = getAssetManager().loadTexture("MC Unarmed.png");
+		player.addControl(new AnimatedPlayerControl(t));
+		t.setViewport(new Rectangle2D(150, 0, 30, 30));
+		player.setGraphics(t);
 
-		sceneManager.bindViewportOrigin(player, 320, 180);
+
+		getSceneManager().bindViewportOrigin(player, 320, 180);
 
 		powerStatus = Entity.noType();
 		powerStatus.translateXProperty().bind(player.translateXProperty());
@@ -552,54 +553,54 @@ public class ConsumeApp extends GameApplication {
 		tTex.textProperty().bind(playerData.ElementProperty().asString());
 		powerStatus.setGraphics(tTex);
 
-		sceneManager.addEntities(powerStatus);
+		getSceneManager().addEntities(powerStatus);
 
-		sceneManager.addEntities(player);
+		getSceneManager().addEntities(player);
 	}
 
 	private void playerDied(FXGLEvent e){
 		if (!playerDied){
 			player.setProperty("stunned", true);
 			playerDied = true;
-			timerManager.runOnceAfter(this::changeLevel, Duration.seconds(0.5));
+			getTimerManager().runOnceAfter(this::changeLevel, Duration.seconds(0.5));
 		}
 	}
 
 	private void activateBarrier(Entity block) {
 		block.setProperty("state", "dying");
 
-		for (Entity b : sceneManager.getEntitiesInRange(
+		for (Entity b : getSceneManager().getEntitiesInRange(
 				new Rectangle2D(block.getTranslateX() - 40, block.getTranslateY() - 40, 120, 120), Type.BLOCK)) {
 			if (b.getProperty(Property.SUB_TYPE) == Block.BARRIER && !"dying".equals(b.getProperty("state"))) {
 				activateBarrier(b);
 			}
 		}
 
-		sceneManager.removeEntity(block);
+		getSceneManager().removeEntity(block);
 		Entity e = new Entity(Type.PLATFORM);
 		e.setPosition(block.getTranslateX(), block.getTranslateY());
 		Rectangle rect = new Rectangle(40, 40);
 		rect.setFill(Color.GREY);
 		e.setGraphics(rect);
 
-		sceneManager.addEntities(e);
+		getSceneManager().addEntities(e);
 	}
 
 	public void destroyBlock(Entity block) {
 		block.setProperty("state", "dying");
 
-		for (Entity b : sceneManager.getEntitiesInRange(
+		for (Entity b : getSceneManager().getEntitiesInRange(
 				new Rectangle2D(block.getTranslateX() - 40, block.getTranslateY() - 40, 120, 120), Type.PLATFORM)) {
 			if (b.getProperty(Property.SUB_TYPE) == Platform.DESTRUCTIBLE && !"dying".equals(b.getProperty("state"))) {
 				destroyBlock(b);
 			}
 		}
 
-		sceneManager.removeEntity(block);
+		getSceneManager().removeEntity(block);
 	}
 
 	public Random getRandom() {
-		return random;
+		return new Random();
 	}
 
 	public static void main(String[] args) {
