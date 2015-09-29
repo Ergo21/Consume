@@ -92,7 +92,7 @@ public class EntitySpawner {
 		enemy.setProperty("shover", true);
 		enemy.setPosition(spawnPoint.getX(), spawnPoint.getY());
 		enemy.addControl(new PhysicsControl(consApp.physics));
-		enemy.addControl(new SimpleJumpControl(consApp.player, Speed.ENEMY_JUMP));
+		enemy.addControl(new SimpleJumpControl(consApp, consApp.player, Speed.ENEMY_JUMP));
 		enemy.addFXGLEventHandler(Event.DEATH, this::onEnemyDeath);
 
 		return enemy;
@@ -130,7 +130,7 @@ public class EntitySpawner {
 		enemy.setProperty("shover", true);
 		enemy.setPosition(spawnPoint.getX(), spawnPoint.getY());
 		enemy.addControl(new PhysicsControl(consApp.physics));
-		enemy.addControl(new SimpleJumpControl(consApp.player, Speed.ENEMY_JUMP));
+		enemy.addControl(new SimpleJumpControl(consApp, consApp.player, Speed.ENEMY_JUMP));
 		enemy.addFXGLEventHandler(Event.DEATH, this::onEnemyDeath);
 
 		return enemy;

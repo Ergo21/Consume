@@ -5,7 +5,6 @@ import java.util.HashMap;
 
 import com.almasb.consume.ConsumeApp;
 import com.almasb.consume.Types.Actions;
-import com.almasb.fxgl.asset.AssetManager;
 import com.almasb.fxgl.asset.Music;
 import com.almasb.fxgl.asset.SaveLoadManager;
 import com.almasb.fxgl.event.MenuEvent;
@@ -67,6 +66,8 @@ public final class ConsumeMainMenu extends FXGLMenu {
         consApp = app;
         saveList = new ListView<String>();
         emptyMenu = new MenuContent();
+        consApp.getAudioManager().setGlobalMusicVolume(consApp.sSettings.getBackMusicVolume());
+		consApp.getAudioManager().setGlobalSoundVolume(consApp.sSettings.getSFXVolume());
         MenuBox menu = createMainMenu();
         menuX = 50;
         menuY = consApp.getHeight() / 2 - menu.getLayoutHeight() / 2;
@@ -275,7 +276,15 @@ public final class ConsumeMainMenu extends FXGLMenu {
         MenuItem itemVideo = new MenuItem(mainWidth, "VIDEO");
         itemVideo.setMenuContent(createContentVideo());
         MenuItem itemAudio = new MenuItem(mainWidth, "Audio");
-        itemAudio.setMenuContent(createContentAudio());
+        MenuContent menuContent = createContentAudio();
+        itemAudio.setMenuContent(menuContent);
+        itemAudio.setOnMouseClicked(event -> {
+            switchMenuContentTo(menuContent);
+            consApp.backVol.set(consApp.sSettings.getBackMusicVolume());
+            consApp.sfxVol.set(consApp.sSettings.getSFXVolume());
+            musTexVal.setText(Math.round(consApp.backVol.get() * 100) + "%");
+            sfxTexVal.setText(Math.round(consApp.sfxVol.get() * 100) + "%");
+        });
 
         return new MenuBox(mainWidth, itemControls, itemVideo, itemAudio);
     }
@@ -322,21 +331,24 @@ public final class ConsumeMainMenu extends FXGLMenu {
         MenuContent mc = new MenuContent();
         return mc;
     }
+    
+    private Text musTexVal;
+    private Text sfxTexVal;
 
     private MenuContent createContentAudio() {
         Text musTex = new Text("Music Volume");
         musTex.setStroke(Color.WHITE);
         musTex.setFill(Color.WHITE);
         musTex.setFont(new Font(20));
-        Text musTexVal = new Text();
+        musTexVal = new Text();
         musTexVal.setStroke(Color.WHITE);
         musTexVal.setFill(Color.WHITE);
         ProgressBar musBar = new ProgressBar();
-        musBar.setProgress(consApp.sSettings.getBackMusicVolume());
+        musBar.progressProperty().bind(consApp.backVol);
         musBar.setPadding(new Insets(0, 5, 20, 0));
         musBar.setPrefSize(200, 15);
         musBar.setOnMouseClicked(event -> {
-            musBar.setProgress((event.getX() + 8) / 200);
+        	consApp.backVol.set((event.getX() + 8) / 200);
             musTexVal.setText(Math.round(musBar.getProgress() * 100) + "%");
         });
         musBar.setOnMouseDragged(event -> {
@@ -347,7 +359,7 @@ public final class ConsumeMainMenu extends FXGLMenu {
             else if (val > 1) {
                 val = 1;
             }
-            musBar.setProgress(val);
+            consApp.backVol.set(val);
             musTexVal.setText(Math.round(musBar.getProgress() * 100) + "%");
         });
         musTexVal.setText(Math.round(musBar.getProgress() * 100) + "%");
@@ -358,15 +370,15 @@ public final class ConsumeMainMenu extends FXGLMenu {
         sfxTex.setStroke(Color.WHITE);
         sfxTex.setFill(Color.WHITE);
         sfxTex.setFont(new Font(20));
-        Text sfxTexVal = new Text();
+        sfxTexVal = new Text();
         sfxTexVal.setStroke(Color.WHITE);
         sfxTexVal.setFill(Color.WHITE);
         ProgressBar sfxBar = new ProgressBar();
-        sfxBar.setProgress(consApp.sSettings.getSFXVolume());
+        sfxBar.progressProperty().bind(consApp.sfxVol);
         sfxBar.setPadding(new Insets(0, 5, 20, 0));
         sfxBar.setPrefSize(200, 15);
         sfxBar.setOnMouseClicked(event -> {
-            sfxBar.setProgress((event.getX() + 8) / 200);
+        	consApp.sfxVol.set((event.getX() + 8) / 200);
             sfxTexVal.setText(Math.round(sfxBar.getProgress() * 100) + "%");
         });
         sfxBar.setOnMouseDragged(event -> {
@@ -377,7 +389,7 @@ public final class ConsumeMainMenu extends FXGLMenu {
             else if (val > 1) {
                 val = 1;
             }
-            sfxBar.setProgress(val);
+            consApp.sfxVol.set(val);
             sfxTexVal.setText(Math.round(sfxBar.getProgress() * 100) + "%");
         });
         sfxTexVal.setText(Math.round(sfxBar.getProgress() * 100) + "%");
@@ -387,6 +399,10 @@ public final class ConsumeMainMenu extends FXGLMenu {
         savAud.setOnMouseClicked(event -> {
             consApp.sSettings.setBackMusicVolume(musBar.getProgress());
             consApp.sSettings.setSFXVolume(sfxBar.getProgress());
+            consApp.getAudioManager().setGlobalMusicVolume(consApp.sSettings.getBackMusicVolume());
+			consApp.getAudioManager().setGlobalSoundVolume(consApp.sSettings.getSFXVolume());
+			consApp.backVol.set(musBar.getProgress());
+			consApp.sfxVol.set(sfxBar.getProgress());
         });
 
         MenuContent mc = new MenuContent(musTex, musBlock, sfxTex, sfxBlock,

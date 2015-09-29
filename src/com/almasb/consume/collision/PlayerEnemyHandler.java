@@ -1,15 +1,17 @@
 package com.almasb.consume.collision;
 
+import com.almasb.consume.ConsumeApp;
 import com.almasb.consume.Event;
 import com.almasb.consume.Types.Property;
 import com.almasb.consume.Types.Type;
+import com.almasb.consume.ai.ChargeControl;
 import com.almasb.consume.ai.DiveBombControl;
 import com.almasb.consume.ai.PhysicsControl;
 import com.almasb.consume.ai.SimpleMoveControl;
-import com.almasb.fxgl.GameApplication;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.FXGLEvent;
 import com.almasb.fxgl.physics.CollisionHandler;
+import com.ergo21.consume.FileNames;
 import com.ergo21.consume.Player;
 
 import javafx.scene.text.Text;
@@ -17,11 +19,11 @@ import javafx.util.Duration;
 
 public class PlayerEnemyHandler extends CollisionHandler {
 
-	private GameApplication app;
+	private ConsumeApp consApp;
 
-	public PlayerEnemyHandler(GameApplication app) {
+	public PlayerEnemyHandler(ConsumeApp cA) {
 		super(Type.PLAYER, Type.ENEMY);
-		this.app = app;
+		this.consApp = cA;
 	}
 
 	@Override
@@ -43,6 +45,23 @@ public class PlayerEnemyHandler extends CollisionHandler {
 			velocityX = enemy.getControl(SimpleMoveControl.class).getVelocity();
 		}
 		player.getControl(PhysicsControl.class).moveX(velocityX);
+		
+		if(enemy.getControl(ChargeControl.class) != null){
+			consApp.soundManager.playSFX(FileNames.CHARGE_HIT);
+		}
+		else{
+			int ran = consApp.getRandom().nextInt(3);
+			if(ran == 2){
+				consApp.soundManager.playSFX(FileNames.HIT3);
+			}
+			else if(ran == 1){
+				consApp.soundManager.playSFX(FileNames.HIT2);
+			}
+			else{
+				consApp.soundManager.playSFX(FileNames.HIT1);
+			}
+			
+		}
 
 		if(playerData.getCurrentHealth() > 0){
 			player.setCollidable(false);
@@ -51,15 +70,15 @@ public class PlayerEnemyHandler extends CollisionHandler {
 			e.translateXProperty().bind(player.translateXProperty());
 			e.translateYProperty().bind(player.translateYProperty().subtract(20));
 
-			app.getSceneManager().addEntities(e);
+			consApp.getSceneManager().addEntities(e);
 
-			app.getTimerManager().runOnceAfter(() -> {
+			consApp.getTimerManager().runOnceAfter(() -> {
 				player.getControl(PhysicsControl.class).moveX(0);
 				player.setProperty("stunned", false);
 			} , Duration.seconds(0.5));
 
-			app.getTimerManager().runOnceAfter(() -> {
-				app.getSceneManager().removeEntity(e);
+			consApp.getTimerManager().runOnceAfter(() -> {
+				consApp.getSceneManager().removeEntity(e);
 				player.setCollidable(true);
 			} , Duration.seconds(2));
 		}

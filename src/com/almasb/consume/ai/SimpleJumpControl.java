@@ -2,18 +2,22 @@ package com.almasb.consume.ai;
 
 import com.almasb.consume.Config;
 import com.almasb.consume.Config.Speed;
+import com.almasb.consume.ConsumeApp;
 import com.almasb.fxgl.entity.AbstractControl;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.time.TimerManager;
+import com.ergo21.consume.FileNames;
 
 public class SimpleJumpControl extends AbstractControl {
 
+	private ConsumeApp consApp;
 	private Entity target;
 	private int vel = 0;
 	private int jump;
 	private long lastJumped = -1; // Stores when the enemy first sees the player
 
-	public SimpleJumpControl(Entity tar, int jum) {
+	public SimpleJumpControl(ConsumeApp cA, Entity tar, int jum) {
+		consApp = cA;
 		target = tar;
 		jump = jum;
 	}
@@ -35,6 +39,7 @@ public class SimpleJumpControl extends AbstractControl {
 			}
 			entity.getControl(PhysicsControl.class).jump();
 			lastJumped = now;
+			consApp.soundManager.playSFX(FileNames.JUMP);
 		} else if (!(boolean) entity.getProperty("jumping")) {
 			entity.getControl(PhysicsControl.class).moveX(0);
 		}

@@ -1,6 +1,5 @@
 package com.ergo21.consume;
 
-import java.sql.Time;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -84,9 +83,10 @@ public class ConsumeController {
 					consApp.playerData.setCurrentLevel(consApp.playerData.getCurrentLevel() + 1);
 					consApp.changeLevel();
 				}
-				else{	
+				else if(!(boolean) consApp.player.getProperty("eating") && !(boolean) consApp.player.getProperty("eaten")){	
 					consApp.player.setProperty("eating", true);
 					consApp.player.getControl(PhysicsControl.class).moveX(0);
+					consApp.soundManager.playSFX(FileNames.EATING);
 					consApp.getTimerManager().runOnceAfter(() ->{
 						consApp.player.setProperty("eating", false);
 						consApp.player.setProperty("eaten", true);
@@ -245,6 +245,7 @@ public class ConsumeController {
 			e.addControl(new SpearProjectileControl(consApp.player));
 			if (spear == null || !consApp.getSceneManager().getEntities().contains(spear)) {
 				spear = e;
+				consApp.soundManager.playSFX(FileNames.SPEAR_THROW);
 			} else {
 				return;
 			}
@@ -263,6 +264,7 @@ public class ConsumeController {
 			e.setProperty(Property.ENABLE_GRAVITY, false);
 			if (consApp.playerData.getCurrentMana() >= Config.FIREBALL_COST) {
 				consApp.playerData.setCurrentMana(consApp.playerData.getCurrentMana() - Config.FIREBALL_COST);
+				consApp.soundManager.playSFX(FileNames.FIRE_COAL);
 			} else {
 				return;
 			}
@@ -308,14 +310,13 @@ public class ConsumeController {
 			break;
 		}
 		case METAL: {
-			if (consApp.playerData.getCurrentMana() >= Config.BULLET_COST) {
+			if (consApp.playerData.getCurrentMana() >= Config.BULLET_COST && !fired) {
 				consApp.playerData.setCurrentMana(consApp.playerData.getCurrentMana() - Config.BULLET_COST);
+				consApp.soundManager.playSFX(FileNames.RIFLE_SHOT);
 			} else {
 				return;
 			}
-			if (fired) {
-				return;
-			}
+			
 			consApp.getTimerManager().runOnceAfter(() -> fired = false, Duration.seconds(3));
 			fired = true;
 			e.addControl(new BulletProjectileControl(consApp.player));
@@ -324,7 +325,7 @@ public class ConsumeController {
 		}
 		case LIGHTNING: {
 			if (consApp.playerData.getCurrentMana() >= Config.LIGHTNING_COST) {
-				consApp.playerData.setCurrentMana(consApp.playerData.getCurrentMana() - Config.LIGHTNING_COST);
+				consApp.playerData.setCurrentMana(consApp.playerData.getCurrentMana() - Config.LIGHTNING_COST);			
 			} else {
 				return;
 			}
@@ -350,6 +351,10 @@ public class ConsumeController {
 			shadow.setInput(new Glow(0.7));
 			g.setEffect(shadow);
 			e.setProperty(Property.ENABLE_GRAVITY, false);
+			
+			consApp.getTimerManager().runOnceAfter(() -> {
+				consApp.soundManager.playSFX(FileNames.LIGHTING_DRUM);
+			}, Config.LIGHTNING_DELAY.divide(2));
 			break;
 		}
 		case DEATH: {
@@ -361,6 +366,7 @@ public class ConsumeController {
 			e.setGraphics(new Rectangle(0, 0, consApp.player.getWidth() / 2, consApp.player.getHeight()));
 			e.setProperty(Property.ENABLE_GRAVITY, false);
 			e.addControl(new IngestControl(consApp.player));
+			
 			break;
 		}
 		}

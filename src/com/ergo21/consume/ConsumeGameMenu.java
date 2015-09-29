@@ -354,13 +354,13 @@ public final class ConsumeGameMenu extends FXGLMenu {
 		musTexVal.setStroke(Color.WHITE);
 		musTexVal.setFill(Color.WHITE);
 		ProgressBar musBar = new ProgressBar();
-		musBar.setProgress(consApp.sSettings.getBackMusicVolume());
+		musBar.progressProperty().bind(consApp.backVol);
 		musBar.setPadding(new Insets(0,5,20,0));
 		musBar.setPrefSize(200, 15);
 		musBar.setOnMouseClicked(new EventHandler<MouseEvent>(){
 			@Override
 			public void handle(MouseEvent me) {
-				musBar.setProgress((me.getX()+8)/200);
+				consApp.backVol.set((me.getX()+8)/200);
 				musTexVal.setText(Math.round(musBar.getProgress() * 100) + "%");
 			}
 
@@ -375,7 +375,7 @@ public final class ConsumeGameMenu extends FXGLMenu {
 				else if(val > 1){
 					val = 1;
 				}
-				musBar.setProgress(val);
+				consApp.backVol.set(val);
 				musTexVal.setText(Math.round(musBar.getProgress() * 100) + "%");
 			}
 
@@ -393,13 +393,13 @@ public final class ConsumeGameMenu extends FXGLMenu {
 		sfxTexVal.setStroke(Color.WHITE);
 		sfxTexVal.setFill(Color.WHITE);
 		ProgressBar sfxBar = new ProgressBar();
-		sfxBar.setProgress(consApp.sSettings.getSFXVolume());
+		sfxBar.progressProperty().bind(consApp.sfxVol);
 		sfxBar.setPadding(new Insets(0,5,20,0));
 		sfxBar.setPrefSize(200, 15);
 		sfxBar.setOnMouseClicked(new EventHandler<MouseEvent>(){
 			@Override
 			public void handle(MouseEvent me) {
-				sfxBar.setProgress((me.getX()+8)/200);
+				consApp.sfxVol.set((me.getX()+8)/200);
 				sfxTexVal.setText(Math.round(sfxBar.getProgress() * 100) + "%");
 			}
 
@@ -414,7 +414,7 @@ public final class ConsumeGameMenu extends FXGLMenu {
 				else if(val > 1){
 					val = 1;
 				}
-				sfxBar.setProgress(val);
+				consApp.sfxVol.set(val);
 				sfxTexVal.setText(Math.round(sfxBar.getProgress() * 100) + "%");
 			}
 
@@ -430,6 +430,8 @@ public final class ConsumeGameMenu extends FXGLMenu {
 				consApp.sSettings.setSFXVolume(sfxBar.getProgress());
 				consApp.getAudioManager().setGlobalMusicVolume(consApp.sSettings.getBackMusicVolume());
 				consApp.getAudioManager().setGlobalSoundVolume(consApp.sSettings.getSFXVolume());
+				consApp.backVol.set(musBar.getProgress());
+				consApp.sfxVol.set(sfxBar.getProgress());
 			}
 		});
 

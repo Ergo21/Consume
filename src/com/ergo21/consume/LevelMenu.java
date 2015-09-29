@@ -41,6 +41,8 @@ public class LevelMenu extends Group{
 			int lev = (i+1)*3;
 			but.setAction(() -> {
 				consApp.playerData.setCurrentLevel(lev);
+				consApp.playerData.setCurrentHealth(consApp.playerData.getMaxHealth());
+				consApp.playerData.setCurrentMana(consApp.playerData.getMaxMana());
 				consApp.soundManager.setBackgroundMusic(consApp.getBackgroundMusic());
 				consApp.soundManager.getBackgroundMusic().setCycleCount(Integer.MAX_VALUE);
 				consApp.changeLevel();

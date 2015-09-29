@@ -49,6 +49,8 @@ import com.ergo21.consume.SavedSettings;
 import com.ergo21.consume.SoundManager;
 
 import javafx.animation.FadeTransition;
+import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.SimpleDoubleProperty;
 import javafx.geometry.Point2D;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.input.KeyCode;
@@ -87,6 +89,9 @@ public class ConsumeApp extends GameApplication {
 	public SavedSettings sSettings;
 
 	private LevelMenu levelMenu;
+	
+	public DoubleProperty backVol;
+	public DoubleProperty sfxVol;
 
 	@Override
 	protected void initSettings(GameSettings settings) {
@@ -118,7 +123,8 @@ public class ConsumeApp extends GameApplication {
 				e.printStackTrace();
 			}
 		}
-
+		backVol = new SimpleDoubleProperty(sSettings.getBackMusicVolume());
+		sfxVol = new SimpleDoubleProperty(sSettings.getSFXVolume());
 	}
 
 	@Override
@@ -311,11 +317,13 @@ public class ConsumeApp extends GameApplication {
 	@Override
 	public void onMenuOpen(){
 		soundManager.pauseBackgroundMusic();
+		backVol.set(sSettings.getBackMusicVolume());
+        sfxVol.set(sSettings.getSFXVolume());
 		if(playerData.getCurrentLevel() < 3){
-			//consGameMenu.levelMenuItem.setVisible(false);
+			consGameMenu.levelMenuItem.setVisible(false);
 		}
 		else{
-			//consGameMenu.levelMenuItem.setVisible(true);
+			consGameMenu.levelMenuItem.setVisible(true);
 		}
 	}
 
