@@ -373,6 +373,130 @@ public class ConsumeController {
 
 		consApp.getSceneManager().addEntities(e);
 	}
+	
+	public void enemyShootProjectile(Element element, Entity source) {
+		Entity e = new Entity(Type.ENEMY_PROJECTILE);
+		e.setProperty(Property.SUB_TYPE, element);
+		e.setPosition(source.getPosition().add((source.getWidth() / 2), 0));
+		e.setCollidable(true);
+		e.setGraphics(new Rectangle(10, 1));
+		e.addControl(new PhysicsControl(consApp.physics));
+		e.addFXGLEventHandler(Event.COLLIDED_PLATFORM, event -> {
+			Entity platform = event.getSource();
+			consApp.getSceneManager().removeEntity(e);
+
+			if (platform.getProperty(Property.SUB_TYPE) == Platform.DESTRUCTIBLE) {
+				consApp.destroyBlock(platform);
+			}
+		});
+		e.addFXGLEventHandler(Event.DEATH, event -> {
+			consApp.getSceneManager().removeEntity(event.getTarget());
+		});
+
+		switch (element) {
+		case NEUTRAL: {
+			e.addControl(new SpearProjectileControl(consApp.player));
+			consApp.soundManager.playSFX(FileNames.SPEAR_THROW);
+			break;
+		}
+		case NEUTRAL2: {
+			e.setVisible(true);
+			e.setCollidable(true);
+			e.setGraphics(new Rectangle(0, 0, source.getWidth() / 2, source.getHeight()));
+			e.setProperty(Property.ENABLE_GRAVITY, false);
+			e.addControl(new IngestControl(source));
+			break;
+		}
+		case FIRE: {
+			e.addControl(new FireballProjectileControl(source));
+			e.setProperty(Property.ENABLE_GRAVITY, false);
+			consApp.soundManager.playSFX(FileNames.FIRE_COAL);
+			break;
+		}
+		case EARTH: {
+			Point2D p = source.getPosition();
+			if ((boolean) source.getProperty("facingRight")) {
+				p = p.add(source.getWidth(), 0);
+			} else {
+				p = p.add(-e.getWidth(), 0);
+			}
+			e.setPosition(p);
+			e.addControl(new SandProjectileControl(source, false));
+			e.setProperty(Property.ENABLE_GRAVITY, false);
+
+			Entity e2 = new Entity(Type.ENEMY_PROJECTILE);
+			e2.setProperty(Property.SUB_TYPE, element);
+			e2.setPosition(p);
+			e2.setCollidable(true);
+			e2.setGraphics(new Rectangle(10, 1));
+			e2.addControl(new PhysicsControl(consApp.physics));
+			e2.addFXGLEventHandler(Event.COLLIDED_PLATFORM, event -> {
+				Entity platform = event.getSource();
+				consApp.getSceneManager().removeEntity(e2);
+
+				if (platform.getProperty(Property.SUB_TYPE) == Platform.DESTRUCTIBLE) {
+					consApp.destroyBlock(platform);
+				}
+			});
+			e2.addFXGLEventHandler(Event.DEATH, event -> {
+				consApp.getSceneManager().removeEntity(event.getTarget());
+			});
+			e2.addControl(new SandProjectileControl(source, true));
+			e2.setProperty(Property.ENABLE_GRAVITY, false);
+
+			consApp.getSceneManager().addEntities(e2);
+			break;
+		}
+		case METAL: {
+			e.addControl(new BulletProjectileControl(consApp.player));
+			e.setProperty(Property.ENABLE_GRAVITY, false);
+			break;
+		}
+		case LIGHTNING: {
+			e.setVisible(false);
+			e.setCollidable(false);
+			Group g = new Group();
+			e.addControl(new PhysicsControl(consApp.physics));
+			LightningControl lc = new LightningControl(g);
+			e.addControl(lc);
+			Point2D p = source.getPosition();
+			if ((boolean) source.getProperty("facingRight")) {
+				p = p.add(source.getWidth() + 30, 0);
+			} else {
+				p = p.add(-e.getWidth() - 30, 0);
+			}
+			p = p.add(0, source.getHeight());
+			e.setPosition(0, 0);
+
+			g.getChildren().addAll(createBolt(new Point2D(p.getX(), -200), p, 5));
+			e.setGraphics(g);
+
+			DropShadow shadow = new DropShadow(20, Color.PURPLE);
+			shadow.setInput(new Glow(0.7));
+			g.setEffect(shadow);
+			e.setProperty(Property.ENABLE_GRAVITY, false);
+			
+			consApp.getTimerManager().runOnceAfter(() -> {
+				consApp.soundManager.playSFX(FileNames.LIGHTING_DRUM);
+			}, Config.LIGHTNING_DELAY.divide(2));
+			break;
+		}
+		case DEATH: {
+			break;
+		}
+		case CONSUME: {
+			// e.setVisible(true);
+			e.setCollidable(true);
+			e.setGraphics(new Rectangle(0, 0, source.getWidth() / 2, source.getHeight()));
+			e.setProperty(Property.ENABLE_GRAVITY, false);
+			e.addControl(new IngestControl(consApp.player));
+			
+			break;
+		}
+		}
+
+		consApp.getSceneManager().addEntities(e);
+	}
 
 	public void aimedProjectile(Entity source, Entity target) {
 		Enemy sourceData = source.getProperty(Property.DATA);

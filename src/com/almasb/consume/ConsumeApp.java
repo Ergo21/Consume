@@ -397,6 +397,12 @@ public class ConsumeApp extends GameApplication {
 				getSceneManager().addEntities(eSpawner.spawnBoss(spawnPoint.add(1000, 0)));
 			}
 		}, KeyCode.DIGIT5);
+		getInputManager().addAction(new UserAction("Spawn Eloko") {
+			@Override
+			protected void onActionBegin() {
+				getSceneManager().addEntities(eSpawner.spawnEloko(spawnPoint.add(1000, 0)));
+			}
+		}, KeyCode.DIGIT6);
 		getInputManager().addAction(new UserAction("Play Background Music") {
 			@Override
 			protected void onActionBegin() {

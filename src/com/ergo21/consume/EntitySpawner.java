@@ -17,6 +17,7 @@ import com.almasb.consume.Types.Powerup;
 import com.almasb.consume.Types.Property;
 import com.almasb.consume.Types.Type;
 import com.almasb.consume.ai.ChargeControl;
+import com.almasb.consume.ai.ConsumeControl;
 import com.almasb.consume.ai.DiveBombControl;
 import com.almasb.consume.ai.PhysicsControl;
 import com.almasb.consume.ai.SimpleJumpControl;
@@ -113,6 +114,30 @@ public class EntitySpawner {
 		enemy.addControl(new DiveBombControl(consApp.player, enemy.getPosition().getY()));
 		enemy.addFXGLEventHandler(Event.DEATH, this::onEnemyDeath);
 		enemy.setProperty(Property.ENABLE_GRAVITY, false);
+
+		return enemy;
+	}
+	
+	public Entity spawnEloko(Point2D spawnPoint){
+		Entity enemy = new Entity(Type.ENEMY);
+		Rectangle rect = new Rectangle(30, 30);
+		rect.setFill(Color.RED);
+
+		enemy.setGraphics(rect);
+		enemy.setCollidable(true);
+		enemy.setProperty(Property.DATA, new Enemy(consApp.assets.getText("enemies/enemy_FireElemental.txt")));
+		enemy.setProperty("physics", consApp.physics);
+		enemy.setProperty("facingRight", true);
+		enemy.setPosition(spawnPoint.getX(), spawnPoint.getY());
+		enemy.addControl(new PhysicsControl(consApp.physics));
+		enemy.addControl(new ConsumeControl(consApp.player));
+		enemy.addFXGLEventHandler(Event.DEATH, this::onEnemyDeath);
+		enemy.addFXGLEventHandler(Event.ENEMY_FIRED, event -> {
+			consApp.consController.enemyShootProjectile(Element.NEUTRAL2, enemy);
+			consApp.getTimerManager().runOnceAfter(() -> {
+				//TODO: Change enemy animation
+			}, Config.CONSUME_DECAY);
+		});
 
 		return enemy;
 	}

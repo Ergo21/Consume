@@ -11,11 +11,11 @@ import com.almasb.fxgl.time.TimerManager;
 
 public class IngestControl extends AbstractControl {
 
-	private Entity player;
+	private Entity source;
 	private long created;
 
-	public IngestControl(Entity player) {
-		this.player = player;
+	public IngestControl(Entity source) {
+		this.source = source;
 		created = 0;
 	}
 
@@ -31,15 +31,15 @@ public class IngestControl extends AbstractControl {
 			created = now;
 		}
 
-		Point2D nPos = player.getPosition();
-		if ((boolean) player.getProperty("facingRight")) {
-			nPos = nPos.add(player.getWidth(), 0);
+		Point2D nPos = source.getPosition();
+		if ((boolean) source.getProperty("facingRight")) {
+			nPos = nPos.add(source.getWidth(), 0);
 		} else {
-			nPos = nPos.add(-player.getWidth() * 0.5, 0);
+			nPos = nPos.add(-source.getWidth() * 0.5, 0);
 		}
 		entity.setPosition(nPos);
 
-		if (Math.abs(entity.getTranslateX() - player.getTranslateX()) >= 350 || now - created > TimerManager.toNanos(Config.CONSUME_DECAY)) {
+		if (Math.abs(entity.getTranslateX() - source.getTranslateX()) >= 350 || now - created > TimerManager.toNanos(Config.CONSUME_DECAY)) {
 			entity.fireFXGLEvent(new FXGLEvent(Event.DEATH));
 		}
 	}
