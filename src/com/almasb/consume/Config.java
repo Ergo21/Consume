@@ -68,4 +68,9 @@ public final class Config {
 
 	public static final int DEATH_DAMAGE = 0;
 
+	public static final Duration ENEMY_SPEAR_DECAY = Duration.seconds(1.5);
+
+	public static final Duration ENEMY_SCORPION_DELAY = Duration.seconds(0.35);
+	public static final Duration ENEMY_SCORPION_DECAY = Duration.seconds(2);
+
 }

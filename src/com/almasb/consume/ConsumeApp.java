@@ -403,6 +403,18 @@ public class ConsumeApp extends GameApplication {
 				getSceneManager().addEntities(eSpawner.spawnEloko(spawnPoint.add(1000, 0)));
 			}
 		}, KeyCode.DIGIT6);
+		getInputManager().addAction(new UserAction("Spawn Spear Thrower"){
+			@Override
+			protected void onActionBegin() {
+				getSceneManager().addEntities(eSpawner.spawnSpearEnemy(spawnPoint.add(1000, 0)));
+			}
+		}, KeyCode.DIGIT7);
+		getInputManager().addAction(new UserAction("Spawn Scorpion"){
+			@Override
+			protected void onActionBegin() {
+				getSceneManager().addEntities(eSpawner.spawnScorpion(spawnPoint.add(1000, 0)));
+			}
+		}, KeyCode.DIGIT8);
 		getInputManager().addAction(new UserAction("Play Background Music") {
 			@Override
 			protected void onActionBegin() {

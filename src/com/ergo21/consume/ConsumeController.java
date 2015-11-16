@@ -22,6 +22,7 @@ import com.almasb.consume.ai.LightningControl;
 import com.almasb.consume.ai.PhysicsControl;
 import com.almasb.consume.ai.SandProjectileControl;
 import com.almasb.consume.ai.SpearProjectileControl;
+import com.almasb.consume.ai.SpearThrowerControl;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.event.UserAction;
 
@@ -376,7 +377,13 @@ public class ConsumeController {
 	
 	public void enemyShootProjectile(Element element, Entity source) {
 		Entity e = new Entity(Type.ENEMY_PROJECTILE);
-		e.setProperty(Property.SUB_TYPE, element);
+		if(source.<Enemy>getProperty(Property.DATA) != null){
+			e.setProperty(Property.SUB_TYPE, source.<Enemy>getProperty(Property.DATA).getElement());
+		}
+		else{
+			e.setProperty(Property.SUB_TYPE, element);
+		}
+		
 		e.setPosition(source.getPosition().add((source.getWidth() / 2), 0));
 		e.setCollidable(true);
 		e.setGraphics(new Rectangle(10, 1));
@@ -395,7 +402,12 @@ public class ConsumeController {
 
 		switch (element) {
 		case NEUTRAL: {
-			e.addControl(new SpearProjectileControl(consApp.player));
+			if(source.getControl(SpearThrowerControl.class).isShortThrow()){
+				e.addControl(new SpearProjectileControl(source, -Speed.PROJECTILE/2));
+			}
+			else {
+				e.addControl(new SpearProjectileControl(source));
+			}
 			consApp.soundManager.playSFX(FileNames.SPEAR_THROW);
 			break;
 		}
@@ -448,7 +460,7 @@ public class ConsumeController {
 			break;
 		}
 		case METAL: {
-			e.addControl(new BulletProjectileControl(consApp.player));
+			e.addControl(new BulletProjectileControl(source));
 			e.setProperty(Property.ENABLE_GRAVITY, false);
 			break;
 		}
