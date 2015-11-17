@@ -403,7 +403,7 @@ public class ConsumeController {
 		switch (element) {
 		case NEUTRAL: {
 			if(source.getControl(SpearThrowerControl.class).isShortThrow()){
-				e.addControl(new SpearProjectileControl(source, -Speed.PROJECTILE/2));
+				e.addControl(new SpearProjectileControl(source, Speed.PROJECTILE, -Speed.PROJECTILE/2));
 			}
 			else {
 				e.addControl(new SpearProjectileControl(source));
@@ -531,6 +531,79 @@ public class ConsumeController {
 		e.setProperty(Property.ENABLE_GRAVITY, false);
 
 		consApp.getSceneManager().addEntities(e);
+	}
+	
+	public void enemyShootStones(Entity source) {
+		boolean lowFirst = consApp.getRandom().nextBoolean();
+		for(int i = 0; i< 3; i++){
+			Entity e = new Entity(Type.ENEMY_PROJECTILE);
+			if(source.<Enemy>getProperty(Property.DATA) != null){
+				e.setProperty(Property.SUB_TYPE, source.<Enemy>getProperty(Property.DATA).getElement());
+			}
+			else{
+				e.setProperty(Property.SUB_TYPE, Element.EARTH);
+			}
+		
+			e.setPosition(source.getPosition().add((source.getWidth() / 2), 0));
+			e.setCollidable(true);
+			e.setGraphics(new Rectangle(10, 1));
+			e.addControl(new PhysicsControl(consApp.physics));
+			e.addFXGLEventHandler(Event.COLLIDED_PLATFORM, event -> {
+				Entity platform = event.getSource();
+				consApp.getSceneManager().removeEntity(e);
+
+				if (platform.getProperty(Property.SUB_TYPE) == Platform.DESTRUCTIBLE) {
+					consApp.destroyBlock(platform);
+				}
+			});
+			e.addFXGLEventHandler(Event.DEATH, event -> {
+				consApp.getSceneManager().removeEntity(event.getTarget());
+			});
+			
+			switch(i){
+				case 0:{
+					e.addControl(new SpearProjectileControl(source, Speed.PROJECTILE, -Speed.PROJECTILE/2));
+					if(lowFirst){
+						consApp.getTimerManager().runOnceAfter(() -> {
+							consApp.getSceneManager().addEntities(e);
+						}, Config.ENEMY_STONE_THROW_DELAY);
+					}
+					else{
+						consApp.getTimerManager().runOnceAfter(() -> {
+							consApp.getSceneManager().addEntities(e);
+						}, Config.ENEMY_STONE_THROW_DELAY.multiply(3));
+					}
+					break;
+				}
+				case 1:{
+					e.addControl(new SpearProjectileControl(source, Speed.PROJECTILE*2/3, -Speed.PROJECTILE*2/3));
+					consApp.getTimerManager().runOnceAfter(() -> {
+						consApp.getSceneManager().addEntities(e);
+					}, Config.ENEMY_STONE_THROW_DELAY.multiply(2));
+					break;
+				}
+				case 2:{
+					e.addControl(new SpearProjectileControl(source, Speed.PROJECTILE/2, -Speed.PROJECTILE*3/2));
+					if(lowFirst){
+						consApp.getTimerManager().runOnceAfter(() -> {
+							consApp.getSceneManager().addEntities(e);
+						}, Config.ENEMY_STONE_THROW_DELAY.multiply(3));
+					}
+					else{
+						consApp.getTimerManager().runOnceAfter(() -> {
+							consApp.getSceneManager().addEntities(e);
+						}, Config.ENEMY_STONE_THROW_DELAY);
+					}
+					break;
+				}
+				default:{
+					e.addControl(new SpearProjectileControl(source, Speed.PROJECTILE, -Speed.PROJECTILE/2));
+					break;
+				}
+			}
+		}
+		
+		consApp.soundManager.playSFX(FileNames.SPEAR_THROW);
 	}
 
 	public void changePower(int posi) {

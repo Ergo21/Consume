@@ -72,5 +72,8 @@ public final class Config {
 
 	public static final Duration ENEMY_SCORPION_DELAY = Duration.seconds(0.35);
 	public static final Duration ENEMY_SCORPION_DECAY = Duration.seconds(2);
+	
+	public static final Duration ENEMY_STONE_THROW_DELAY = Duration.seconds(0.33);
+	public static final Duration ENEMY_STONE_THROW_RECHARGE = Duration.seconds(3);
 
 }

@@ -415,6 +415,18 @@ public class ConsumeApp extends GameApplication {
 				getSceneManager().addEntities(eSpawner.spawnScorpion(spawnPoint.add(1000, 0)));
 			}
 		}, KeyCode.DIGIT8);
+		getInputManager().addAction(new UserAction("Spawn Stone Spirit"){
+			@Override
+			protected void onActionBegin() {
+				getSceneManager().addEntities(eSpawner.spawnStoneEnemy(spawnPoint.add(1000, 0)));
+			}
+		}, KeyCode.DIGIT9);
+		getInputManager().addAction(new UserAction("Spawn Mummy"){
+			@Override
+			protected void onActionBegin() {
+				getSceneManager().addEntities(eSpawner.spawnMummy(spawnPoint.add(1000, 0)));
+			}
+		}, KeyCode.DIGIT0);
 		getInputManager().addAction(new UserAction("Play Background Music") {
 			@Override
 			protected void onActionBegin() {

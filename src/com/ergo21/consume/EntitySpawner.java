@@ -19,11 +19,13 @@ import com.almasb.consume.Types.Type;
 import com.almasb.consume.ai.ChargeControl;
 import com.almasb.consume.ai.ConsumeControl;
 import com.almasb.consume.ai.DiveBombControl;
+import com.almasb.consume.ai.MummyControl;
 import com.almasb.consume.ai.PhysicsControl;
 import com.almasb.consume.ai.ScorpionControl;
 import com.almasb.consume.ai.SimpleJumpControl;
 import com.almasb.consume.ai.SimpleMoveControl;
 import com.almasb.consume.ai.SpearThrowerControl;
+import com.almasb.consume.ai.StoneThrowerControl;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.FXGLEvent;
 import com.almasb.fxgl.entity.FXGLEventHandler;
@@ -144,6 +146,30 @@ public class EntitySpawner {
 		return enemy;
 	}
 	
+	public Entity spawnMummy(Point2D spawnPoint){
+		Entity enemy = new Entity(Type.ENEMY);
+		Rectangle rect = new Rectangle(30, 30);
+		rect.setFill(Color.RED);
+
+		enemy.setGraphics(rect);
+		enemy.setCollidable(true);
+		enemy.setProperty(Property.DATA, new Enemy(consApp.assets.getText("enemies/enemy_FireElemental.txt")));
+		enemy.setProperty("physics", consApp.physics);
+		enemy.setProperty("facingRight", true);
+		enemy.setPosition(spawnPoint.getX(), spawnPoint.getY());
+		enemy.addControl(new PhysicsControl(consApp.physics));
+		enemy.addControl(new MummyControl(consApp.player));
+		enemy.addFXGLEventHandler(Event.DEATH, this::onEnemyDeath);
+		enemy.addFXGLEventHandler(Event.ENEMY_FIRED, event -> {
+			consApp.consController.enemyShootProjectile(Element.NEUTRAL2, enemy);
+			consApp.getTimerManager().runOnceAfter(() -> {
+				//TODO: Change enemy animation
+			}, Config.CONSUME_DECAY);
+		});
+
+		return enemy;
+	}
+	
 	public Entity spawnSpearEnemy(Point2D spawnPoint){
 		Entity enemy = new Entity(Type.ENEMY);
 		Rectangle rect = new Rectangle(30, 30);
@@ -203,6 +229,34 @@ public class EntitySpawner {
 			}, Config.ENEMY_SCORPION_DECAY);
 		});
 
+		return enemy;
+	}
+	
+	public Entity spawnStoneEnemy(Point2D spawnPoint){
+		Entity enemy = new Entity(Type.ENEMY);
+		Rectangle rect = new Rectangle(30, 30);
+		rect.setFill(Color.RED);
+
+		enemy.setGraphics(rect);
+		enemy.setCollidable(true);
+		enemy.setProperty(Property.DATA, new Enemy(consApp.assets.getText("enemies/enemy_FireElemental.txt")));
+		enemy.setProperty("physics", consApp.physics);
+		enemy.setProperty("facingRight", true);
+		enemy.setPosition(spawnPoint.getX(), spawnPoint.getY());
+		enemy.addControl(new PhysicsControl(consApp.physics));
+		enemy.addControl(new StoneThrowerControl(consApp.player));
+		enemy.addFXGLEventHandler(Event.DEATH, this::onEnemyDeath);
+		enemy.addFXGLEventHandler(Event.ENEMY_FIRED, event -> {
+			consApp.consController.enemyShootStones(enemy);
+			consApp.getTimerManager().runOnceAfter(() -> {
+				//TODO: Change enemy animation
+			}, Config.CONSUME_DECAY);
+			consApp.getTimerManager().runOnceAfter(() -> {
+				if(enemy != null && enemy.getControl(StoneThrowerControl.class) != null){
+					enemy.getControl(StoneThrowerControl.class).setStonesThrown(false);
+				}			
+			}, Config.ENEMY_STONE_THROW_RECHARGE);
+		});
 		return enemy;
 	}
 	
