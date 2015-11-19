@@ -427,6 +427,24 @@ public class ConsumeApp extends GameApplication {
 				getSceneManager().addEntities(eSpawner.spawnMummy(spawnPoint.add(1000, 0)));
 			}
 		}, KeyCode.DIGIT0);
+		getInputManager().addAction(new UserAction("Spawn Shooter"){
+			@Override
+			protected void onActionBegin() {
+				getSceneManager().addEntities(eSpawner.spawnShooter(spawnPoint.add(1000, 0)));
+			}
+		}, KeyCode.NUMPAD1);
+		getInputManager().addAction(new UserAction("Spawn Burner"){
+			@Override
+			protected void onActionBegin() {
+				getSceneManager().addEntities(eSpawner.spawnBurner(spawnPoint.add(1000, -40)));
+			}
+		}, KeyCode.NUMPAD2);
+		getInputManager().addAction(new UserAction("Spawn Musician"){
+			@Override
+			protected void onActionBegin() {
+				getSceneManager().addEntities(eSpawner.spawnMusician(spawnPoint.add(1000, 0)));
+			}
+		}, KeyCode.NUMPAD3);
 		getInputManager().addAction(new UserAction("Play Background Music") {
 			@Override
 			protected void onActionBegin() {

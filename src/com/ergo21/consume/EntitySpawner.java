@@ -16,12 +16,15 @@ import com.almasb.consume.Types.Element;
 import com.almasb.consume.Types.Powerup;
 import com.almasb.consume.Types.Property;
 import com.almasb.consume.Types.Type;
+import com.almasb.consume.ai.BurnerControl;
 import com.almasb.consume.ai.ChargeControl;
 import com.almasb.consume.ai.ConsumeControl;
 import com.almasb.consume.ai.DiveBombControl;
 import com.almasb.consume.ai.MummyControl;
+import com.almasb.consume.ai.MusicianControl;
 import com.almasb.consume.ai.PhysicsControl;
 import com.almasb.consume.ai.ScorpionControl;
+import com.almasb.consume.ai.ShooterControl;
 import com.almasb.consume.ai.SimpleJumpControl;
 import com.almasb.consume.ai.SimpleMoveControl;
 import com.almasb.consume.ai.SpearThrowerControl;
@@ -232,6 +235,71 @@ public class EntitySpawner {
 		return enemy;
 	}
 	
+	public Entity spawnShooter(Point2D spawnPoint){
+		Entity enemy = new Entity(Type.ENEMY);
+		Rectangle rect = new Rectangle(30, 30);
+		rect.setFill(Color.RED);
+
+		enemy.setGraphics(rect);
+		enemy.setCollidable(false);
+		enemy.setProperty(Property.DATA, new Enemy(consApp.assets.getText("enemies/enemy_FireElemental.txt")));
+		enemy.setProperty("physics", consApp.physics);
+		enemy.setProperty("facingRight", false);
+		enemy.setPosition(spawnPoint.getX(), spawnPoint.getY());
+		enemy.addControl(new PhysicsControl(consApp.physics));
+		enemy.addControl(new ShooterControl(consApp.player));
+		enemy.addFXGLEventHandler(Event.DEATH, this::onEnemyDeath);
+		enemy.addFXGLEventHandler(Event.ENEMY_FIRED, event -> {
+			consApp.getTimerManager().runOnceAfter(() -> {
+				//TODO: Change enemy animation
+			}, Config.CONSUME_DECAY);
+			consApp.getTimerManager().runOnceAfter(() -> {
+				if(enemy != null && enemy.getControl(ShooterControl.class) != null){
+					consApp.consController.enemyShootProjectile(Element.METAL, enemy);
+				}			
+			}, Config.ENEMY_SCORPION_DELAY);
+			consApp.getTimerManager().runOnceAfter(() -> {
+				if(enemy != null && enemy.getControl(ShooterControl.class) != null){
+					enemy.getControl(ShooterControl.class).setSpearThrown(false);
+				}			
+			}, Config.ENEMY_SCORPION_DECAY);
+		});
+
+		return enemy;
+	}
+	
+	public Entity spawnBurner(Point2D spawnPoint){
+		Entity enemy = new Entity(Type.ENEMY);
+		Rectangle rect = new Rectangle(40, 40);
+		rect.setFill(Color.RED);
+
+		enemy.setGraphics(rect);
+		enemy.setCollidable(false);
+		enemy.setProperty(Property.DATA, new Enemy(consApp.assets.getText("enemies/enemy_FireElemental.txt")));
+		enemy.setProperty("physics", consApp.physics);
+		enemy.setProperty("facingRight", false);
+		enemy.setPosition(spawnPoint.getX(), spawnPoint.getY());
+		enemy.addControl(new BurnerControl(consApp.player));
+		enemy.addFXGLEventHandler(Event.DEATH, this::onEnemyDeath);
+		enemy.addFXGLEventHandler(Event.ENEMY_FIRED, event -> {
+			consApp.getTimerManager().runOnceAfter(() -> {
+				//TODO: Change enemy animation
+			}, Config.CONSUME_DECAY);
+			consApp.getTimerManager().runOnceAfter(() -> {
+				if(enemy != null && enemy.getControl(BurnerControl.class) != null){
+					consApp.consController.enemyShootFireball(enemy);
+				}			
+			}, Config.ENEMY_SCORPION_DELAY);
+			consApp.getTimerManager().runOnceAfter(() -> {
+				if(enemy != null && enemy.getControl(BurnerControl.class) != null){
+					enemy.getControl(BurnerControl.class).setSpearThrown(false);
+				}			
+			}, Config.ENEMY_FIRE_THROW_DELAY);
+		});
+
+		return enemy;
+	}
+	
 	public Entity spawnStoneEnemy(Point2D spawnPoint){
 		Entity enemy = new Entity(Type.ENEMY);
 		Rectangle rect = new Rectangle(30, 30);
@@ -257,6 +325,27 @@ public class EntitySpawner {
 				}			
 			}, Config.ENEMY_STONE_THROW_RECHARGE);
 		});
+		return enemy;
+	}
+	
+	public Entity spawnMusician(Point2D spawnPoint) {
+		Entity enemy = new Entity(Type.ENEMY);
+		Rectangle rect = new Rectangle(30, 30);
+		rect.setFill(Color.RED);
+
+		enemy.setGraphics(rect);
+		enemy.setCollidable(true);
+		enemy.setProperty(Property.DATA, new Enemy(consApp.assets.getText("enemies/enemy_FireElemental.txt")));
+		enemy.setProperty("physics", consApp.physics);
+		enemy.setPosition(spawnPoint.getX(), spawnPoint.getY());
+		enemy.addControl(new PhysicsControl(consApp.physics));
+		enemy.addControl(new MusicianControl(consApp, consApp.player, Speed.ENEMY_JUMP));
+		enemy.addFXGLEventHandler(Event.DEATH, this::onEnemyDeath);
+		enemy.addFXGLEventHandler(Event.ENEMY_FIRED, event -> {
+			enemy.getControl(MusicianControl.class).setPlayed(true);
+			consApp.consController.enemyPlayFlute(enemy);
+		});
+
 		return enemy;
 	}
 	

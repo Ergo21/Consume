@@ -24,6 +24,7 @@ import com.almasb.consume.ai.SandProjectileControl;
 import com.almasb.consume.ai.SpearProjectileControl;
 import com.almasb.consume.ai.SpearThrowerControl;
 import com.almasb.fxgl.entity.Entity;
+import com.almasb.fxgl.entity.FXGLEvent;
 import com.almasb.fxgl.event.UserAction;
 
 import javafx.geometry.Point2D;
@@ -32,6 +33,8 @@ import javafx.scene.effect.DropShadow;
 import javafx.scene.effect.Glow;
 import javafx.scene.input.KeyCode;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Arc;
+import javafx.scene.shape.ArcType;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
 import javafx.util.Duration;
@@ -604,6 +607,92 @@ public class ConsumeController {
 		}
 		
 		consApp.soundManager.playSFX(FileNames.SPEAR_THROW);
+	}
+	
+	public void enemyShootFireball(Entity source) {
+
+		Entity e = new Entity(Type.ENEMY_PROJECTILE);
+		if(source.<Enemy>getProperty(Property.DATA) != null){
+			e.setProperty(Property.SUB_TYPE, source.<Enemy>getProperty(Property.DATA).getElement());
+		}
+		else{
+			e.setProperty(Property.SUB_TYPE, Element.FIRE);
+		}
+		
+		e.setPosition(source.getPosition().add(15, source.getHeight()/2));
+		e.setCollidable(true);
+		e.setGraphics(new Rectangle(10, 10));
+		e.addFXGLEventHandler(Event.DEATH, event -> {
+			consApp.getSceneManager().removeEntity(event.getTarget());
+		});
+		
+		consApp.getTimerManager().runOnceAfter(() -> {
+			e.setGraphics(new Rectangle(15, 30));
+			e.setPosition(e.getPosition().subtract(2.5, 0));
+		}, Config.ENEMY_FIRE_GROWTH_DELAY);
+		consApp.getTimerManager().runOnceAfter(() -> {
+			e.setGraphics(new Rectangle(20, 60));
+			e.setPosition(e.getPosition().subtract(2.5, 0));
+		}, Config.ENEMY_FIRE_GROWTH_DELAY.multiply(2));
+		consApp.getTimerManager().runOnceAfter(() -> {
+			e.fireFXGLEvent(new FXGLEvent(Event.DEATH));
+		}, Config.ENEMY_FIRE_GROWTH_DELAY.multiply(3));
+				
+		consApp.soundManager.playSFX(FileNames.FIRE_COAL);
+		
+		consApp.getSceneManager().addEntities(e);
+	}
+	
+	public void enemyPlayFlute(Entity source) {
+
+		Entity e = new Entity(Type.ENEMY_PROJECTILE);
+		if(source.<Enemy>getProperty(Property.DATA) != null){
+			e.setProperty(Property.SUB_TYPE, source.<Enemy>getProperty(Property.DATA).getElement());
+		}
+		else{
+			e.setProperty(Property.SUB_TYPE, Element.NEUTRAL);
+		}
+		
+		e.setPosition(source.getPosition().add(12.5, source.getHeight()));
+		e.setCollidable(true);
+		
+		Arc tA1 = new Arc(0, 0, 25, 35, 0, 180);
+		tA1.setFill(null);
+		tA1.setStroke(Color.BLACK);
+		tA1.setStrokeWidth(2);
+		tA1.setType(ArcType.OPEN);
+		Arc tA2 = new Arc(0, 0, 35, 45, 0, 180);
+		tA2.setFill(null);
+		tA2.setStroke(Color.BLACK);
+		tA2.setStrokeWidth(2);
+		tA2.setType(ArcType.OPEN);
+		Arc tA3 = new Arc(0, 0, 55, 65, 0, 180);
+		tA3.setFill(null);
+		tA3.setStroke(Color.BLACK);
+		tA3.setStrokeWidth(2);
+		tA3.setType(ArcType.OPEN);
+		Group gr = new Group(tA1);
+		e.setGraphics(gr);
+		e.addFXGLEventHandler(Event.DEATH, event -> {
+			consApp.getSceneManager().removeEntity(event.getTarget());
+		});
+		
+		consApp.getTimerManager().runOnceAfter(() -> {
+			gr.getChildren().add(tA2);
+			//e.setPosition(e.getPosition().add(5, 0));
+		}, Config.ENEMY_SOUND_GROWTH_DELAY);
+		consApp.getTimerManager().runOnceAfter(() -> {
+			gr.getChildren().add(tA3);
+			gr.getChildren().remove(tA1);
+			//e.setPosition(e.getPosition().add(5, 0));
+		}, Config.ENEMY_SOUND_GROWTH_DELAY.multiply(2));
+		consApp.getTimerManager().runOnceAfter(() -> {
+			e.fireFXGLEvent(new FXGLEvent(Event.DEATH));
+		}, Config.ENEMY_SOUND_GROWTH_DELAY.multiply(3));
+				
+		//TODO: Play Sound Effect: consApp.soundManager.playSFX(FileNames.FIRE_COAL);
+		
+		consApp.getSceneManager().addEntities(e);
 	}
 
 	public void changePower(int posi) {
