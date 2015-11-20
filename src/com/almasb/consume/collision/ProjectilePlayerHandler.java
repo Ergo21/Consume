@@ -108,13 +108,19 @@ public class ProjectilePlayerHandler extends CollisionHandler {
 			app.getSceneManager().addEntities(e2);
 
 			app.getTimerManager().runOnceAfter(() -> {
-				player.getControl(PhysicsControl.class).moveX(0);
-				player.setProperty("stunned", false);
+				if(player != null){
+					if(player.getControl(PhysicsControl.class) != null){
+						player.getControl(PhysicsControl.class).moveX(0);
+					}
+					player.setProperty("stunned", false);
+				}
 			} , Duration.seconds(0.5));
 
 			app.getTimerManager().runOnceAfter(() -> {
 				app.getSceneManager().removeEntity(e2);
-				player.setCollidable(true);
+				if(player != null){
+					player.setCollidable(true);
+				}
 			} , Duration.seconds(2));
 		}
 

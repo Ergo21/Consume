@@ -8,20 +8,20 @@ import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.FXGLEvent;
 import com.almasb.fxgl.time.TimerManager;
 
-public class ChargeControl extends AbstractControl {
+public class DogControl extends AbstractControl {
 
 	private Entity target;
 	private int vel = 0;
 	private long firstTimeSaw = -1; // Stores when the enemy first sees the player
 	private long decelerate = -1;
 
-	public ChargeControl(Entity target) {
+	public DogControl(Entity target) {
 		this.target = target;
 	}
 
 	@Override
 	protected void initEntity(Entity entity) {
-
+		
 	}
 
 	@Override
@@ -69,15 +69,24 @@ public class ChargeControl extends AbstractControl {
 			decelerate = - 1;
 			vel += right ? Speed.ENEMY_SEEK_ACCEL : -Speed.ENEMY_SEEK_ACCEL;
 
-			if (Math.abs(vel) >= Speed.ENEMY_SEEK_MAX)
-				vel = (int) Math.signum(vel) * (Speed.ENEMY_SEEK_MAX);
+			if (Math.abs(vel) >= Speed.ENEMY_SEEK_MAX - 1)
+				vel = (int) Math.signum(vel) * (Speed.ENEMY_SEEK_MAX - 1);
 
 			entity.getControl(PhysicsControl.class).moveX(vel);
+			
+			if(isTargetClose()){
+				entity.getControl(PhysicsControl.class).setJump(Speed.ENEMY_JUMP - 1);
+				entity.getControl(PhysicsControl.class).jump();
+			}
 		}
 	}
 
 	private boolean isTargetInRange() {
 		return target.getPosition().distance(entity.getPosition()) <= Config.ENEMY_CHARGE_RANGE;
+	}
+	
+	private boolean isTargetClose(){
+		return target.getPosition().distance(entity.getPosition()) <= Config.ENEMY_CHARGE_RANGE/3;
 	}
 
 	public int getVelocity() {

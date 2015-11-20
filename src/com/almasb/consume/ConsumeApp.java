@@ -373,10 +373,10 @@ public class ConsumeApp extends GameApplication {
 			}
 		}, KeyCode.DIGIT1);
 
-		getInputManager().addAction(new UserAction("Spawn Dog") {
+		getInputManager().addAction(new UserAction("Spawn Charger") {
 			@Override
 			protected void onActionBegin() {
-				getSceneManager().addEntities(eSpawner.spawnDog(spawnPoint.add(1000, 0)));
+				getSceneManager().addEntities(eSpawner.spawnCharger(spawnPoint.add(1000, 0)));
 			}
 		}, KeyCode.DIGIT2);
 		getInputManager().addAction(new UserAction("Spawn Scarab") {
@@ -445,6 +445,18 @@ public class ConsumeApp extends GameApplication {
 				getSceneManager().addEntities(eSpawner.spawnMusician(spawnPoint.add(1000, 0)));
 			}
 		}, KeyCode.NUMPAD3);
+		getInputManager().addAction(new UserAction("Spawn Dancer"){
+			@Override
+			protected void onActionBegin() {
+				getSceneManager().addEntities(eSpawner.spawnDancer(spawnPoint.add(1000, 0)));
+			}
+		}, KeyCode.NUMPAD4);
+		getInputManager().addAction(new UserAction("Spawn Dog"){
+			@Override
+			protected void onActionBegin() {
+				getSceneManager().addEntities(eSpawner.spawnDog(spawnPoint.add(1000, 0)));
+			}
+		}, KeyCode.NUMPAD5);
 		getInputManager().addAction(new UserAction("Play Background Music") {
 			@Override
 			protected void onActionBegin() {

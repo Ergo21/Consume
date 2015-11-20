@@ -73,13 +73,19 @@ public class PlayerEnemyHandler extends CollisionHandler {
 			consApp.getSceneManager().addEntities(e);
 
 			consApp.getTimerManager().runOnceAfter(() -> {
-				player.getControl(PhysicsControl.class).moveX(0);
-				player.setProperty("stunned", false);
+				if(player != null){
+					if(player.getControl(PhysicsControl.class) != null){
+						player.getControl(PhysicsControl.class).moveX(0);
+					}
+					player.setProperty("stunned", false);
+				}
 			} , Duration.seconds(0.5));
 
 			consApp.getTimerManager().runOnceAfter(() -> {
 				consApp.getSceneManager().removeEntity(e);
-				player.setCollidable(true);
+				if(player != null){
+					player.setCollidable(true);
+				}
 			} , Duration.seconds(2));
 		}
 	}
