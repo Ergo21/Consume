@@ -11,8 +11,8 @@ public class BulletProjectileControl extends AbstractControl {
 	private boolean facingRight;
 	private Entity player;
 
-	public BulletProjectileControl(Entity player) {
-		facingRight = player.getProperty("facingRight");
+	public BulletProjectileControl(Entity player, boolean facingRight) {
+		this.facingRight = facingRight;
 		this.player = player;
 	}
 
@@ -24,10 +24,10 @@ public class BulletProjectileControl extends AbstractControl {
 	@Override
 	public void onUpdate(Entity entity, long now) {
 		PhysicsControl control = entity.getControl(PhysicsControl.class);
-		control.moveX(
-				facingRight ? (Speed.PROJECTILE + Speed.PROJECTILE / 2) : -(Speed.PROJECTILE + Speed.PROJECTILE / 2));
+		control.moveX(facingRight ? 
+				(Speed.PROJECTILE + Speed.PROJECTILE / 2) : -(Speed.PROJECTILE + Speed.PROJECTILE / 2));
 
-		if (Math.abs(entity.getTranslateX() - player.getTranslateX()) >= 350) {
+		if (Math.abs(entity.getTranslateX() - player.getTranslateX()) >= 550) {
 			entity.fireFXGLEvent(new FXGLEvent(Event.DEATH));
 		}
 	}

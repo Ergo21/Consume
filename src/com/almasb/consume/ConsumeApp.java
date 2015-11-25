@@ -457,6 +457,24 @@ public class ConsumeApp extends GameApplication {
 				getSceneManager().addEntities(eSpawner.spawnDog(spawnPoint.add(1000, 0)));
 			}
 		}, KeyCode.NUMPAD5);
+		getInputManager().addAction(new UserAction("Spawn Ice Spirit"){
+			@Override
+			protected void onActionBegin() {
+				getSceneManager().addEntities(eSpawner.spawnIceSpirit(spawnPoint.add(1000, -90)));
+			}
+		}, KeyCode.NUMPAD6);
+		getInputManager().addAction(new UserAction("Spawn Cannon"){
+			@Override
+			protected void onActionBegin() {
+				getSceneManager().addEntities(eSpawner.spawnCannon(spawnPoint.add(1000, 0)));
+			}
+		}, KeyCode.NUMPAD7);
+		getInputManager().addAction(new UserAction("Spawn Rifler"){
+			@Override
+			protected void onActionBegin() {
+				getSceneManager().addEntities(eSpawner.spawnRifler(spawnPoint.add(1000, 0)));
+			}
+		}, KeyCode.NUMPAD8);
 		getInputManager().addAction(new UserAction("Play Background Music") {
 			@Override
 			protected void onActionBegin() {

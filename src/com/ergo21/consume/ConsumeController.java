@@ -323,7 +323,7 @@ public class ConsumeController {
 			
 			consApp.getTimerManager().runOnceAfter(() -> fired = false, Duration.seconds(3));
 			fired = true;
-			e.addControl(new BulletProjectileControl(consApp.player));
+			e.addControl(new BulletProjectileControl(consApp.player, consApp.player.getProperty("facingRight")));
 			e.setProperty(Property.ENABLE_GRAVITY, false);
 			break;
 		}
@@ -463,7 +463,7 @@ public class ConsumeController {
 			break;
 		}
 		case METAL: {
-			e.addControl(new BulletProjectileControl(source));
+			e.addControl(new BulletProjectileControl(consApp.player, source.getProperty("facingRight")));
 			e.setProperty(Property.ENABLE_GRAVITY, false);
 			break;
 		}
