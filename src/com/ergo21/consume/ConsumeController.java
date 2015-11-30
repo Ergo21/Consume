@@ -23,6 +23,7 @@ import com.almasb.consume.ai.PhysicsControl;
 import com.almasb.consume.ai.SandProjectileControl;
 import com.almasb.consume.ai.SpearProjectileControl;
 import com.almasb.consume.ai.SpearThrowerControl;
+import com.almasb.consume.ai.StabControl;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.FXGLEvent;
 import com.almasb.fxgl.event.UserAction;
@@ -392,12 +393,7 @@ public class ConsumeController {
 		e.setGraphics(new Rectangle(10, 1));
 		e.addControl(new PhysicsControl(consApp.physics));
 		e.addFXGLEventHandler(Event.COLLIDED_PLATFORM, event -> {
-			Entity platform = event.getSource();
 			consApp.getSceneManager().removeEntity(e);
-
-			if (platform.getProperty(Property.SUB_TYPE) == Platform.DESTRUCTIBLE) {
-				consApp.destroyBlock(platform);
-			}
 		});
 		e.addFXGLEventHandler(Event.DEATH, event -> {
 			consApp.getSceneManager().removeEntity(event.getTarget());
@@ -446,12 +442,7 @@ public class ConsumeController {
 			e2.setGraphics(new Rectangle(10, 1));
 			e2.addControl(new PhysicsControl(consApp.physics));
 			e2.addFXGLEventHandler(Event.COLLIDED_PLATFORM, event -> {
-				Entity platform = event.getSource();
 				consApp.getSceneManager().removeEntity(e2);
-
-				if (platform.getProperty(Property.SUB_TYPE) == Platform.DESTRUCTIBLE) {
-					consApp.destroyBlock(platform);
-				}
 			});
 			e2.addFXGLEventHandler(Event.DEATH, event -> {
 				consApp.getSceneManager().removeEntity(event.getTarget());
@@ -552,12 +543,7 @@ public class ConsumeController {
 			e.setGraphics(new Rectangle(10, 1));
 			e.addControl(new PhysicsControl(consApp.physics));
 			e.addFXGLEventHandler(Event.COLLIDED_PLATFORM, event -> {
-				Entity platform = event.getSource();
 				consApp.getSceneManager().removeEntity(e);
-
-				if (platform.getProperty(Property.SUB_TYPE) == Platform.DESTRUCTIBLE) {
-					consApp.destroyBlock(platform);
-				}
 			});
 			e.addFXGLEventHandler(Event.DEATH, event -> {
 				consApp.getSceneManager().removeEntity(event.getTarget());
@@ -692,6 +678,34 @@ public class ConsumeController {
 				
 		//TODO: Play Sound Effect: consApp.soundManager.playSFX(FileNames.FIRE_COAL);
 		
+		consApp.getSceneManager().addEntities(e);
+	}
+	
+	public void enemyStab(Entity source){
+		Entity e = new Entity(Type.ENEMY_PROJECTILE);
+		if(source.<Enemy>getProperty(Property.DATA) != null){
+			e.setProperty(Property.SUB_TYPE, source.<Enemy>getProperty(Property.DATA).getElement());
+		}
+		else{
+			e.setProperty(Property.SUB_TYPE, Element.METAL);
+		}
+		
+		e.setPosition(source.getPosition().add((source.getWidth() / 2), 0));
+		e.setCollidable(true);
+		e.addControl(new PhysicsControl(consApp.physics));
+		e.addFXGLEventHandler(Event.COLLIDED_PLATFORM, event -> {
+			consApp.getSceneManager().removeEntity(e);
+		});
+		e.addFXGLEventHandler(Event.DEATH, event -> {
+			consApp.getSceneManager().removeEntity(event.getTarget());
+		});
+
+		
+		e.setVisible(true);
+		e.setGraphics(new Rectangle(0, 0, 20, 15));
+		e.setProperty(Property.ENABLE_GRAVITY, false);
+		e.addControl(new StabControl(source));
+
 		consApp.getSceneManager().addEntities(e);
 	}
 

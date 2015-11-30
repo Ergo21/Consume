@@ -66,7 +66,7 @@ public final class Config {
 
 	public static final Duration CONSUME_DECAY = Duration.seconds(0.5);
 
-	public static final int DEATH_DAMAGE = 0;
+	public static final int DEATH_DAMAGE = 3;
 
 	public static final Duration ENEMY_SPEAR_DECAY = Duration.seconds(1.5);
 

@@ -475,6 +475,24 @@ public class ConsumeApp extends GameApplication {
 				getSceneManager().addEntities(eSpawner.spawnRifler(spawnPoint.add(1000, 0)));
 			}
 		}, KeyCode.NUMPAD8);
+		getInputManager().addAction(new UserAction("Spawn Bayoneter"){
+			@Override
+			protected void onActionBegin() {
+				getSceneManager().addEntities(eSpawner.spawnBayoneter(spawnPoint.add(1000, 0)));
+			}
+		}, KeyCode.NUMPAD9);
+		getInputManager().addAction(new UserAction("Spawn Knifer"){
+			@Override
+			protected void onActionBegin() {
+				getSceneManager().addEntities(eSpawner.spawnKnifer(spawnPoint.add(1000, 0)));
+			}
+		}, KeyCode.NUMPAD0);
+		getInputManager().addAction(new UserAction("Spawn Magician"){
+			@Override
+			protected void onActionBegin() {
+				getSceneManager().addEntities(eSpawner.spawnMagician(spawnPoint.add(1000, 0)));
+			}
+		}, KeyCode.DECIMAL);
 		getInputManager().addAction(new UserAction("Play Background Music") {
 			@Override
 			protected void onActionBegin() {

@@ -9,12 +9,12 @@ import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.FXGLEvent;
 import com.almasb.fxgl.time.TimerManager;
 
-public class IngestControl extends AbstractControl {
+public class StabControl extends AbstractControl {
 
 	private Entity source;
 	private long created;
 
-	public IngestControl(Entity source) {
+	public StabControl(Entity source) {
 		this.source = source;
 		created = 0;
 	}
@@ -31,15 +31,13 @@ public class IngestControl extends AbstractControl {
 			created = now;
 		}
 
-		if(source != null && source.getProperty("facingRight") != null && source.getPosition() != null){
-			Point2D nPos = source.getPosition();
-			if ((boolean) source.getProperty("facingRight")) {
-				nPos = nPos.add(source.getWidth(), 0);
-			} else {
-				nPos = nPos.add(-source.getWidth() * 0.5, 0);
-			}
-			entity.setPosition(nPos);
+		Point2D nPos = source.getPosition();
+		if ((boolean) source.getProperty("facingRight")) {
+			nPos = nPos.add(source.getWidth() + source.getWidth(), source.getHeight()/2 - entity.getHeight()/2);
+		} else {
+			nPos = nPos.add(-entity.getWidth() - source.getWidth(), source.getHeight()/2 - entity.getHeight()/2);
 		}
+		entity.setPosition(nPos);
 
 		if (Math.abs(entity.getTranslateX() - source.getTranslateX()) >= 350 || now - created > TimerManager.toNanos(Config.CONSUME_DECAY)) {
 			entity.fireFXGLEvent(new FXGLEvent(Event.DEATH));
