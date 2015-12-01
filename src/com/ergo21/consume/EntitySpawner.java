@@ -31,6 +31,7 @@ import com.almasb.consume.ai.MummyControl;
 import com.almasb.consume.ai.MusicianControl;
 import com.almasb.consume.ai.PhysicsControl;
 import com.almasb.consume.ai.RifleControl;
+import com.almasb.consume.ai.SandBossControl;
 import com.almasb.consume.ai.ScorpionControl;
 import com.almasb.consume.ai.ShooterControl;
 import com.almasb.consume.ai.SimpleJumpControl;
@@ -584,6 +585,41 @@ public class EntitySpawner {
 		enemy.addControl(new PhysicsControl(consApp.physics));
 		enemy.addControl(new SimpleJumpControl(consApp, consApp.player, Speed.ENEMY_JUMP));
 		enemy.addFXGLEventHandler(Event.DEATH, this::onEnemyDeath);
+
+		return enemy;
+	}
+	
+	public Entity spawnSandBoss(Point2D spawnPoint) {
+		Entity enemy = new Entity(Type.ENEMY);
+		Rectangle rect = new Rectangle(30, 30);
+		rect.setFill(Color.RED);
+
+		enemy.setGraphics(rect);
+		enemy.setVisible(false);
+		enemy.setCollidable(false);
+		enemy.setProperty(Property.DATA, new Enemy(consApp.assets.getText("enemies/enemy_FireElemental.txt")));
+		enemy.setProperty(Property.SUB_TYPE, Type.BOSS);
+		enemy.setProperty("physics", consApp.physics);
+		enemy.setProperty("shover", true);
+		enemy.setPosition(spawnPoint.getX(), spawnPoint.getY());
+		enemy.addControl(new PhysicsControl(consApp.physics));
+		enemy.addControl(new SandBossControl(consApp.player));
+		enemy.addFXGLEventHandler(Event.DEATH, this::onEnemyDeath);
+		enemy.addFXGLEventHandler(Event.ENEMY_FIRED, event -> {
+			consApp.getTimerManager().runOnceAfter(() -> {
+				//TODO: Change enemy animation
+			}, Config.CONSUME_DECAY);
+			consApp.getTimerManager().runOnceAfter(() -> {
+				if(enemy != null && enemy.getControl(SandBossControl.class) != null){
+					consApp.consController.enemyShootProjectile(Element.EARTH, enemy);
+				}			
+			}, Config.ENEMY_SCORPION_DELAY);
+			consApp.getTimerManager().runOnceAfter(() -> {
+				if(enemy != null && enemy.getControl(SandBossControl.class) != null){
+					enemy.getControl(SandBossControl.class).setAttackComplete(true);
+				}			
+			}, Config.ENEMY_SCORPION_DECAY);
+		});
 
 		return enemy;
 	}

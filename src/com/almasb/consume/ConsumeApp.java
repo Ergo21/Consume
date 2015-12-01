@@ -369,128 +369,128 @@ public class ConsumeApp extends GameApplication {
 		getInputManager().addAction(new UserAction("Spawn Flyer") {
 			@Override
 			protected void onActionBegin() {
-				getSceneManager().addEntities(eSpawner.spawnEnemy(spawnPoint.add(1000, -90)));
+				getSceneManager().addEntities(eSpawner.spawnEnemy(spawnPoint.add(900, -90)));
 			}
 		}, KeyCode.DIGIT1);
 
 		getInputManager().addAction(new UserAction("Spawn Charger") {
 			@Override
 			protected void onActionBegin() {
-				getSceneManager().addEntities(eSpawner.spawnCharger(spawnPoint.add(1000, 0)));
+				getSceneManager().addEntities(eSpawner.spawnCharger(spawnPoint.add(900, 0)));
 			}
 		}, KeyCode.DIGIT2);
 		getInputManager().addAction(new UserAction("Spawn Scarab") {
 			@Override
 			protected void onActionBegin() {
-				getSceneManager().addEntities(eSpawner.spawnScarab(spawnPoint.add(1000, 0)));
+				getSceneManager().addEntities(eSpawner.spawnScarab(spawnPoint.add(900, 0)));
 			}
 		}, KeyCode.DIGIT3);
 		getInputManager().addAction(new UserAction("Spawn Locust") {
 			@Override
 			protected void onActionBegin() {
-				getSceneManager().addEntities(eSpawner.spawnLocust(spawnPoint.add(1000, -90)));
+				getSceneManager().addEntities(eSpawner.spawnLocust(spawnPoint.add(900, -90)));
 			}
 		}, KeyCode.DIGIT4);
-		getInputManager().addAction(new UserAction("Spawn Boss") {
+		getInputManager().addAction(new UserAction("Spawn Sand Boss") {
 			@Override
 			protected void onActionBegin() {
-				getSceneManager().addEntities(eSpawner.spawnBoss(spawnPoint.add(1000, 0)));
+				getSceneManager().addEntities(eSpawner.spawnSandBoss(spawnPoint.add(1300, 0)));
 			}
 		}, KeyCode.DIGIT5);
 		getInputManager().addAction(new UserAction("Spawn Eloko") {
 			@Override
 			protected void onActionBegin() {
-				getSceneManager().addEntities(eSpawner.spawnEloko(spawnPoint.add(1000, 0)));
+				getSceneManager().addEntities(eSpawner.spawnEloko(spawnPoint.add(900, 0)));
 			}
 		}, KeyCode.DIGIT6);
 		getInputManager().addAction(new UserAction("Spawn Spear Thrower"){
 			@Override
 			protected void onActionBegin() {
-				getSceneManager().addEntities(eSpawner.spawnSpearEnemy(spawnPoint.add(1000, 0)));
+				getSceneManager().addEntities(eSpawner.spawnSpearEnemy(spawnPoint.add(900, 0)));
 			}
 		}, KeyCode.DIGIT7);
 		getInputManager().addAction(new UserAction("Spawn Scorpion"){
 			@Override
 			protected void onActionBegin() {
-				getSceneManager().addEntities(eSpawner.spawnScorpion(spawnPoint.add(1000, 0)));
+				getSceneManager().addEntities(eSpawner.spawnScorpion(spawnPoint.add(900, 0)));
 			}
 		}, KeyCode.DIGIT8);
 		getInputManager().addAction(new UserAction("Spawn Stone Spirit"){
 			@Override
 			protected void onActionBegin() {
-				getSceneManager().addEntities(eSpawner.spawnStoneEnemy(spawnPoint.add(1000, 0)));
+				getSceneManager().addEntities(eSpawner.spawnStoneEnemy(spawnPoint.add(900, 0)));
 			}
 		}, KeyCode.DIGIT9);
 		getInputManager().addAction(new UserAction("Spawn Mummy"){
 			@Override
 			protected void onActionBegin() {
-				getSceneManager().addEntities(eSpawner.spawnMummy(spawnPoint.add(1000, 0)));
+				getSceneManager().addEntities(eSpawner.spawnMummy(spawnPoint.add(900, 0)));
 			}
 		}, KeyCode.DIGIT0);
 		getInputManager().addAction(new UserAction("Spawn Shooter"){
 			@Override
 			protected void onActionBegin() {
-				getSceneManager().addEntities(eSpawner.spawnShooter(spawnPoint.add(1000, 0)));
+				getSceneManager().addEntities(eSpawner.spawnShooter(spawnPoint.add(900, 0)));
 			}
 		}, KeyCode.NUMPAD1);
 		getInputManager().addAction(new UserAction("Spawn Burner"){
 			@Override
 			protected void onActionBegin() {
-				getSceneManager().addEntities(eSpawner.spawnBurner(spawnPoint.add(1000, -40)));
+				getSceneManager().addEntities(eSpawner.spawnBurner(spawnPoint.add(900, -40)));
 			}
 		}, KeyCode.NUMPAD2);
 		getInputManager().addAction(new UserAction("Spawn Musician"){
 			@Override
 			protected void onActionBegin() {
-				getSceneManager().addEntities(eSpawner.spawnMusician(spawnPoint.add(1000, 0)));
+				getSceneManager().addEntities(eSpawner.spawnMusician(spawnPoint.add(900, 0)));
 			}
 		}, KeyCode.NUMPAD3);
 		getInputManager().addAction(new UserAction("Spawn Dancer"){
 			@Override
 			protected void onActionBegin() {
-				getSceneManager().addEntities(eSpawner.spawnDancer(spawnPoint.add(1000, 0)));
+				getSceneManager().addEntities(eSpawner.spawnDancer(spawnPoint.add(900, 0)));
 			}
 		}, KeyCode.NUMPAD4);
 		getInputManager().addAction(new UserAction("Spawn Dog"){
 			@Override
 			protected void onActionBegin() {
-				getSceneManager().addEntities(eSpawner.spawnDog(spawnPoint.add(1000, 0)));
+				getSceneManager().addEntities(eSpawner.spawnDog(spawnPoint.add(900, 0)));
 			}
 		}, KeyCode.NUMPAD5);
 		getInputManager().addAction(new UserAction("Spawn Ice Spirit"){
 			@Override
 			protected void onActionBegin() {
-				getSceneManager().addEntities(eSpawner.spawnIceSpirit(spawnPoint.add(1000, -90)));
+				getSceneManager().addEntities(eSpawner.spawnIceSpirit(spawnPoint.add(900, -90)));
 			}
 		}, KeyCode.NUMPAD6);
 		getInputManager().addAction(new UserAction("Spawn Cannon"){
 			@Override
 			protected void onActionBegin() {
-				getSceneManager().addEntities(eSpawner.spawnCannon(spawnPoint.add(1000, 0)));
+				getSceneManager().addEntities(eSpawner.spawnCannon(spawnPoint.add(900, 0)));
 			}
 		}, KeyCode.NUMPAD7);
 		getInputManager().addAction(new UserAction("Spawn Rifler"){
 			@Override
 			protected void onActionBegin() {
-				getSceneManager().addEntities(eSpawner.spawnRifler(spawnPoint.add(1000, 0)));
+				getSceneManager().addEntities(eSpawner.spawnRifler(spawnPoint.add(900, 0)));
 			}
 		}, KeyCode.NUMPAD8);
 		getInputManager().addAction(new UserAction("Spawn Bayoneter"){
 			@Override
 			protected void onActionBegin() {
-				getSceneManager().addEntities(eSpawner.spawnBayoneter(spawnPoint.add(1000, 0)));
+				getSceneManager().addEntities(eSpawner.spawnBayoneter(spawnPoint.add(900, 0)));
 			}
 		}, KeyCode.NUMPAD9);
 		getInputManager().addAction(new UserAction("Spawn Knifer"){
 			@Override
 			protected void onActionBegin() {
-				getSceneManager().addEntities(eSpawner.spawnKnifer(spawnPoint.add(1000, 0)));
+				getSceneManager().addEntities(eSpawner.spawnKnifer(spawnPoint.add(900, 0)));
 			}
 		}, KeyCode.NUMPAD0);
 		getInputManager().addAction(new UserAction("Spawn Magician"){
 			@Override
 			protected void onActionBegin() {
-				getSceneManager().addEntities(eSpawner.spawnMagician(spawnPoint.add(1000, 0)));
+				getSceneManager().addEntities(eSpawner.spawnMagician(spawnPoint.add(900, 0)));
 			}
 		}, KeyCode.DECIMAL);
 		getInputManager().addAction(new UserAction("Play Background Music") {
