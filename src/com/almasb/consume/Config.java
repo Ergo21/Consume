@@ -81,4 +81,6 @@ public final class Config {
 
 	public static final Duration ENEMY_SOUND_GROWTH_DELAY = Duration.seconds(0.33);
 	public static final Duration ENEMY_SOUND_PLAY_DELAY = Duration.seconds(0.66);
+
+	public static final Duration ANUBIS_JATTACK_DELAY = Duration.seconds(0.2);
 }

@@ -16,6 +16,7 @@ import com.almasb.consume.Types.Element;
 import com.almasb.consume.Types.Powerup;
 import com.almasb.consume.Types.Property;
 import com.almasb.consume.Types.Type;
+import com.almasb.consume.ai.AnubisControl;
 import com.almasb.consume.ai.BayonetControl;
 import com.almasb.consume.ai.BurnerControl;
 import com.almasb.consume.ai.CannonControl;
@@ -606,6 +607,68 @@ public class EntitySpawner {
 		enemy.addControl(new SandBossControl(consApp.player));
 		enemy.addFXGLEventHandler(Event.DEATH, this::onEnemyDeath);
 		enemy.addFXGLEventHandler(Event.ENEMY_FIRED, event -> {
+			consApp.getTimerManager().runOnceAfter(() -> {
+				//TODO: Change enemy animation
+			}, Config.CONSUME_DECAY);
+			consApp.getTimerManager().runOnceAfter(() -> {
+				if(enemy != null && enemy.getControl(SandBossControl.class) != null){
+					consApp.consController.enemyShootProjectile(Element.EARTH, enemy);
+				}			
+			}, Config.ENEMY_SCORPION_DELAY);
+			consApp.getTimerManager().runOnceAfter(() -> {
+				if(enemy != null && enemy.getControl(SandBossControl.class) != null){
+					enemy.getControl(SandBossControl.class).setAttackComplete(true);
+				}			
+			}, Config.ENEMY_SCORPION_DECAY);
+		});
+
+		return enemy;
+	}
+	
+	public Entity spawnAnubisBoss(Point2D spawnPoint) {
+		Entity enemy = new Entity(Type.ENEMY);
+		Rectangle rect = new Rectangle(30, 30);
+		rect.setFill(Color.RED);
+
+		enemy.setGraphics(rect);
+		enemy.setVisible(true);
+		enemy.setCollidable(true);
+		enemy.setProperty(Property.DATA, new Enemy(consApp.assets.getText("enemies/enemy_FireElemental.txt")));
+		enemy.setProperty(Property.SUB_TYPE, Type.BOSS);
+		enemy.setProperty("physics", consApp.physics);
+		enemy.setProperty("shover", true);
+		enemy.setPosition(spawnPoint.getX(), spawnPoint.getY());
+		enemy.addControl(new PhysicsControl(consApp.physics));
+		enemy.addControl(new AnubisControl(consApp, consApp.player));
+		enemy.addFXGLEventHandler(Event.DEATH, this::onEnemyDeath);
+		enemy.addFXGLEventHandler(Event.ENEMY_FIRED, event -> {
+			if((boolean)enemy.getProperty("jumping")){
+				consApp.getTimerManager().runOnceAfter(() -> {
+					if(enemy != null && enemy.getControl(AnubisControl.class) != null){
+						consApp.consController.enemyShootProjectile(Element.DEATH, enemy);
+					}			
+				}, Config.ANUBIS_JATTACK_DELAY);
+				consApp.getTimerManager().runOnceAfter(() -> {
+					if(enemy != null && enemy.getControl(AnubisControl.class) != null){
+						consApp.consController.enemyShootProjectile(Element.DEATH, enemy);
+					}			
+				}, Config.ANUBIS_JATTACK_DELAY.multiply(2));
+				consApp.getTimerManager().runOnceAfter(() -> {
+					if(enemy != null && enemy.getControl(AnubisControl.class) != null){
+						consApp.consController.enemyShootProjectile(Element.DEATH, enemy);
+						enemy.getControl(AnubisControl.class).setAttackComplete(true, false);
+					}			
+				}, Config.ANUBIS_JATTACK_DELAY.multiply(3));
+			}
+			else{
+				consApp.consController.enemyShootProjectile(Element.NEUTRAL2, enemy);
+				consApp.getTimerManager().runOnceAfter(() -> {
+					if(enemy != null && enemy.getControl(AnubisControl.class) != null){
+						enemy.getControl(AnubisControl.class).setAttackComplete(true, true);
+					}			
+				}, Config.ENEMY_SCORPION_DECAY);
+			}
+			
 			consApp.getTimerManager().runOnceAfter(() -> {
 				//TODO: Change enemy animation
 			}, Config.CONSUME_DECAY);

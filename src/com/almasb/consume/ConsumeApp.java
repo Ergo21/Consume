@@ -493,6 +493,12 @@ public class ConsumeApp extends GameApplication {
 				getSceneManager().addEntities(eSpawner.spawnMagician(spawnPoint.add(900, 0)));
 			}
 		}, KeyCode.DECIMAL);
+		getInputManager().addAction(new UserAction("Spawn Anubis Boss") {
+			@Override
+			protected void onActionBegin() {
+				getSceneManager().addEntities(eSpawner.spawnAnubisBoss(spawnPoint.add(1300, 0)));
+			}
+		}, KeyCode.F1);
 		getInputManager().addAction(new UserAction("Play Background Music") {
 			@Override
 			protected void onActionBegin() {
