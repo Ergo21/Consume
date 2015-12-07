@@ -337,6 +337,7 @@ public class ConsumeApp extends GameApplication {
 		System.out.println("Level number: " + lev);
 		Level level = levels.get(lev);
 		Point2D spawnPoint = level.getSpawnPoint();
+		getSceneManager().setLimits(level.getUpperLeftLimit(), level.getLowerRightLimit());	
 
 		// add level objects
 		for (Entity e : level.getEntitiesAsArray()) {
@@ -653,8 +654,7 @@ public class ConsumeApp extends GameApplication {
 		t.setViewport(new Rectangle2D(150, 0, 30, 30));
 		player.setGraphics(t);
 
-
-		getSceneManager().bindViewportOrigin(player, 320, 180);
+		getSceneManager().bindViewportOrigin(player, 320, 180, true);
 
 		powerStatus = Entity.noType();
 		powerStatus.translateXProperty().bind(player.translateXProperty());

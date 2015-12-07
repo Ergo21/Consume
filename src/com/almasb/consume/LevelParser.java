@@ -60,6 +60,18 @@ public class LevelParser {
 					level.nextLevelEntity = e;
 					rect.setFill(Color.BLACK);
 					break;
+				case '3':
+					e = new Entity(Types.Type.LIMIT);
+					e.setCollidable(true);
+					rect.setFill(Color.CYAN);
+					
+					if(level.uLLim == null){
+						level.uLLim = new Point2D(j * Config.BLOCK_SIZE, i * Config.BLOCK_SIZE);
+					}
+					else if(level.lRLim == null){
+						level.lRLim = new Point2D(j * Config.BLOCK_SIZE, i * Config.BLOCK_SIZE);
+					}
+					break;
 				case '5':
 				case '6':
 				case '7':
@@ -128,6 +140,13 @@ public class LevelParser {
 				}
 			}
 		}
+		
+		if(level.uLLim == null){
+			level.uLLim = new Point2D(0, 0);
+		}
+		if(level.lRLim == null){
+			level.lRLim = new Point2D(level.width, level.height);
+		}
 
 		if (!level.isValid())
 			throw new IllegalArgumentException("Level: " + levelNumber + " was not parsed as valid");
@@ -152,13 +171,15 @@ public class LevelParser {
 		private List<Entity> entities = new ArrayList<>();
 		private Point2D spawnPoint;
 		private Entity nextLevelEntity;
+		private Point2D uLLim, lRLim;
 
 		/* package-private */ Level() {
 
 		}
 
 		private boolean isValid() {
-			return spawnPoint != null && nextLevelEntity != null && width != 0 && height != 0;
+			return spawnPoint != null && nextLevelEntity != null && width != 0 && height != 0 && 
+					uLLim != null && lRLim != null;
 		}
 
 		public List<Entity> getEntities() {
@@ -175,6 +196,14 @@ public class LevelParser {
 
 		public Entity getNextLevelEntity() {
 			return nextLevelEntity;
+		}
+		
+		public Point2D getUpperLeftLimit(){
+			return uLLim;
+		}
+		
+		public Point2D getLowerRightLimit(){
+			return lRLim;
 		}
 	}
 }
