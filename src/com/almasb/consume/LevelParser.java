@@ -13,13 +13,17 @@ import com.almasb.consume.Types.Block;
 import com.almasb.consume.Types.Platform;
 import com.almasb.consume.Types.Powerup;
 import com.almasb.consume.Types.Property;
+import com.almasb.fxgl.asset.Texture;
 import com.almasb.fxgl.entity.Entity;
+import com.ergo21.consume.FileNames;
 
 public class LevelParser {
 
+	private ConsumeApp consApp;
 	private List<LevelData> levels;
 
-	public LevelParser(List<LevelData> levels) {
+	public LevelParser(ConsumeApp cA, List<LevelData> levels) {
+		consApp = cA;
 		this.levels = levels;
 	}
 	
@@ -34,11 +38,27 @@ public class LevelParser {
 		List<String> data = levels.get(levelNumber).data;
 
 		// TODO: range checks
-
+		
 		Level level = new Level();
 
 		level.width = data.get(0).length() * Config.BLOCK_SIZE;
 		level.height = data.size() * Config.BLOCK_SIZE;
+		
+		int backWidth = 640;
+		int backHeight = 360;
+		
+		for(int j = 0; j * backHeight <= level.height; j++) {
+			for(int i = 0; i * backWidth <= level.width; i++) {
+				Entity bEn = new Entity(Types.Type.BACKGROUND);
+				bEn.setCollidable(false);
+				bEn.setVisible(true);
+				
+				bEn.setPosition(i * backWidth, j * backHeight);
+				bEn.setGraphics(getBackground(levelNumber));
+				
+				level.entities.add(bEn);
+			}
+		}
 
 		for (int i = 0; i < data.size(); i++) {
 			String line = data.get(i);
@@ -152,6 +172,75 @@ public class LevelParser {
 			throw new IllegalArgumentException("Level: " + levelNumber + " was not parsed as valid");
 
 		return level;
+	}
+
+	boolean release = false;
+	
+	private Texture getBackground(int levelNumber) {
+		// TODO Auto-generated method stub
+		if(!release){
+			return consApp.assets.getTexture("forest1.jpg");
+		}
+		
+		switch(levelNumber){
+			case 0: {
+				return consApp.assets.getTexture(FileNames.FOREST1_BACK_1);
+			}
+			case 1: {
+				return consApp.assets.getTexture(FileNames.FOREST1_BACK_2);
+			}
+			case 2: {
+				return consApp.assets.getTexture(FileNames.FOREST1_BACK_3);
+			}
+			case 3:
+			case 4:
+			case 5: {
+				return consApp.assets.getTexture(FileNames.DESERT_BACK_1);
+			}
+			case 6: {
+				return consApp.assets.getTexture(FileNames.PYRAMID_BACK_1);
+			}
+			case 7:
+			case 8: {
+				return consApp.assets.getTexture(FileNames.PYRAMID_BACK_2);
+			}
+			case 9:
+			case 10:
+			case 11: {
+				return consApp.assets.getTexture(FileNames.FESTIVAL_BACK_1);
+			}
+			case 12: {
+				return consApp.assets.getTexture(FileNames.FOREST1_BACK_2);
+			}
+			case 13: {
+				return consApp.assets.getTexture(FileNames.FOREST1_BACK_3);
+			}
+			case 14: {
+				return consApp.assets.getTexture(FileNames.EMPIRE_BACK_2);
+			}
+			case 15: {
+				return consApp.assets.getTexture(FileNames.MOUNTAIN_BACK_1);
+			}
+			case 16:
+			case 17: {
+				return consApp.assets.getTexture(FileNames.MOUNTAIN_BACK_2);
+			}
+			case 18:
+			case 19:
+			case 20: {
+				return consApp.assets.getTexture(FileNames.COLONY_BACK_1);
+			}
+			case 21:
+			case 22: {
+				return consApp.assets.getTexture(FileNames.EMPIRE_BACK_1);
+			}
+			case 23: {
+				return consApp.assets.getTexture(FileNames.EMPIRE_BACK_2);
+			}
+			default: {
+				return consApp.assets.getTexture(FileNames.FESTIVAL_BACK_1);
+			}
+		}
 	}
 
 	public static class LevelData {

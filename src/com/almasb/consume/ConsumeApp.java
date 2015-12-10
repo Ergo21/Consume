@@ -221,7 +221,7 @@ public class ConsumeApp extends GameApplication {
 				.mapToObj(i -> new LevelData(assets.getText("levels/level_" + i + ".txt")))
 				.collect(Collectors.toList());
 
-		parser = new LevelParser(levelData);
+		parser = new LevelParser(this, levelData);
 		levels = parser.parseAll();
 	}
 
@@ -553,8 +553,10 @@ public class ConsumeApp extends GameApplication {
 		System.out.println("Show level screen");
 		consGameMenu.updatePowerMenu(playerData);
 
+		//this.getInputManager().
 		//this.getSceneManager().closeGameMenu();
 		this.soundManager.stopAll();
+		this.soundManager.setBackgroundMusic(FileNames.THEME_MUSIC);
 		if(playerData.getPowers().size() > 6){
 			levelMenu.setFinalLevelVisible(true);
 		}

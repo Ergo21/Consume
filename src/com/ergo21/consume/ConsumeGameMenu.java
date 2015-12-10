@@ -71,7 +71,7 @@ public final class ConsumeGameMenu extends FXGLMenu {
 	private PowerGroup powerList;
 	private AnchorPane contentViewer;
 	private ConsumeApp consApp;
-
+	
 	public MenuItem levelMenuItem;
 
 	public ConsumeGameMenu(ConsumeApp app) {
@@ -132,6 +132,7 @@ public final class ConsumeGameMenu extends FXGLMenu {
 		levelMenuItem = new MenuItem("Level Menu");
 		levelMenuItem.setAction(() -> {
 			consApp.showLevelScreen();
+			levelMenuItem.fireEvent(new MenuEvent(MenuEvent.RESUME));
 			contentViewer.getChildren().clear();
 			contentViewer.getChildren().add(powerList);
 		});

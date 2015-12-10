@@ -40,6 +40,7 @@ public class LevelMenu extends Group{
 			MenuItem but = new MenuItem(String.valueOf(i));
 			int lev = (i+1)*3;
 			but.setAction(() -> {
+				consApp.soundManager.stopAll();
 				consApp.playerData.setCurrentLevel(lev);
 				consApp.playerData.setCurrentHealth(consApp.playerData.getMaxHealth());
 				consApp.playerData.setCurrentMana(consApp.playerData.getMaxMana());

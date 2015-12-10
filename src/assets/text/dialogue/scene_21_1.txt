@@ -1,3 +1,0 @@
-Shaka ("ShakaIcon.png")= "For the deaths of those behind you, I Shaka, Leader of the Zulus, will kill you."
-PLAYER ("PlayerIcon.png")= "For the deaths I seek to prevent, I will not be stopped."
-END

@@ -9,6 +9,7 @@
 .classpath
 .project
 .settings/
+/src/assets/textures/backgrounds
 /bin
 /target
 /saves
