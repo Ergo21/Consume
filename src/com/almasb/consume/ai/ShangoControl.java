@@ -15,16 +15,17 @@ import com.ergo21.consume.FileNames;
 import javafx.geometry.Point2D;
 import javafx.util.Duration;
 
-public class AnubisControl extends AbstractControl {
+public class ShangoControl extends AbstractControl {
 
 	private Entity target;
 	private Random ran;
 	private enum BossActions {
-		NONE, MOVE, JUMP, ATTACK, JATTACK
+		NONE, JUMP, ATTACK, JATTACK
 	}
 	private BossActions curAction;
 	private Point2D startPos;
 	private Point2D curPos;
+	private Point2D jumpPos;
 	private boolean start = false;
 	private boolean attacking = false;
 	private int vel = 0;
@@ -34,7 +35,7 @@ public class AnubisControl extends AbstractControl {
 	
 	private ConsumeApp consApp;
 
-	public AnubisControl(ConsumeApp cA, Entity target) {
+	public ShangoControl(ConsumeApp cA, Entity target) {
 		this.target = target;
 		ran = new Random();
 		curAction = BossActions.NONE;
@@ -52,6 +53,7 @@ public class AnubisControl extends AbstractControl {
 			if(entity != null && entity.getPosition() != null){
 				startPos = entity.getPosition();
 				curPos = entity.getPosition();
+				jumpPos = startPos.subtract(Config.BLOCK_SIZE*7, 0);
 			}
 		}
 		
@@ -65,75 +67,42 @@ public class AnubisControl extends AbstractControl {
 					chooseDelay = now;
 				}
 				
-				if(now - chooseDelay >= TimerManager.toNanos(Duration.seconds(0.5))){
+				if(now - chooseDelay >= TimerManager.toNanos(Duration.seconds(1))){
 					switch(ran.nextInt(3)){
 						case 0:{
-							curAction = BossActions.MOVE;
-							break;
-						}
-						case 1:{
-							curAction = BossActions.JUMP;
-							break;
-						}
-						case 2:{
 							curAction = BossActions.JATTACK;
 							break;
 						}
+						case 1:
+						case 2:{
+							curAction = BossActions.ATTACK;
+							break;
+						}
 					}
 					chooseDelay = -1;
 				}
-				else if(isTargetInRange(1)){
-					curAction = BossActions.ATTACK;
+				else if(isTargetInRange(1.75)){
+					curAction = BossActions.JUMP;
 					chooseDelay = -1;
-				}
-				break;
-			}
-			case MOVE:{
-				if(moveStart == -1){
-					moveStart = now;
-				}
-				
-				if(isTargetInRange(0.75)){
-					curAction = BossActions.ATTACK;
-					moveStart = -1;
-					cycle = 0;
-				} 
-				else if(now - moveStart >= TimerManager.toNanos(Duration.seconds(3)) && cycle == 3){				
-					curAction = BossActions.NONE;
-					moveStart = -1;
-					cycle = 0;
-				}
-				else if((now - moveStart >= TimerManager.toNanos(Duration.seconds(2)) && cycle == 2) ||
-						(now - moveStart >= TimerManager.toNanos(Duration.seconds(1)) && cycle == 1) ||
-						(now - moveStart < TimerManager.toNanos(Duration.seconds(1)) && cycle == 0)){
-					if(entity.getPosition().getX() >= target.getPosition().getX()){
-						entity.getControl(PhysicsControl.class).moveX(-Speed.PLAYER_MOVE);
-						entity.setProperty("facingRight", false);
-					}
-					else{
-						entity.getControl(PhysicsControl.class).moveX(Speed.PLAYER_MOVE);
-						entity.setProperty("facingRight", true);	
-					}
-					cycle++;
 				}
 				break;
 			}
 			case JUMP:{
-				if(moveStart == -1){
-					moveStart = now;
-				}
-				if(!(boolean)entity.getProperty("jumping") && now - moveStart >= TimerManager.toNanos(Duration.seconds(3))){
-					moveStart = -1;
-					curAction = BossActions.NONE;
-				}
-				else if(!(boolean)entity.getProperty("jumping") && now - moveStart < TimerManager.toNanos(Duration.seconds(3))){
-					int spd = calculateJumpSpeed(entity.getPosition(), target.getPosition());
+				if(!(boolean)entity.getProperty("jumping") && moveStart == -1){			
+					moveStart = 1;
+					int spd = calculateJumpSpeed(entity.getPosition(), chooseJumpPoint());
 					entity.getControl(PhysicsControl.class).moveX(spd);
 					entity.setProperty("facingRight", spd >= 0);
 					
 					entity.getControl(PhysicsControl.class).jump();
 					consApp.soundManager.playSFX(FileNames.JUMP);
-				}				
+				}		
+				else if(!(boolean)entity.getProperty("jumping") && moveStart != -1){
+					moveStart = -1;
+					entity.getControl(PhysicsControl.class).moveX(0);
+					curAction = BossActions.NONE;
+					entity.setProperty("facingRight", target.getPosition().getX() >= entity.getPosition().getX());
+				}
 				break;
 			}
 			case ATTACK:{
@@ -145,7 +114,7 @@ public class AnubisControl extends AbstractControl {
 			}
 			case JATTACK:{
 				
-				if(!(boolean)entity.getProperty("jumping") && (cycle == 0 || cycle == 3)){ //Jump to start
+				if(!(boolean)entity.getProperty("jumping") && (cycle == 0 || cycle == 3)){
 					int spd = calculateJumpSpeed(entity.getPosition(), startPos);
 					entity.getControl(PhysicsControl.class).moveX(spd);
 					entity.setProperty("facingRight", spd >= 0);
@@ -154,8 +123,8 @@ public class AnubisControl extends AbstractControl {
 					consApp.soundManager.playSFX(FileNames.JUMP);
 					cycle++;
 				}
-				else if(!(boolean)entity.getProperty("jumping") && cycle == 1){ //Jump to opposite side
-					int spd = calculateJumpSpeed(entity.getPosition(), startPos.subtract(Config.BLOCK_SIZE*7, 0));
+				else if(!(boolean)entity.getProperty("jumping") && cycle == 1){
+					int spd = calculateJumpSpeed(entity.getPosition(), jumpPos);
 					entity.getControl(PhysicsControl.class).moveX(spd);
 					entity.setProperty("facingRight", spd >= 0);
 					
@@ -163,22 +132,20 @@ public class AnubisControl extends AbstractControl {
 					consApp.soundManager.playSFX(FileNames.JUMP);
 					cycle++;
 				}
-				else if((boolean)entity.getProperty("jumping") && (cycle == 2 || cycle == 4)){ //Attack during jump*3
+				else if((boolean)entity.getProperty("jumping") && (cycle == 2 || cycle == 4)){
 					if(!attacking){
 						entity.fireFXGLEvent(new FXGLEvent(Event.ENEMY_FIRED));
 						attacking = true;
 						cycle++;
 					}
 				}
-				else if(!(boolean)entity.getProperty("jumping") && cycle == 5){ //End Jump Attack
+				else if(!(boolean)entity.getProperty("jumping") && cycle == 5){
 					entity.getControl(PhysicsControl.class).moveX(0);
 					cycle = 0;
 					curAction = BossActions.NONE;
+					entity.setProperty("facingRight", target.getPosition().getX() >= entity.getPosition().getX());
 				}
 					
-					
-				
-				
 				break;
 			}
 		}
@@ -195,6 +162,15 @@ public class AnubisControl extends AbstractControl {
 	
 	public void startFight(boolean fight){
 		start = fight;
+	}
+	
+	private Point2D chooseJumpPoint(){
+		if(target.getPosition().distance(startPos) > target.getPosition().distance(jumpPos)){
+			return startPos;
+		}
+		else{
+			return jumpPos;
+		}
 	}
 	
 	private int calculateJumpSpeed(Point2D start, Point2D end){
@@ -223,4 +199,5 @@ public class AnubisControl extends AbstractControl {
 	public int getVelocity() {
 		return vel;
 	}
+	
 }

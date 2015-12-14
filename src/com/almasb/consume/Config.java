@@ -21,6 +21,8 @@ public final class Config {
 
 		public static final int PROJECTILE = PLAYER_MOVE + 2;
 	}
+	
+	public static final boolean RELEASE = false;
 
 	public static final int BLOCK_SIZE = 40;
 
@@ -59,7 +61,7 @@ public final class Config {
 	public static final int LIGHTNING_COST = 7;
 	public static final int LIGHTNING_DAMAGE = 6;
 	public static final Duration LIGHTNING_DELAY = Duration.seconds(0.5);
-	public static final Duration LIGHTNING_DECAY = Duration.seconds(1.5);
+	public static final Duration LIGHTNING_DECAY = Duration.seconds(1);
 
 	public static final int BULLET_COST = 0;
 	public static final int BULLET_DAMAGE = 5;
@@ -83,4 +85,7 @@ public final class Config {
 	public static final Duration ENEMY_SOUND_PLAY_DELAY = Duration.seconds(0.66);
 
 	public static final Duration ANUBIS_JATTACK_DELAY = Duration.seconds(0.2);
+
+	public static final Duration SHANGO_JATTACK_DELAY = Duration.seconds(0.3);
+	public static final Duration SHANGO_MATTACK_DELAY = Duration.seconds(0.3);
 }

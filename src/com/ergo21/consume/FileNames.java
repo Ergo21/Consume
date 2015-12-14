@@ -4,6 +4,7 @@ public final class FileNames{
 	public static final String SETTINGS = "settings.set";
 	
 	public static final String THEME_MUSIC		= "01 Consume Theme.mp3";
+	public static final String AFRICA 			= "backgrounds/afrika.jpg";
 	
 	public static final String FOREST1_MUSIC 	= "02 Forests (Part I).mp3";
 	public static final String FOREST1_BACK_1 	= "backgrounds/forest1.jpg";
@@ -50,6 +51,8 @@ public final class FileNames{
 	public static final String HIT3				= "09 Punch.mp3";
 	public static final String CHARGE_HIT		= "10 Punch 2.mp3";
 	public static final String JUMP				= "08 Jump.mp3";
+
+	
 
 	
 }

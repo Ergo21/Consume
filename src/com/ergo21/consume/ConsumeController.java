@@ -527,6 +527,40 @@ public class ConsumeController {
 		consApp.getSceneManager().addEntities(e);
 	}
 	
+	public void aimedLightningBolt(Entity source, Point2D target) {
+		Entity e = new Entity(Type.ENEMY_PROJECTILE);
+		e.setProperty(Property.SUB_TYPE, Element.LIGHTNING);
+		e.addControl(new PhysicsControl(consApp.physics));
+		e.addFXGLEventHandler(Event.COLLIDED_PLATFORM, event -> {
+			consApp.getSceneManager().removeEntity(e);
+		});
+		e.addFXGLEventHandler(Event.DEATH, event -> {
+			consApp.getSceneManager().removeEntity(event.getTarget());
+		});
+
+		e.setVisible(false);
+		e.setCollidable(false);
+		Group g = new Group();
+		e.addControl(new PhysicsControl(consApp.physics));
+		LightningControl lc = new LightningControl(g);
+		e.addControl(lc);
+		e.setPosition(0, 0);
+
+		g.getChildren().addAll(createBolt(new Point2D(target.getX(), -200), target, 5));
+		e.setGraphics(g);
+
+		DropShadow shadow = new DropShadow(20, Color.PURPLE);
+		shadow.setInput(new Glow(0.7));
+		g.setEffect(shadow);
+		e.setProperty(Property.ENABLE_GRAVITY, false);
+			
+		consApp.getTimerManager().runOnceAfter(() -> {
+			consApp.soundManager.playSFX(FileNames.LIGHTING_DRUM);
+		}, Config.LIGHTNING_DELAY.divide(2));
+
+		consApp.getSceneManager().addEntities(e);
+	}
+	
 	public void enemyShootStones(Entity source) {
 		boolean lowFirst = consApp.getRandom().nextBoolean();
 		for(int i = 0; i< 3; i++){
@@ -755,7 +789,7 @@ public class ConsumeController {
 
 		Collections.sort(positions);
 
-		float sway = 80;
+		float sway = 20;
 		float jaggedness = 1 / sway;
 
 		Point2D prevPoint = src;

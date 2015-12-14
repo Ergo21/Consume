@@ -173,12 +173,10 @@ public class LevelParser {
 
 		return level;
 	}
-
-	boolean release = false;
 	
 	private Texture getBackground(int levelNumber) {
 		// TODO Auto-generated method stub
-		if(!release){
+		if(!Config.RELEASE){
 			return consApp.assets.getTexture("forest1.jpg");
 		}
 		

@@ -395,7 +395,7 @@ public class ConsumeApp extends GameApplication {
 		getInputManager().addAction(new UserAction("Spawn Sand Boss") {
 			@Override
 			protected void onActionBegin() {
-				getSceneManager().addEntities(eSpawner.spawnSandBoss(spawnPoint.add(1300, 0)));
+				getSceneManager().addEntities(eSpawner.spawnSandBoss(spawnPoint.add(1250, 0)));
 			}
 		}, KeyCode.DIGIT5);
 		getInputManager().addAction(new UserAction("Spawn Eloko") {
@@ -497,9 +497,15 @@ public class ConsumeApp extends GameApplication {
 		getInputManager().addAction(new UserAction("Spawn Anubis Boss") {
 			@Override
 			protected void onActionBegin() {
-				getSceneManager().addEntities(eSpawner.spawnAnubisBoss(spawnPoint.add(1300, 0)));
+				getSceneManager().addEntities(eSpawner.spawnAnubisBoss(spawnPoint.add(1250, 0)));
 			}
 		}, KeyCode.F1);
+		getInputManager().addAction(new UserAction("Spawn Shango Boss") {
+			@Override
+			protected void onActionBegin() {
+				getSceneManager().addEntities(eSpawner.spawnShangoBoss(spawnPoint.add(1250, 0)));
+			}
+		}, KeyCode.F2);
 		getInputManager().addAction(new UserAction("Play Background Music") {
 			@Override
 			protected void onActionBegin() {

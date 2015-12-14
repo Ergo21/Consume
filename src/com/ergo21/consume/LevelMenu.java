@@ -1,5 +1,6 @@
 package com.ergo21.consume;
 
+import com.almasb.consume.Config;
 import com.almasb.consume.ConsumeApp;
 
 import javafx.geometry.Insets;
@@ -33,6 +34,9 @@ public class LevelMenu extends Group{
 		Rectangle bg = new Rectangle(consApp.getWidth(), consApp.getHeight());
 		bg.setFill(Color.OLIVE);
 		this.getChildren().add(bg);
+		if(Config.RELEASE){
+			this.getChildren().add(consApp.getAssetManager().loadTexture(FileNames.AFRICA));
+		}
 		
 		GridPane gp = new GridPane();
 		
@@ -74,11 +78,11 @@ public class LevelMenu extends Group{
 					break;
 				}
 				case 5:{
-					gp.add(but, 0, 2);
+					gp.add(but, 1, 2);
 					break;
 				}
 				case 6:{
-					gp.add(but, 1, 2);
+					gp.add(but, 2, 2);
 					break;
 				}
 				

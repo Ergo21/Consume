@@ -34,6 +34,7 @@ import com.almasb.consume.ai.PhysicsControl;
 import com.almasb.consume.ai.RifleControl;
 import com.almasb.consume.ai.SandBossControl;
 import com.almasb.consume.ai.ScorpionControl;
+import com.almasb.consume.ai.ShangoControl;
 import com.almasb.consume.ai.ShooterControl;
 import com.almasb.consume.ai.SimpleJumpControl;
 import com.almasb.consume.ai.SimpleMoveControl;
@@ -667,6 +668,90 @@ public class EntitySpawner {
 						enemy.getControl(AnubisControl.class).setAttackComplete(true, true);
 					}			
 				}, Config.ENEMY_SCORPION_DECAY);
+			}
+			
+			consApp.getTimerManager().runOnceAfter(() -> {
+				//TODO: Change enemy animation
+			}, Config.CONSUME_DECAY);
+		});
+
+		return enemy;
+	}
+	
+	public Entity spawnShangoBoss(Point2D spawnPoint) {
+		Entity enemy = new Entity(Type.ENEMY);
+		Rectangle rect = new Rectangle(30, 30);
+		rect.setFill(Color.RED);
+
+		enemy.setGraphics(rect);
+		enemy.setVisible(true);
+		enemy.setCollidable(true);
+		enemy.setProperty(Property.DATA, new Enemy(consApp.assets.getText("enemies/enemy_FireElemental.txt")));
+		enemy.setProperty(Property.SUB_TYPE, Type.BOSS);
+		enemy.setProperty("physics", consApp.physics);
+		enemy.setProperty("shover", true);
+		enemy.setProperty("facingRight", false);
+		enemy.setPosition(spawnPoint.getX(), spawnPoint.getY());
+		Point2D gPoint = spawnPoint.add(0, enemy.getHeight() + 5);
+		enemy.addControl(new PhysicsControl(consApp.physics));
+		enemy.addControl(new ShangoControl(consApp, consApp.player));
+		enemy.addFXGLEventHandler(Event.DEATH, this::onEnemyDeath);
+		enemy.addFXGLEventHandler(Event.ENEMY_FIRED, event -> {
+			if((boolean)enemy.getProperty("jumping")){
+				consApp.getTimerManager().runOnceAfter(() -> {
+					if(enemy != null && enemy.getControl(ShangoControl.class) != null){
+						if((boolean)enemy.getProperty("facingRight")){
+							consApp.consController.aimedLightningBolt(enemy, new Point2D(enemy.getPosition().getX() - Config.BLOCK_SIZE*1.5, gPoint.getY()));	
+						}
+						else{
+							consApp.consController.aimedLightningBolt(enemy, new Point2D(enemy.getPosition().getX() + Config.BLOCK_SIZE*1.5, gPoint.getY()));	
+						}
+						enemy.getControl(ShangoControl.class).setAttackComplete(true, false);
+					}			
+				}, Config.SHANGO_JATTACK_DELAY);
+			}
+			else{
+				if(consApp.getRandom().nextBoolean()){
+					if((boolean)enemy.getProperty("facingRight")){
+						consApp.getTimerManager().runOnceAfter(() -> {
+							consApp.consController.aimedLightningBolt(enemy, new Point2D(enemy.getPosition().getX() + Config.BLOCK_SIZE*1.5, gPoint.getY()));	
+						}, Config.SHANGO_MATTACK_DELAY);
+						consApp.getTimerManager().runOnceAfter(() -> {
+							consApp.consController.aimedLightningBolt(enemy, new Point2D(enemy.getPosition().getX() + Config.BLOCK_SIZE*1.5*2, gPoint.getY()));
+						}, Config.SHANGO_MATTACK_DELAY.multiply(2));
+						consApp.getTimerManager().runOnceAfter(() -> {
+							consApp.consController.aimedLightningBolt(enemy, new Point2D(enemy.getPosition().getX() + Config.BLOCK_SIZE*1.5*3, gPoint.getY()));
+						}, Config.SHANGO_MATTACK_DELAY.multiply(3));
+					}
+					else{
+						consApp.getTimerManager().runOnceAfter(() -> {
+							consApp.consController.aimedLightningBolt(enemy, new Point2D(enemy.getPosition().getX() - Config.BLOCK_SIZE*1.5, gPoint.getY()));	
+						}, Config.SHANGO_MATTACK_DELAY);
+						consApp.getTimerManager().runOnceAfter(() -> {
+							consApp.consController.aimedLightningBolt(enemy, new Point2D(enemy.getPosition().getX() - Config.BLOCK_SIZE*1.5*2, gPoint.getY()));
+						}, Config.SHANGO_MATTACK_DELAY.multiply(2));
+						consApp.getTimerManager().runOnceAfter(() -> {
+							consApp.consController.aimedLightningBolt(enemy, new Point2D(enemy.getPosition().getX() - Config.BLOCK_SIZE*1.5*3, gPoint.getY()));
+						}, Config.SHANGO_MATTACK_DELAY.multiply(3));
+					}
+					consApp.getTimerManager().runOnceAfter(() -> {
+						if(enemy != null && enemy.getControl(ShangoControl.class) != null){
+							enemy.getControl(ShangoControl.class).setAttackComplete(true, true);
+						}				
+					}, Config.ENEMY_SCORPION_DECAY);
+					
+				}
+				else{
+					Point2D pPos = new Point2D(consApp.player.getPosition().getX(), gPoint.getY());
+					consApp.getTimerManager().runOnceAfter(() -> {
+						consApp.consController.aimedLightningBolt(enemy, pPos);
+					}, Config.SHANGO_MATTACK_DELAY.multiply(3));
+					consApp.getTimerManager().runOnceAfter(() -> {
+						if(enemy != null && enemy.getControl(ShangoControl.class) != null){
+							enemy.getControl(ShangoControl.class).setAttackComplete(true, true);
+						}			
+					}, Config.ENEMY_SCORPION_DECAY);
+				}			
 			}
 			
 			consApp.getTimerManager().runOnceAfter(() -> {
