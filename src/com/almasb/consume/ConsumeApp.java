@@ -506,6 +506,12 @@ public class ConsumeApp extends GameApplication {
 				getSceneManager().addEntities(eSpawner.spawnShangoBoss(spawnPoint.add(1250, 0)));
 			}
 		}, KeyCode.F2);
+		getInputManager().addAction(new UserAction("Spawn Kibo Boss") {
+			@Override
+			protected void onActionBegin() {
+				getSceneManager().addEntities(eSpawner.spawnKiboBoss(spawnPoint.add(1250, 0)));
+			}
+		}, KeyCode.F3);
 		getInputManager().addAction(new UserAction("Play Background Music") {
 			@Override
 			protected void onActionBegin() {

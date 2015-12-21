@@ -175,7 +175,7 @@ public class LevelParser {
 	}
 	
 	private Texture getBackground(int levelNumber) {
-		// TODO Auto-generated method stub
+
 		if(!Config.RELEASE){
 			return consApp.assets.getTexture("forest1.jpg");
 		}

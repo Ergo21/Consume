@@ -14,6 +14,7 @@ import com.almasb.consume.Types.Element;
 import com.almasb.consume.Types.Platform;
 import com.almasb.consume.Types.Property;
 import com.almasb.consume.Types.Type;
+import com.almasb.consume.ai.AimedFireballControl;
 import com.almasb.consume.ai.AimedProjectileControl;
 import com.almasb.consume.ai.BulletProjectileControl;
 import com.almasb.consume.ai.FireballProjectileControl;
@@ -518,6 +519,32 @@ public class ConsumeController {
 		e.setGraphics(new Rectangle(10, 1));
 		e.addControl(new PhysicsControl(consApp.physics));
 		e.addControl(new AimedProjectileControl(source, target));
+		e.addFXGLEventHandler(Event.DEATH, event -> {
+			consApp.getSceneManager().removeEntity(event.getTarget());
+		});
+
+		e.setProperty(Property.ENABLE_GRAVITY, false);
+
+		consApp.getSceneManager().addEntities(e);
+	}
+	
+	public void aimedFireball(Entity source, Entity target) {
+		Enemy sourceData = source.getProperty(Property.DATA);
+		Type t = Type.ENEMY_PROJECTILE;
+		if (source == consApp.player) {
+			t = Type.PLAYER_PROJECTILE;
+		}
+
+		Entity e = new Entity(t);
+		e.setProperty(Property.SUB_TYPE, sourceData.getElement());
+		e.setPosition(source.getPosition().add(0, source.getHeight() / 2));
+		e.setCollidable(true);
+		e.setGraphics(new Rectangle(10, 1));
+		e.addControl(new PhysicsControl(consApp.physics));
+		e.addControl(new AimedFireballControl(source, target));
+		e.addFXGLEventHandler(Event.COLLIDED_PLATFORM, event -> {
+			consApp.getSceneManager().removeEntity(e);
+		});
 		e.addFXGLEventHandler(Event.DEATH, event -> {
 			consApp.getSceneManager().removeEntity(event.getTarget());
 		});

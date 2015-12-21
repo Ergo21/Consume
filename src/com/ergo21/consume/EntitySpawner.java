@@ -26,6 +26,7 @@ import com.almasb.consume.ai.ConsumeControl;
 import com.almasb.consume.ai.DiveBombControl;
 import com.almasb.consume.ai.DiveReturnControl;
 import com.almasb.consume.ai.DogControl;
+import com.almasb.consume.ai.KiboControl;
 import com.almasb.consume.ai.KnifeControl;
 import com.almasb.consume.ai.MagicianControl;
 import com.almasb.consume.ai.MummyControl;
@@ -757,16 +758,74 @@ public class EntitySpawner {
 			consApp.getTimerManager().runOnceAfter(() -> {
 				//TODO: Change enemy animation
 			}, Config.CONSUME_DECAY);
+		});
+
+		return enemy;
+	}
+	
+	public Entity spawnKiboBoss(Point2D spawnPoint) {
+		Entity enemy = new Entity(Type.ENEMY);
+		Rectangle rect = new Rectangle(30, 30);
+		rect.setFill(Color.RED);
+
+		enemy.setGraphics(rect);
+		enemy.setVisible(true);
+		enemy.setCollidable(true);
+		enemy.setProperty(Property.DATA, new Enemy(consApp.assets.getText("enemies/enemy_FireElemental.txt")));
+		enemy.setProperty(Property.SUB_TYPE, Type.BOSS);
+		enemy.setProperty("physics", consApp.physics);
+		enemy.setProperty("shover", true);
+		enemy.setProperty("facingRight", false);
+		enemy.setPosition(spawnPoint.getX(), spawnPoint.getY());
+		enemy.addControl(new PhysicsControl(consApp.physics));
+		enemy.addControl(new KiboControl(consApp, consApp.player));
+		enemy.addFXGLEventHandler(Event.DEATH, this::onEnemyDeath);
+		enemy.addFXGLEventHandler(Event.ENEMY_FIRED, event -> {
+			if(enemy != null && enemy.getControl(KiboControl.class) != null){
+			
+				switch(enemy.getControl(KiboControl.class).getAttackType()){
+					case 0:{
+						consApp.consController.aimedFireball(enemy, consApp.player);
+						consApp.getTimerManager().runOnceAfter(() -> {
+							if(enemy != null && enemy.getControl(KiboControl.class) != null){			
+								enemy.getControl(KiboControl.class).setAttackComplete(true, true);
+							}			
+						}, Config.ENEMY_SCORPION_DELAY);				
+						break;
+					}
+					case 1:{
+						consApp.consController.enemyShootProjectile(Element.FIRE, enemy);
+						if(enemy != null & enemy.getControl(PhysicsControl.class) != null){
+							enemy.getControl(PhysicsControl.class).jump();
+						}
+						consApp.getTimerManager().runOnceAfter(() -> {
+							if(enemy != null && enemy.getControl(KiboControl.class) != null){			
+								consApp.consController.enemyShootProjectile(Element.FIRE, enemy);
+							}			
+						}, Config.ENEMY_SCORPION_DELAY);	
+						consApp.getTimerManager().runOnceAfter(() -> {
+							if(enemy != null && enemy.getControl(KiboControl.class) != null){	
+								consApp.consController.enemyShootProjectile(Element.FIRE, enemy);
+								enemy.getControl(KiboControl.class).setAttackComplete(true, true);
+							}			
+						}, Config.ENEMY_SCORPION_DELAY.multiply(2.2));	
+						break;
+					}
+					case 2:{
+						consApp.consController.enemyShootProjectile(Element.FIRE, enemy);
+						consApp.getTimerManager().runOnceAfter(() -> {
+							if(enemy != null && enemy.getControl(KiboControl.class) != null){	
+								enemy.getControl(KiboControl.class).setAttackComplete(true, false);
+							}			
+						}, Config.ENEMY_SCORPION_DELAY.multiply(3));
+						break;
+					}
+				}
+			}
+			
 			consApp.getTimerManager().runOnceAfter(() -> {
-				if(enemy != null && enemy.getControl(SandBossControl.class) != null){
-					consApp.consController.enemyShootProjectile(Element.EARTH, enemy);
-				}			
-			}, Config.ENEMY_SCORPION_DELAY);
-			consApp.getTimerManager().runOnceAfter(() -> {
-				if(enemy != null && enemy.getControl(SandBossControl.class) != null){
-					enemy.getControl(SandBossControl.class).setAttackComplete(true);
-				}			
-			}, Config.ENEMY_SCORPION_DECAY);
+				//TODO: Change enemy animation
+			}, Config.CONSUME_DECAY);
 		});
 
 		return enemy;
