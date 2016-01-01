@@ -90,4 +90,7 @@ public final class Config {
 	public static final Duration SHANGO_MATTACK_DELAY = Duration.seconds(0.3);
 	
 	public static final Duration GENTLE_CATTACK_DELAY = Duration.seconds(1);
+	
+	public static final Duration SHAKA_CATTACK_DELAY = Duration.seconds(0.75);
+	public static final Duration SHAKA_SPEAR_DECAY = Duration.seconds(1);
 }

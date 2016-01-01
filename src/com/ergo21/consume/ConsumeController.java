@@ -19,9 +19,11 @@ import com.almasb.consume.ai.AimedProjectileControl;
 import com.almasb.consume.ai.BulletProjectileControl;
 import com.almasb.consume.ai.FireballProjectileControl;
 import com.almasb.consume.ai.IngestControl;
+import com.almasb.consume.ai.KnifeControl;
 import com.almasb.consume.ai.LightningControl;
 import com.almasb.consume.ai.PhysicsControl;
 import com.almasb.consume.ai.SandProjectileControl;
+import com.almasb.consume.ai.ShakaControl;
 import com.almasb.consume.ai.SpearProjectileControl;
 import com.almasb.consume.ai.SpearThrowerControl;
 import com.almasb.consume.ai.StabControl;
@@ -262,7 +264,7 @@ public class ConsumeController {
 			e.setCollidable(true);
 			e.setGraphics(new Rectangle(0, 0, consApp.player.getWidth() / 2, consApp.player.getHeight()));
 			e.setProperty(Property.ENABLE_GRAVITY, false);
-			e.addControl(new IngestControl(consApp.player));
+			e.addControl(new KnifeControl(consApp.player));
 			break;
 		}
 		case FIRE: {
@@ -402,7 +404,8 @@ public class ConsumeController {
 
 		switch (element) {
 		case NEUTRAL: {
-			if(source.getControl(SpearThrowerControl.class).isShortThrow()){
+			if((source.getControl(SpearThrowerControl.class) != null && source.getControl(SpearThrowerControl.class).isShortThrow()) ||
+					(source.getControl(ShakaControl.class) != null && source.getControl(ShakaControl.class).isShortThrow())){
 				e.addControl(new SpearProjectileControl(source, Speed.PROJECTILE, -Speed.PROJECTILE/2));
 			}
 			else {
@@ -416,7 +419,7 @@ public class ConsumeController {
 			e.setCollidable(true);
 			e.setGraphics(new Rectangle(0, 0, source.getWidth() / 2, source.getHeight()));
 			e.setProperty(Property.ENABLE_GRAVITY, false);
-			e.addControl(new IngestControl(source));
+			e.addControl(new KnifeControl(source));
 			break;
 		}
 		case FIRE: {

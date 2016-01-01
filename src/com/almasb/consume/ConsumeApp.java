@@ -518,6 +518,12 @@ public class ConsumeApp extends GameApplication {
 				getSceneManager().addEntities(eSpawner.spawnGentlemanBoss(spawnPoint.add(1250, 0)));
 			}
 		}, KeyCode.F4);
+		getInputManager().addAction(new UserAction("Spawn Shaka Boss") {
+			@Override
+			protected void onActionBegin() {
+				getSceneManager().addEntities(eSpawner.spawnShakaBoss(spawnPoint.add(1250, 0)));
+			}
+		}, KeyCode.F5);
 		getInputManager().addAction(new UserAction("Play Background Music") {
 			@Override
 			protected void onActionBegin() {

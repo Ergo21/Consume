@@ -36,6 +36,7 @@ import com.almasb.consume.ai.PhysicsControl;
 import com.almasb.consume.ai.RifleControl;
 import com.almasb.consume.ai.SandBossControl;
 import com.almasb.consume.ai.ScorpionControl;
+import com.almasb.consume.ai.ShakaControl;
 import com.almasb.consume.ai.ShangoControl;
 import com.almasb.consume.ai.ShooterControl;
 import com.almasb.consume.ai.SimpleJumpControl;
@@ -900,6 +901,75 @@ public class EntitySpawner {
 				if(enemy != null && enemy.getControl(GentlemanControl.class) != null){
 					enemy.getControl(GentlemanControl.class).setAttackComplete(true, true);
 				}				
+			}
+			
+			consApp.getTimerManager().runOnceAfter(() -> {
+				//TODO: Change enemy animation
+			}, Config.CONSUME_DECAY);
+		});
+
+		return enemy;
+	}
+	
+
+	public Entity spawnShakaBoss(Point2D spawnPoint) {
+		Entity enemy = new Entity(Type.ENEMY);
+		Rectangle rect = new Rectangle(30, 30);
+		rect.setFill(Color.RED);
+
+		enemy.setGraphics(rect);
+		enemy.setVisible(true);
+		enemy.setCollidable(true);
+		enemy.setProperty(Property.DATA, new Enemy(consApp.assets.getText("enemies/enemy_FireElemental.txt")));
+		enemy.setProperty(Property.SUB_TYPE, Type.BOSS);
+		enemy.setProperty("physics", consApp.physics);
+		enemy.setProperty("shover", true);
+		enemy.setProperty("facingRight", false);
+		enemy.setPosition(spawnPoint.getX(), spawnPoint.getY());
+		enemy.addControl(new PhysicsControl(consApp.physics));
+		enemy.addControl(new ShakaControl(consApp, consApp.player));
+		enemy.addFXGLEventHandler(Event.DEATH, this::onEnemyDeath);
+		enemy.addFXGLEventHandler(Event.ENEMY_FIRED, event -> {
+			if((enemy != null && enemy.getControl(PhysicsControl.class) != null && enemy.getControl(PhysicsControl.class).getVelocity().getX() != 0)){
+				consApp.consController.enemyShootProjectile(Element.NEUTRAL2, enemy);
+				consApp.getTimerManager().runOnceAfter(() -> {
+					if(enemy != null && enemy.getControl(ShakaControl.class) != null){			
+						consApp.consController.enemyShootProjectile(Element.NEUTRAL2, enemy);
+					}			
+				}, Config.SHAKA_CATTACK_DELAY);	
+				consApp.getTimerManager().runOnceAfter(() -> {
+					if(enemy != null && enemy.getControl(ShakaControl.class) != null){	
+						consApp.consController.enemyShootProjectile(Element.NEUTRAL2, enemy);
+					}			
+				}, Config.SHAKA_CATTACK_DELAY.multiply(2));	
+				consApp.getTimerManager().runOnceAfter(() -> {
+					if(enemy != null && enemy.getControl(ShakaControl.class) != null){	
+						consApp.consController.enemyShootProjectile(Element.NEUTRAL2, enemy);
+					}			
+				}, Config.SHAKA_CATTACK_DELAY.multiply(3));	
+				consApp.getTimerManager().runOnceAfter(() -> {
+					if(enemy != null && enemy.getControl(ShakaControl.class) != null){	
+						consApp.consController.enemyShootProjectile(Element.NEUTRAL2, enemy);
+					}			
+				}, Config.SHAKA_CATTACK_DELAY.multiply(4));	
+				consApp.getTimerManager().runOnceAfter(() -> {
+					if(enemy != null && enemy.getControl(ShakaControl.class) != null){	
+						consApp.consController.enemyShootProjectile(Element.NEUTRAL2, enemy);
+					}			
+				}, Config.SHAKA_CATTACK_DELAY.multiply(5));
+				consApp.getTimerManager().runOnceAfter(() -> {
+					if(enemy != null && enemy.getControl(ShakaControl.class) != null){	
+						consApp.consController.enemyShootProjectile(Element.NEUTRAL2, enemy);
+					}			
+				}, Config.SHAKA_CATTACK_DELAY.multiply(6));	
+			}
+			else if((enemy != null && enemy.getControl(PhysicsControl.class) != null && enemy.getControl(PhysicsControl.class).getVelocity().getX() == 0)){
+				consApp.consController.enemyShootProjectile(Element.NEUTRAL, enemy);
+				consApp.getTimerManager().runOnceAfter(() -> {
+					if(enemy != null && enemy.getControl(ShakaControl.class) != null){			
+						enemy.getControl(ShakaControl.class).setAttackComplete(true, true);
+					}			
+				}, Config.SHAKA_SPEAR_DECAY);	
 			}
 			
 			consApp.getTimerManager().runOnceAfter(() -> {
