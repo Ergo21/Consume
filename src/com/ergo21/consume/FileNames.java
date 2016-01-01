@@ -1,7 +1,7 @@
 package com.ergo21.consume;
 
 public final class FileNames{
-	public static final String SETTINGS = "settings.set";
+	public static final String SETTINGS 		= "settings.set";
 	
 	public static final String THEME_MUSIC		= "01 Consume Theme.mp3";
 	public static final String AFRICA 			= "backgrounds/afrika.jpg";

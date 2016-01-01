@@ -88,4 +88,6 @@ public final class Config {
 
 	public static final Duration SHANGO_JATTACK_DELAY = Duration.seconds(0.3);
 	public static final Duration SHANGO_MATTACK_DELAY = Duration.seconds(0.3);
+	
+	public static final Duration GENTLE_CATTACK_DELAY = Duration.seconds(1);
 }
