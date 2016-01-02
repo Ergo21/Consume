@@ -26,6 +26,7 @@ import com.almasb.consume.ai.ConsumeControl;
 import com.almasb.consume.ai.DiveBombControl;
 import com.almasb.consume.ai.DiveReturnControl;
 import com.almasb.consume.ai.DogControl;
+import com.almasb.consume.ai.EshuControl;
 import com.almasb.consume.ai.GentlemanControl;
 import com.almasb.consume.ai.KiboControl;
 import com.almasb.consume.ai.KnifeControl;
@@ -970,6 +971,44 @@ public class EntitySpawner {
 						enemy.getControl(ShakaControl.class).setAttackComplete(true, true);
 					}			
 				}, Config.SHAKA_SPEAR_DECAY);	
+			}
+			
+			consApp.getTimerManager().runOnceAfter(() -> {
+				//TODO: Change enemy animation
+			}, Config.CONSUME_DECAY);
+		});
+
+		return enemy;
+	}
+	
+	public Entity spawnEshuBoss(Point2D spawnPoint) {
+		Entity enemy = new Entity(Type.ENEMY);
+		Rectangle rect = new Rectangle(30, 30);
+		rect.setFill(Color.RED);
+
+		enemy.setGraphics(rect);
+		enemy.setVisible(true);
+		enemy.setCollidable(true);
+		enemy.setProperty(Property.DATA, new Enemy(consApp.assets.getText("enemies/enemy_FireElemental.txt")));
+		enemy.setProperty(Property.SUB_TYPE, Type.BOSS);
+		enemy.setProperty("physics", consApp.physics);
+		enemy.setProperty("shover", true);
+		enemy.setProperty("facingRight", false);
+		enemy.setPosition(spawnPoint.getX(), spawnPoint.getY());
+		enemy.addControl(new PhysicsControl(consApp.physics));
+		enemy.addControl(new EshuControl(consApp, consApp.player));
+		enemy.addFXGLEventHandler(Event.DEATH, this::onEnemyDeath);
+		enemy.addFXGLEventHandler(Event.ENEMY_FIRED, event -> {
+			if((enemy != null && (boolean)enemy.getProperty("jumping"))){
+				consApp.consController.enemyStabDown(enemy);
+			}
+			else if((enemy != null && enemy.getControl(PhysicsControl.class) != null && enemy.getControl(PhysicsControl.class).getVelocity().getX() == 0)){
+				consApp.consController.enemyShootProjectile(Element.NEUTRAL, enemy);
+				consApp.getTimerManager().runOnceAfter(() -> {
+					if(enemy != null && enemy.getControl(EshuControl.class) != null){			
+						enemy.getControl(EshuControl.class).setAttackComplete(true, true);
+					}			
+				}, Config.ESHU_SPEAR_DECAY);	
 			}
 			
 			consApp.getTimerManager().runOnceAfter(() -> {

@@ -93,4 +93,9 @@ public final class Config {
 	
 	public static final Duration SHAKA_CATTACK_DELAY = Duration.seconds(0.75);
 	public static final Duration SHAKA_SPEAR_DECAY = Duration.seconds(1);
+	
+	public static final int ESHU_MOVE = Speed.PLAYER_MOVE+2;
+	public static final Duration ESHU_SPEAR_DECAY = Duration.seconds(0.7);
+
+	public static final Duration STAB_DOWN_DECAY = Duration.seconds(0.5);
 }

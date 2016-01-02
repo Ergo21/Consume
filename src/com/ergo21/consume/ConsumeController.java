@@ -17,6 +17,7 @@ import com.almasb.consume.Types.Type;
 import com.almasb.consume.ai.AimedFireballControl;
 import com.almasb.consume.ai.AimedProjectileControl;
 import com.almasb.consume.ai.BulletProjectileControl;
+import com.almasb.consume.ai.EshuControl;
 import com.almasb.consume.ai.FireballProjectileControl;
 import com.almasb.consume.ai.IngestControl;
 import com.almasb.consume.ai.KnifeControl;
@@ -27,6 +28,7 @@ import com.almasb.consume.ai.ShakaControl;
 import com.almasb.consume.ai.SpearProjectileControl;
 import com.almasb.consume.ai.SpearThrowerControl;
 import com.almasb.consume.ai.StabControl;
+import com.almasb.consume.ai.StabDownControl;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.FXGLEvent;
 import com.almasb.fxgl.event.UserAction;
@@ -405,7 +407,8 @@ public class ConsumeController {
 		switch (element) {
 		case NEUTRAL: {
 			if((source.getControl(SpearThrowerControl.class) != null && source.getControl(SpearThrowerControl.class).isShortThrow()) ||
-					(source.getControl(ShakaControl.class) != null && source.getControl(ShakaControl.class).isShortThrow())){
+					(source.getControl(ShakaControl.class) != null && source.getControl(ShakaControl.class).isShortThrow()) ||
+					(source.getControl(EshuControl.class) != null && source.getControl(EshuControl.class).isShortThrow())){
 				e.addControl(new SpearProjectileControl(source, Speed.PROJECTILE, -Speed.PROJECTILE/2));
 			}
 			else {
@@ -772,6 +775,33 @@ public class ConsumeController {
 
 		consApp.getSceneManager().addEntities(e);
 	}
+	
+	public void enemyStabDown(Entity source) {
+		Entity e = new Entity(Type.ENEMY_PROJECTILE);
+		if(source.<Enemy>getProperty(Property.DATA) != null){
+			e.setProperty(Property.SUB_TYPE, source.<Enemy>getProperty(Property.DATA).getElement());
+		}
+		else{
+			e.setProperty(Property.SUB_TYPE, Element.NEUTRAL);
+		}
+		
+		e.setPosition(source.getPosition().add(source.getWidth() - e.getWidth()/2, source.getHeight()));
+		e.setCollidable(true);
+		e.addControl(new PhysicsControl(consApp.physics));
+		e.addFXGLEventHandler(Event.COLLIDED_PLATFORM, event -> {
+		});
+		e.addFXGLEventHandler(Event.DEATH, event -> {
+			consApp.getSceneManager().removeEntity(event.getTarget());
+		});
+
+		
+		e.setVisible(true);
+		e.setGraphics(new Rectangle(0, 0, 15, 30));
+		e.setProperty(Property.ENABLE_GRAVITY, false);
+		e.addControl(new StabDownControl(source));
+
+		consApp.getSceneManager().addEntities(e);
+	}
 
 	public void changePower(int posi) {
 		int ind = consApp.playerData.getPowers().indexOf(consApp.playerData.getCurrentPower());
@@ -857,4 +887,5 @@ public class ConsumeController {
 
 		return results;
 	}
+
 }
