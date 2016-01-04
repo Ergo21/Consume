@@ -100,12 +100,12 @@ public class GameScene extends Group {
 
 	public void playScene() {
 		this.setVisible(true);
-		app.player.setProperty("stunned", true);
+		app.player.setProperty("scenePlaying", true);
 	}
 
 	public void endScene() {
 		this.setVisible(false);
-		app.player.setProperty("stunned", false);
+		app.player.setProperty("scenePlaying", false);
 	}
 
 	private void setValues(SceneLine sceneLine) {

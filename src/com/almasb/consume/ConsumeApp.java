@@ -1,6 +1,7 @@
 package com.almasb.consume;
 
 import java.io.Serializable;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
 import java.util.stream.Collectors;
@@ -15,6 +16,7 @@ import com.almasb.consume.Types.Powerup;
 import com.almasb.consume.Types.Property;
 import com.almasb.consume.Types.Type;
 import com.almasb.consume.ai.AnimatedPlayerControl;
+import com.almasb.consume.ai.DemoAnimatedPlayerControl;
 import com.almasb.consume.ai.PhysicsControl;
 import com.almasb.consume.collision.PlayerBlockHandler;
 import com.almasb.consume.collision.PlayerEnemyHandler;
@@ -142,7 +144,7 @@ public class ConsumeApp extends GameApplication {
 		playerData.getPowers().add(Element.LIGHTNING);
 		playerData.getPowers().add(Element.METAL);
 		playerData.getPowers().add(Element.DEATH);
-		//playerData.getPowers().add(Element.CONSUME);
+		playerData.getPowers().add(Element.CONSUME);
 		eSpawner = new EntitySpawner(this);
 
 		initLevels();
@@ -251,12 +253,6 @@ public class ConsumeApp extends GameApplication {
 
 	@Override
 	protected void onUpdate() {
-		if (player.<Boolean>getProperty("climb") != null && !player.<Boolean> getProperty("climb")) {
-			// here player is no longer touching the ladder
-			player.setProperty("climbing", false);
-			player.setProperty(Property.ENABLE_GRAVITY, true);
-		}
-
 		if (getNow() - regenTime >= TimerManager.toNanos(Config.REGEN_TIME_INTERVAL)) {
 			playerData.regenMana();
 			regenTime = getNow();
@@ -292,8 +288,6 @@ public class ConsumeApp extends GameApplication {
 			if (e.getProperty(Property.SUB_TYPE) == Block.BARRIER)
 				e.setProperty("state", "idle");
 		}
-
-		player.setProperty("climb", false);
 
 		debug.setText("Debug text goes here");
 	}
@@ -674,19 +668,39 @@ public class ConsumeApp extends GameApplication {
 
 	private void initPlayer(Point2D point) {
 
-		player = new Entity(Type.PLAYER).setPosition(point.getX(), point.getY()).setCollidable(true)
+		player = new Entity(Type.PLAYER);
+		
+		player.setPosition(point.getX(), point.getY()).setCollidable(true)
 				.setProperty(Property.DATA, playerData).setProperty("climb", false).setProperty("climbing", false)
 				.setProperty("facingRight", true).setProperty("stunned", false).setProperty("eating", false).setProperty("eaten",  false)
+				.setProperty("scenePlaying", false).setProperty("attacking", false)
 				.addControl(new PhysicsControl(physics));
+		
+		Rectangle rG = new Rectangle(0, 0, 20, 30);
+		rG.setFill(Color.RED);
+		player.setGraphics(rG);
+		player.setVisible(true);
 
 		player.addFXGLEventHandler(Event.PLAYER_DEATH, this::playerDied);
 
-		Texture t = getAssetManager().loadTexture("MC Unarmed.png");
-		player.addControl(new AnimatedPlayerControl(t));
-		t.setViewport(new Rectangle2D(150, 0, 30, 30));
-		player.setGraphics(t);
-
 		getSceneManager().bindViewportOrigin(player, 320, 180, true);
+		
+		
+		Entity pPicBox = new Entity(Type.PLAYER_PIC_BOX);
+		pPicBox.setCollidable(false);
+		if(Config.RELEASE){
+			pPicBox.addControl(new AnimatedPlayerControl(player, playerData, getPlayerImages(), getAssetManager().
+					loadTexture("spritesheets/player/Shared SS.png")));
+		}
+		else{
+			Texture t = getAssetManager().loadTexture("MC Unarmed.png");
+			pPicBox.addControl(new DemoAnimatedPlayerControl(t));
+			t.setViewport(new Rectangle2D(150, 0, 30, 30));
+			pPicBox.setGraphics(t);
+		}
+		
+		pPicBox.translateXProperty().bind(player.translateXProperty().add(pPicBox.getTranslateX()));
+		pPicBox.translateYProperty().bind(player.translateYProperty().add(pPicBox.getTranslateY()));
 
 		powerStatus = Entity.noType();
 		powerStatus.translateXProperty().bind(player.translateXProperty());
@@ -697,7 +711,17 @@ public class ConsumeApp extends GameApplication {
 
 		getSceneManager().addEntities(powerStatus);
 
-		getSceneManager().addEntities(player);
+		getSceneManager().addEntities(player, pPicBox);
+	}
+
+	private HashMap<Element, Texture> getPlayerImages() {
+		HashMap<Element, Texture> pTex = new HashMap<Element, Texture>();
+		for(Element el : Types.Element.values()){
+			pTex.put(el, getAssetManager().
+					loadTexture("spritesheets/player/" + el.toString() + " SS.png"));
+		}
+		
+		return pTex;
 	}
 
 	private void playerDied(FXGLEvent e){

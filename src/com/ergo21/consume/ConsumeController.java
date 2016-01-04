@@ -111,7 +111,8 @@ public class ConsumeController {
 			@Override
 			protected void onAction() {
 				if (consApp.player != null && consApp.player.getProperty("stunned") != null && !(boolean) consApp.player.getProperty("stunned") &&
-												consApp.player.getProperty("eating") != null && !(boolean) consApp.player.getProperty("eating")) {
+												consApp.player.getProperty("eating") != null && !(boolean) consApp.player.getProperty("eating") &&
+												consApp.player.getProperty("scenePlaying") != null && !(boolean) consApp.player.getProperty("scenePlaying")) {
 					consApp.player.getControl(PhysicsControl.class).moveX(-Speed.PLAYER_MOVE);
 					consApp.player.setProperty("facingRight", false);
 				}
@@ -120,7 +121,8 @@ public class ConsumeController {
 			@Override
 			protected void onActionEnd() {
 				if (consApp.player != null && consApp.player.getProperty("stunned") != null && !(boolean) consApp.player.getProperty("stunned") &&
-						consApp.player.getProperty("eating") != null && !(boolean) consApp.player.getProperty("eating")) {
+						consApp.player.getProperty("eating") != null && !(boolean) consApp.player.getProperty("eating") &&
+						consApp.player.getProperty("scenePlaying") != null && !(boolean) consApp.player.getProperty("scenePlaying")) {
 					consApp.player.getControl(PhysicsControl.class).moveX(0);
 				}
 			}
@@ -129,7 +131,8 @@ public class ConsumeController {
 			@Override
 			protected void onAction() {
 				if (consApp.player != null && consApp.player.getProperty("stunned") != null &&  !(boolean) consApp.player.getProperty("stunned") &&
-						consApp.player.getProperty("eating") != null && !(boolean) consApp.player.getProperty("eating")) {
+						consApp.player.getProperty("eating") != null && !(boolean) consApp.player.getProperty("eating") &&
+						consApp.player.getProperty("scenePlaying") != null && !(boolean) consApp.player.getProperty("scenePlaying")) {
 					consApp.player.getControl(PhysicsControl.class).moveX(Speed.PLAYER_MOVE);
 					consApp.player.setProperty("facingRight", true);
 				}
@@ -138,7 +141,8 @@ public class ConsumeController {
 			@Override
 			protected void onActionEnd() {
 				if (consApp.player != null && consApp.player.getProperty("stunned") != null && !(boolean) consApp.player.getProperty("stunned") &&
-						consApp.player.getProperty("eating") != null && !(boolean) consApp.player.getProperty("eating")) {
+						consApp.player.getProperty("eating") != null && !(boolean) consApp.player.getProperty("eating") && 
+								consApp.player.getProperty("scenePlaying") != null && !(boolean) consApp.player.getProperty("scenePlaying")){
 					consApp.player.getControl(PhysicsControl.class).moveX(0);
 				}
 			}
@@ -147,9 +151,24 @@ public class ConsumeController {
 			@Override
 			protected void onAction() {
 				if (consApp.player != null && consApp.player.getProperty("stunned") != null && !(boolean) consApp.player.getProperty("stunned") &&
-						consApp.player.getProperty("eating") != null && !(boolean) consApp.player.getProperty("eating")) {
-					if (consApp.player.<Boolean> getProperty("climbing"))
+						consApp.player.getProperty("eating") != null && !(boolean) consApp.player.getProperty("eating") && 
+								consApp.player.getProperty("scenePlaying") != null && !(boolean) consApp.player.getProperty("scenePlaying")){
+					if (consApp.player.<Boolean> getProperty("climb")){
 						consApp.player.getControl(PhysicsControl.class).climb(-5);
+						consApp.player.setProperty("climbing", true);
+					}
+				}
+			}
+			
+			@Override
+			protected void onActionEnd() {
+				if (consApp.player != null && consApp.player.getProperty("stunned") != null && !(boolean) consApp.player.getProperty("stunned") &&
+						consApp.player.getProperty("eating") != null && !(boolean) consApp.player.getProperty("eating") && 
+								consApp.player.getProperty("scenePlaying") != null && !(boolean) consApp.player.getProperty("scenePlaying")){
+					if (consApp.player.<Boolean> getProperty("climb")){
+						consApp.player.getControl(PhysicsControl.class).climb(0);
+						consApp.player.setProperty("climbing", false);
+					}
 				}
 			}
 		});
@@ -157,10 +176,8 @@ public class ConsumeController {
 			@Override
 			protected void onAction() {
 				if (consApp.player != null && consApp.player.getProperty("stunned") != null && !(boolean) consApp.player.getProperty("stunned") &&
-						consApp.player.getProperty("eating") != null && !(boolean) consApp.player.getProperty("eating")) {
-					if (consApp.player.<Boolean> getProperty("climbing"))
-						consApp.player.getControl(PhysicsControl.class).climb(-5);
-					else
+						consApp.player.getProperty("eating") != null && !(boolean) consApp.player.getProperty("eating") && 
+								consApp.player.getProperty("scenePlaying") != null && !(boolean) consApp.player.getProperty("scenePlaying")){
 						consApp.player.getControl(PhysicsControl.class).jump();
 				}
 			}
@@ -169,10 +186,24 @@ public class ConsumeController {
 			@Override
 			protected void onAction() {
 				if (consApp.player != null && consApp.player.getProperty("stunned") != null && !(boolean) consApp.player.getProperty("stunned") &&
-						consApp.player.getProperty("eating") != null && !(boolean) consApp.player.getProperty("eating")) {
-					if (consApp.player.<Boolean> getProperty("climbing")) {
+						consApp.player.getProperty("eating") != null && !(boolean) consApp.player.getProperty("eating") && 
+								consApp.player.getProperty("scenePlaying") != null && !(boolean) consApp.player.getProperty("scenePlaying")) {
+					if (consApp.player.<Boolean> getProperty("climb")) {
 						consApp.player.getControl(PhysicsControl.class).climb(5);
+						consApp.player.setProperty("climbing", true);
 					}
+				}
+			}
+			
+			@Override
+			protected void onActionEnd() {
+				if (consApp.player != null && consApp.player.getProperty("stunned") != null && !(boolean) consApp.player.getProperty("stunned") &&
+						consApp.player.getProperty("eating") != null && !(boolean) consApp.player.getProperty("eating") && 
+								consApp.player.getProperty("scenePlaying") != null && !(boolean) consApp.player.getProperty("scenePlaying")){
+					if (consApp.player.<Boolean> getProperty("climb")){
+						consApp.player.getControl(PhysicsControl.class).climb(5);
+						consApp.player.setProperty("climbing", false);
+					}	
 				}
 			}
 		});
@@ -180,7 +211,8 @@ public class ConsumeController {
 			@Override
 			protected void onActionBegin() {
 				if (consApp.player != null && consApp.player.getProperty("stunned") != null && !(boolean) consApp.player.getProperty("stunned") &&
-						consApp.player.getProperty("eating") != null && !(boolean) consApp.player.getProperty("eating")) {
+						consApp.player.getProperty("eating") != null && !(boolean) consApp.player.getProperty("eating") && 
+								consApp.player.getProperty("scenePlaying") != null && !(boolean) consApp.player.getProperty("scenePlaying")) {
 					shootProjectile();
 				}
 			}
@@ -189,7 +221,8 @@ public class ConsumeController {
 			@Override
 			protected void onActionBegin() {
 				if (consApp.player != null && consApp.player.getProperty("stunned") != null && !(boolean) consApp.player.getProperty("stunned") &&
-						consApp.player.getProperty("eating") != null && !(boolean) consApp.player.getProperty("eating")) {
+						consApp.player.getProperty("eating") != null && !(boolean) consApp.player.getProperty("eating") && 
+								consApp.player.getProperty("scenePlaying") != null && !(boolean) consApp.player.getProperty("scenePlaying")) {
 					changePower(1);
 				}
 			}
@@ -198,7 +231,8 @@ public class ConsumeController {
 			@Override
 			protected void onActionBegin() {
 				if (consApp.player != null && consApp.player.getProperty("stunned") != null && !(boolean) consApp.player.getProperty("stunned") &&
-						consApp.player.getProperty("eating") != null && !(boolean) consApp.player.getProperty("eating")) {
+						consApp.player.getProperty("eating") != null && !(boolean) consApp.player.getProperty("eating") && 
+								consApp.player.getProperty("scenePlaying") != null && !(boolean) consApp.player.getProperty("scenePlaying")) {
 					changePower(-1);
 				}
 			}
@@ -228,6 +262,7 @@ public class ConsumeController {
 
 	private Entity spear;
 	private boolean fired;
+	private boolean slashed;
 
 	public void shootProjectile() {
 		Element element = consApp.playerData.getCurrentPower();
@@ -262,6 +297,13 @@ public class ConsumeController {
 			break;
 		}
 		case NEUTRAL2: {
+			if(slashed){
+				return;
+			}
+			
+			consApp.getTimerManager().runOnceAfter(() -> slashed = false, Config.CONSUME_DECAY.multiply(2));
+			slashed = true;
+			
 			e.setVisible(true);
 			e.setCollidable(true);
 			e.setGraphics(new Rectangle(0, 0, consApp.player.getWidth() / 2, consApp.player.getHeight()));
@@ -368,9 +410,20 @@ public class ConsumeController {
 			break;
 		}
 		case DEATH: {
+			if (consApp.playerData.getCurrentMana() >= Config.DEATH_COST) {
+				consApp.playerData.setCurrentMana(consApp.playerData.getCurrentMana() - Config.DEATH_COST);			
+			} else {
+				return;
+			}
 			break;
 		}
 		case CONSUME: {
+			if(slashed){
+				return;
+			}
+			
+			consApp.getTimerManager().runOnceAfter(() -> slashed = false, Config.CONSUME_DECAY.multiply(2));
+			slashed = true;
 			// e.setVisible(true);
 			e.setCollidable(true);
 			e.setGraphics(new Rectangle(0, 0, consApp.player.getWidth() / 2, consApp.player.getHeight()));
@@ -380,7 +433,12 @@ public class ConsumeController {
 			break;
 		}
 		}
-
+		
+		consApp.player.setProperty("attacking", true);
+		consApp.getTimerManager().runOnceAfter(() ->{
+			consApp.player.setProperty("attacking", false);
+		}, Duration.seconds(0.5));
+		
 		consApp.getSceneManager().addEntities(e);
 	}
 	

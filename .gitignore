@@ -10,6 +10,7 @@
 .project
 .settings/
 /src/assets/textures/backgrounds
+/src/assets/textures/spritesheets
 /bin
 /target
 /saves

@@ -70,7 +70,7 @@ public class PhysicsControl extends AbstractControl {
 	}
 
 	public void climb(int clSpd) {
-		if (entity.getProperty("climbing") != null && entity.<Boolean> getProperty("climbing")) {
+		if (entity.getProperty("climb") != null && entity.<Boolean> getProperty("climb")) {
 			physics.moveY(entity, clSpd);
 		}
 	}

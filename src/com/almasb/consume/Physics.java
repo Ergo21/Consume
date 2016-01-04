@@ -1,15 +1,14 @@
 package com.almasb.consume;
 
 import com.almasb.consume.Types.Type;
-import com.almasb.fxgl.GameApplication;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.FXGLEvent;
 
 public class Physics {
 
-	private GameApplication app;
+	private ConsumeApp app;
 
-	public Physics(GameApplication app) {
+	public Physics(ConsumeApp app) {
 		this.app = app;
 	}
 
@@ -25,7 +24,7 @@ public class Physics {
 
 		for (int i = 0; i < Math.abs(value); i++) {
 			for (Entity platform : app.getSceneManager().getEntities(Type.PLATFORM)) {
-				if (e.getBoundsInParent().intersects(platform.getBoundsInParent())) {
+				if(e.getBoundsInParent().intersects(platform.getBoundsInParent())){
 					if (movingRight) {
 						if (e.getTranslateX() + e.getWidth() == platform.getTranslateX()) {
 							e.fireFXGLEvent(new FXGLEvent(Event.COLLIDED_PLATFORM, platform));
@@ -52,7 +51,7 @@ public class Physics {
 
 		for (int i = 0; i < Math.abs(value); i++) {
 			for (Entity platform : app.getSceneManager().getEntities(Type.PLATFORM)) {
-				if (e.getBoundsInParent().intersects(platform.getBoundsInParent())) {
+				if(e.getBoundsInParent().intersects(platform.getBoundsInParent())){
 					if (movingDown) {
 						if (e.getTranslateY() + e.getHeight() == platform.getTranslateY()) {
 							e.fireFXGLEvent(new FXGLEvent(Event.COLLIDED_PLATFORM, platform));
@@ -66,7 +65,10 @@ public class Physics {
 							return;
 						}
 					}
+				
 				}
+			
+					
 			}
 			e.setTranslateY(e.getTranslateY() + (movingDown ? 1 : -1));
 			e.setProperty("jumping", true);
