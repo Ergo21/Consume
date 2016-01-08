@@ -22,7 +22,7 @@ public final class Config {
 		public static final int PROJECTILE = PLAYER_MOVE + 2;
 	}
 	
-	public static final boolean RELEASE = false;
+	public static final boolean RELEASE = true;
 
 	public static final int BLOCK_SIZE = 40;
 
@@ -68,6 +68,7 @@ public final class Config {
 
 	public static final Duration CONSUME_DECAY = Duration.seconds(0.5);
 
+	public static final int DEATH_COST = 2;
 	public static final int DEATH_DAMAGE = 3;
 
 	public static final Duration ENEMY_SPEAR_DECAY = Duration.seconds(1.5);

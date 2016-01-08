@@ -139,7 +139,7 @@ public class ConsumeApp extends GameApplication {
 	protected void initGame() {
 		playerData = new Player(assets.getText("player.txt"));
 		playerData.getPowers().add(Element.NEUTRAL2);
-		//playerData.getPowers().add(Element.FIRE);
+		playerData.getPowers().add(Element.FIRE);
 		playerData.getPowers().add(Element.EARTH);
 		playerData.getPowers().add(Element.LIGHTNING);
 		playerData.getPowers().add(Element.METAL);

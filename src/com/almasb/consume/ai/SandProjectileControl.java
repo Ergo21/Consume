@@ -8,6 +8,8 @@ import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.FXGLEvent;
 import com.almasb.fxgl.time.TimerManager;
 
+import javafx.geometry.Point2D;
+
 public class SandProjectileControl extends AbstractControl {
 
 	private boolean facingRight;
@@ -16,7 +18,6 @@ public class SandProjectileControl extends AbstractControl {
 	private long created;
 
 	public SandProjectileControl(Entity player, boolean diag) {
-		this.facingRight = player.getProperty("facingRight");
 		this.player = player;
 		diagonal = diag;
 		created = 0;
@@ -34,6 +35,17 @@ public class SandProjectileControl extends AbstractControl {
 			created = now;
 		}
 		if (now - created > TimerManager.toNanos(Config.SAND_DELAY)) {
+			if(!entity.isVisible()){
+				this.facingRight = player.getProperty("facingRight");
+				Point2D p = player.getPosition();
+				if (facingRight) {
+					p = p.add(player.getWidth(), 0);
+				} else {
+					p = p.add(-entity.getWidth(), 0);
+				}
+				entity.setPosition(p);
+				entity.setVisible(true);
+			}
 			if (diagonal) {
 				control.moveX(facingRight ? (Speed.PLAYER_MOVE + 1) : -(Speed.PLAYER_MOVE + 1));
 				control.moveY(-Speed.PROJECTILE / 4);

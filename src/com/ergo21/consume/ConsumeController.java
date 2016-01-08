@@ -337,7 +337,8 @@ public class ConsumeController {
 			e.setPosition(p);
 			e.addControl(new SandProjectileControl(consApp.player, false));
 			e.setProperty(Property.ENABLE_GRAVITY, false);
-
+			e.setVisible(false);
+			
 			Entity e2 = new Entity(Type.PLAYER_PROJECTILE);
 			e2.setProperty(Property.SUB_TYPE, element);
 			e2.setPosition(p);
@@ -357,6 +358,7 @@ public class ConsumeController {
 			});
 			e2.addControl(new SandProjectileControl(consApp.player, true));
 			e2.setProperty(Property.ENABLE_GRAVITY, false);
+			e2.setVisible(false);
 
 			consApp.getSceneManager().addEntities(e2);
 			break;
