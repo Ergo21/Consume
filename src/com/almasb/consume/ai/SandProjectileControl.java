@@ -16,6 +16,7 @@ public class SandProjectileControl extends AbstractControl {
 	private Entity player;
 	private boolean diagonal;
 	private long created;
+	private boolean positioned = false;
 
 	public SandProjectileControl(Entity player, boolean diag) {
 		this.player = player;
@@ -35,7 +36,7 @@ public class SandProjectileControl extends AbstractControl {
 			created = now;
 		}
 		if (now - created > TimerManager.toNanos(Config.SAND_DELAY)) {
-			if(!entity.isVisible()){
+			if(!positioned){
 				this.facingRight = player.getProperty("facingRight");
 				Point2D p = player.getPosition();
 				if (facingRight) {
@@ -44,7 +45,7 @@ public class SandProjectileControl extends AbstractControl {
 					p = p.add(-entity.getWidth(), 0);
 				}
 				entity.setPosition(p);
-				entity.setVisible(true);
+				positioned = true;
 			}
 			if (diagonal) {
 				control.moveX(facingRight ? (Speed.PLAYER_MOVE + 1) : -(Speed.PLAYER_MOVE + 1));
