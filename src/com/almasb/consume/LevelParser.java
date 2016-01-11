@@ -184,30 +184,38 @@ public class LevelParser {
 			}
 		}
 		else{
-			for(int j = -1; (j * backHeight) + (backY.getY()%backHeight) <= level.height; j++) {
-				for(int i = 0; i * backWidth <= level.width; i++) {
-					Entity bEn = new Entity(Types.Type.BACKGROUND);
-					bEn.setCollidable(false);
-					bEn.setVisible(true);
-					bEn.setPosition(i * backWidth, (j * backHeight) + (backY.getY()%backHeight));
-					
-					if((j * backHeight) + (backY.getY()%backHeight) < backY.getY()){
-						Rectangle backCol = new Rectangle(0,0,backWidth,backHeight);
-						backCol.setFill(getBackground(levelNumber).getImage().getPixelReader().getColor(1, 1));
-						bEn.setGraphics(backCol);
-					}
-					else if((j * backHeight) + (backY.getY()%backHeight) < backY.getY() + backHeight){
-						bEn.setGraphics(getBackground(levelNumber));
-					}
-					else{
-						Rectangle backCol = new Rectangle(0,0,backWidth,backHeight);
-						backCol.setFill(getBackground(levelNumber).getImage().getPixelReader().getColor(1, backHeight-1));
-						bEn.setGraphics(backCol);
-					}
+			Entity bUEn = new Entity(Types.Type.BACKGROUND);
+			bUEn.setCollidable(false);
+			bUEn.setVisible(true);
+			bUEn.setPosition(0, 0);
+			
+			Rectangle backUCol = new Rectangle(0,0,level.width,backY.getY());
+			backUCol.setFill(getBackground(levelNumber).getImage().getPixelReader().getColor(1, 1));
+			bUEn.setGraphics(backUCol);
+						
+			backEn.add(bUEn);
+			
+			for(int i = 0; i * backWidth <= level.width; i++) {
+				Entity bEn = new Entity(Types.Type.BACKGROUND);
+				bEn.setCollidable(false);
+				bEn.setVisible(true);
+				bEn.setPosition(i * backWidth, backY.getY());
+				bEn.setGraphics(getBackground(levelNumber));
 								
-					backEn.add(bEn);
-				}
-			}		}
+				backEn.add(bEn);
+			}
+			
+			Entity bDEn = new Entity(Types.Type.BACKGROUND);
+			bDEn.setCollidable(false);
+			bDEn.setVisible(true);
+			bDEn.setPosition(0, (backY.getY() + backHeight));
+			
+			Rectangle backDCol = new Rectangle(0,0,level.width, level.height - (backY.getY() + backHeight));
+			backDCol.setFill(getBackground(levelNumber).getImage().getPixelReader().getColor(1, backHeight-1));
+			bDEn.setGraphics(backDCol);
+						
+			backEn.add(bDEn);
+		}
 
 		return backEn;
 	}
