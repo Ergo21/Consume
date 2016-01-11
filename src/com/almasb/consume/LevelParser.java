@@ -1,6 +1,7 @@
 package com.almasb.consume;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -36,29 +37,14 @@ public class LevelParser {
 			return null;
 		}
 		List<String> data = levels.get(levelNumber).data;
+		Point2D backY = new Point2D(0,0);
 
 		// TODO: range checks
 		
 		Level level = new Level();
-
+		
 		level.width = data.get(0).length() * Config.BLOCK_SIZE;
 		level.height = data.size() * Config.BLOCK_SIZE;
-		
-		int backWidth = 640;
-		int backHeight = 360;
-		
-		for(int j = 0; j * backHeight <= level.height; j++) {
-			for(int i = 0; i * backWidth <= level.width; i++) {
-				Entity bEn = new Entity(Types.Type.BACKGROUND);
-				bEn.setCollidable(false);
-				bEn.setVisible(true);
-				
-				bEn.setPosition(i * backWidth, j * backHeight);
-				bEn.setGraphics(getBackground(levelNumber));
-				
-				level.entities.add(bEn);
-			}
-		}
 
 		for (int i = 0; i < data.size(); i++) {
 			String line = data.get(i);
@@ -91,6 +77,9 @@ public class LevelParser {
 					else if(level.lRLim == null){
 						level.lRLim = new Point2D(j * Config.BLOCK_SIZE, i * Config.BLOCK_SIZE);
 					}
+					break;
+				case '4':
+					backY = backY.add(0, i*Config.BLOCK_SIZE);
 					break;
 				case '5':
 				case '6':
@@ -167,6 +156,8 @@ public class LevelParser {
 		if(level.lRLim == null){
 			level.lRLim = new Point2D(level.width, level.height);
 		}
+		
+		level.entities.addAll(0, getBackgroundEntities(levelNumber, level, backY));
 
 		if (!level.isValid())
 			throw new IllegalArgumentException("Level: " + levelNumber + " was not parsed as valid");
@@ -174,6 +165,54 @@ public class LevelParser {
 		return level;
 	}
 	
+	private ArrayList<Entity> getBackgroundEntities(int levelNumber, Level level, Point2D backY) {
+		ArrayList<Entity> backEn = new ArrayList<Entity>();
+		
+		int backWidth = 640;
+		int backHeight = 360;
+		
+		if(levelNumber == 7 || levelNumber == 8){
+			for(int j = -1; j * backHeight <= level.height; j++) {
+				for(int i = 0; i * backWidth <= level.width; i++) {
+					Entity bEn = new Entity(Types.Type.BACKGROUND);
+					bEn.setCollidable(false);
+					bEn.setVisible(true);
+					bEn.setPosition(i * backWidth, j * backHeight);
+					bEn.setGraphics(getBackground(levelNumber));
+								
+					backEn.add(bEn);
+				}
+			}
+		}
+		else{
+			for(int j = -1; (j * backHeight) + (backY.getY()%backHeight) <= level.height; j++) {
+				for(int i = 0; i * backWidth <= level.width; i++) {
+					Entity bEn = new Entity(Types.Type.BACKGROUND);
+					bEn.setCollidable(false);
+					bEn.setVisible(true);
+					bEn.setPosition(i * backWidth, (j * backHeight) + (backY.getY()%backHeight));
+					
+					if((j * backHeight) + (backY.getY()%backHeight) < backY.getY()){
+						Rectangle backCol = new Rectangle(0,0,backWidth,backHeight);
+						backCol.setFill(getBackground(levelNumber).getImage().getPixelReader().getColor(1, 1));
+						bEn.setGraphics(backCol);
+					}
+					else if((j * backHeight) + (backY.getY()%backHeight) < backY.getY() + backHeight){
+						bEn.setGraphics(getBackground(levelNumber));
+					}
+					else{
+						Rectangle backCol = new Rectangle(0,0,backWidth,backHeight);
+						backCol.setFill(getBackground(levelNumber).getImage().getPixelReader().getColor(1, backHeight-1));
+						bEn.setGraphics(backCol);
+					}
+								
+					backEn.add(bEn);
+				}
+			}		}
+
+		return backEn;
+	}
+
 	private Texture getBackground(int levelNumber) {
 
 		if(!Config.RELEASE){
