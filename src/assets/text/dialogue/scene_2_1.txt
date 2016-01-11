@@ -1,7 +1,7 @@
-Eshu ("EshuIcon.png")= "Are you going to give me the food, or do I have to kill more of you?"
-Player ("PlayerIcon.png")= "This is our food, we worked for it."
-Eshu ("EshuIcon.png")= "And I work to take it from you. If you can't defend it why shouldn't I have it."
-Player ("PlayerIcon.png")= "That's..."
-Eshu ("EshuIcon.png")= "The strong struggle atop the pile of the weak."
-Player ("PlayerIcon.png")= "I'M NOT WEAK!"
+Eshu (ESHU)= "Are you going to give me the food, or do I have to kill more of you?"
+Player (PLAYER)= "This is our food, we worked for it."
+Eshu (ESHU)= "And I work to take it from you. If you can't defend it why shouldn't I have it."
+Player (PLAYER)= "That's..."
+Eshu (ESHU)= "The strong struggle atop the pile of the weak."
+Player (PLAYER)= "I'M NOT WEAK!"
 END

@@ -5,11 +5,14 @@ public final class FileNames{
 	
 	public static final String THEME_MUSIC		= "01 Consume Theme.mp3";
 	public static final String AFRICA 			= "backgrounds/afrika.jpg";
+	public static final String EMPTY			= "empty.png";
+	public static final String PLAYER_ICON		= "icons/player icon.png";
 	
 	public static final String FOREST1_MUSIC 	= "02 Forests (Part I).mp3";
 	public static final String FOREST1_BACK_1 	= "backgrounds/forest1.jpg";
 	public static final String FOREST1_BACK_2 	= "backgrounds/forest2.jpg";
 	public static final String FOREST1_BACK_3 	= "backgrounds/forest with village.jpg";
+	public static final String ESHU_ICON		= "icons/eshu icon.png";
 	
 	public static final String FOREST2_MUSIC 	= "03 Forests (Part II).mp3";
 	
@@ -19,20 +22,25 @@ public final class FileNames{
 	public static final String PYRAMID_MUSIC 	= "06 Pyramid.mp3";
 	public static final String PYRAMID_BACK_1 	= "backgrounds/Egyptian Pyramid.jpg";
 	public static final String PYRAMID_BACK_2 	= "backgrounds/Egyptian Pyramid interior.jpg";
+	public static final String ANUBIS_ICON		= "icons/anubis icon.png";
 			
 	public static final String FESTIVAL_MUSIC 	= "07 Festival.mp3";
 	public static final String FESTIVAL_BACK_1 	= "backgrounds/Yoruba Village.jpg";
+	public static final String SHANGO_ICON		= "icons/shango icon.png";
 	
 	public static final String MOUNTAIN_MUSIC 	= "08 Kilimanjaro.mp3";
 	public static final String MOUNTAIN_BACK_1 	= "backgrounds/kilimanjaro.jpg";
 	public static final String MOUNTAIN_BACK_2 	= "backgrounds/kilimanjaro top_2.jpg";
+	public static final String KIBO_ICON		= "icons/kibo icon.png";
 	
 	public static final String COLONY_MUSIC 	= "09 Colony.mp3";
 	public static final String COLONY_BACK_1	= "backgrounds/cape town.jpg";
+	public static final String GENTLEMAN_ICON	= "icons/gentleman icon.png"; 
 	
 	public static final String EMPIRE_MUSIC 	= "10 Empire.mp3";
 	public static final String EMPIRE_BACK_1 	= "backgrounds/zulu empire.jpg";
 	public static final String EMPIRE_BACK_2 	= "backgrounds/hut interior.jpg";
+	public static final String SHAKA_ICON		= "icons/shaka icon.png";
 	
 	public static final String BOSS1_MUSIC 		= "11 Boss (Part I).mp3";
 	

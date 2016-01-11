@@ -1,4 +1,10 @@
-Ergo ("ErgoIcon.png")= "I think the project is going fairly well so far."
-Almas ("AlmasIcon.png")= "Pretty well considering its been two days."
-Ergo ("ErgoIcon.png")= "Hopefully we can keep this pace up and get some nice assets."
+Ergo (PLAYER)= "I think the project is going fairly well so far."
+Almas (GENTLEMAN)= "Pretty well considering its been two days."
+Ergo (ANUBIS)= "Hopefully we can keep this pace up and get some nice assets."
+Test (ESHU)= "Eshu Icon"
+Test (KIBO)= "Kibo Icon"
+Test (SHAKA)= "Shaka Icon"
+Test (SHANGO)= "Shango Icon"
+Test ()= "No Icon"
+Test (DEFAULT) = "No Icon 2"
 END

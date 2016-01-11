@@ -3,10 +3,12 @@ package com.ergo21.consume;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.almasb.consume.Config;
 import com.almasb.consume.ConsumeApp;
 import com.almasb.consume.Types.Type;
 import com.almasb.consume.ai.PhysicsControl;
 import com.almasb.fxgl.asset.Assets;
+import com.almasb.fxgl.asset.Texture;
 
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
@@ -55,15 +57,38 @@ public class GameScene extends Group {
 				break;
 			}
 			String nam = val.substring(0, val.indexOf('('));
-			String tVal = val.substring(val.indexOf('"') + 1);
-			String icoNam = tVal.substring(0, tVal.indexOf('"'));
+			String tVal = val.substring(val.indexOf('(') + 1);
+			String icoNam = tVal.substring(0, tVal.indexOf(')'));
 			tVal = tVal.substring(tVal.indexOf('=') + 1);
 			String lin = tVal.trim();
 
-			script.add(new SceneLine(nam, assets.getTexture(icoNam), lin));
+			script.add(new SceneLine(nam, getIconFile(icoNam), lin));
 		}
 
 		setValues(script.get(currentLine));
+	}
+
+	private Texture getIconFile(String icoNam) {
+		if(!Config.RELEASE){
+			return assets.getTexture(FileNames.EMPTY);
+		}
+		switch(icoNam){
+			case "PLAYER":
+				return assets.getTexture(FileNames.PLAYER_ICON);
+			case "GENTLEMAN":
+				return assets.getTexture(FileNames.GENTLEMAN_ICON);
+			case "ANUBIS":
+				return assets.getTexture(FileNames.ANUBIS_ICON);
+			case "ESHU":
+				return assets.getTexture(FileNames.ESHU_ICON);
+			case "KIBO":
+				return assets.getTexture(FileNames.KIBO_ICON);
+			case "SHAKA":
+				return assets.getTexture(FileNames.SHAKA_ICON);
+			case "SHANGO":
+				return assets.getTexture(FileNames.SHANGO_ICON);
+		}
+		return assets.getTexture(FileNames.EMPTY);
 	}
 
 	public boolean updateScript() {
@@ -113,6 +138,8 @@ public class GameScene extends Group {
 		line.setText(sceneLine.getSentence());
 		// icon = sceneLine.getIcon();
 		icon.setImage(sceneLine.getIcon().getImage());
+		icon.setPreserveRatio(true);
+		icon.setFitHeight(60);
 	}
 
 	public Assets getAssets() {
