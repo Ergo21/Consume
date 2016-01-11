@@ -50,6 +50,7 @@ public class LevelParser {
 			for (int j = 0; j < line.length(); j++) {
 				Rectangle rect = new Rectangle(Config.BLOCK_SIZE, Config.BLOCK_SIZE);
 				Entity e = null;
+				Texture t = null;
 
 				switch (line.charAt(j)) {
 				case ' ':
@@ -114,36 +115,64 @@ public class LevelParser {
 					e = new Entity(Types.Type.PLATFORM);
 					e.setProperty(Property.SUB_TYPE, Platform.INDESTRUCTIBLE);
 					rect.setFill(Color.BROWN);
+					if(i >= 1 && data.get(i-1) != null && data.get(i-1).charAt(j) == ' '){
+						t = consApp.assets.getTexture(FileNames.SDIRT_BLOCK);
+						if(j >= 1 && line.charAt(j-1) == 'i' && level.entities.get(level.entities.size() - 1).getScaleX() == 1){
+							e.setScaleX(-1);
+						}
+					}
+					else{
+						t = consApp.assets.getTexture(FileNames.UDIRT_BLOCK);
+					}
+					t.setPreserveRatio(true);
+					t.setFitHeight(40);
 					break;
 				case 'p':
 					e = new Entity(Types.Type.BLOCK);
 					e.setProperty(Property.SUB_TYPE, Block.LADDER);
 					e.setCollidable(true);
 					rect.setFill(Color.GREY);
+					t = consApp.assets.getTexture(FileNames.LADDER_BLOCK);
+					t.setPreserveRatio(true);
+					t.setFitHeight(40);
 					break;
 				case 'u':
 					e = new Entity(Types.Type.POWERUP);
 					e.setProperty(Property.SUB_TYPE, Powerup.INC_MAX_HEALTH);
 					e.setCollidable(true);
 					rect.setFill(Color.PURPLE);
+					t = consApp.assets.getTexture(FileNames.POWERUP_BLOCK);
+					t.setPreserveRatio(true);
+					t.setFitHeight(30);
 					break;
 				case 'U':
 					e = new Entity(Types.Type.POWERUP);
 					e.setProperty(Property.SUB_TYPE, Powerup.INC_MAX_MANA);
 					e.setCollidable(true);
 					rect.setFill(Color.PURPLE);
+					t = consApp.assets.getTexture(FileNames.POWERUP_BLOCK);
+					t.setPreserveRatio(true);
+					t.setFitHeight(30);
 					break;
 				case 'v':
 					e = new Entity(Types.Type.POWERUP);
 					e.setProperty(Property.SUB_TYPE, Powerup.INC_MANA_REGEN);
 					e.setCollidable(true);
 					rect.setFill(Color.PURPLE);
+					t = consApp.assets.getTexture(FileNames.POWERUP_BLOCK);
+					t.setPreserveRatio(true);
+					t.setFitHeight(30);
 					break;
 				}
 
 				if (e != null) {
 					e.setPosition(j * Config.BLOCK_SIZE, i * Config.BLOCK_SIZE);
-					e.setGraphics(rect);
+					if(Config.RELEASE && t != null){
+						e.setGraphics(t);
+					}
+					else{
+						e.setGraphics(rect);
+					}
 					level.entities.add(e);
 				}
 			}
@@ -164,6 +193,10 @@ public class LevelParser {
 		return level;
 	}
 	
+	private Texture getLevelTexture(int levelNumber, Entity e) {
+		return null;
+	}
+
 	private ArrayList<Entity> getBackgroundEntities(int levelNumber, Level level, Point2D backY) {
 		ArrayList<Entity> backEn = new ArrayList<Entity>();
 		

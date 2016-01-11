@@ -44,6 +44,7 @@ import com.almasb.consume.ai.SimpleJumpControl;
 import com.almasb.consume.ai.SimpleMoveControl;
 import com.almasb.consume.ai.SpearThrowerControl;
 import com.almasb.consume.ai.StoneThrowerControl;
+import com.almasb.fxgl.asset.Texture;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.FXGLEvent;
 import com.almasb.fxgl.entity.FXGLEventHandler;
@@ -1067,9 +1068,26 @@ public class EntitySpawner {
 				e.setProperty(Property.SUB_TYPE, drops.get(0));
 			}
 			
-			Rectangle r = new Rectangle(30, 30);
-			r.setFill(Color.PINK);
-			e.setGraphics(r);
+			Texture t;
+			if(enemy.getProperty(Property.SUB_TYPE) == Type.BOSS){
+				t = consApp.assets.getTexture(FileNames.POWERUP_BLOCK);
+				t.setPreserveRatio(true);
+				t.setFitHeight(30);
+			}
+			else{
+				t = consApp.assets.getTexture(FileNames.FOOD_BLOCK);
+				t.setPreserveRatio(true);
+				t.setFitHeight(20);
+			}
+			
+			if(Config.RELEASE && t != null){
+				e.setGraphics(t);
+			}
+			else{
+				Rectangle r = new Rectangle(30, 30);
+				r.setFill(Color.PINK);
+				e.setGraphics(r);
+			}
 			e.addControl(new PhysicsControl(consApp.physics));
 			e.setCollidable(true);
 

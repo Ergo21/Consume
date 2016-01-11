@@ -61,6 +61,11 @@ public final class FileNames{
 	public static final String JUMP				= "08 Jump.mp3";
 
 	
-
+	public static final String LADDER_BLOCK		= "statics/ladder.png";
 	
+	public static final String SDIRT_BLOCK		= "statics/dirt 1.png";
+	public static final String UDIRT_BLOCK		= "statics/dirt 2.png";
+	
+	public static final String FOOD_BLOCK		= "statics/food 1.png";
+	public static final String POWERUP_BLOCK	= "statics/food 2.png";
 }
