@@ -112,17 +112,114 @@ public class LevelParser {
 					rect.setFill(Color.DARKGREEN);
 					break;
 				case 'i':
+				case 'I':
+				case 'j':
 					e = new Entity(Types.Type.PLATFORM);
 					e.setProperty(Property.SUB_TYPE, Platform.INDESTRUCTIBLE);
 					rect.setFill(Color.BROWN);
-					if(i >= 1 && data.get(i-1) != null && data.get(i-1).charAt(j) == ' '){
-						t = consApp.assets.getTexture(FileNames.SDIRT_BLOCK);
+					if(i >= 1 && data.get(i-1) != null && (data.get(i-1).charAt(j) != 'i' && data.get(i-1).charAt(j) != 'I' && data.get(i-1).charAt(j) != 'j')){
+						if(line.charAt(j) == 'I'){
+							t = consApp.assets.getTexture(FileNames.G_DIRT_BLOCK);
+						}
+						else if (line.charAt(j) == 'j'){
+							t = consApp.assets.getTexture(FileNames.ST_DIRT_BLOCK);
+						}
+						else{
+							t = consApp.assets.getTexture(FileNames.S_DIRT_BLOCK);
+						}
+						
 						if(j >= 1 && line.charAt(j-1) == 'i' && level.entities.get(level.entities.size() - 1).getScaleX() == 1){
 							e.setScaleX(-1);
 						}
 					}
 					else{
-						t = consApp.assets.getTexture(FileNames.UDIRT_BLOCK);
+						t = consApp.assets.getTexture(FileNames.U_DIRT_BLOCK);
+					}
+					t.setPreserveRatio(true);
+					t.setFitHeight(40);
+					break;
+				case 'k':
+				case 'K':
+					e = new Entity(Types.Type.PLATFORM);
+					e.setProperty(Property.SUB_TYPE, Platform.INDESTRUCTIBLE);
+					rect.setFill(Color.BROWN);
+					if(i >= 1 && data.get(i-1) != null && (data.get(i-1).charAt(j) != 'k' && data.get(i-1).charAt(j) != 'K')){
+						if(line.charAt(j) == 'K'){
+							t = consApp.assets.getTexture(FileNames.G_SAND_BLOCK);
+						}
+						else{
+							t = consApp.assets.getTexture(FileNames.S_SAND_BLOCK);
+						}
+						
+						if(j >= 1 && line.charAt(j-1) == 'i' && level.entities.get(level.entities.size() - 1).getScaleX() == 1){
+							e.setScaleX(-1);
+						}
+					}
+					else{
+						t = consApp.assets.getTexture(FileNames.U_SAND_BLOCK);
+					}
+					t.setPreserveRatio(true);
+					t.setFitHeight(40);
+					break;
+				case 'l':
+				case 'L':
+					e = new Entity(Types.Type.PLATFORM);
+					e.setProperty(Property.SUB_TYPE, Platform.INDESTRUCTIBLE);
+					rect.setFill(Color.BROWN);
+					if(i >= 1 && data.get(i-1) != null && (data.get(i-1).charAt(j) != 'l' && data.get(i-1).charAt(j) != 'L')){
+						if(line.charAt(j) == 'L'){
+							t = consApp.assets.getTexture(FileNames.G_N_SAND_BLOCK);
+						}
+						else{
+							t = consApp.assets.getTexture(FileNames.S_N_SAND_BLOCK);
+						}
+						
+						if(j >= 1 && line.charAt(j-1) == 'i' && level.entities.get(level.entities.size() - 1).getScaleX() == 1){
+							e.setScaleX(-1);
+						}
+					}
+					else{
+						t = consApp.assets.getTexture(FileNames.U_N_SAND_BLOCK);
+					}
+					t.setPreserveRatio(true);
+					t.setFitHeight(40);
+					break;
+				case 'm':
+				case 'M':
+					e = new Entity(Types.Type.PLATFORM);
+					e.setProperty(Property.SUB_TYPE, Platform.INDESTRUCTIBLE);
+					rect.setFill(Color.BROWN);
+					if(i >= 1 && data.get(i-1) != null && (data.get(i-1).charAt(j) != 'm' && data.get(i-1).charAt(j) != 'M')){
+						if(line.charAt(j) == 'M'){
+							t = consApp.assets.getTexture(FileNames.SN_STONE_BLOCK);
+						}
+						else{
+							t = consApp.assets.getTexture(FileNames.S_STONE_BLOCK);
+						}
+						
+						if(j >= 1 && line.charAt(j-1) == 'i' && level.entities.get(level.entities.size() - 1).getScaleX() == 1){
+							e.setScaleX(-1);
+						}
+					}
+					else{
+						t = consApp.assets.getTexture(FileNames.U_STONE_BLOCK);
+					}
+					t.setPreserveRatio(true);
+					t.setFitHeight(40);
+					break;
+				case 'n':
+					e = new Entity(Types.Type.PLATFORM);
+					e.setProperty(Property.SUB_TYPE, Platform.INDESTRUCTIBLE);
+					rect.setFill(Color.BROWN);
+					if(i >= 1 && data.get(i-1) != null && (data.get(i-1).charAt(j) != 'n')){
+						t = consApp.assets.getTexture(FileNames.S_SANDSTONE_BLOCK);
+						
+						if(j >= 1 && line.charAt(j-1) == 'i' && level.entities.get(level.entities.size() - 1).getScaleX() == 1){
+							e.setScaleX(-1);
+						}
+					}
+					else{
+						t = consApp.assets.getTexture(FileNames.U_SANDSTONE_BLOCK);
 					}
 					t.setPreserveRatio(true);
 					t.setFitHeight(40);
