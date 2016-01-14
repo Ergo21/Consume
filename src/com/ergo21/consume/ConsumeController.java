@@ -97,7 +97,9 @@ public class ConsumeController {
 					consApp.playerData.setCurrentLevel(consApp.playerData.getCurrentLevel() + 1);
 					consApp.changeLevel();
 				}
-				else if(!(boolean) consApp.player.getProperty("eating") && !(boolean) consApp.player.getProperty("eaten")){	
+				else if(consApp.player.getProperty("climb") != null && !(boolean) consApp.player.getProperty("climb") &&
+						consApp.player.getProperty("eating")!= null && !(boolean) consApp.player.getProperty("eating") && 
+						consApp.player.getProperty("eaten") != null && !(boolean) consApp.player.getProperty("eaten")){	
 					consApp.player.setProperty("eating", true);
 					consApp.player.getControl(PhysicsControl.class).moveX(0);
 					consApp.soundManager.playSFX(FileNames.EATING);
@@ -158,7 +160,7 @@ public class ConsumeController {
 						consApp.player.getProperty("eating") != null && !(boolean) consApp.player.getProperty("eating") && 
 								consApp.player.getProperty("scenePlaying") != null && !(boolean) consApp.player.getProperty("scenePlaying")){
 					if (consApp.player.<Boolean> getProperty("climb")){
-						consApp.player.getControl(PhysicsControl.class).climb(-5);
+						consApp.player.getControl(PhysicsControl.class).climb(-3);
 						consApp.player.setProperty("climbing", true);
 					}
 				}
@@ -193,7 +195,7 @@ public class ConsumeController {
 						consApp.player.getProperty("eating") != null && !(boolean) consApp.player.getProperty("eating") && 
 								consApp.player.getProperty("scenePlaying") != null && !(boolean) consApp.player.getProperty("scenePlaying")) {
 					if (consApp.player.<Boolean> getProperty("climb")) {
-						consApp.player.getControl(PhysicsControl.class).climb(5);
+						consApp.player.getControl(PhysicsControl.class).climb(3);
 						consApp.player.setProperty("climbing", true);
 					}
 				}
@@ -205,7 +207,7 @@ public class ConsumeController {
 						consApp.player.getProperty("eating") != null && !(boolean) consApp.player.getProperty("eating") && 
 								consApp.player.getProperty("scenePlaying") != null && !(boolean) consApp.player.getProperty("scenePlaying")){
 					if (consApp.player.<Boolean> getProperty("climb")){
-						consApp.player.getControl(PhysicsControl.class).climb(5);
+						consApp.player.getControl(PhysicsControl.class).climb(3);
 						consApp.player.setProperty("climbing", false);
 					}	
 				}
@@ -216,7 +218,8 @@ public class ConsumeController {
 			protected void onActionBegin() {
 				if (consApp.player != null && consApp.player.getProperty("stunned") != null && !(boolean) consApp.player.getProperty("stunned") &&
 						consApp.player.getProperty("eating") != null && !(boolean) consApp.player.getProperty("eating") && 
-								consApp.player.getProperty("scenePlaying") != null && !(boolean) consApp.player.getProperty("scenePlaying")) {
+						consApp.player.getProperty("climb") != null  && !(boolean) consApp.player.getProperty("climb") &&
+						consApp.player.getProperty("scenePlaying") != null && !(boolean) consApp.player.getProperty("scenePlaying")) {
 					shootProjectile();
 				}
 			}
@@ -316,7 +319,9 @@ public class ConsumeController {
 			
 			e.setVisible(true);
 			e.setCollidable(true);
-			e.setGraphics(new Rectangle(0, 0, consApp.player.getWidth() / 2, consApp.player.getHeight()));
+			//e.setPosition(e.getPosition().add(4, 0));
+			e.setPosition(consApp.player.getPosition());
+			e.setGraphics(new Rectangle(0, 0, consApp.player.getWidth(), consApp.player.getHeight()));
 			e.setProperty(Property.ENABLE_GRAVITY, false);
 			e.addControl(new KnifeControl(consApp.player));
 			break;

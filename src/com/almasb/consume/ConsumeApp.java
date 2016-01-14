@@ -682,7 +682,7 @@ public class ConsumeApp extends GameApplication {
 				.setProperty("scenePlaying", false).setProperty("attacking", false)
 				.addControl(new PhysicsControl(physics));
 		
-		Rectangle rG = new Rectangle(0, 0, 15, 30);
+		Rectangle rG = new Rectangle(0, 0, 16, 30);
 		rG.setFill(Color.RED);
 		player.setGraphics(rG);
 		player.setVisible(true);

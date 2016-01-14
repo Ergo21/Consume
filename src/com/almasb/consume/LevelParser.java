@@ -135,12 +135,8 @@ public class LevelParser {
 							case 'f': t = consApp.assets.getTexture(FileNames.DES_ICE_BLOCK); break;
 						}
 						t.setPreserveRatio(true);
-						if(line.charAt(j) == 'f'){
-							t.setFitWidth(40);
-						}
-						else{
-							t.setFitHeight(40);
-						}
+						t.setFitHeight(40);
+						
 						
 					}
 					break;
