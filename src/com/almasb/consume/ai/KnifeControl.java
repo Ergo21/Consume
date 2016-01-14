@@ -33,12 +33,15 @@ public class KnifeControl extends AbstractControl {
 
 		if(source != null && source.getProperty("facingRight") != null && source.getPosition() != null){
 			Point2D nPos = source.getPosition();
+			PhysicsControl pc = entity.getControl(PhysicsControl.class);
 			if ((boolean) source.getProperty("facingRight")) {
-				nPos = nPos.add(source.getWidth(), 0);
+				nPos = nPos.add(source.getWidth() + 2, 0);
 			} else {
-				nPos = nPos.add(-source.getWidth() * 0.5, 0);
+				nPos = nPos.add(-source.getWidth() * 0.5 - 2, 0);
 			}
-			entity.setPosition(nPos);
+			pc.moveX((int)(nPos.getX() - entity.getPosition().getX()));
+			pc.moveY((int)(nPos.getY() - entity.getPosition().getY()));
+			//entity.setPosition(nPos);
 		}
 
 		if (Math.abs(entity.getTranslateX() - source.getTranslateX()) >= 350 || now - created > TimerManager.toNanos(Config.CONSUME_DECAY)) {

@@ -142,14 +142,14 @@ public class AnimatedPlayerControl implements Control {
 			if(player.<Boolean> getProperty("stunned")){
 				t = getTexture(AnimationChannel.HIT);
 				t.setPreserveRatio(true);
-				t.setTranslateX(-27);
+				t.setTranslateX(-30);
 				t.setTranslateY(-40);
 				t.setFitHeight(75);	
 			}
 			else if(player.<Boolean> getProperty("eating")){
 				t = getTexture(AnimationChannel.EAT);
 				t.setPreserveRatio(true);
-				t.setTranslateX(-27);
+				t.setTranslateX(-30);
 				t.setTranslateY(-40);
 				t.setFitHeight(75);	
 			}
@@ -161,7 +161,7 @@ public class AnimatedPlayerControl implements Control {
 					t = getTexture(AnimationChannel.HOLD);
 				}
 				t.setPreserveRatio(true);
-				t.setTranslateX(-27);
+				t.setTranslateX(-30);
 				t.setTranslateY(-40);
 				t.setFitHeight(75);	
 			}
@@ -173,7 +173,7 @@ public class AnimatedPlayerControl implements Control {
 					t = getTexture(AnimationChannel.JUMP);
 				}
 				t.setPreserveRatio(true);
-				t.setTranslateX(-28);
+				t.setTranslateX(-31);
 				t.setTranslateY(-43);
 				t.setFitHeight(78);
 			}
@@ -185,21 +185,21 @@ public class AnimatedPlayerControl implements Control {
 					t = getTexture(AnimationChannel.MOVE);
 				}
 				t.setPreserveRatio(true);
-				t.setTranslateX(-27);
+				t.setTranslateX(-30);
 				t.setTranslateY(-40);
 				t.setFitHeight(75);	
 			} 
 			else if(player.<Boolean> getProperty("attacking")){
 				t = getTexture(AnimationChannel.ATK);
 				t.setPreserveRatio(true);
-				t.setTranslateX(-27);
+				t.setTranslateX(-30);
 				t.setTranslateY(-40);
 				t.setFitHeight(75);	
 			}
 			else {
 				t = getTexture(AnimationChannel.IDLE);
 				t.setPreserveRatio(true);
-				t.setTranslateX(-27);
+				t.setTranslateX(-30);
 				t.setTranslateY(-40);
 				t.setFitHeight(75);
 			}

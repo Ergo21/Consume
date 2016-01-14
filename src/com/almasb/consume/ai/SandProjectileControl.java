@@ -37,15 +37,27 @@ public class SandProjectileControl extends AbstractControl {
 		}
 		if (now - created > TimerManager.toNanos(Config.SAND_DELAY)) {
 			if(!positioned){
-				this.facingRight = player.getProperty("facingRight");
-				Point2D p = player.getPosition();
-				if (facingRight) {
-					p = p.add(player.getWidth(), 0);
-				} else {
-					p = p.add(-entity.getWidth(), 0);
+				if(player == null){
+					entity.fireFXGLEvent(new FXGLEvent(Event.DEATH));
+					positioned = true;
 				}
-				entity.setPosition(p);
-				positioned = true;
+				else{
+					if(player.getProperty("facingRight") != null){
+						this.facingRight = player.getProperty("facingRight");
+					}
+					else{
+						facingRight = false;
+					}
+					
+					Point2D p = player.getPosition();
+					if (facingRight) {
+						p = p.add(player.getWidth(), 0);
+					} else {
+						p = p.add(-entity.getWidth(), 0);
+					}
+					entity.setPosition(p);
+					positioned = true;
+				}
 			}
 			if (diagonal) {
 				control.moveX(facingRight ? (Speed.PLAYER_MOVE + 1) : -(Speed.PLAYER_MOVE + 1));

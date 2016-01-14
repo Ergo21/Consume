@@ -104,17 +104,14 @@ public class SandBossControl extends AbstractControl {
 						switch(ran.nextInt(3)){
 							case 0:{
 								curPos = startPos; //7.5 of 10
-								System.out.println(1);
 								break;
 							}
 							case 1:{
 								curPos = startPos.subtract(100, 0); // 5 of 10
-								System.out.println(2);
 								break;
 							}
 							case 2:{
 								curPos = startPos.subtract(200, 0); // 2.5 of 10
-								System.out.println(3);
 								break;
 							}
 						}

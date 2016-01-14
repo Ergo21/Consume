@@ -30,7 +30,7 @@ public class LightningControl extends AbstractControl {
 
 	@Override
 	public void onUpdate(Entity entity, long now) {
-		// PhysicsControl control = entity.getControl(PhysicsControl.class);
+		//PhysicsControl pc = entity.getControl(PhysicsControl.class);
 		if (created == 0) {
 			created = now;
 		}

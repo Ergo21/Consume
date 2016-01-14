@@ -50,7 +50,7 @@ public final class FileNames{
 	public static final String SPEAR_THROW		= "01 Spear Throw.mp3";
 	public static final String RIFLE_SHOT		= "02 Rifle Shot.mp3";
 	public static final String FIRE_COAL		= "03 Flaming Coals.mp3";
-	public static final String LIGHTING_DRUM	= "04 Thunder & Drums.mp3";
+	public static final String LIGHTNING_DRUM	= "04 Thunder & Drums.mp3";
 	
 	public static final String EATING			= "06 Eating.mp3";
 	
@@ -83,16 +83,17 @@ public final class FileNames{
 	public static final String S_SANDSTONE_BLOCK = "statics/sandstone 2.png";
 
 	
-	public static final String CAVE = null;
-	public static final String S_DOOR = null;
-	public static final String W_DOOR = null;
+	public static final String W_DOOR 	= "statics/door 1.png";
+	public static final String S_DOOR 	= "statics/door 2.png";
+	public static final String CAVE 	= "statics/door 3.png";
 	
 	
-	public static final String DES_SAND_BLOCK = null;
-	public static final String DES_SANDSTONE_BLOCK = null;
-	public static final String DES_CRATE_BLOCK = null;
-	public static final String DES_ICE_BLOCK = null;
-	public static final String DES_THATCH_BLOCK = null;
+	public static final String DES_THATCH_BLOCK 	= "statics/thatch.png";
+	public static final String DES_CRATE_BLOCK 		= "statics/crate.png";
+	public static final String DES_SANDSTONE_BLOCK 	= "statics/cracked sandstone.png";
+	public static final String DES_BRICK_BLOCK 		= "statics/cracked bricks.png";
+	public static final String DES_ICE_BLOCK 		= "statics/ice.png";
+	
 	
 	public static final String CORPSE_BLOCK	 	= null;
 	public static final String COFFIN_BLOCK		= null;

@@ -281,8 +281,9 @@ public class ConsumeController {
 			Entity platform = event.getSource();
 			consApp.getSceneManager().removeEntity(e);
 
-			if (platform.getProperty(Property.SUB_TYPE) == Platform.DESTRUCTIBLE) {
-				consApp.destroyBlock(platform);
+			if (platform.getProperty(Property.SUB_TYPE) == Platform.DESTRUCTIBLE && 
+					platform.getProperty("desElement") != null && platform.<Element>getProperty("desElement") == element) {
+					consApp.destroyBlock(platform);
 			}
 		});
 		e.addFXGLEventHandler(Event.DEATH, event -> {
@@ -390,8 +391,9 @@ public class ConsumeController {
 				Entity platform = event.getSource();
 				consApp.getSceneManager().removeEntity(e2);
 
-				if (platform.getProperty(Property.SUB_TYPE) == Platform.DESTRUCTIBLE) {
-					consApp.destroyBlock(platform);
+				if (platform.getProperty(Property.SUB_TYPE) == Platform.DESTRUCTIBLE && 
+						platform.getProperty("desElement") != null && platform.<Element>getProperty("desElement") == element) {
+						consApp.destroyBlock(platform);
 				}
 			});
 			e2.addFXGLEventHandler(Event.DEATH, event -> {
@@ -502,7 +504,6 @@ public class ConsumeController {
 			e.setVisible(false);
 			e.setCollidable(false);
 			Group g = new Group();
-			e.addControl(new PhysicsControl(consApp.physics));
 			LightningControl lc = new LightningControl(g);
 			e.addControl(lc);
 			Point2D p = consApp.player.getPosition();
@@ -511,10 +512,11 @@ public class ConsumeController {
 			} else {
 				p = p.add(-e.getWidth() - 30, 0);
 			}
-			p = p.add(0, consApp.player.getHeight());
-			e.setPosition(0, 0);
+			p = p.add(0, consApp.player.getHeight() - 250);
+			e.setPosition(p);
 
-			g.getChildren().addAll(createBolt(new Point2D(p.getX(), -200), p, 5));
+			g.getChildren().addAll(createBolt(new Point2D(0, 0), new Point2D(0, 250), 5));
+			
 			e.setGraphics(g);
 
 			DropShadow shadow = new DropShadow(20, Color.PURPLE);
@@ -522,8 +524,45 @@ public class ConsumeController {
 			g.setEffect(shadow);
 			e.setProperty(Property.ENABLE_GRAVITY, false);
 			
+			Entity e2 = new Entity(Type.PLAYER_PROJECTILE);
+			e2.setProperty(Property.SUB_TYPE, element);
+			e2.setPosition(p.add(0, 220));
+			e2.setCollidable(true);
+			e2.setGraphics(new Rectangle(10, 10));
+			e2.addControl(new PhysicsControl(consApp.physics));
+			e2.addFXGLEventHandler(Event.COLLIDED_PLATFORM, event -> {
+				Entity platform = event.getSource();
+				consApp.getSceneManager().removeEntity(e2);
+
+				if (platform.getProperty(Property.SUB_TYPE) == Platform.DESTRUCTIBLE && 
+					platform.getProperty("desElement") != null && platform.<Element>getProperty("desElement") == element) {
+					consApp.destroyBlock(platform);
+				}
+			});
+			e2.addFXGLEventHandler(Event.DEATH, event -> {
+				consApp.getSceneManager().removeEntity(event.getTarget());
+			});
+			e2.translateYProperty().addListener(new ChangeListener<Number>(){
+				@Override
+				public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
+					if(newValue.doubleValue() + 30 > e.getPosition().getY() + e.getHeight()){
+						e2.fireFXGLEvent(new FXGLEvent(Event.DEATH));
+					}
+				}});
+			e.aliveProperty().addListener(new ChangeListener<Boolean>(){
+				@Override
+				public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+					consApp.getTimerManager().runOnceAfter(() -> {
+						e2.fireFXGLEvent(new FXGLEvent(Event.DEATH));
+					}, Duration.seconds(0.01));
+				}});
+			
+			consApp.getTimerManager().runOnceAfter(() ->{
+				consApp.getSceneManager().addEntities(e2);
+			}, Config.LIGHTNING_DELAY);
+			
 			consApp.getTimerManager().runOnceAfter(() -> {
-				consApp.soundManager.playSFX(FileNames.LIGHTING_DRUM);
+				consApp.soundManager.playSFX(FileNames.LIGHTNING_DRUM);
 			}, Config.LIGHTNING_DELAY.divide(2));
 			break;
 		}
@@ -672,7 +711,7 @@ public class ConsumeController {
 			e.setProperty(Property.ENABLE_GRAVITY, false);
 			
 			consApp.getTimerManager().runOnceAfter(() -> {
-				consApp.soundManager.playSFX(FileNames.LIGHTING_DRUM);
+				consApp.soundManager.playSFX(FileNames.LIGHTNING_DRUM);
 			}, Config.LIGHTNING_DELAY.divide(2));
 			break;
 		}
@@ -770,7 +809,7 @@ public class ConsumeController {
 		e.setProperty(Property.ENABLE_GRAVITY, false);
 			
 		consApp.getTimerManager().runOnceAfter(() -> {
-			consApp.soundManager.playSFX(FileNames.LIGHTING_DRUM);
+			consApp.soundManager.playSFX(FileNames.LIGHTNING_DRUM);
 		}, Config.LIGHTNING_DELAY.divide(2));
 
 		consApp.getSceneManager().addEntities(e);

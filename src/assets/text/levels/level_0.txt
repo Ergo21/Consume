@@ -1,14 +1,14 @@
 3  i                                     i0
 i  p                                     i0
-i ipiii4                                 i0		
+i ipiii4ffff                             i0		
 i  p                                     i0		
 i  p                                     i0
 iiip         i                           i0 
-iiip    1   ii                i          i0 
-iiipiiiiiiiiii   iiiiiiiiiiiiiiiiiiiiiiiii0
-i  p        p     d    u  U  v  V        i0
-i  p        p     d                      i0
-i  p        p     d                      i0
+iiip    1   ii                i           i0
+iiipiiiiiiiiii   IIjjkkKKllLLiimmMMnniiiiii0
+i  p        p    IIjjkkKKllLLiimmMMnn    i0
+i  p        p     d  D  e  E             i0
+i  p     r  p     d  D  e  E    u  U  v  i0
 iiiiiiiiiiiipiiiiiiiiiiiiiiiiiiiiiiiiiiiii0
 i  p        pi0
 i  p        pi0
@@ -20,6 +20,6 @@ i  p       p i0
 i iii  iiiipii0
 i       d  p i0
 i       d  p i0
-i 2     d  p i0
+i       d  p i0
 iiiiiiiiiiiiii                           
                                           30

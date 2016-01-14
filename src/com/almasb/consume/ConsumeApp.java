@@ -168,7 +168,13 @@ public class ConsumeApp extends GameApplication {
 		physicsManager.addCollisionHandler(new CollisionHandler(Type.PLAYER, Type.NEXT_LEVEL_POINT) {
 			@Override
 			public void onCollisionBegin(Entity a, Entity b) {
-				a.setProperty("inDoor", true);
+				if(b.getProperty("autoDoor") != null && b.<Boolean>getProperty("autoDoor")){
+					playerData.setCurrentLevel(playerData.getCurrentLevel() + 1);
+					changeLevel();
+				}
+				else{
+					a.setProperty("inDoor", true);
+				}
 			}
 			@Override
             public void onCollisionEnd(Entity a, Entity b) {
@@ -676,7 +682,7 @@ public class ConsumeApp extends GameApplication {
 				.setProperty("scenePlaying", false).setProperty("attacking", false)
 				.addControl(new PhysicsControl(physics));
 		
-		Rectangle rG = new Rectangle(0, 0, 20, 30);
+		Rectangle rG = new Rectangle(0, 0, 15, 30);
 		rG.setFill(Color.RED);
 		player.setGraphics(rG);
 		player.setVisible(true);
