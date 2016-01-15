@@ -95,8 +95,8 @@ public final class FileNames{
 	public static final String DES_ICE_BLOCK 		= "statics/ice.png";
 	
 	
-	public static final String CORPSE_BLOCK	 	= null;
-	public static final String COFFIN_BLOCK		= null;
+	public static final String CORPSE_BLOCK	 	= "statics/corpse.png";
+	public static final String COFFIN_BLOCK		= "statics/coffin.png";
 	public static final String LADDER_BLOCK		= "statics/ladder.png";
 	public static final String FOOD_BLOCK		= "statics/food 1.png";
 	public static final String POWERUP_BLOCK	= "statics/food 2.png";

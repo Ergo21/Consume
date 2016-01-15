@@ -323,6 +323,27 @@ public class LevelParser {
 						e.setPosition(0, 10);
 					}
 					break;
+				case 'x':
+					e = new Entity(Types.Type.PROP);
+					e.setCollidable(false);
+					rect.setFill(Color.BLUEVIOLET);
+					if(Config.RELEASE){
+						t = consApp.assets.getTexture(FileNames.CORPSE_BLOCK);
+						t.setPreserveRatio(true);
+						t.setFitWidth(60);
+						e.setPosition(0, 24);
+					}
+					break;
+				case 'X':
+					e = new Entity(Types.Type.PROP);
+					e.setCollidable(false);
+					rect.setFill(Color.VIOLET);
+					if(Config.RELEASE){
+						t = consApp.assets.getTexture(FileNames.COFFIN_BLOCK);
+						t.setPreserveRatio(true);
+						t.setFitHeight(80);
+						e.setPosition(0, -40);
+					}
 				}
 
 				if (e != null) {
