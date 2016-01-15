@@ -39,4 +39,8 @@ public class Types {
 	public enum Actions {
 		LEFT, RIGHT, UP, DOWN, JUMP, INTERACT, SHOOT, CHPOWP, CHPOWN
 	}
+	
+	public enum AnimationActions {
+		IDLE, HIT, MOVE, MATK, ATK,	JUMP, JATK
+	}
 }
