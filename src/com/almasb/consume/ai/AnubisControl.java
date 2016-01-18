@@ -138,6 +138,8 @@ public class AnubisControl extends AbstractControl {
 			}
 			case ATTACK:{
 				if(!attacking){
+					entity.setProperty("facingRight", entity.getPosition().getX() < target.getPosition().getX());
+					entity.getControl(PhysicsControl.class).moveX(0);
 					entity.fireFXGLEvent(new FXGLEvent(Event.ENEMY_FIRED));
 					attacking = true;
 				}

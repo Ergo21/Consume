@@ -2,20 +2,27 @@ package com.ergo21.consume;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.geometry.Point2D;
+import javafx.geometry.Rectangle2D;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
+import javafx.util.Duration;
 
 import com.almasb.consume.Config;
 import com.almasb.consume.ConsumeApp;
 import com.almasb.consume.Event;
+import com.almasb.consume.Types;
 import com.almasb.consume.Config.Speed;
 import com.almasb.consume.Types.Element;
 import com.almasb.consume.Types.Powerup;
 import com.almasb.consume.Types.Property;
 import com.almasb.consume.Types.Type;
+import com.almasb.consume.ai.AnimatedEnemyControl;
 import com.almasb.consume.ai.AnubisControl;
 import com.almasb.consume.ai.BayonetControl;
 import com.almasb.consume.ai.BurnerControl;
@@ -44,6 +51,7 @@ import com.almasb.consume.ai.SimpleJumpControl;
 import com.almasb.consume.ai.SimpleMoveControl;
 import com.almasb.consume.ai.SpearThrowerControl;
 import com.almasb.consume.ai.StoneThrowerControl;
+import com.almasb.consume.ai.AnimatedEnemyControl.AnimationDetails;
 import com.almasb.fxgl.asset.Texture;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.FXGLEvent;
@@ -633,22 +641,53 @@ public class EntitySpawner {
 	
 	public Entity spawnAnubisBoss(Point2D spawnPoint) {
 		Entity enemy = new Entity(Type.ENEMY);
-		Rectangle rect = new Rectangle(30, 30);
+		Rectangle rect = new Rectangle(20, 30);
 		rect.setFill(Color.RED);
 
 		enemy.setGraphics(rect);
-		enemy.setVisible(true);
+		enemy.setVisible(false);
 		enemy.setCollidable(true);
 		enemy.setProperty(Property.DATA, new Enemy(consApp.assets.getText("enemies/enemy_FireElemental.txt")));
 		enemy.setProperty(Property.SUB_TYPE, Type.BOSS);
 		enemy.setProperty("physics", consApp.physics);
 		enemy.setProperty("shover", true);
+		enemy.setProperty("facingRight", false);
+		enemy.setProperty("beenHit", false);
+		enemy.setProperty("attacking", false);
 		enemy.setPosition(spawnPoint.getX(), spawnPoint.getY());
 		enemy.addControl(new PhysicsControl(consApp.physics));
 		enemy.addControl(new AnubisControl(consApp, consApp.player));
+		Entity ePic = new Entity(Type.ENEMY);
+		ePic.setVisible(true);
+		ePic.setCollidable(false);
+		ePic.setPosition(spawnPoint.getX(), spawnPoint.getY());
+		ePic.translateXProperty().bind(enemy.translateXProperty());
+		ePic.translateYProperty().bind(enemy.translateYProperty());
+		HashMap<Types.AnimationActions, AnimationDetails> hashMap = new HashMap<>();
+		for(Types.AnimationActions aa : Types.AnimationActions.values()){
+			switch(aa){
+				case ATK: hashMap.put(aa, new AnimationDetails(new Rectangle2D(0, 900, 600, 300), 2, 2.5, false)); break;
+				case IDLE: hashMap.put(aa, new AnimationDetails(new Rectangle2D(0, 0, 600, 300), 2, 1, true)); break;
+				case JATK: hashMap.put(aa, new AnimationDetails(new Rectangle2D(0, 1200, 300, 300), 1, 1, true)); break;
+				case JUMP: hashMap.put(aa, new AnimationDetails(new Rectangle2D(0, 1200, 300, 300), 1, 1, true)); break;
+				case MATK: hashMap.put(aa, new AnimationDetails(new Rectangle2D(0, 300, 1200, 300), 4, 1, true)); break;
+				case MOVE: hashMap.put(aa, new AnimationDetails(new Rectangle2D(0, 300, 1200, 300), 4, 1, true)); break;
+				default: break;
+			}
+		}
+		ePic.addControl(new AnimatedEnemyControl(enemy, hashMap, consApp.getAssetManager().loadTexture(FileNames.ANUBIS_TEX)));
+		ePic.addFXGLEventHandler(Event.DEATH, (event) -> consApp.getSceneManager().removeEntity(ePic));
+		enemy.aliveProperty().addListener(new ChangeListener<Boolean>(){
+			@Override
+			public void changed(ObservableValue<? extends Boolean> arg0, Boolean arg1, Boolean arg2) {
+				if(!arg2){
+					consApp.getTimerManager().runOnceAfter(() -> ePic.fireFXGLEvent(new FXGLEvent(Event.DEATH)), Duration.seconds(0.01));
+				}
+			}});
 		enemy.addFXGLEventHandler(Event.DEATH, this::onEnemyDeath);
 		enemy.addFXGLEventHandler(Event.ENEMY_FIRED, event -> {
 			if((boolean)enemy.getProperty("jumping")){
+				enemy.setProperty("attacking", true);
 				consApp.getTimerManager().runOnceAfter(() -> {
 					if(enemy != null && enemy.getControl(AnubisControl.class) != null){
 						consApp.consController.enemyShootProjectile(Element.DEATH, enemy);
@@ -663,15 +702,19 @@ public class EntitySpawner {
 					if(enemy != null && enemy.getControl(AnubisControl.class) != null){
 						consApp.consController.enemyShootProjectile(Element.DEATH, enemy);
 						enemy.getControl(AnubisControl.class).setAttackComplete(true, false);
+						enemy.setProperty("attacking", false);
 					}			
 				}, Config.ANUBIS_JATTACK_DELAY.multiply(3));
 			}
 			else{
 				consApp.consController.enemyShootProjectile(Element.NEUTRAL2, enemy);
+				enemy.setProperty("attacking", true);
 				consApp.getTimerManager().runOnceAfter(() -> {
 					if(enemy != null && enemy.getControl(AnubisControl.class) != null){
 						enemy.getControl(AnubisControl.class).setAttackComplete(true, true);
+						enemy.setProperty("attacking", false);
 					}			
+					
 				}, Config.ENEMY_SCORPION_DECAY);
 			}
 			
@@ -680,6 +723,7 @@ public class EntitySpawner {
 			}, Config.CONSUME_DECAY);
 		});
 
+		consApp.getSceneManager().addEntities(ePic);
 		return enemy;
 	}
 	

@@ -721,6 +721,12 @@ public class ConsumeController {
 			break;
 		}
 		case DEATH: {
+			if(Config.RELEASE){
+				Texture t = consApp.assets.getTexture("projectiles/Ankh.png");
+				t.setPreserveRatio(true);
+				t.setFitHeight(15);
+				e.setGraphics(t);
+			}
 			break;
 		}
 		case CONSUME: {

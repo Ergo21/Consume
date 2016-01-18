@@ -100,4 +100,6 @@ public final class FileNames{
 	public static final String LADDER_BLOCK		= "statics/ladder.png";
 	public static final String FOOD_BLOCK		= "statics/food 1.png";
 	public static final String POWERUP_BLOCK	= "statics/food 2.png";
+	
+	public static final String ANUBIS_TEX		= "spritesheets/Anubis SS.png";
 }
