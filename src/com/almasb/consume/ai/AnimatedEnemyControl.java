@@ -56,11 +56,11 @@ public class AnimatedEnemyControl implements Control {
 
 	@Override
 	public void onUpdate(Entity entity, long now) {
-		if(entity.getProperty("beenHit") != null && entity.<Boolean>getProperty("beenHit")){
+		if(enemy != null && enemy.getProperty("beenHit") != null && enemy.<Boolean>getProperty("beenHit")){
 			prevVisible = true;
 			entity.setVisible(!entity.isVisible());
 		}
-		else if(entity.getProperty("beenHit") != null && !entity.<Boolean>getProperty("beenHit") &&
+		else if(enemy != null && enemy.getProperty("beenHit") != null && !enemy.<Boolean>getProperty("beenHit") &&
 				!entity.isVisible() && prevVisible){
 			entity.setVisible(true);
 		}
@@ -69,7 +69,8 @@ public class AnimatedEnemyControl implements Control {
 			entity.setGraphics(t);
 		}
 		
-		if(entity != null && ((enemy.<Boolean> getProperty("facingRight") && entity.getScaleX() < 0) ||
+		if(entity != null && enemy != null && enemy.getProperty("facingRight") != null && 
+				((enemy.<Boolean> getProperty("facingRight") && entity.getScaleX() < 0) ||
 				(!enemy.<Boolean> getProperty("facingRight") && entity.getScaleX() > 0))){
 			entity.setScaleX(entity.getScaleX()*-1);
 		}
