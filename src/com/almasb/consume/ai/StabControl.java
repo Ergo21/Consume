@@ -30,16 +30,20 @@ public class StabControl extends AbstractControl {
 		if (created == 0) {
 			created = now;
 		}
+		if(source != null && source.getPosition() != null && source.getProperty("facingRight") != null){
+			Point2D nPos = source.getPosition();
+			if (source.<Boolean>getProperty("facingRight")) {
+				nPos = nPos.add(source.getWidth(), source.getHeight()/2 - entity.getHeight()/2);
+			} else {
+				nPos = nPos.add(-entity.getWidth(), source.getHeight()/2 - entity.getHeight()/2);
+			}
+			entity.setPosition(nPos);
 
-		Point2D nPos = source.getPosition();
-		if ((boolean) source.getProperty("facingRight")) {
-			nPos = nPos.add(source.getWidth() + source.getWidth(), source.getHeight()/2 - entity.getHeight()/2);
-		} else {
-			nPos = nPos.add(-entity.getWidth() - source.getWidth(), source.getHeight()/2 - entity.getHeight()/2);
+			if (Math.abs(entity.getTranslateX() - source.getTranslateX()) >= 350 || now - created > TimerManager.toNanos(Config.CONSUME_DECAY)) {
+				entity.fireFXGLEvent(new FXGLEvent(Event.DEATH));
+			}
 		}
-		entity.setPosition(nPos);
-
-		if (Math.abs(entity.getTranslateX() - source.getTranslateX()) >= 350 || now - created > TimerManager.toNanos(Config.CONSUME_DECAY)) {
+		else{
 			entity.fireFXGLEvent(new FXGLEvent(Event.DEATH));
 		}
 	}

@@ -467,19 +467,19 @@ public class ConsumeApp extends GameApplication {
 		getInputManager().addAction(new UserAction("Spawn Cannon"){
 			@Override
 			protected void onActionBegin() {
-				getSceneManager().addEntities(eSpawner.spawnCannon(spawnPoint.add(900, 0)));
+				getSceneManager().addEntities(eSpawner.spawnCannon(spawnPoint.add(900, -60)));
 			}
 		}, KeyCode.NUMPAD7);
 		getInputManager().addAction(new UserAction("Spawn Rifler"){
 			@Override
 			protected void onActionBegin() {
-				getSceneManager().addEntities(eSpawner.spawnRifler(spawnPoint.add(900, 0)));
+				getSceneManager().addEntities(eSpawner.spawnRifler(spawnPoint.add(900, -60)));
 			}
 		}, KeyCode.NUMPAD8);
 		getInputManager().addAction(new UserAction("Spawn Bayoneter"){
 			@Override
 			protected void onActionBegin() {
-				getSceneManager().addEntities(eSpawner.spawnBayoneter(spawnPoint.add(900, 0)));
+				getSceneManager().addEntities(eSpawner.spawnBayoneter(spawnPoint.add(900, -60)));
 			}
 		}, KeyCode.NUMPAD9);
 		getInputManager().addAction(new UserAction("Spawn Knifer"){

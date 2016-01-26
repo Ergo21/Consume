@@ -44,6 +44,7 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Arc;
 import javafx.scene.shape.ArcType;
+import javafx.scene.shape.Circle;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Polygon;
 import javafx.scene.shape.Rectangle;
@@ -495,6 +496,10 @@ public class ConsumeController {
 			p.setFill(Color.SILVER);
 			if(!consApp.player.<Boolean>getProperty("facingRight")){
 				p.setScaleX(p.getScaleX()*-1);
+				e.setPosition(consApp.player.getPosition().add(-consApp.player.getWidth()/2 - 10, 10));
+			}
+			else{
+				e.setPosition(consApp.player.getPosition().add(consApp.player.getWidth()*3/2, 10));
 			}
 			e.setGraphics(p);
 			e.setProperty(Property.ENABLE_GRAVITY, false);
@@ -728,8 +733,26 @@ public class ConsumeController {
 			break;
 		}
 		case METAL: {
+			consApp.soundManager.playSFX(FileNames.RIFLE_SHOT);
 			e.addControl(new BulletProjectileControl(consApp.player, source.getProperty("facingRight")));
 			e.setProperty(Property.ENABLE_GRAVITY, false);
+			
+			Polygon p = new Polygon();
+			p.getPoints().addAll(new Double[]{
+					0.0,0.0,
+					0.0,5.0,
+					10.0,2.5
+			});
+			p.setFill(Color.SILVER);
+			if(!source.<Boolean>getProperty("facingRight")){
+				p.setScaleX(p.getScaleX()*-1);
+				e.setPosition(source.getPosition().add(-source.getWidth()/2 - 10, 10));
+			}
+			else{
+				e.setPosition(source.getPosition().add(source.getWidth()*3/2, 10));
+			}
+			e.setGraphics(p);
+			
 			break;
 		}
 		case LIGHTNING: {
@@ -966,6 +989,39 @@ public class ConsumeController {
 				
 		consApp.soundManager.playSFX(FileNames.FIRE_COAL);
 		
+		consApp.getSceneManager().addEntities(e);
+	}
+	
+	public void enemyShootCannon(Entity source) {
+		Entity e = new Entity(Type.ENEMY_PROJECTILE);
+		e.setProperty(Property.SUB_TYPE, Element.METAL);
+		e.setProperty("isCannonball", true);
+		e.setCollidable(true);
+		PhysicsControl pc = new PhysicsControl(consApp.physics);
+		e.addControl(pc);
+		pc.moveY(-5);
+		e.addFXGLEventHandler(Event.COLLIDED_PLATFORM, event -> {
+			consApp.getSceneManager().removeEntity(e);
+		});
+		e.addFXGLEventHandler(Event.DEATH, event -> {
+			consApp.getSceneManager().removeEntity(event.getTarget());
+		});
+
+		//TODO Cannon Sound
+		consApp.soundManager.playSFX(FileNames.RIFLE_SHOT);
+		e.addControl(new BulletProjectileControl(consApp.player, source.getProperty("facingRight")));
+		e.setProperty(Property.ENABLE_GRAVITY, true);
+			
+		Circle p = new Circle(8);
+		p.setFill(Color.SILVER);
+		if(!source.<Boolean>getProperty("facingRight")){
+			e.setPosition(source.getPosition().add(-source.getWidth()/2 - 10, 0));
+		}
+		else{
+			e.setPosition(source.getPosition().add(source.getWidth()*3/2, 0));
+		}
+		e.setGraphics(p);
+
 		consApp.getSceneManager().addEntities(e);
 	}
 	

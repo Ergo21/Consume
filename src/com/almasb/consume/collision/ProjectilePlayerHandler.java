@@ -58,7 +58,12 @@ public class ProjectilePlayerHandler extends CollisionHandler {
 			damage = Config.LIGHTNING_DAMAGE;
 			break;
 		case METAL:
-			damage = Config.BULLET_DAMAGE;
+			if(projectile.getProperty("isCannonball") != null && projectile.<Boolean>getProperty("isCannonball")){
+				damage = Config.CAN_BALL_DAMAGE;
+			}
+			else{
+				damage = Config.BULLET_DAMAGE;
+			}
 			break;
 		default:
 			break;

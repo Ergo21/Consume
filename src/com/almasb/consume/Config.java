@@ -65,6 +65,7 @@ public final class Config {
 
 	public static final int BULLET_COST = 0;
 	public static final int BULLET_DAMAGE = 5;
+	public static final int CAN_BALL_DAMAGE = 8;
 
 	public static final Duration CONSUME_DECAY = Duration.seconds(0.5);
 

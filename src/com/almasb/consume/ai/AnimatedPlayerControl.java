@@ -128,10 +128,10 @@ public class AnimatedPlayerControl implements Control {
 
 	@Override
 	public void onUpdate(Entity entity, long now) {
-		if(player != null && player.getProperty("stunned") != null && player.<Boolean>getProperty("stunned")){
+		if(player != null && !player.isCollidable()){
 			entity.setVisible(!entity.isVisible());
 		}
-		else if(player != null && player.getProperty("stunned") != null && !player.<Boolean>getProperty("stunned") && !entity.isVisible()){
+		else if(player != null && player.isCollidable() && !entity.isVisible()){
 			entity.setVisible(true);
 		}
 		
