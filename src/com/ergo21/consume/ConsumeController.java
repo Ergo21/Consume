@@ -327,7 +327,7 @@ public class ConsumeController {
 			break;
 		}
 		case FIRE: {
-			e.addControl(new FireballProjectileControl(consApp.player));
+			e.addControl(new FireballProjectileControl(consApp.player, consApp.player.<Boolean>getProperty("facingRight")));
 			e.setProperty(Property.ENABLE_GRAVITY, false);
 			if (consApp.playerData.getCurrentMana() >= Config.FIREBALL_COST) {
 				consApp.playerData.setCurrentMana(consApp.playerData.getCurrentMana() - Config.FIREBALL_COST);
@@ -638,23 +638,64 @@ public class ConsumeController {
 				e.addControl(new SpearProjectileControl(source, Speed.PROJECTILE, -Speed.PROJECTILE/2));
 			}
 			else {
-				e.addControl(new SpearProjectileControl(source));
+				SpearProjectileControl spc = new SpearProjectileControl(source);
+				if(Config.RELEASE){
+					Texture t = consApp.assets.getTexture("projectiles/Spear SS.png");
+					spc.addTexture(t);
+				}
+				e.addControl(spc);
 			}
 			consApp.soundManager.playSFX(FileNames.SPEAR_THROW);
+			
 			break;
 		}
 		case NEUTRAL2: {
 			e.setVisible(true);
 			e.setCollidable(true);
-			e.setGraphics(new Rectangle(0, 0, source.getWidth() / 2, source.getHeight()));
+			e.setPosition(source.getPosition());
+			e.setGraphics(new Rectangle(0, 0, source.getWidth(), source.getHeight()));
 			e.setProperty(Property.ENABLE_GRAVITY, false);
 			e.addControl(new KnifeControl(source));
 			break;
 		}
 		case FIRE: {
-			e.addControl(new FireballProjectileControl(source));
+			e.addControl(new FireballProjectileControl(consApp.player, source.<Boolean>getProperty("facingRight")));
 			e.setProperty(Property.ENABLE_GRAVITY, false);
 			consApp.soundManager.playSFX(FileNames.FIRE_COAL);
+			
+			if(Config.RELEASE){
+				e.setGraphics(new Rectangle(10,10));
+				e.setVisible(false);
+				
+				Texture t = consApp.assets.getTexture("projectiles/Coal SS.png");
+				t = t.toStaticAnimatedTexture(3, Duration.seconds(0.5));
+				t.setPreserveRatio(true);
+				t.setFitHeight(15);
+				if(!source.<Boolean>getProperty("facingRight")){
+					t.setScaleX(t.getScaleX()*-1);
+				}
+				Entity ePic = new Entity(Type.ENEMY_PROJECTILE);
+				ePic.setProperty(Property.SUB_TYPE, element);
+				ePic.setPosition(e.getPosition());
+				if(source.<Boolean>getProperty("facingRight")){
+					ePic.translateXProperty().bind(e.translateXProperty().add(-20));
+				}
+				else{
+					ePic.translateXProperty().bind(e.translateXProperty());
+				}			
+				ePic.translateYProperty().bind(e.translateYProperty().add(-5));
+				e.aliveProperty().addListener(new ChangeListener<Boolean>(){
+					@Override
+					public void changed(ObservableValue<? extends Boolean> arg0, Boolean arg1, Boolean arg2) {
+						if(!arg2){
+							consApp.getTimerManager().runOnceAfter(() -> {consApp.getSceneManager().removeEntity(ePic);}, Duration.seconds(0.01));
+						}
+					}});
+				ePic.setCollidable(false);
+				ePic.setGraphics(t);
+				consApp.getSceneManager().addEntities(ePic);
+			}
+			
 			break;
 		}
 		case EARTH: {

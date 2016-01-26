@@ -86,6 +86,10 @@ public class ProjectileEnemyHandler extends CollisionHandler {
 		enemyData.takeDamage(damage);
 
 		app.getSceneManager().removeEntity(projectile);
+		
+		enemy.setProperty("beenHit", true);
+		
+		app.getTimerManager().runOnceAfter(() -> {if(enemy != null){enemy.setProperty("beenHit", false);}}, Duration.seconds(0.5));
 
 		if (enemyData.getCurrentHealth() <= 0) {
 			enemy.fireFXGLEvent(new FXGLEvent(Event.DEATH));

@@ -101,5 +101,29 @@ public final class FileNames{
 	public static final String FOOD_BLOCK		= "statics/food 1.png";
 	public static final String POWERUP_BLOCK	= "statics/food 2.png";
 	
-	public static final String ANUBIS_TEX		= "spritesheets/Anubis SS.png";
+	public static final String ANUBIS_TEX		= "spritesheets/anubis SS.png";
+	public static final String BANDIT_K_TEX		= "spritesheets/bandit_K SS.png";
+	public static final String BANDIT_M_TEX		= "spritesheets/bandit_M SS.png";
+	public static final String BANDIT_S_TEX 	= "spritesheets/bandit_S SS.png";
+	public static final String BRITISH_TEX 		= "spritesheets/british SS.png";
+	public static final String CANNON_TEX 		= "spritesheets/cannon SS.png";
+	public static final String DANCERS_TEX 		= "spritesheets/dancer SS.png";
+	public static final String DOG_TEX 			= "spritesheets/dog SS.png";
+	public static final String ELOKO_TEX 		= "spritesheets/eloko SS.png";
+	public static final String ESHU_TEX 		= "spritesheets/eshu SS.png";
+	public static final String GENTLEMAN_TEX 	= "spritesheets/gentleman SS.png";
+	public static final String GOLEM_TEX 		= "spritesheets/golem SS.png";
+	public static final String ICE_SPIRIT_TEX 	= "spritesheets/ice_spirit SS.png";
+	public static final String KIBO_TEX 		= "spritesheets/kibo SS.png";
+	public static final String LOCUST_TEX 		= "spritesheets/locust SS.png";
+	public static final String MUMMY_TEX 		= "spritesheets/mummy SS.png";
+	public static final String MUSICIAN_TEX 	= "spritesheets/musician SS.png";
+	public static final String SAND_ELEPHANT_TEX= "spritesheets/sand_elephant SS.png";
+	public static final String SCARAB_TEX 		= "spritesheets/scarab SS.png";
+	public static final String SCORPION_TEX 	= "spritesheets/scorpion SS.png";
+	public static final String SHAKA_TEX 		= "spritesheets/shaka SS.png";
+	public static final String SHANGO_TEX 		= "spritesheets/shango SS.png";
+	public static final String ZULU_K_TEX 		= "spritesheets/zulu_K SS.png";
+	public static final String ZULU_SH_TEX 		= "spritesheets/zulu_Sh SS.png";
+	public static final String ZULU_SP_TEX 		= "spritesheets/zulu_Sp SS.png";
 }

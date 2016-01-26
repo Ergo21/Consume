@@ -11,8 +11,8 @@ public class FireballProjectileControl extends AbstractControl {
 	private boolean facingRight;
 	private Entity player;
 
-	public FireballProjectileControl(Entity player) {
-		this.facingRight = player.getProperty("facingRight");
+	public FireballProjectileControl(Entity player, boolean fRight) {
+		this.facingRight = fRight;
 		this.player = player;
 	}
 

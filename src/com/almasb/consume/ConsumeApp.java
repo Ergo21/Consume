@@ -407,7 +407,7 @@ public class ConsumeApp extends GameApplication {
 		getInputManager().addAction(new UserAction("Spawn Spear Thrower"){
 			@Override
 			protected void onActionBegin() {
-				getSceneManager().addEntities(eSpawner.spawnSpearEnemy(spawnPoint.add(900, 0)));
+				getSceneManager().addEntities(eSpawner.spawnSpearEnemy(spawnPoint.add(900, -60)));
 			}
 		}, KeyCode.DIGIT7);
 		getInputManager().addAction(new UserAction("Spawn Scorpion"){
@@ -485,13 +485,13 @@ public class ConsumeApp extends GameApplication {
 		getInputManager().addAction(new UserAction("Spawn Knifer"){
 			@Override
 			protected void onActionBegin() {
-				getSceneManager().addEntities(eSpawner.spawnKnifer(spawnPoint.add(900, 0)));
+				getSceneManager().addEntities(eSpawner.spawnKnifer(spawnPoint.add(900, -60)));
 			}
 		}, KeyCode.NUMPAD0);
 		getInputManager().addAction(new UserAction("Spawn Magician"){
 			@Override
 			protected void onActionBegin() {
-				getSceneManager().addEntities(eSpawner.spawnMagician(spawnPoint.add(900, 0)));
+				getSceneManager().addEntities(eSpawner.spawnMagician(spawnPoint.add(900, -60)));
 			}
 		}, KeyCode.DECIMAL);
 		getInputManager().addAction(new UserAction("Spawn Anubis Boss") {
