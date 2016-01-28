@@ -18,38 +18,49 @@ public class ConsumeControl extends AbstractControl {
 	
 	public ConsumeControl(Entity target) {
 		this.target = target;
-		vel = -Speed.ENEMY_PATROL/2;
+		vel = Speed.ENEMY_PATROL/2;
 		created = 0;
 		playerSeen = false;
 	}
 
 	@Override
 	public void onUpdate(Entity entity, long now) {
+		int v = (int)entity.getControl(PhysicsControl.class).getVelocity().getX();
+		
+		if(v == 0){
+			v = vel;
+		}
+		
 		if (isTargetInRange() && !playerSeen) {
 			playerSeen = true;
 		} else if (!isTargetInRange() && playerSeen) {
 			playerSeen = false;
 		} else if (playerSeen) {
 			if (entity.getPosition().getX() > target.getPosition().getX()) {
-				entity.getControl(PhysicsControl.class).moveX(-Speed.ENEMY_PATROL/2);
-				entity.setProperty("facingRight", false);				
+				if(v > 0){
+					v = -v;
+				}
+				entity.getControl(PhysicsControl.class).moveX(v);
 			} else {
-				entity.getControl(PhysicsControl.class).moveX(Speed.ENEMY_PATROL/2);
-				entity.setProperty("facingRight", true);
+				if(v < 0){
+					v = -v;
+				}
+				entity.getControl(PhysicsControl.class).moveX(v);
 			}
 			if(now - created > TimerManager.toNanos(Config.CONSUME_DECAY) + TimerManager.toNanos(Config.ENEMY_CHARGE_DELAY)){
 				created = now;
 				entity.fireFXGLEvent(new FXGLEvent(Event.ENEMY_FIRED));
 			}
 		} else if(lastX == entity.getPosition().getX()){
-			vel = -vel;
-			entity.getControl(PhysicsControl.class).moveX(vel);
-			entity.setProperty("facingRight", !(boolean)entity.getProperty("facingRight"));
+			v = (int)-entity.getControl(PhysicsControl.class).getVelocity().getX();
+			entity.getControl(PhysicsControl.class).moveX(v);
 		}
 		else{
 			lastX = entity.getPosition().getX();
-			entity.getControl(PhysicsControl.class).moveX(vel);
+			entity.getControl(PhysicsControl.class).moveX(v);
 		}
+		
+		entity.setProperty("facingRight", v > 0);		
 		
 	}
 

@@ -79,6 +79,7 @@ public class DogControl extends AbstractControl {
 				entity.getControl(PhysicsControl.class).jump();
 			}
 		}
+		entity.setProperty("facingRight", vel > 0);
 	}
 
 	private boolean isTargetInRange() {
