@@ -158,7 +158,7 @@ public class LevelParser {
 								t = consApp.assets.getTexture(FileNames.S_DIRT_BLOCK);
 							}
 						
-							if(j >= 1 && line.charAt(j-1) == 'i' && level.entities.get(level.entities.size() - 1).getScaleX() == 1){
+							if(j >= 1 && line.charAt(j-1) == line.charAt(j) && level.entities.get(level.entities.size() - 1).getScaleX() == 1){
 								e.setScaleX(-1);
 							}
 						}
@@ -183,7 +183,7 @@ public class LevelParser {
 								t = consApp.assets.getTexture(FileNames.S_SAND_BLOCK);
 							}
 						
-							if(j >= 1 && line.charAt(j-1) == 'i' && level.entities.get(level.entities.size() - 1).getScaleX() == 1){
+							if(j >= 1 && line.charAt(j-1) == line.charAt(j) && level.entities.get(level.entities.size() - 1).getScaleX() == 1){
 								e.setScaleX(-1);
 							}
 						}
@@ -208,7 +208,7 @@ public class LevelParser {
 								t = consApp.assets.getTexture(FileNames.S_N_SAND_BLOCK);
 							}
 						
-							if(j >= 1 && line.charAt(j-1) == 'i' && level.entities.get(level.entities.size() - 1).getScaleX() == 1){
+							if(j >= 1 && line.charAt(j-1) == line.charAt(j) && level.entities.get(level.entities.size() - 1).getScaleX() == 1){
 								e.setScaleX(-1);
 							}
 						}
@@ -233,7 +233,7 @@ public class LevelParser {
 								t = consApp.assets.getTexture(FileNames.S_STONE_BLOCK);
 							}
 						
-							if(j >= 1 && line.charAt(j-1) == 'i' && level.entities.get(level.entities.size() - 1).getScaleX() == 1){
+							if(j >= 1 && line.charAt(j-1) == line.charAt(j) && level.entities.get(level.entities.size() - 1).getScaleX() == 1){
 								e.setScaleX(-1);
 							}
 						}
@@ -252,7 +252,7 @@ public class LevelParser {
 						if(i >= 1 && data.get(i-1) != null && (data.get(i-1).charAt(j) != 'n')){
 							t = consApp.assets.getTexture(FileNames.S_SANDSTONE_BLOCK);
 						
-							if(j >= 1 && line.charAt(j-1) == 'i' && level.entities.get(level.entities.size() - 1).getScaleX() == 1){
+							if(j >= 1 && line.charAt(j-1) == line.charAt(j) && level.entities.get(level.entities.size() - 1).getScaleX() == 1){
 								e.setScaleX(-1);
 							}
 						}

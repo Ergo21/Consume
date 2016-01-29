@@ -153,10 +153,10 @@ public class GentlemanControl extends AbstractControl {
 				}
 				else if(now - moveStart >= TimerManager.toNanos(Duration.seconds(1.25*cycle))){
 					if(target.getPosition().getX() >= entity.getPosition().getX()){
-						vel = Speed.ENEMY_PATROL;
+						vel = Speed.ENEMY_PATROL - 2;
 					}
 					else{
-						vel = -Speed.ENEMY_PATROL;
+						vel = -Speed.ENEMY_PATROL + 2;
 					}
 					entity.getControl(PhysicsControl.class).moveX(vel);
 					entity.setProperty("facingRight", target.getPosition().getX() >= entity.getPosition().getX());

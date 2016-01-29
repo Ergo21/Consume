@@ -640,7 +640,10 @@ public class ConsumeController {
 			if((source.getControl(SpearThrowerControl.class) != null && source.getControl(SpearThrowerControl.class).isShortThrow()) ||
 					(source.getControl(ShakaControl.class) != null && source.getControl(ShakaControl.class).isShortThrow()) ||
 					(source.getControl(EshuControl.class) != null && source.getControl(EshuControl.class).isShortThrow())){
-				e.addControl(new SpearProjectileControl(source, Speed.PROJECTILE, -Speed.PROJECTILE/2));
+				SpearProjectileControl spc = new SpearProjectileControl(source, Speed.PROJECTILE, -Speed.PROJECTILE/2);
+				Texture t = consApp.assets.getTexture("projectiles/Spear SS.png");
+				spc.addTexture(t);
+				e.addControl(spc);
 			}
 			else {
 				SpearProjectileControl spc = new SpearProjectileControl(source);

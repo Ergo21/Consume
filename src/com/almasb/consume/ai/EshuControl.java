@@ -64,6 +64,7 @@ public class EshuControl extends AbstractControl {
 			case NONE:{
 				if(chooseDelay == -1){
 					chooseDelay = now;
+					entity.setProperty("attacking", false);
 				}
 				
 				if(now - chooseDelay >= TimerManager.toNanos(Duration.seconds(1))){
@@ -126,11 +127,13 @@ public class EshuControl extends AbstractControl {
 					if(!attacking){
 						attacking = true;
 						entity.fireFXGLEvent(new FXGLEvent(Event.ENEMY_FIRED));
+						entity.setProperty("attacking", true);
 					}
 				}
 				else if(!(boolean)entity.getProperty("jumping") && moveStart != -1){
 					moveStart = -1;
 					attacking = false;
+					entity.setProperty("attacking", false);
 					entity.getControl(PhysicsControl.class).moveX(0);
 					curAction = BossActions.NONE;
 					entity.setProperty("facingRight", target.getPosition().getX() >= entity.getPosition().getX());
@@ -141,12 +144,14 @@ public class EshuControl extends AbstractControl {
 				if(!attacking){
 					attacking = true;
 					entity.fireFXGLEvent(new FXGLEvent(Event.ENEMY_FIRED));
+					entity.setProperty("attacking", true);
 				}
 				break;
 			}
 			case CATTACK:{
 				if(moveStart == -1){
 					moveStart = now;
+					entity.setProperty("attacking", true);
 				}
 				
 				if(now - moveStart >= TimerManager.toNanos(Duration.seconds(5))){
@@ -156,6 +161,7 @@ public class EshuControl extends AbstractControl {
 					entity.setProperty("facingRight", target.getPosition().getX() >= entity.getPosition().getX());
 					attacking = false;
 					cycle = 0;
+					entity.setProperty("attacking", false);
 				}
 				else if(now - moveStart >= TimerManager.toNanos(Duration.seconds(0.9*cycle))){
 					if(target.getPosition().getX() >= entity.getPosition().getX()){

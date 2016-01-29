@@ -529,16 +529,6 @@ public class ConsumeApp extends GameApplication {
 				getSceneManager().addEntities(eSpawner.spawnEshuBoss(spawnPoint.add(1250, 0)));
 			}
 		}, KeyCode.F6);
-		getInputManager().addAction(new UserAction("Play Background Music") {
-			@Override
-			protected void onActionBegin() {
-	            soundManager.stopAll();
-
-				soundManager.setBackgroundMusic(FileNames.PYRAMID_MUSIC);
-				soundManager.getBackgroundMusic().setCycleCount(Integer.MAX_VALUE);
-				soundManager.playBackgroundMusic();
-			}
-		}, KeyCode.P);
 	}
 
 	public void changeLevel() {
@@ -684,7 +674,7 @@ public class ConsumeApp extends GameApplication {
 		Rectangle rG = new Rectangle(0, 0, 16, 30);
 		rG.setFill(Color.RED);
 		player.setGraphics(rG);
-		player.setVisible(true);
+		player.setVisible(false);
 
 		player.addFXGLEventHandler(Event.PLAYER_DEATH, this::playerDied);
 
