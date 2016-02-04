@@ -18,7 +18,7 @@ public class SandBossControl extends AbstractControl {
 	private Entity target;
 	private Random ran;
 	private enum BossActions {
-		NONE, MERGE, BLOW
+		NONE, MERGE, FORM, BLOW, UATK
 	}
 	private BossActions curAction;
 	private Point2D startPos;
@@ -29,11 +29,13 @@ public class SandBossControl extends AbstractControl {
 	private long chooseDelay = -1; 
 	private long mergeDelay = -1;
 	private int cycle = 0;
+	private boolean underground;
 
 	public SandBossControl(Entity target) {
 		this.target = target;
 		ran = new Random();
 		curAction = BossActions.MERGE;
+		underground = true;
 	}
 
 	@Override
@@ -57,14 +59,59 @@ public class SandBossControl extends AbstractControl {
 				}
 				
 				if(now - chooseDelay >= TimerManager.toNanos(Duration.seconds(1))){
-					if(ran.nextBoolean()){
-						curAction = BossActions.MERGE;
+					if(underground){
+						if(ran.nextBoolean()){
+							curAction = BossActions.FORM;
+						}
+						else{
+							curAction = BossActions.UATK;
+						}
 					}
 					else{
-						curAction = BossActions.BLOW;
+						if(ran.nextBoolean()){
+							curAction = BossActions.MERGE;
+						}
+						else{
+							curAction = BossActions.BLOW;
+						}
 					}
+					
 					chooseDelay = -1;
 				}
+				break;
+			}
+			case FORM:{
+				if(mergeDelay == -1){
+					mergeDelay = now;
+				}
+				
+				if(now - mergeDelay >= TimerManager.toNanos(Duration.seconds(1)) && cycle == 2){
+					Rectangle rect = new Rectangle(50, 40);
+					rect.setFill(Color.RED);
+					entity.setPosition(entity.getPosition().subtract(0, 15));
+					entity.setGraphics(rect);
+					curAction = BossActions.NONE;
+					mergeDelay = -1;
+					cycle = 0;
+					underground = false;
+				}
+				else if(now - mergeDelay >= TimerManager.toNanos(Duration.seconds(0.66)) && cycle == 1){
+					Rectangle rect = new Rectangle(50, 25);
+					rect.setFill(Color.RED);
+					entity.setPosition(entity.getPosition().subtract(0, 15));
+					entity.setGraphics(rect);
+					entity.setCollidable(true);
+					cycle = 2;
+				}
+				else if(now - mergeDelay >= TimerManager.toNanos(Duration.seconds(0.33)) && cycle == 0){
+					entity.setProperty("facingRight", target.getPosition().getX() > entity.getPosition().getX());
+					entity.setVisible(true);
+					if(start){
+						start = false;
+					}
+					cycle = 1;
+				}
+				
 				break;
 			}
 			case MERGE:{
@@ -72,34 +119,8 @@ public class SandBossControl extends AbstractControl {
 					mergeDelay = now;
 				}
 				
-				if(now - mergeDelay >= TimerManager.toNanos(Duration.seconds(3)) && cycle == 5){
-					Rectangle rect = new Rectangle(30, 30);
-					rect.setFill(Color.RED);
-					entity.setPosition(entity.getPosition().subtract(0, 10));
-					entity.setGraphics(rect);
-					curAction = BossActions.NONE;
-					mergeDelay = -1;
-					cycle = 0;
-				}
-				else if(now - mergeDelay >= TimerManager.toNanos(Duration.seconds(2.66)) && cycle == 4){
-					Rectangle rect = new Rectangle(30, 20);
-					rect.setFill(Color.RED);
-					entity.setPosition(entity.getPosition().subtract(0, 10));
-					entity.setGraphics(rect);
-					entity.setCollidable(true);
-					cycle = 5;
-				}
-				else if(now - mergeDelay >= TimerManager.toNanos(Duration.seconds(2.33)) && cycle == 3){
-					entity.setProperty("facingRight", target.getPosition().getX() > entity.getPosition().getX());
-					entity.setVisible(true);
-					if(start){
-						start = false;
-					}
-					cycle = 4;
-				}
-				else if(now - mergeDelay >= TimerManager.toNanos(Duration.seconds(1)) && cycle == 2){
+				if(now - mergeDelay >= TimerManager.toNanos(Duration.seconds(1)) && cycle == 2){
 					entity.setVisible(false);
-					cycle = 3;
 					if(!start){
 						switch(ran.nextInt(3)){
 							case 0:{
@@ -118,22 +139,28 @@ public class SandBossControl extends AbstractControl {
 						entity.setPosition(curPos);
 					}
 						
+					curAction = BossActions.NONE;
+					mergeDelay = -1;
+					cycle = 0;
+					underground = true;
 				}
 				else if(now - mergeDelay >= TimerManager.toNanos(Duration.seconds(0.66)) && cycle == 1){
-					Rectangle rect = new Rectangle(30, 10);
+					Rectangle rect = new Rectangle(50, 10);
 					rect.setFill(Color.RED);
 					entity.setGraphics(rect);
 					entity.setCollidable(false);
 					cycle = 2;
 				}
 				else if(now - mergeDelay >= TimerManager.toNanos(Duration.seconds(0.33)) && cycle == 0){
-					Rectangle rect = new Rectangle(30, 20);
+					Rectangle rect = new Rectangle(50, 25);
 					rect.setFill(Color.RED);
 					entity.setGraphics(rect);
 					cycle = 1;
 				}
+
 				break;
 			}
+			case UATK:
 			case BLOW:{
 				if(!attacking){
 					entity.fireFXGLEvent(new FXGLEvent(Event.ENEMY_FIRED));
@@ -142,6 +169,10 @@ public class SandBossControl extends AbstractControl {
 				break;
 			}
 		}
+	}
+	
+	public boolean isUnderground(){
+		return underground;
 	}
 	
 	public void setAttackComplete(boolean b){

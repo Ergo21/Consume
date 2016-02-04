@@ -47,7 +47,7 @@ public class MusicianControl extends AbstractControl {
 			entity.getControl(PhysicsControl.class).jump();
 			lastJumped = now;
 			consApp.soundManager.playSFX(FileNames.JUMP);
-			played = false;
+			setPlayed(false);
 		} else if (!(boolean) entity.getProperty("jumping")) {
 			entity.getControl(PhysicsControl.class).moveX(0);
 		}
@@ -72,6 +72,7 @@ public class MusicianControl extends AbstractControl {
 	
 	public void setPlayed(boolean b){
 		played = b;
+		entity.setProperty("attacking", b);
 	}
 	
 	private boolean isTargetInRange() {

@@ -38,6 +38,8 @@ public final class Config {
 	public static final double ENEMY_DIVEBOMB_ACC = 0.1;
 
 	public static final Duration ENEMY_JUMP_DELAY = Duration.seconds(1.5);
+	
+	public static final Duration PILLAR_LIFE = Duration.seconds(1.5);
 
 	public static final int MAX_HEALTH_INC = 10;
 	public static final int MAX_MANA_INC = 10;
@@ -100,4 +102,5 @@ public final class Config {
 	public static final Duration ESHU_SPEAR_DECAY = Duration.seconds(0.7);
 
 	public static final Duration STAB_DOWN_DECAY = Duration.seconds(0.5);
+
 }

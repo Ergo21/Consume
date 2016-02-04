@@ -65,16 +65,17 @@ public class KiboControl extends AbstractControl {
 				}
 				
 				if(now - chooseDelay >= TimerManager.toNanos(Duration.seconds(1))){
-					switch(ran.nextInt(3)){
+					int aT = ran.nextInt(3);
+					switch(aT){
 						case 0:
 						case 1:{
 							curAction = BossActions.ATTACK;
-							atType = ran.nextInt(2);
+							atType = aT;
 							break;
 						}
 						case 2:{
 							curAction = BossActions.MATTACK;
-							atType = 2;
+							atType = aT;
 							break;
 						}
 					}

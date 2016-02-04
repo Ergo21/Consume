@@ -23,6 +23,7 @@ import com.almasb.consume.ai.IngestControl;
 import com.almasb.consume.ai.KnifeControl;
 import com.almasb.consume.ai.LightningControl;
 import com.almasb.consume.ai.PhysicsControl;
+import com.almasb.consume.ai.PillarControl;
 import com.almasb.consume.ai.SandProjectileControl;
 import com.almasb.consume.ai.ShakaControl;
 import com.almasb.consume.ai.SpearProjectileControl;
@@ -733,6 +734,72 @@ public class ConsumeController {
 			e2.setProperty(Property.ENABLE_GRAVITY, false);
 
 			consApp.getSceneManager().addEntities(e2);
+			
+			if(Config.RELEASE){
+				e.setGraphics(new Rectangle(10,10));
+				e.setVisible(false);
+				
+				e2.setGraphics(new Rectangle(10,10));
+				e2.setVisible(false);
+				consApp.getTimerManager().runOnceAfter(() ->{
+					Texture t = consApp.assets.getTexture("projectiles/Sand SS.png");
+					Texture t2 = consApp.assets.getTexture("projectiles/Sand SS.png");
+					t = t.toStaticAnimatedTexture(3, Config.SAND_DECAY);
+					t.setPreserveRatio(true);
+					t.setFitHeight(20);
+					t2 = t2.toStaticAnimatedTexture(3, Config.SAND_DECAY);
+					t2.setPreserveRatio(true);
+					t2.setFitHeight(20);
+					if(!consApp.player.<Boolean>getProperty("facingRight")){
+						t.setScaleX(t.getScaleX()*-1);
+						t2.setScaleX(t2.getScaleX()*-1);
+					}
+					Entity ePic = new Entity(Type.ENEMY_PROJECTILE);
+					ePic.setProperty(Property.SUB_TYPE, element);
+					ePic.setPosition(e.getPosition());
+					if(consApp.player.<Boolean>getProperty("facingRight")){
+						ePic.translateXProperty().bind(e.translateXProperty().add(-10));
+					}
+					else{
+						ePic.translateXProperty().bind(e.translateXProperty());
+					}			
+					ePic.translateYProperty().bind(e.translateYProperty().add(-5));
+					e.aliveProperty().addListener(new ChangeListener<Boolean>(){
+						@Override
+						public void changed(ObservableValue<? extends Boolean> arg0, Boolean arg1, Boolean arg2) {
+							if(!arg2){
+								consApp.getTimerManager().runOnceAfter(() -> {consApp.getSceneManager().removeEntity(ePic);}, Duration.seconds(0.01));
+							}
+						}});
+					ePic.setCollidable(false);
+					ePic.setGraphics(t);
+					consApp.getSceneManager().addEntities(ePic);
+					
+					Entity ePic2 = new Entity(Type.ENEMY_PROJECTILE);
+					ePic2.setProperty(Property.SUB_TYPE, element);
+					ePic2.setPosition(e.getPosition());
+					if(consApp.player.<Boolean>getProperty("facingRight")){
+						ePic2.translateXProperty().bind(e2.translateXProperty().add(-10));
+					}
+					else{
+						ePic2.translateXProperty().bind(e2.translateXProperty());
+					}			
+					ePic2.translateYProperty().bind(e2.translateYProperty().add(-5));
+					e2.aliveProperty().addListener(new ChangeListener<Boolean>(){
+						@Override
+						public void changed(ObservableValue<? extends Boolean> arg0, Boolean arg1, Boolean arg2) {
+							if(!arg2){
+								consApp.getTimerManager().runOnceAfter(() -> {consApp.getSceneManager().removeEntity(ePic2);}, Duration.seconds(0.01));
+							}
+						}});
+					ePic2.setCollidable(false);
+					ePic2.setGraphics(t2);
+					consApp.getSceneManager().addEntities(ePic2);
+				}, Config.SAND_DELAY);
+				
+				//e2.setRotate(-30);
+			}
+			
 			break;
 		}
 		case METAL: {
@@ -835,12 +902,12 @@ public class ConsumeController {
 	
 	public void aimedFireball(Entity source, Entity target) {
 		Enemy sourceData = source.getProperty(Property.DATA);
-		Type t = Type.ENEMY_PROJECTILE;
+		Type ty = Type.ENEMY_PROJECTILE;
 		if (source == consApp.player) {
-			t = Type.PLAYER_PROJECTILE;
+			ty = Type.PLAYER_PROJECTILE;
 		}
 
-		Entity e = new Entity(t);
+		Entity e = new Entity(ty);
 		e.setProperty(Property.SUB_TYPE, sourceData.getElement());
 		e.setPosition(source.getPosition().add(0, source.getHeight() / 2));
 		e.setCollidable(true);
@@ -856,6 +923,41 @@ public class ConsumeController {
 
 		e.setProperty(Property.ENABLE_GRAVITY, false);
 
+		consApp.soundManager.playSFX(FileNames.FIRE_COAL);
+		
+		if(Config.RELEASE){
+			e.setGraphics(new Rectangle(10,10));
+			e.setVisible(false);
+			
+			Texture t = consApp.assets.getTexture("projectiles/Coal SS.png");
+			t = t.toStaticAnimatedTexture(3, Duration.seconds(0.5));
+			t.setPreserveRatio(true);
+			t.setFitHeight(15);
+			if(!source.<Boolean>getProperty("facingRight")){
+				t.setScaleX(t.getScaleX()*-1);
+			}
+			Entity ePic = new Entity(Type.ENEMY_PROJECTILE);
+			ePic.setProperty(Property.SUB_TYPE, sourceData.getElement());
+			ePic.setPosition(e.getPosition());
+			if(source.<Boolean>getProperty("facingRight")){
+				ePic.translateXProperty().bind(e.translateXProperty().add(-20));
+			}
+			else{
+				ePic.translateXProperty().bind(e.translateXProperty());
+			}			
+			ePic.translateYProperty().bind(e.translateYProperty().add(-5));
+			e.aliveProperty().addListener(new ChangeListener<Boolean>(){
+				@Override
+				public void changed(ObservableValue<? extends Boolean> arg0, Boolean arg1, Boolean arg2) {
+					if(!arg2){
+						consApp.getTimerManager().runOnceAfter(() -> {consApp.getSceneManager().removeEntity(ePic);}, Duration.seconds(0.01));
+					}
+				}});
+			ePic.setCollidable(false);
+			ePic.setGraphics(t);
+			consApp.getSceneManager().addEntities(ePic);
+		}
+		
 		consApp.getSceneManager().addEntities(e);
 	}
 	
@@ -1131,6 +1233,33 @@ public class ConsumeController {
 		e.setGraphics(new Rectangle(0, 0, 15, 30));
 		e.setProperty(Property.ENABLE_GRAVITY, false);
 		e.addControl(new StabDownControl(source));
+
+		consApp.getSceneManager().addEntities(e);
+	}
+	
+	public void enemyCreatePillar(Entity source, Entity target, double startY) {
+		Entity e = new Entity(Type.ENEMY_PROJECTILE);
+		if(source.<Enemy>getProperty(Property.DATA) != null){
+			e.setProperty(Property.SUB_TYPE, source.<Enemy>getProperty(Property.DATA).getElement());
+		}
+		else{
+			e.setProperty(Property.SUB_TYPE, Element.NEUTRAL);
+		}
+		
+		e.setPosition(new Point2D(target.getPosition().getX(), startY - 5));
+		e.setCollidable(false);
+		e.addControl(new PhysicsControl(consApp.physics));
+		e.addFXGLEventHandler(Event.COLLIDED_PLATFORM, event -> {
+		});
+		e.addFXGLEventHandler(Event.DEATH, event -> {
+			consApp.getSceneManager().removeEntity(event.getTarget());
+		});
+
+		
+		e.setVisible(true);
+		e.setGraphics(new Rectangle(0, 0, 20, 5));
+		e.setProperty(Property.ENABLE_GRAVITY, false);
+		e.addControl(new PillarControl());
 
 		consApp.getSceneManager().addEntities(e);
 	}
