@@ -157,13 +157,13 @@ public class LevelParser {
 							else{
 								t = consApp.assets.getTexture(FileNames.S_DIRT_BLOCK);
 							}
-						
-							if(j >= 1 && line.charAt(j-1) == line.charAt(j) && level.entities.get(level.entities.size() - 1).getScaleX() == 1){
-								e.setScaleX(-1);
-							}
 						}
 						else{
 							t = consApp.assets.getTexture(FileNames.U_DIRT_BLOCK);
+						}
+						
+						if(j >= 1 && line.charAt(j-1) == line.charAt(j) && level.entities.get(level.entities.size() - 1).getScaleX() == 1){
+							e.setScaleX(-1);
 						}
 						t.setPreserveRatio(true);
 						t.setFitHeight(40);
@@ -182,13 +182,12 @@ public class LevelParser {
 							else{
 								t = consApp.assets.getTexture(FileNames.S_SAND_BLOCK);
 							}
-						
-							if(j >= 1 && line.charAt(j-1) == line.charAt(j) && level.entities.get(level.entities.size() - 1).getScaleX() == 1){
-								e.setScaleX(-1);
-							}
 						}
 						else{
 							t = consApp.assets.getTexture(FileNames.U_SAND_BLOCK);
+						}
+						if(j >= 1 && line.charAt(j-1) == line.charAt(j) && level.entities.get(level.entities.size() - 1).getScaleX() == 1){
+							e.setScaleX(-1);
 						}
 						t.setPreserveRatio(true);
 						t.setFitHeight(40);
@@ -207,13 +206,12 @@ public class LevelParser {
 							else{
 								t = consApp.assets.getTexture(FileNames.S_N_SAND_BLOCK);
 							}
-						
-							if(j >= 1 && line.charAt(j-1) == line.charAt(j) && level.entities.get(level.entities.size() - 1).getScaleX() == 1){
-								e.setScaleX(-1);
-							}
 						}
 						else{
 							t = consApp.assets.getTexture(FileNames.U_N_SAND_BLOCK);
+						}
+						if(j >= 1 && line.charAt(j-1) == line.charAt(j) && level.entities.get(level.entities.size() - 1).getScaleX() == 1){
+							e.setScaleX(-1);
 						}
 						t.setPreserveRatio(true);
 						t.setFitHeight(40);
@@ -232,13 +230,12 @@ public class LevelParser {
 							else{
 								t = consApp.assets.getTexture(FileNames.S_STONE_BLOCK);
 							}
-						
-							if(j >= 1 && line.charAt(j-1) == line.charAt(j) && level.entities.get(level.entities.size() - 1).getScaleX() == 1){
-								e.setScaleX(-1);
-							}
 						}
 						else{
 							t = consApp.assets.getTexture(FileNames.U_STONE_BLOCK);
+						}
+						if(j >= 1 && line.charAt(j-1) == line.charAt(j) && level.entities.get(level.entities.size() - 1).getScaleX() == 1){
+							e.setScaleX(-1);
 						}
 						t.setPreserveRatio(true);
 						t.setFitHeight(40);
@@ -251,13 +248,12 @@ public class LevelParser {
 					if(Config.RELEASE){
 						if(i >= 1 && data.get(i-1) != null && (data.get(i-1).charAt(j) != 'n')){
 							t = consApp.assets.getTexture(FileNames.S_SANDSTONE_BLOCK);
-						
-							if(j >= 1 && line.charAt(j-1) == line.charAt(j) && level.entities.get(level.entities.size() - 1).getScaleX() == 1){
-								e.setScaleX(-1);
-							}
 						}
 						else{
 							t = consApp.assets.getTexture(FileNames.U_SANDSTONE_BLOCK);
+						}
+						if(j >= 1 && line.charAt(j-1) == line.charAt(j) && level.entities.get(level.entities.size() - 1).getScaleX() == 1){
+							e.setScaleX(-1);
 						}
 						t.setPreserveRatio(true);
 						t.setFitHeight(40);

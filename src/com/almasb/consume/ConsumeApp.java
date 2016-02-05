@@ -394,7 +394,7 @@ public class ConsumeApp extends GameApplication {
 		getInputManager().addAction(new UserAction("Spawn Sand Boss") {
 			@Override
 			protected void onActionBegin() {
-				getSceneManager().addEntities(eSpawner.spawnSandBoss(spawnPoint.add(1250, 0)));
+				getSceneManager().addEntities(eSpawner.spawnSandBoss(spawnPoint.add(1250, Config.BLOCK_SIZE/2)));
 			}
 		}, KeyCode.DIGIT5);
 		getInputManager().addAction(new UserAction("Spawn Eloko") {

@@ -22,6 +22,8 @@ import com.almasb.consume.Types.Element;
 import com.almasb.consume.Types.Powerup;
 import com.almasb.consume.Types.Property;
 import com.almasb.consume.Types.Type;
+import com.almasb.consume.ai.AnimatedElephantControl;
+import com.almasb.consume.ai.AnimatedElephantControl.AnimationDetailsE;
 import com.almasb.consume.ai.AnimatedEnemyControl;
 import com.almasb.consume.ai.AnubisControl;
 import com.almasb.consume.ai.BayonetControl;
@@ -1142,7 +1144,7 @@ public class EntitySpawner {
 	
 	public Entity spawnSandBoss(Point2D spawnPoint) {
 		Entity enemy = new Entity(Type.ENEMY);
-		Rectangle rect = new Rectangle(60, 40);
+		Rectangle rect = new Rectangle(60, 20); //60 High, 20 start
 		rect.setFill(Color.RED);
 
 		enemy.setGraphics(rect);
@@ -1160,7 +1162,7 @@ public class EntitySpawner {
 			consApp.getTimerManager().runOnceAfter(() -> {
 				if(enemy != null && enemy.getControl(SandBossControl.class) != null){
 					if(enemy.getControl(SandBossControl.class).isUnderground()){
-						consApp.consController.enemyCreatePillar(enemy, consApp.player, spawnPoint.getY() + Config.BLOCK_SIZE);
+						consApp.consController.enemyCreatePillar(enemy, consApp.player, spawnPoint.getY() + Config.BLOCK_SIZE/2);
 					}
 					else{
 						enemy.setProperty("attacking", true);
@@ -1180,8 +1182,7 @@ public class EntitySpawner {
 		});
 		
 		
-		//TODO: COMPLETE Sand boss, Colbox not correct, sand projectile not correct, Sand pillar needs image,
-		//					custom animated control
+		//TODO: COMPLETE Sand boss,  sand projectile not correct, Sand pillar needs image,
 		
 		//enemy.setVisible(false);
 		enemy.setProperty("jumping", false);
@@ -1191,28 +1192,28 @@ public class EntitySpawner {
 		ePic.setVisible(true);
 		ePic.setCollidable(false);
 		ePic.setPosition(spawnPoint.getX(), spawnPoint.getY());
-		ePic.translateXProperty().bind(enemy.translateXProperty().add(15));
+		ePic.translateXProperty().bind(enemy.translateXProperty());
 		ePic.translateYProperty().bind(enemy.translateYProperty().add(10));
 		int fS = 300;
-		HashMap<Types.AnimationActions, AnimationDetails> hashMap = new HashMap<>();
+		HashMap<Types.AnimationActions, AnimationDetailsE> hashMap = new HashMap<>();
 		for(Types.AnimationActions aa : Types.AnimationActions.values()){
 			switch(aa){
-				case ATK: hashMap.put(aa, new AnimationDetails(
+				case ATK: hashMap.put(aa, new AnimationDetailsE(
 						new Rectangle2D	(0,   4*fS, 2*fS, fS), 2, 1, false)); break;
-				case IDLE: hashMap.put(aa, new AnimationDetails(
+				case IDLE: hashMap.put(aa, new AnimationDetailsE(
 						new Rectangle2D	(0,   0*fS, 1*fS, fS), 1, 1, true)); break;
-				case JATK: hashMap.put(aa, new AnimationDetails(
+				case JATK: hashMap.put(aa, new AnimationDetailsE(
 						new Rectangle2D	(0,   0*fS, 1*fS, fS), 1, 1, true)); break;
-				case JUMP: hashMap.put(aa, new AnimationDetails(
+				case JUMP: hashMap.put(aa, new AnimationDetailsE(
 						new Rectangle2D	(0,   1*fS, 5*fS, fS), 5, 1, true)); break;
-				case MATK: hashMap.put(aa, new AnimationDetails(
+				case MATK: hashMap.put(aa, new AnimationDetailsE(
 						new Rectangle2D	(0,   4*fS, 2*fS, fS), 2, 1, true)); break;
-				case MOVE: hashMap.put(aa, new AnimationDetails(
-						new Rectangle2D	(0,   0*fS, 1*fS, fS), 1, 1, false)); break;
+				case MOVE: hashMap.put(aa, new AnimationDetailsE(
+						new Rectangle2D	(0,   1*fS, 4*fS, fS), 4, 1, false)); break;
 				default: break;
 			}
 		}
-		ePic.addControl(new AnimatedEnemyControl(enemy, hashMap, consApp.getAssetManager().loadTexture(FileNames.SAND_ELEPHANT_TEX)));
+		ePic.addControl(new AnimatedElephantControl(enemy, hashMap, consApp.getAssetManager().loadTexture(FileNames.SAND_ELEPHANT_TEX)));
 		ePic.addFXGLEventHandler(Event.DEATH, (event) -> consApp.getSceneManager().removeEntity(ePic));
 		enemy.aliveProperty().addListener(new ChangeListener<Boolean>(){
 			@Override

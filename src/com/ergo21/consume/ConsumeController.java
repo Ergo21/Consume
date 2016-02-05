@@ -24,6 +24,7 @@ import com.almasb.consume.ai.KnifeControl;
 import com.almasb.consume.ai.LightningControl;
 import com.almasb.consume.ai.PhysicsControl;
 import com.almasb.consume.ai.PillarControl;
+import com.almasb.consume.ai.SandEnemyProjectileControl;
 import com.almasb.consume.ai.SandProjectileControl;
 import com.almasb.consume.ai.ShakaControl;
 import com.almasb.consume.ai.SpearProjectileControl;
@@ -99,7 +100,8 @@ public class ConsumeController {
 					consApp.playerData.setCurrentLevel(consApp.playerData.getCurrentLevel() + 1);
 					consApp.changeLevel();
 				}
-				else if(consApp.player.getProperty("climb") != null && !(boolean) consApp.player.getProperty("climb") &&
+				else if(consApp.player.getProperty("jumping") != null && !(boolean) consApp.player.getProperty("jumping") &&
+						consApp.player.getProperty("climb") != null && !(boolean) consApp.player.getProperty("climb") &&
 						consApp.player.getProperty("eating")!= null && !(boolean) consApp.player.getProperty("eating") && 
 						consApp.player.getProperty("eaten") != null && !(boolean) consApp.player.getProperty("eaten")){	
 					consApp.player.setProperty("eating", true);
@@ -715,7 +717,7 @@ public class ConsumeController {
 				p = p.add(-e.getWidth(), 0);
 			}
 			e.setPosition(p);
-			e.addControl(new SandProjectileControl(source, false));
+			e.addControl(new SandEnemyProjectileControl(source, false));
 			e.setProperty(Property.ENABLE_GRAVITY, false);
 
 			Entity e2 = new Entity(Type.ENEMY_PROJECTILE);
@@ -1257,9 +1259,11 @@ public class ConsumeController {
 
 		
 		e.setVisible(true);
-		e.setGraphics(new Rectangle(0, 0, 20, 5));
+		Rectangle g = new Rectangle(0, 0, 20, 5);
+		g.setFill(Color.GOLDENROD);
+		e.setGraphics(g);
 		e.setProperty(Property.ENABLE_GRAVITY, false);
-		e.addControl(new PillarControl());
+		e.addControl(new PillarControl(consApp.assets.getTexture(FileNames.S_N_SAND_BLOCK)));
 
 		consApp.getSceneManager().addEntities(e);
 	}
