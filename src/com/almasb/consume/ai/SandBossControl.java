@@ -205,7 +205,7 @@ public class SandBossControl extends AbstractControl {
 			}
 		}
 		
-		//entity.setVisible(false);
+		entity.setVisible(false);
 	}
 	
 	public boolean isUnderground(){

@@ -26,6 +26,7 @@ import com.almasb.consume.ai.PhysicsControl;
 import com.almasb.consume.ai.PillarControl;
 import com.almasb.consume.ai.SandEnemyProjectileControl;
 import com.almasb.consume.ai.SandProjectileControl;
+import com.almasb.consume.ai.ScorpionControl;
 import com.almasb.consume.ai.ShakaControl;
 import com.almasb.consume.ai.SpearProjectileControl;
 import com.almasb.consume.ai.SpearThrowerControl;
@@ -36,10 +37,12 @@ import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.FXGLEvent;
 import com.almasb.fxgl.event.UserAction;
 
+import javafx.animation.FadeTransition;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.geometry.Point2D;
 import javafx.scene.Group;
+import javafx.scene.control.ProgressBar;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.effect.Glow;
 import javafx.scene.input.KeyCode;
@@ -506,6 +509,34 @@ public class ConsumeController {
 			}
 			e.setGraphics(p);
 			e.setProperty(Property.ENABLE_GRAVITY, false);
+			
+
+			Entity relBar = Entity.noType();
+			relBar.translateXProperty().bind(consApp.player.translateXProperty().subtract(10));
+			relBar.translateYProperty().bind(consApp.player.translateYProperty().subtract(30));
+			ProgressBar rBar = new ProgressBar();
+			rBar.setProgress(0.01);
+			rBar.setPrefWidth(40);
+			relBar.setGraphics(rBar);
+			FadeTransition fT = new FadeTransition(Duration.millis(500), relBar);
+			fT.setFromValue(1);
+			fT.setToValue(0.25);
+			fT.setCycleCount(9);
+			fT.setAutoReverse(true);
+			fT.play();
+			
+			consApp.getTimerManager().runAtIntervalWhile(() -> {
+					if(rBar.getProgress() < 1){
+						rBar.setProgress(rBar.getProgress() + 0.01);
+					}
+				}, Duration.seconds(0.03), relBar.aliveProperty());
+			
+			consApp.getTimerManager().runOnceAfter(() -> {
+				consApp.getSceneManager().removeEntity(relBar);
+			}, Duration.seconds(3));
+
+			consApp.getSceneManager().addEntities(relBar);
+			
 			break;
 		}
 		case LIGHTNING: {
@@ -805,7 +836,12 @@ public class ConsumeController {
 			break;
 		}
 		case METAL: {
-			consApp.soundManager.playSFX(FileNames.RIFLE_SHOT);
+			if(source != null && source.getControl(ScorpionControl.class) == null){
+				consApp.soundManager.playSFX(FileNames.RIFLE_SHOT);
+			}
+			else{
+				consApp.soundManager.playSFX(FileNames.SPEAR_THROW);
+			}
 			e.addControl(new BulletProjectileControl(consApp.player, source.getProperty("facingRight")));
 			e.setProperty(Property.ENABLE_GRAVITY, false);
 			
@@ -1010,7 +1046,10 @@ public class ConsumeController {
 		
 			e.setPosition(source.getPosition().add((source.getWidth() / 2), 0));
 			e.setCollidable(true);
-			e.setGraphics(new Rectangle(10, 1));
+			Texture t = consApp.assets.getTexture(FileNames.STONE_PROJ);
+			t.setPreserveRatio(true);
+			t.setFitHeight(10);
+			e.setGraphics(t);
 			e.addControl(new PhysicsControl(consApp.physics));
 			e.addFXGLEventHandler(Event.COLLIDED_PLATFORM, event -> {
 				consApp.getSceneManager().removeEntity(e);
@@ -1062,6 +1101,7 @@ public class ConsumeController {
 			}
 		}
 		
+		//TODO: Replace 
 		consApp.soundManager.playSFX(FileNames.SPEAR_THROW);
 	}
 	
@@ -1075,19 +1115,27 @@ public class ConsumeController {
 			e.setProperty(Property.SUB_TYPE, Element.FIRE);
 		}
 		
-		e.setPosition(source.getPosition().add(15, source.getHeight()/2));
+		e.setPosition(source.getPosition().add(7, source.getHeight()/4 - 5));
 		e.setCollidable(true);
-		e.setGraphics(new Rectangle(10, 10));
+		Texture t = consApp.assets.getTexture(FileNames.FIREBALL_PROJ);
+		t.setPreserveRatio(false);
+		t.setFitWidth(10);
+		t.setFitHeight(10);
+		e.setGraphics(t);
 		e.addFXGLEventHandler(Event.DEATH, event -> {
 			consApp.getSceneManager().removeEntity(event.getTarget());
 		});
 		
 		consApp.getTimerManager().runOnceAfter(() -> {
-			e.setGraphics(new Rectangle(15, 30));
+			t.setFitWidth(15);
+			t.setFitHeight(30);
+			e.setGraphics(t);
 			e.setPosition(e.getPosition().subtract(2.5, 0));
 		}, Config.ENEMY_FIRE_GROWTH_DELAY);
 		consApp.getTimerManager().runOnceAfter(() -> {
-			e.setGraphics(new Rectangle(20, 60));
+			t.setFitWidth(20);
+			t.setFitHeight(60);
+			e.setGraphics(t);
 			e.setPosition(e.getPosition().subtract(2.5, 0));
 		}, Config.ENEMY_FIRE_GROWTH_DELAY.multiply(2));
 		consApp.getTimerManager().runOnceAfter(() -> {

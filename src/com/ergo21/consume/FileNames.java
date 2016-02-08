@@ -101,6 +101,9 @@ public final class FileNames{
 	public static final String FOOD_BLOCK		= "statics/food 1.png";
 	public static final String POWERUP_BLOCK	= "statics/food 2.png";
 	
+	public static final String FIREBALL_PROJ	= "projectiles/fireball.png";
+	public static final String STONE_PROJ	= "projectiles/stone.png";
+	
 	public static final String ANUBIS_TEX		= "spritesheets/anubis SS.png";
 	public static final String BANDIT_K_TEX		= "spritesheets/bandit_K SS.png";
 	public static final String BANDIT_M_TEX		= "spritesheets/bandit_M SS.png";

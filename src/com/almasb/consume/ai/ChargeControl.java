@@ -74,6 +74,8 @@ public class ChargeControl extends AbstractControl {
 
 			entity.getControl(PhysicsControl.class).moveX(vel);
 		}
+		
+		entity.setProperty("facingRight", vel > 0);
 	}
 
 	private boolean isTargetInRange() {

@@ -42,7 +42,7 @@ public class AnimatedEnemyControl implements Control {
 		for(Types.AnimationActions aA : aniDetails.keySet()){
 			AnimationDetails val = aniDetails.get(aA);
 			if(val != null){
-				if(val.startAnimation){
+				if(val.startAnimation && val.frames > 1){
 					animations.put(aA, spriteSheet.subTexture(val.area).
 							toStaticAnimatedTexture(val.frames, Duration.seconds(val.period)));
 				}
