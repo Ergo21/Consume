@@ -2,6 +2,7 @@ package com.ergo21.consume;
 
 import com.almasb.consume.Config;
 import com.almasb.consume.ConsumeApp;
+import com.almasb.fxgl.asset.Texture;
 
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -20,9 +21,6 @@ import javafx.scene.paint.CycleMethod;
 import javafx.scene.paint.LinearGradient;
 import javafx.scene.paint.Stop;
 import javafx.scene.shape.Rectangle;
-import javafx.scene.text.Font;
-import javafx.scene.text.FontWeight;
-import javafx.scene.text.Text;
 
 public class LevelMenu extends Group{
 	private ConsumeApp consApp;
@@ -41,7 +39,7 @@ public class LevelMenu extends Group{
 		GridPane gp = new GridPane();
 		
 		for(int i = 0; i < 7; i++){
-			MenuItem but = new MenuItem(String.valueOf(i));
+			MenuItem but = new MenuItem(getButtonIcon(i));
 			int lev = (i+1)*3;
 			but.setAction(() -> {
 				consApp.soundManager.stopAll();
@@ -97,22 +95,91 @@ public class LevelMenu extends Group{
 		this.getChildren().add(gp);
 	}
 	
+	private Texture getButtonIcon(int lev) {
+		Texture t = null;
+		switch(lev){
+			case 0:{
+				//t = consApp.getAssetManager().loadTexture(FileNames.DESERT_BACK_1);
+				t = consApp.getAssetManager().loadTexture(FileNames.ELEPHANT_ICON);
+				t.setPreserveRatio(false);
+				t.setFitWidth(76);
+				t.setFitHeight(72);
+				break;
+			}
+			case 1:{
+				//t = consApp.getAssetManager().loadTexture(FileNames.PYRAMID_BACK_1);
+				t = consApp.getAssetManager().loadTexture(FileNames.ANUBIS_ICON);
+				t.setPreserveRatio(true);
+				t.setFitWidth(80);
+				t.setFitHeight(80);
+				break;
+			}
+			case 2:{
+				//t = consApp.getAssetManager().loadTexture(FileNames.FESTIVAL_BACK_1);
+				t = consApp.getAssetManager().loadTexture(FileNames.SHANGO_ICON);
+				t.setPreserveRatio(true);
+				t.setFitWidth(80);
+				t.setFitHeight(80);
+				break;
+			}
+			case 3:{
+				//t = consApp.getAssetManager().loadTexture(FileNames.FOREST1_BACK_2);
+				t = consApp.getAssetManager().loadTexture(FileNames.ESHU_ICON);
+				t.setPreserveRatio(true);
+				t.setFitWidth(80);
+				t.setFitHeight(80);
+				break;
+			}
+			case 4:{
+				//t = consApp.getAssetManager().loadTexture(FileNames.MOUNTAIN_BACK_1);
+				t = consApp.getAssetManager().loadTexture(FileNames.KIBO_ICON);
+				t.setPreserveRatio(true);
+				t.setFitWidth(80);
+				t.setFitHeight(80);
+				break;
+			}
+			case 5:{
+				//t = consApp.getAssetManager().loadTexture(FileNames.COLONY_BACK_1);
+				t = consApp.getAssetManager().loadTexture(FileNames.GENTLEMAN_ICON);
+				t.setPreserveRatio(true);
+				t.setFitWidth(80);
+				t.setFitHeight(80);
+				break;
+			}
+			case 6:{
+				//t = consApp.getAssetManager().loadTexture(FileNames.EMPIRE_BACK_1);
+				t = consApp.getAssetManager().loadTexture(FileNames.SHAKA_ICON);
+				t.setPreserveRatio(true);
+				t.setFitWidth(80);
+				t.setFitHeight(80);
+				break;
+			}
+			default:{
+				t = consApp.getAssetManager().loadTexture(FileNames.DESERT_BACK_1);
+				t.setPreserveRatio(true);
+				t.setFitWidth(80);
+				t.setFitHeight(80);
+				break;
+			}
+		}
+		return t;
+	}
+
 	public void setFinalLevelVisible(boolean v){
 		finalLevel.setVisible(v);
 	}
 	
 	private class MenuItem extends StackPane {
-		private Text text;
 
 		private Background defBack;
-		private Color defTexFill;
+		private Texture icon;
 
-		public MenuItem(String name) {
-			LinearGradient gradient = new LinearGradient(0, 0, 1, 0, true, CycleMethod.NO_CYCLE,
-					new Stop[] { new Stop(0.5, Color.hsb(33, 0.7, 0.7)), new Stop(1, Color.hsb(100, 0.8, 1)) });
+		public MenuItem(Texture ico) {
+			icon = ico;
+			LinearGradient gradient = new LinearGradient(0, 1, 0, 0, true, CycleMethod.NO_CYCLE,
+					new Stop[] { new Stop(0.5, Color.DARKRED), new Stop(1, Color.RED) });
 
 			defBack = new Background(new BackgroundFill(new Color(0,0,0,0.4), new CornerRadii(7), new Insets(1)));
-			defTexFill = Color.WHITE;
 			this.setBackground(defBack);
 			this.setBorder(new Border(
 					new BorderStroke(Color.WHITE, BorderStrokeStyle.SOLID, new CornerRadii(5), BorderWidths.DEFAULT)));
@@ -121,21 +188,15 @@ public class LevelMenu extends Group{
 			bg.setVisible(false);
 			bg.setOpacity(0.4);
 
-			text = new Text(name);
-			text.setFill(defTexFill);
-			text.setFont(Font.font("", FontWeight.SEMI_BOLD, 22));
-
 			setAlignment(Pos.CENTER);
-			getChildren().addAll(text, bg);
+			getChildren().addAll(icon, bg);
 
 			setOnMouseEntered(event -> {
 				this.setBackground(new Background(new BackgroundFill(gradient, new CornerRadii(5), new Insets(1))));
-				text.setFill(Color.BLACK);
 			});
 
 			setOnMouseExited(event -> {
 				this.setBackground(defBack);
-				text.setFill(defTexFill);
 			});
 
 			setOnMousePressed(event -> {

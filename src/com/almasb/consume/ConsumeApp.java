@@ -183,7 +183,7 @@ public class ConsumeApp extends GameApplication {
 		});
 	}
 
-	private Text debug = new Text();
+	//private Text debug = new Text();
 
 	@Override
 	protected void initUI() {
@@ -204,9 +204,9 @@ public class ConsumeApp extends GameApplication {
 		performance.setTranslateY(50);
 		performance.setFill(Color.BLACK);
 
-		debug.setTranslateX(450);
-		debug.setTranslateY(100);
-		getSceneManager().addUINodes(gScene, hud, performance, debug);
+		///debug.setTranslateX(450);
+		//debug.setTranslateY(100);
+		getSceneManager().addUINodes(gScene, hud, performance);
 
         hud.CurHealthProperty().bind(playerData.CurrentHealthProperty());
         hud.CurManaProperty().bind(playerData.CurrentManaProperty());
@@ -295,7 +295,7 @@ public class ConsumeApp extends GameApplication {
 				e.setProperty("state", "idle");
 		}
 
-		debug.setText("Debug text goes here");
+		//debug.setText("Debug text goes here");
 	}
 
 	@Override
@@ -659,7 +659,7 @@ public class ConsumeApp extends GameApplication {
 		}
 	}
 
-	Entity powerStatus;
+	//Entity powerStatus;
 
 	private void initPlayer(Point2D point) {
 
@@ -697,14 +697,14 @@ public class ConsumeApp extends GameApplication {
 		pPicBox.translateXProperty().bind(player.translateXProperty().add(pPicBox.getTranslateX()));
 		pPicBox.translateYProperty().bind(player.translateYProperty().add(pPicBox.getTranslateY()));
 
-		powerStatus = Entity.noType();
+		/*powerStatus = Entity.noType();
 		powerStatus.translateXProperty().bind(player.translateXProperty());
 		powerStatus.translateYProperty().bind(player.translateYProperty().subtract(40));
 		Text tTex = new Text();
 		tTex.textProperty().bind(playerData.ElementProperty().asString());
 		powerStatus.setGraphics(tTex);
 
-		getSceneManager().addEntities(powerStatus);
+		getSceneManager().addEntities(powerStatus);*/
 
 		getSceneManager().addEntities(player, pPicBox);
 	}

@@ -18,6 +18,7 @@ public final class FileNames{
 	
 	public static final String DESERT_MUSIC 	= "05 Desert.mp3";
 	public static final String DESERT_BACK_1 	= "backgrounds/sahara night.jpg";
+	public static final String ELEPHANT_ICON	= "icons/elephant icon.png";
 	
 	public static final String PYRAMID_MUSIC 	= "06 Pyramid.mp3";
 	public static final String PYRAMID_BACK_1 	= "backgrounds/Egyptian Pyramid.jpg";
