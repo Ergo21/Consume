@@ -43,14 +43,20 @@ public class PlayerPowerupHandler extends CollisionHandler {
 		switch (type) {
 		case INC_MANA_REGEN:
 			playerData.increaseManaRegen(Config.MANA_REGEN_INC);
+			playerData.restoreHealth(1);
+			playerData.restoreMana(playerData.getMaxMana());
 			playerData.getUpgrades().add(playerData.getCurrentLevel());
 			break;
 		case INC_MAX_HEALTH:
 			playerData.increaseMaxHealth(Config.MAX_HEALTH_INC);
+			playerData.restoreHealth(1);
+			playerData.restoreMana(playerData.getMaxMana());
 			playerData.getUpgrades().add(playerData.getCurrentLevel());
 			break;
 		case INC_MAX_MANA:
 			playerData.increaseMaxMana(Config.MAX_MANA_INC);
+			playerData.restoreHealth(1);
+			playerData.restoreMana(playerData.getMaxMana());
 			playerData.getUpgrades().add(playerData.getCurrentLevel());
 			break;
 		case RESTORE_HEALTH_12:
@@ -63,13 +69,13 @@ public class PlayerPowerupHandler extends CollisionHandler {
 			playerData.restoreHealth(0.5);
 			break;
 		case RESTORE_MANA_12:
-			playerData.restoreMana(0.125);
+			playerData.restoreMana(playerData.getMaxMana()/8);
 			break;
 		case RESTORE_MANA_25:
-			playerData.restoreMana(0.25);
+			playerData.restoreMana(playerData.getMaxMana()/4);
 			break;
 		case RESTORE_MANA_50:
-			playerData.restoreMana(0.5);
+			playerData.restoreMana(playerData.getMaxMana()/2);
 			break;
 		case NEUTRAL2:
 			if(!playerData.getPowers().contains(Element.NEUTRAL2)){

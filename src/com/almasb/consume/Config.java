@@ -41,9 +41,9 @@ public final class Config {
 	
 	public static final Duration PILLAR_LIFE = Duration.seconds(1.5);
 
-	public static final int MAX_HEALTH_INC = 10;
-	public static final int MAX_MANA_INC = 10;
-	public static final int MANA_REGEN_INC = 5;
+	public static final int MAX_HEALTH_INC = 5;
+	public static final int MAX_MANA_INC = 5;
+	public static final int MANA_REGEN_INC = 1;
 
 	public static final Duration REGEN_TIME_INTERVAL = Duration.seconds(1);
 

@@ -303,7 +303,7 @@ public class LevelParser {
 					if(line.charAt(j) == 'u'){
 						e.setProperty(Property.SUB_TYPE, Powerup.INC_MAX_HEALTH);
 					}
-					else if(line.charAt(j) == 'u'){
+					else if(line.charAt(j) == 'U'){
 						e.setProperty(Property.SUB_TYPE, Powerup.INC_MAX_MANA);
 					}
 					else{

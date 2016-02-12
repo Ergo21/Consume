@@ -259,6 +259,10 @@ public class ConsumeApp extends GameApplication {
 
 	@Override
 	protected void onUpdate() {
+		if(playerData.getCurrentMana() == playerData.getMaxMana()){
+			regenTime = getNow();
+		}
+		
 		if (getNow() - regenTime >= TimerManager.toNanos(Config.REGEN_TIME_INTERVAL)) {
 			playerData.regenMana();
 			regenTime = getNow();

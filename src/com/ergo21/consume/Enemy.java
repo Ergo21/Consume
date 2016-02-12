@@ -251,9 +251,8 @@ public class Enemy {
 	 *
 	 * @param percent
 	 */
-	public void restoreMana(double percent) {
-		int restored = (int) (maxMana.get() * percent);
-		setCurrentMana(Math.min(maxMana.get(), curMana.get() + restored));
+	public void restoreMana(int value) {
+		setCurrentMana(Math.min(maxMana.get(), curMana.get() + value));
 	}
 
 	/**
@@ -261,7 +260,7 @@ public class Enemy {
 	 * rate
 	 */
 	public void regenMana() {
-		restoreMana(manaReg.get() / 100.0);
+		restoreMana(manaReg.get());
 	}
 
 	public void takeDamage(int value) {

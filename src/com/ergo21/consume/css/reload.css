@@ -1,0 +1,7 @@
+.progress-bar .bar{
+	-fx-background-color: yellow;
+}
+
+.progress-bar .track{
+	-fx-background-color: black;
+}

@@ -7,8 +7,10 @@ import javafx.beans.value.ObservableValue;
 import javafx.geometry.Insets;
 import javafx.scene.Group;
 import javafx.scene.control.Label;
-import javafx.scene.control.ProgressBar;
 import javafx.scene.layout.GridPane;
+import javafx.scene.paint.Color;
+import javafx.scene.paint.Paint;
+import javafx.scene.shape.Rectangle;
 import javafx.scene.transform.Rotate;
 import javafx.scene.transform.Translate;
 
@@ -18,8 +20,8 @@ public class PlayerHUD extends Group {
 	protected IntegerProperty maxMana = new SimpleIntegerProperty();
 	protected IntegerProperty curHealth = new SimpleIntegerProperty();
 	protected IntegerProperty curMana = new SimpleIntegerProperty();
-	private ProgressBar healthBar;
-	private ProgressBar manaBar;
+	private ValueBar healthBar;
+	private ValueBar manaBar;
 
 	private Label healthLab;
 	private Label manaLab;
@@ -54,13 +56,16 @@ public class PlayerHUD extends Group {
 				updateValues();
 			}
 		});
-		healthBar = new ProgressBar();
+		healthBar = new ValueBar(95, 20, curHealth, maxHealth, Color.RED);
 		healthBar.getTransforms().add(new Rotate(270));
-		manaBar = new ProgressBar();
+		healthBar.getTransforms().add(new Translate(-10, 15, 0));
+		manaBar = new ValueBar(95, 20, curMana, maxMana, Color.LIMEGREEN);
 		manaBar.getTransforms().add(new Rotate(270));
-		manaBar.getTransforms().add(new Translate(0, 25, 0));
+		manaBar.getTransforms().add(new Translate(-10, 40, 0));
 		healthLab = new Label();
 		manaLab = new Label();
+		healthLab.setVisible(false);
+		manaLab.setVisible(false);
 
 		GridPane grid = new GridPane();
 		grid.setVgap(2);
@@ -127,11 +132,45 @@ public class PlayerHUD extends Group {
 	}
 
 	private void updateValues() {
-		healthBar.setProgress(curHealth.get() * 1.0 / maxHealth.get());
-		if (maxMana.get() != 0)
-			manaBar.setProgress(curMana.get() * 1.0 / maxMana.get());
-
 		healthLab.setText(curHealth.get() + "/" + maxHealth.get());
 		manaLab.setText(curMana.get() + "/" + maxMana.get());
+	}
+	
+	private class ValueBar extends Group{
+		private IntegerProperty curValue;
+		private IntegerProperty maxValue;
+		private Rectangle backBar;
+		public ValueBar(int width, int height, IntegerProperty cV, IntegerProperty mV, Paint p){
+			curValue = cV;
+			maxValue = mV;
+			backBar = new Rectangle(width, height, Color.BLACK);
+			this.getChildren().add(backBar);
+			
+			for(int i = 0; i < maxValue.intValue(); i++){
+				Rectangle r = new Rectangle(i*width/maxValue.intValue() + 1, 2, (width - maxValue.intValue())/maxValue.intValue(), height - 4);
+				r.setFill(p);
+				this.getChildren().add(r);
+			}
+			
+			curValue.addListener(new ChangeListener<Number>(){
+				@Override
+				public void changed(ObservableValue<? extends Number> arg0, Number arg1, Number arg2) {
+					for(int i = 0; i < getChildren().size(); i++){
+						getChildren().get(i).setVisible(i <= arg2.intValue());
+					}
+				}});
+			
+			maxValue.addListener(new ChangeListener<Number>(){
+				@Override
+				public void changed(ObservableValue<? extends Number> arg0, Number arg1, Number arg2) {
+					getChildren().clear();
+					getChildren().add(backBar);
+					for(int i = 0; i < arg2.intValue(); i++){
+						Rectangle r = new Rectangle(i*width/arg2.intValue() + 1, 2, (width - arg2.intValue())/arg2.intValue(), height - 4);
+						r.setFill(p);
+						getChildren().add(r);
+					}
+				}});
+		}
 	}
 }
