@@ -16,6 +16,7 @@ import com.almasb.fxgl.ui.FXGLMenu;
 import com.almasb.fxgl.util.Version;
 
 import javafx.beans.binding.Bindings;
+import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.beans.value.ChangeListener;
@@ -25,11 +26,11 @@ import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Group;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.ListView;
-import javafx.scene.control.ProgressBar;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextInputDialog;
@@ -53,6 +54,7 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.CycleMethod;
 import javafx.scene.paint.LinearGradient;
+import javafx.scene.paint.Paint;
 import javafx.scene.paint.Stop;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
@@ -123,7 +125,7 @@ public final class ConsumeGameMenu extends FXGLMenu {
 			contentViewer.getChildren().add(createContentLoadConsume());
 		});
 
-		MenuItem itemOptions = new MenuItem("Options");
+		MenuItem itemOptions = new MenuItem("OPTIONS");
 		itemOptions.setAction(() -> {
 			contentViewer.getChildren().clear();
 			contentViewer.getChildren().add(createOptionsMenuConsume());
@@ -278,23 +280,23 @@ public final class ConsumeGameMenu extends FXGLMenu {
 	}
 
 	private MenuBox createOptionsMenuConsume() {
-		MenuItem itemControls = new MenuItem("Controls");
+		MenuItem itemControls = new MenuItem("CONTROLS");
 		itemControls.setAction(() -> {
 			contentViewer.getChildren().clear();
 			contentViewer.getChildren().add(createContentControls());
 		});
-		MenuItem itemVideo = new MenuItem("VIDEO");
+		//MenuItem itemVideo = new MenuItem("VIDEO");
 		MenuItem itemAudio = new MenuItem("Audio");
 		itemAudio.setAction(() ->{
 			contentViewer.getChildren().clear();
 			contentViewer.getChildren().add(createContentAudio());
 		});
-		MenuItem itemCredits = new MenuItem("Credits");
+		MenuItem itemCredits = new MenuItem("CREDITS");
 		itemCredits.setAction(() -> {
 			contentViewer.getChildren().clear();
 			contentViewer.getChildren().add(createContentCredits());
 		});
-		return new MenuBox(5, itemControls, itemVideo, itemAudio, itemCredits);
+		return new MenuBox(5, itemControls, itemAudio, itemCredits);
 	}
 
 	public void updatePowerMenu(Player playerData) {
@@ -354,22 +356,18 @@ public final class ConsumeGameMenu extends FXGLMenu {
 		Text musTexVal = new Text();
 		musTexVal.setStroke(Color.WHITE);
 		musTexVal.setFill(Color.WHITE);
-		ProgressBar musBar = new ProgressBar();
-		musBar.progressProperty().bind(consApp.backVol);
-		musBar.setPadding(new Insets(0,5,20,0));
-		musBar.setPrefSize(200, 15);
+		SoundBar musBar = new SoundBar(200, 15, consApp.backVol, 100, musTexVal, Color.YELLOW);
 		musBar.setOnMouseClicked(new EventHandler<MouseEvent>(){
 			@Override
 			public void handle(MouseEvent me) {
-				consApp.backVol.set((me.getX()+8)/200);
-				musTexVal.setText(Math.round(musBar.getProgress() * 100) + "%");
+				consApp.backVol.set((me.getX())/200);
 			}
 
 		});
 		musBar.setOnMouseDragged(new EventHandler<MouseEvent>(){
 			@Override
 			public void handle(MouseEvent me) {
-				double val = (me.getX()+8)/200;
+				double val = (me.getX())/200;
 				if(val < 0){
 					val = 0;
 				}
@@ -377,14 +375,12 @@ public final class ConsumeGameMenu extends FXGLMenu {
 					val = 1;
 				}
 				consApp.backVol.set(val);
-				musTexVal.setText(Math.round(musBar.getProgress() * 100) + "%");
 			}
 
 		});
-		musTexVal.setText(Math.round(musBar.getProgress() * 100) + "%");
 
 		HBox musBlock = new HBox(musBar, musTexVal);
-
+		musTexVal.setTranslateX(musTexVal.getTranslateX() + 5);
 
 		Text sfxTex = new Text("Sound Effects Volume");
 		sfxTex.setStroke(Color.WHITE);
@@ -393,22 +389,18 @@ public final class ConsumeGameMenu extends FXGLMenu {
 		Text sfxTexVal = new Text();
 		sfxTexVal.setStroke(Color.WHITE);
 		sfxTexVal.setFill(Color.WHITE);
-		ProgressBar sfxBar = new ProgressBar();
-		sfxBar.progressProperty().bind(consApp.sfxVol);
-		sfxBar.setPadding(new Insets(0,5,20,0));
-		sfxBar.setPrefSize(200, 15);
+		SoundBar sfxBar = new SoundBar(200, 15, consApp.sfxVol, 100, sfxTexVal, Color.YELLOW);
 		sfxBar.setOnMouseClicked(new EventHandler<MouseEvent>(){
 			@Override
 			public void handle(MouseEvent me) {
-				consApp.sfxVol.set((me.getX()+8)/200);
-				sfxTexVal.setText(Math.round(sfxBar.getProgress() * 100) + "%");
+				consApp.sfxVol.set((me.getX())/200);
 			}
 
 		});
 		sfxBar.setOnMouseDragged(new EventHandler<MouseEvent>(){
 			@Override
 			public void handle(MouseEvent me) {
-				double val = (me.getX()+8)/200;
+				double val = (me.getX())/200;
 				if(val < 0){
 					val = 0;
 				}
@@ -416,25 +408,23 @@ public final class ConsumeGameMenu extends FXGLMenu {
 					val = 1;
 				}
 				consApp.sfxVol.set(val);
-				sfxTexVal.setText(Math.round(sfxBar.getProgress() * 100) + "%");
 			}
 
 		});
-		sfxTexVal.setText(Math.round(sfxBar.getProgress() * 100) + "%");
 		HBox sfxBlock = new HBox(sfxBar, sfxTexVal);
-
+		sfxTexVal.setTranslateX(sfxTexVal.getTranslateX() + 5);
+		
 		MenuItem savAud = new MenuItem("Save");
 		savAud.setOnMouseClicked(new EventHandler<MouseEvent>(){
 			@Override
 			public void handle(MouseEvent event) {
-				consApp.sSettings.setBackMusicVolume(musBar.getProgress());
-				consApp.sSettings.setSFXVolume(sfxBar.getProgress());
+				consApp.sSettings.setBackMusicVolume(consApp.backVol.doubleValue());
+				consApp.sSettings.setSFXVolume(consApp.sfxVol.doubleValue());
 				consApp.getAudioManager().setGlobalMusicVolume(consApp.sSettings.getBackMusicVolume());
 				consApp.getAudioManager().setGlobalSoundVolume(consApp.sSettings.getSFXVolume());
-				consApp.backVol.set(musBar.getProgress());
-				consApp.sfxVol.set(sfxBar.getProgress());
 			}
 		});
+		savAud.setMaxWidth(200);
 
 		VBox vb = new VBox(musTex, musBlock, sfxTex, sfxBlock, savAud);
 		return vb;
@@ -442,18 +432,20 @@ public final class ConsumeGameMenu extends FXGLMenu {
 
 	private BorderPane createContentControls() {
 		TableView<TabItem> center = new TableView<TabItem>();
-		center.setMaxHeight(consApp.getHeight()/2);
+		center.setMaxHeight(consApp.getHeight()/2 - 15);
 		center.setPrefWidth(consApp.getWidth()/2);
 		//center.getC
 		TableColumn<TabItem, String> action = new TableColumn<TabItem, String>("Action");
-		action.setResizable(false); //<TabItem, String>
-		action.setPrefWidth(consApp.getWidth()/4);
+		action.setResizable(false);
+		action.setPrefWidth(consApp.getWidth()/4.2);
 		action.setCellValueFactory(new PropertyValueFactory<>("itAction"));
+		action.setStyle("-fx-alignment: CENTER");
 
 		TableColumn<TabItem, String> key = new TableColumn<TabItem, String>("Key");
 		key.setResizable(false);
-		key.setPrefWidth(consApp.getWidth()/4);
+		key.setPrefWidth(consApp.getWidth()/4.2);
 		key.setCellValueFactory(new PropertyValueFactory<>("itKey"));
+		key.setStyle("-fx-alignment: CENTER");
 
 		HashMap<Actions, KeyCode> tKeys = consApp.consController.getCurrentKeys();
 		ObservableList<TabItem> items = FXCollections.observableArrayList();
@@ -502,6 +494,7 @@ public final class ConsumeGameMenu extends FXGLMenu {
 				consApp.consController.initControls(newKeyMap);
 			}
 		});
+
 		MenuItem itemRestore = new MenuItem("Restore to Default");
 		itemRestore.setOnMouseClicked(new EventHandler<MouseEvent>(){
 			@Override
@@ -513,7 +506,9 @@ public final class ConsumeGameMenu extends FXGLMenu {
 				}
 			}
 		});
-		VBox right= new VBox(itemSave, itemRestore);
+		itemRestore.setTranslateY(5);
+		VBox right = new VBox(itemSave, itemRestore);
+		right.setTranslateX(10);
 
 		BorderPane view = new BorderPane();
 		view.setCenter(center);
@@ -603,9 +598,9 @@ public final class ConsumeGameMenu extends FXGLMenu {
 		private Color defTexFill;
 
 		public MenuItem(String name) {
-			LinearGradient gradient = new LinearGradient(0, 0, 1, 0, true, CycleMethod.NO_CYCLE,
-					new Stop[] { new Stop(0.5, Color.hsb(33, 0.7, 0.7)), new Stop(1, Color.hsb(100, 0.8, 1)) });
-
+			LinearGradient gradient = new LinearGradient(0, 1, 0, 0, true, CycleMethod.NO_CYCLE,
+					new Stop[] { new Stop(0.5, Color.DARKRED), new Stop(1, Color.RED) });
+			
 			highlight = false;
 			defBack = new Background(new BackgroundFill(Color.BLACK, new CornerRadii(7), new Insets(1)));
 			defTexFill = Color.WHITE;
@@ -626,7 +621,6 @@ public final class ConsumeGameMenu extends FXGLMenu {
 
 			setOnMouseEntered(event -> {
 				this.setBackground(new Background(new BackgroundFill(gradient, new CornerRadii(5), new Insets(1))));
-				text.setFill(Color.BLACK);
 			});
 
 			setOnMouseExited(event -> {
@@ -635,7 +629,7 @@ public final class ConsumeGameMenu extends FXGLMenu {
 			});
 
 			setOnMousePressed(event -> {
-				this.setBackground(new Background(new BackgroundFill(Color.GOLD, new CornerRadii(5), new Insets(1))));
+				this.setBackground(new Background(new BackgroundFill(Color.RED, new CornerRadii(5), new Insets(1))));
 			});
 
 			setOnMouseReleased(event -> {
@@ -748,4 +742,38 @@ public final class ConsumeGameMenu extends FXGLMenu {
     protected com.almasb.fxgl.ui.FXGLMenu.MenuBox createMenuBody() {
         return new com.almasb.fxgl.ui.FXGLMenu.MenuBox(200);
     }
+    
+    private class SoundBar extends Group{
+		private DoubleProperty curValue;
+		private double maxValue;
+		private Rectangle backBar;
+		private Text textValue;
+		public SoundBar(int width, int height, DoubleProperty cV, double mV, Text t, Paint p){
+			curValue = cV;
+			maxValue = mV;
+			backBar = new Rectangle(width, height, Color.BLACK);
+			textValue = t;
+			this.getChildren().add(backBar);
+			
+			for(int i = 0; i < maxValue; i++){
+				Rectangle r = new Rectangle(i*width/maxValue + 1, 2, (width - maxValue)/maxValue, height - 4);
+				r.setFill(p);
+				this.getChildren().add(r);
+			}
+			
+			for(int i = 0; i < getChildren().size(); i++){
+				getChildren().get(i).setVisible(i <= curValue.doubleValue()*100);
+			}
+			textValue.setText(Math.round(curValue.doubleValue()*100) + "%");
+			
+			curValue.addListener(new ChangeListener<Number>(){
+				@Override
+				public void changed(ObservableValue<? extends Number> arg0, Number arg1, Number arg2) {
+					for(int i = 0; i < getChildren().size(); i++){
+						getChildren().get(i).setVisible(i <= arg2.doubleValue()*100);
+					}
+					textValue.setText(Math.round(arg2.doubleValue()*100) + "%");
+				}});
+		}
+	}
 }

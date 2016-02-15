@@ -245,6 +245,7 @@ public class ConsumeApp extends GameApplication {
             @Override
             public FXGLMenu newMainMenu(GameApplication app) {
                 consMainMenu = new ConsumeMainMenu(ConsumeApp.this);
+                consMainMenu.getStylesheets().add("com/ergo21/consume/css/menu.css");
                 return consMainMenu;
             }
 
@@ -252,6 +253,7 @@ public class ConsumeApp extends GameApplication {
             public FXGLMenu newGameMenu(GameApplication app) {
                 levelMenu = new LevelMenu(ConsumeApp.this);
                 consGameMenu = new ConsumeGameMenu(ConsumeApp.this);
+                consGameMenu.getStylesheets().add("com/ergo21/consume/css/menu.css");
                 return consGameMenu;
             }
 	    };
