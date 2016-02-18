@@ -5,11 +5,13 @@ import java.util.HashMap;
 
 import com.almasb.consume.ConsumeApp;
 import com.almasb.consume.Types.Actions;
+import com.almasb.fxgl.asset.AssetManager;
 import com.almasb.fxgl.asset.Music;
 import com.almasb.fxgl.asset.SaveLoadManager;
 import com.almasb.fxgl.event.MenuEvent;
 import com.almasb.fxgl.ui.FXGLMenu;
 import com.almasb.fxgl.util.Version;
+import com.sun.javafx.scene.control.skin.LabeledText;
 
 import javafx.animation.FadeTransition;
 import javafx.beans.binding.Bindings;
@@ -26,7 +28,9 @@ import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
+import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
@@ -100,7 +104,7 @@ public final class ConsumeMainMenu extends FXGLMenu {
         Music m = consApp.getAssetManager().loadMusic(FileNames.THEME_MUSIC);
         m.setCycleCount(Integer.MAX_VALUE);
         consApp.getAudioManager().playMusic(m);
-
+        
     }
 
     private MenuBox createMainMenu() {
@@ -274,7 +278,9 @@ public final class ConsumeMainMenu extends FXGLMenu {
 
     private MenuBox createOptionsMenuConsume() {
         MenuItem itemControls = new MenuItem(mainWidth, "Controls");
-        itemControls.setMenuContent(createContentControls());
+        MenuContent mcc = createContentControls();
+        mcc.getStylesheets().add("assets/ui/css/menu.css");
+        itemControls.setMenuContent(mcc);
 
         MenuItem itemAudio = new MenuItem(mainWidth, "Audio");
         MenuContent menuContent = createContentAudio();
@@ -419,13 +425,18 @@ public final class ConsumeMainMenu extends FXGLMenu {
             items.add(new TabItem(actionItem, tKeys.get(actionItem)));
         }
         center.setItems(items);
-        center.setOnMouseClicked(new EventHandler<MouseEvent>() {
+        center.addEventFilter(MouseEvent.ANY, new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
-                if (event.getClickCount() > 1) {
+                if (event.getClickCount() > 1 && event.getTarget().getClass().getSuperclass() == TableCell.class) {
+                	event.consume();
                     center.getItems().get(
                             center.getFocusModel().getFocusedCell().getRow())
                             .setKey(KeyCode.UNDEFINED);
+                    
+                }
+                else if(event.getTarget().getClass() == LabeledText.class || event.getTarget().getClass() == Label.class){
+                	event.consume();
                 }
             }
         });
@@ -460,11 +471,23 @@ public final class ConsumeMainMenu extends FXGLMenu {
                         alert.showAndWait();
                         return;
                     }
+                    else if(item.getKey() == KeyCode.UNDEFINED){
+                    	Alert alert = new Alert(AlertType.ERROR);
+                        alert.setContentText(
+                                "Key undefined. Changes not saved.");
+                        alert.showAndWait();
+                        return;
+                    }
                     else {
                         newKeyMap.put(item.getAction(), item.getKey());
                     }
                 }
                 consApp.consController.initControls(newKeyMap);
+                Alert alert = new Alert(AlertType.INFORMATION);
+                alert.setHeaderText("Saved");
+                alert.setContentText(
+                        "Key changes saved.");
+                alert.showAndWait();
             }
         });
         MenuItem itemRestore = new MenuItem(mainWidth, "Restore to Default");
@@ -479,7 +502,7 @@ public final class ConsumeMainMenu extends FXGLMenu {
                 }
             }
         });
-
+        
         return new MenuContent(center, itemSave, itemRestore);
     }
 
@@ -517,6 +540,8 @@ public final class ConsumeMainMenu extends FXGLMenu {
             ft2.play();
         });
         ft.play();
+        
+        switchMenuContentTo(emptyMenu);
     }
 
     private void switchMenuContentTo(MenuContent content) {
@@ -638,6 +663,7 @@ public final class ConsumeMainMenu extends FXGLMenu {
 
             back.setOnMouseClicked(evt -> {
                 switchMenuTo(MenuItem.this.parent);
+                switchMenuContentTo(emptyMenu);
             });
 
             this.setOnMouseClicked(event -> {

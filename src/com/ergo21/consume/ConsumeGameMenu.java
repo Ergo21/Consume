@@ -14,6 +14,7 @@ import com.almasb.fxgl.asset.SaveLoadManager;
 import com.almasb.fxgl.event.MenuEvent;
 import com.almasb.fxgl.ui.FXGLMenu;
 import com.almasb.fxgl.util.Version;
+import com.sun.javafx.scene.control.skin.LabeledText;
 
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.DoubleProperty;
@@ -30,7 +31,9 @@ import javafx.scene.Group;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ButtonType;
+import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
+import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextInputDialog;
@@ -280,7 +283,7 @@ public final class ConsumeGameMenu extends FXGLMenu {
 	}
 
 	private MenuBox createOptionsMenuConsume() {
-		MenuItem itemControls = new MenuItem("CONTROLS");
+		MenuItem itemControls = new MenuItem("Controls");
 		itemControls.setAction(() -> {
 			contentViewer.getChildren().clear();
 			contentViewer.getChildren().add(createContentControls());
@@ -434,7 +437,8 @@ public final class ConsumeGameMenu extends FXGLMenu {
 		TableView<TabItem> center = new TableView<TabItem>();
 		center.setMaxHeight(consApp.getHeight()/2 - 15);
 		center.setPrefWidth(consApp.getWidth()/2);
-		//center.getC
+		center.getStylesheets().add("assets/ui/css/menu.css");
+		
 		TableColumn<TabItem, String> action = new TableColumn<TabItem, String>("Action");
 		action.setResizable(false);
 		action.setPrefWidth(consApp.getWidth()/4.2);
@@ -453,14 +457,21 @@ public final class ConsumeGameMenu extends FXGLMenu {
 			items.add(new TabItem(actionItem, tKeys.get(actionItem)));
 		}
 		center.setItems(items);
-		center.setOnMouseClicked(new EventHandler<MouseEvent>(){
-			@Override
-			public void handle(MouseEvent event) {
-				if(event.getClickCount() > 1){
-					center.getItems().get(center.getFocusModel().getFocusedCell().getRow()).setKey(KeyCode.UNDEFINED);
-				}
-			}
-		});
+		center.addEventFilter(MouseEvent.ANY, new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                if (event.getClickCount() > 1 && event.getTarget().getClass().getSuperclass() == TableCell.class) {
+                	event.consume();
+                    center.getItems().get(
+                            center.getFocusModel().getFocusedCell().getRow())
+                            .setKey(KeyCode.UNDEFINED);
+                    
+                }
+                else if(event.getTarget().getClass() == LabeledText.class || event.getTarget().getClass() == Label.class){
+                	event.consume();
+                }
+            }
+        });
 		center.setOnKeyPressed(new EventHandler<KeyEvent>(){
 			@Override
 			public void handle(KeyEvent ke) {
@@ -480,18 +491,32 @@ public final class ConsumeGameMenu extends FXGLMenu {
 			@Override
 			public void handle(MouseEvent event) {
 				HashMap<Actions, KeyCode> newKeyMap = new HashMap<Actions, KeyCode>();
-				for(TabItem item : items){
-					if(newKeyMap.values().contains(item.getKey()) && item.getKey() != KeyCode.UNDEFINED){
-						Alert alert = new Alert(AlertType.ERROR);
-						alert.setContentText("Duplicate keys found. Changes not saved.");
-						alert.showAndWait();
-						return;
-					}
-					else{
-						newKeyMap.put(item.getAction(), item.getKey());
-					}
-				}
-				consApp.consController.initControls(newKeyMap);
+				for (TabItem item : items) {
+                    if (newKeyMap.values().contains(item.getKey())
+                            && item.getKey() != KeyCode.UNDEFINED) {
+                        Alert alert = new Alert(AlertType.ERROR);
+                        alert.setContentText(
+                                "Duplicate keys found. Changes not saved.");
+                        alert.showAndWait();
+                        return;
+                    }
+                    else if(item.getKey() == KeyCode.UNDEFINED){
+                    	Alert alert = new Alert(AlertType.ERROR);
+                        alert.setContentText(
+                                "Key undefined. Changes not saved.");
+                        alert.showAndWait();
+                        return;
+                    }
+                    else {
+                        newKeyMap.put(item.getAction(), item.getKey());
+                    }
+                }
+                consApp.consController.initControls(newKeyMap);
+                Alert alert = new Alert(AlertType.INFORMATION);
+                alert.setHeaderText("Saved");
+                alert.setContentText(
+                        "Key changes saved.");
+                alert.showAndWait();
 			}
 		});
 

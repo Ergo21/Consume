@@ -518,7 +518,7 @@ public class ConsumeController {
 			ProgressBar rBar = new ProgressBar();
 			rBar.setProgress(0.01);
 			rBar.setPrefWidth(40);
-			rBar.getStylesheets().add("com/ergo21/consume/css/reload.css");
+			rBar.getStylesheets().add("assets/ui/css/reload.css");
 			
 			relBar.setGraphics(rBar);
 			FadeTransition fT = new FadeTransition(Duration.millis(500), relBar);
