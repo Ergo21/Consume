@@ -2175,11 +2175,9 @@ public class EntitySpawner {
 		if (consApp.getRandom().nextInt(100) <= 33 || enemy.getProperty(Property.SUB_TYPE) == Type.BOSS) { // check if dropping
 			ArrayList<Powerup> drops = new ArrayList<>();
 			drops.add(Powerup.RESTORE_HEALTH_12);
-			drops.add(Powerup.RESTORE_MANA_12);
 
 			Player p = consApp.player.getProperty(Property.DATA);
 			double hpPercent = p.getCurrentHealth() * 1.0 / p.getMaxHealth();
-			double manaPercent = p.getCurrentMana() * 1.0 / p.getMaxMana();
 
 			if (hpPercent < 0.75)
 				drops.add(Powerup.RESTORE_HEALTH_25);
@@ -2187,21 +2185,6 @@ public class EntitySpawner {
 			if (hpPercent < 0.5)
 				drops.add(Powerup.RESTORE_HEALTH_50);
 
-			if (manaPercent < 0.75)
-				drops.add(Powerup.RESTORE_MANA_25);
-
-			if (hpPercent < 0.5)
-				drops.add(Powerup.RESTORE_MANA_50);
-
-			if (hpPercent > manaPercent) {
-				drops.remove(Powerup.RESTORE_HEALTH_12);
-				drops.remove(Powerup.RESTORE_HEALTH_25);
-				drops.remove(Powerup.RESTORE_HEALTH_50);
-			} else {
-				drops.remove(Powerup.RESTORE_MANA_12);
-				drops.remove(Powerup.RESTORE_MANA_25);
-				drops.remove(Powerup.RESTORE_MANA_50);
-			}
 
 			Collections.shuffle(drops);
 

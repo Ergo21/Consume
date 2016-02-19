@@ -68,15 +68,6 @@ public class PlayerPowerupHandler extends CollisionHandler {
 		case RESTORE_HEALTH_50:
 			playerData.restoreHealth(0.5);
 			break;
-		case RESTORE_MANA_12:
-			playerData.restoreMana(playerData.getMaxMana()/8);
-			break;
-		case RESTORE_MANA_25:
-			playerData.restoreMana(playerData.getMaxMana()/4);
-			break;
-		case RESTORE_MANA_50:
-			playerData.restoreMana(playerData.getMaxMana()/2);
-			break;
 		case NEUTRAL2:
 			if(!playerData.getPowers().contains(Element.NEUTRAL2)){
 				playerData.getPowers().add(Element.NEUTRAL2);

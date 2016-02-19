@@ -14,9 +14,6 @@
     -fx-background-color: transparent;
 }
 
-/* Spaltenköpfe
-    Struktur column-header-background -> column-header */
-
 .table-view .column-header-background{ 
     -fx-background-color: linear-gradient(from 0% 0% to 0% 100%, rgba(255, 0, 0, 1) 0%, rgba(139, 0, 0, 1) 100%);
 }
@@ -51,9 +48,10 @@
 }
 
 .table-row-cell:selected {
-    -fx-background-color: #005797;
+    -fx-background-color: darkred;
     -fx-background-insets: 0;
     -fx-background-radius: 1;
+    -fx-table-cell-border-color: red;
 }
 
 .table-view > .virtual-flow > .scroll-bar > .thumb{

@@ -91,6 +91,7 @@ public class ConsumeApp extends GameApplication {
 	public SavedSettings sSettings;
 
 	private LevelMenu levelMenu;
+	public boolean newGamePlusGame = false;
 	
 	public DoubleProperty backVol;
 	public DoubleProperty sfxVol;
@@ -140,13 +141,24 @@ public class ConsumeApp extends GameApplication {
 	@Override
 	protected void initGame() {
 		playerData = new Player(assets.getText("player.txt"));
-		playerData.getPowers().add(Element.NEUTRAL2);
-		playerData.getPowers().add(Element.FIRE);
-		playerData.getPowers().add(Element.EARTH);
-		playerData.getPowers().add(Element.LIGHTNING);
-		playerData.getPowers().add(Element.METAL);
-		playerData.getPowers().add(Element.DEATH);
-		playerData.getPowers().add(Element.CONSUME);
+		if(newGamePlusGame){
+			playerData.getPowers().add(Element.NEUTRAL2);
+			playerData.getPowers().add(Element.FIRE);
+			playerData.getPowers().add(Element.EARTH);
+			playerData.getPowers().add(Element.LIGHTNING);
+			playerData.getPowers().add(Element.METAL);
+			playerData.getPowers().add(Element.DEATH);
+			playerData.getPowers().add(Element.CONSUME);
+			for(int i = 0; i < 24; i++){
+				playerData.getUpgrades().add(i);
+			}
+			playerData.increaseManaRegen(Config.MANA_REGEN_INC*2);
+			playerData.increaseMaxHealth(Config.MAX_HEALTH_INC*2);
+			playerData.increaseMaxMana(Config.MAX_MANA_INC*2);
+			playerData.restoreHealth(1);
+			playerData.restoreMana(playerData.getMaxMana());
+		}
+		
 		eSpawner = new EntitySpawner(this);
 
 		initLevels();

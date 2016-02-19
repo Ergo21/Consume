@@ -17,12 +17,14 @@ public class SavedSettings implements Serializable{
 	private double sfxVol;
 	private HashMap<Actions, KeyCode> controls;
 	private String lastSave;
+	private boolean newGamePlusUnlocked;
 	
 	public SavedSettings(){
 		backVol = 0.75;
 		sfxVol = 0.75;
 		controls = new HashMap<Actions, KeyCode>(); 
 		lastSave = "";
+		newGamePlusUnlocked = false;
 	}
 	
 	public double getBackMusicVolume(){
@@ -53,5 +55,13 @@ public class SavedSettings implements Serializable{
 	
 	public void setLastSave(String ls){
 		lastSave = ls;
+	}
+	
+	public boolean getNewGamePlusUnlocked(){
+		return newGamePlusUnlocked;
+	}
+	
+	public void setNewGamePlusUnlocked(boolean b){
+		newGamePlusUnlocked = b;
 	}
 }

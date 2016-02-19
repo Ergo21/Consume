@@ -13,6 +13,7 @@ import com.almasb.fxgl.asset.AssetManager;
 import com.almasb.fxgl.asset.SaveLoadManager;
 import com.almasb.fxgl.event.MenuEvent;
 import com.almasb.fxgl.ui.FXGLMenu;
+import com.almasb.fxgl.ui.UIFactory;
 import com.almasb.fxgl.util.Version;
 import com.sun.javafx.scene.control.skin.LabeledText;
 
@@ -122,11 +123,11 @@ public final class ConsumeGameMenu extends FXGLMenu {
 			contentViewer.getChildren().add(powerList);
 		});
 
-		MenuItem itemLoad = new MenuItem("Load & Save");
+		/*MenuItem itemLoad = new MenuItem("Load & Save");
 		itemLoad.setAction(() -> {
 			contentViewer.getChildren().clear();
 			contentViewer.getChildren().add(createContentLoadConsume());
-		});
+		});*/
 
 		MenuItem itemOptions = new MenuItem("OPTIONS");
 		itemOptions.setAction(() -> {
@@ -156,15 +157,18 @@ public final class ConsumeGameMenu extends FXGLMenu {
 			contentViewer.getChildren().add(powerList);
 		});
 
-		MenuBox menu = new MenuBox(5, itemPowers, itemLoad, itemOptions, levelMenuItem, itemExit);
+		MenuBox menu = new MenuBox(5, itemPowers, itemOptions, levelMenuItem, itemExit);
 
-		menu.setTranslateX(0);
+		menu.setTranslateX(5);
 		menu.setTranslateY(app.getHeight() / 2 - menu.getLayoutHeight() / 2);
 		return menu;
 	}
 
 	private BorderPane createContentLoadConsume() {
 		ListView<String> list = new ListView<String>();
+        list.getStylesheets().add("assets/ui/css/list.css");
+        list.setMinHeight(consApp.getHeight()/2 - 15);
+        list.setMaxHeight(consApp.getHeight()/2 - 15);
 		SaveLoadManager.INSTANCE.loadFileNames().ifPresent(names -> list.getItems().setAll(names));
 		ArrayList<String> removes = new ArrayList<String>();
 		for(String item : list.getItems()){
@@ -175,13 +179,7 @@ public final class ConsumeGameMenu extends FXGLMenu {
 		list.getItems().removeAll(removes);
 		removes.clear();
 		list.prefHeightProperty().bind(Bindings.size(list.getItems()).multiply(36));
-
-		try {
-			String css = AssetManager.INSTANCE.loadCSS("listview.css");
-			list.getStylesheets().add(css);
-		} catch (Exception e) {
-		}
-
+		
 		if (list.getItems().size() > 0) {
 			list.getSelectionModel().selectFirst();
 		}
@@ -210,6 +208,12 @@ public final class ConsumeGameMenu extends FXGLMenu {
 					if(result.isPresent() && result.get() == ButtonType.CANCEL){
 						return;
 					}
+				}
+				if(consApp.player.getProperty("scenePlaying") != null && (boolean) consApp.player.getProperty("scenePlaying")){
+					Alert alert = new Alert(AlertType.ERROR);
+					alert.setContentText("Cannot save file in the middle of a scene.");
+					alert.showAndWait();
+					return;
 				}
 				try {
 					SaveLoadManager.INSTANCE.save(data, fileName);
@@ -276,7 +280,10 @@ public final class ConsumeGameMenu extends FXGLMenu {
 
 		BorderPane bp = new BorderPane();
 		bp.setCenter(list);
-		VBox right= new VBox(btnSave, btnLoad, btnDelete);
+		btnLoad.setTranslateY(5);
+		btnDelete.setTranslateY(10);
+		VBox right = new VBox(btnSave, btnLoad, btnDelete);
+		right.setTranslateX(10);
 		bp.setRight(right);
 
 		return bp;
@@ -425,6 +432,7 @@ public final class ConsumeGameMenu extends FXGLMenu {
 				consApp.sSettings.setSFXVolume(consApp.sfxVol.doubleValue());
 				consApp.getAudioManager().setGlobalMusicVolume(consApp.sSettings.getBackMusicVolume());
 				consApp.getAudioManager().setGlobalSoundVolume(consApp.sSettings.getSFXVolume());
+				UIFactory.getDialogBox().showMessageBox("Audio changes saved.");
 			}
 		});
 		savAud.setMaxWidth(200);
@@ -494,17 +502,11 @@ public final class ConsumeGameMenu extends FXGLMenu {
 				for (TabItem item : items) {
                     if (newKeyMap.values().contains(item.getKey())
                             && item.getKey() != KeyCode.UNDEFINED) {
-                        Alert alert = new Alert(AlertType.ERROR);
-                        alert.setContentText(
-                                "Duplicate keys found. Changes not saved.");
-                        alert.showAndWait();
+                    	UIFactory.getDialogBox().showMessageBox("Duplicate keys found. Changes not saved.");
                         return;
                     }
                     else if(item.getKey() == KeyCode.UNDEFINED){
-                    	Alert alert = new Alert(AlertType.ERROR);
-                        alert.setContentText(
-                                "Key undefined. Changes not saved.");
-                        alert.showAndWait();
+                    	UIFactory.getDialogBox().showMessageBox(item.getKey() + " key undefined. Changes not saved.");
                         return;
                     }
                     else {
@@ -512,11 +514,7 @@ public final class ConsumeGameMenu extends FXGLMenu {
                     }
                 }
                 consApp.consController.initControls(newKeyMap);
-                Alert alert = new Alert(AlertType.INFORMATION);
-                alert.setHeaderText("Saved");
-                alert.setContentText(
-                        "Key changes saved.");
-                alert.showAndWait();
+                UIFactory.getDialogBox().showMessageBox("Key changes saved.");
 			}
 		});
 
@@ -633,7 +631,7 @@ public final class ConsumeGameMenu extends FXGLMenu {
 			this.setBorder(new Border(
 					new BorderStroke(Color.WHITE, BorderStrokeStyle.SOLID, new CornerRadii(5), BorderWidths.DEFAULT)));
 
-			Rectangle bg = new Rectangle(120, 30);
+			Rectangle bg = new Rectangle(150, 30);
 			bg.setVisible(false);
 			// this.setOpacity(0.4);
 

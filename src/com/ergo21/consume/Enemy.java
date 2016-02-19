@@ -244,12 +244,11 @@ public class Enemy {
 	}
 
 	/**
-	 * Restores mana of enemy/player by given value in % ratio 1.0 = 100% 0.5 =
-	 * 50%
+	 * Restores mana of enemy/player by given value.
 	 *
 	 * Will NOT increase mana over 100%
 	 *
-	 * @param percent
+	 * @param Value to increase by 
 	 */
 	public void restoreMana(int value) {
 		setCurrentMana(Math.min(maxMana.get(), curMana.get() + value));

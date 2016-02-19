@@ -1,15 +1,13 @@
 package com.ergo21.consume;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 
 import com.almasb.consume.ConsumeApp;
 import com.almasb.consume.Types.Actions;
-import com.almasb.fxgl.asset.AssetManager;
 import com.almasb.fxgl.asset.Music;
-import com.almasb.fxgl.asset.SaveLoadManager;
 import com.almasb.fxgl.event.MenuEvent;
 import com.almasb.fxgl.ui.FXGLMenu;
+import com.almasb.fxgl.ui.UIFactory;
 import com.almasb.fxgl.util.Version;
 import com.sun.javafx.scene.control.skin.LabeledText;
 
@@ -26,8 +24,6 @@ import javafx.event.EventHandler;
 import javafx.geometry.Pos;
 import javafx.scene.Group;
 import javafx.scene.Node;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TableCell;
@@ -65,13 +61,16 @@ public final class ConsumeMainMenu extends FXGLMenu {
     private int mainWidth = 200;
     private int subWidth = 100;
     private ListView<String> saveList;
-    private MenuItem itemContinue;
+    //private MenuItem itemContinue;
     private MenuContent emptyMenu;
 
     public ConsumeMainMenu(ConsumeApp app) {
         super(app);
         consApp = app;
         saveList = new ListView<String>();
+        saveList.getStylesheets().add("assets/ui/css/list.css");
+        saveList.setMinHeight(consApp.getHeight()/2);
+        saveList.setMaxHeight(consApp.getHeight()/2);
         emptyMenu = new MenuContent();
         consApp.getAudioManager().setGlobalMusicVolume(consApp.sSettings.getBackMusicVolume());
 		consApp.getAudioManager().setGlobalSoundVolume(consApp.sSettings.getSFXVolume());
@@ -108,7 +107,7 @@ public final class ConsumeMainMenu extends FXGLMenu {
     }
 
     private MenuBox createMainMenu() {
-        itemContinue = new MenuItem(mainWidth, "Continue");
+        /*itemContinue = new MenuItem(mainWidth, "Continue");
         itemContinue.setEnabled(
                 SaveLoadManager.INSTANCE.loadFileNames().isPresent()
                         && SaveLoadManager.INSTANCE.loadFileNames().get()
@@ -154,8 +153,34 @@ public final class ConsumeMainMenu extends FXGLMenu {
             catch (Exception e) {
                 e.printStackTrace();
             }
-        });
+        });*/
 
+    	MenuItem itemNewGamePlus = new MenuItem(mainWidth, "New Game+");
+        itemNewGamePlus.setAction(() -> {
+            switchMenuContentTo(emptyMenu);
+            Rectangle bg = new Rectangle(consApp.getWidth(),
+                    consApp.getHeight());
+            bg.setFill(Color.rgb(10, 1, 1));
+            bg.setOpacity(1);
+            FadeTransition ft = new FadeTransition(Duration.seconds(1), bg);
+            ft.setFromValue(1);
+            ft.setToValue(0);
+            ft.setOnFinished(evt -> consApp.getSceneManager().removeUINode(bg));
+
+            consApp.newGamePlusGame = true;
+            
+            itemNewGamePlus.fireEvent(new MenuEvent(MenuEvent.NEW_GAME));
+
+            FadeTransition ft2 = new FadeTransition(Duration.seconds(1), bg);
+            ft2.setFromValue(1);
+            ft2.setToValue(1);
+            ft2.setOnFinished(evt -> ft.play());
+            ft2.play();
+            consApp.getSceneManager().addUINodes(bg);
+        });
+        
+        itemNewGamePlus.setEnabled(consApp.sSettings.getNewGamePlusUnlocked());
+    	
         MenuItem itemNewGame = new MenuItem(mainWidth, "New Game");
         itemNewGame.setAction(() -> {
             switchMenuContentTo(emptyMenu);
@@ -168,6 +193,8 @@ public final class ConsumeMainMenu extends FXGLMenu {
             ft.setToValue(0);
             ft.setOnFinished(evt -> consApp.getSceneManager().removeUINode(bg));
 
+            consApp.newGamePlusGame = false;
+            
             itemNewGame.fireEvent(new MenuEvent(MenuEvent.NEW_GAME));
 
             FadeTransition ft2 = new FadeTransition(Duration.seconds(1), bg);
@@ -178,14 +205,14 @@ public final class ConsumeMainMenu extends FXGLMenu {
             consApp.getSceneManager().addUINodes(bg);
         });
 
-        MenuItem itemLoad = new MenuItem(mainWidth, "Load");
+        /*MenuItem itemLoad = new MenuItem(mainWidth, "Load");
         itemLoad.setMenuContent(createContentLoadConsume());
         itemLoad.setOnMouseClicked(event -> {
             refreshSaveList();
             switchMenuContentTo(itemLoad.getMenuContent());
-        });
+        });*/
 
-        MenuItem itemOptions = new MenuItem(mainWidth, "OPTIONS");
+        MenuItem itemOptions = new MenuItem(mainWidth, "Options");
         itemOptions.setChild(createOptionsMenuConsume());
 
         MenuItem itemExtra = new MenuItem(mainWidth, "EXTRA");
@@ -195,15 +222,15 @@ public final class ConsumeMainMenu extends FXGLMenu {
         itemExit.setAction(
                 () -> itemExit.fireEvent(new MenuEvent(MenuEvent.EXIT)));
 
-        MenuBox menu = new MenuBox(mainWidth, itemContinue, itemNewGame,
-                itemLoad, itemOptions, itemExtra, itemExit);
+        MenuBox menu = new MenuBox(mainWidth, itemNewGamePlus, itemNewGame,
+        			itemOptions, itemExtra, itemExit);
         menu.setTranslateX(50);
         menu.setTranslateY(
                 consApp.getHeight() / 2 - menu.getLayoutHeight() / 2);
         return menu;
     }
 
-    private MenuContent createContentLoadConsume() {
+    /*private MenuContent createContentLoadConsume() {
         refreshSaveList();
         saveList.prefHeightProperty()
                 .bind(Bindings.size(saveList.getItems()).multiply(36));
@@ -274,7 +301,7 @@ public final class ConsumeMainMenu extends FXGLMenu {
         hbox.setAlignment(Pos.CENTER);
 
         return new MenuContent(saveList, hbox);
-    }
+    }*/
 
     private MenuBox createOptionsMenuConsume() {
         MenuItem itemControls = new MenuItem(mainWidth, "Controls");
@@ -392,6 +419,7 @@ public final class ConsumeMainMenu extends FXGLMenu {
             consApp.sSettings.setSFXVolume(consApp.sfxVol.doubleValue());
             consApp.getAudioManager().setGlobalMusicVolume(consApp.sSettings.getBackMusicVolume());
 			consApp.getAudioManager().setGlobalSoundVolume(consApp.sSettings.getSFXVolume());
+			UIFactory.getDialogBox().showMessageBox("Audio changes saved.");
         });
 
         MenuContent mc = new MenuContent(musTex, musBlock, sfxTex, sfxBlock,
@@ -401,7 +429,7 @@ public final class ConsumeMainMenu extends FXGLMenu {
 
     private MenuContent createContentControls() {
         TableView<TabItem> center = new TableView<TabItem>();
-        center.setMaxHeight(consApp.getHeight() / 2);
+        center.setMaxHeight(consApp.getHeight() / 2 - 10);
         center.setPrefWidth(consApp.getWidth() / 2);
 
         TableColumn<TabItem, String> action = new TableColumn<TabItem, String>(
@@ -465,17 +493,11 @@ public final class ConsumeMainMenu extends FXGLMenu {
                 for (TabItem item : items) {
                     if (newKeyMap.values().contains(item.getKey())
                             && item.getKey() != KeyCode.UNDEFINED) {
-                        Alert alert = new Alert(AlertType.ERROR);
-                        alert.setContentText(
-                                "Duplicate keys found. Changes not saved.");
-                        alert.showAndWait();
+                    	UIFactory.getDialogBox().showMessageBox("Duplicate keys found. Changes not saved.");
                         return;
                     }
                     else if(item.getKey() == KeyCode.UNDEFINED){
-                    	Alert alert = new Alert(AlertType.ERROR);
-                        alert.setContentText(
-                                "Key undefined. Changes not saved.");
-                        alert.showAndWait();
+                    	UIFactory.getDialogBox().showMessageBox(item.getKey() + " key undefined. Changes not saved.");
                         return;
                     }
                     else {
@@ -483,11 +505,7 @@ public final class ConsumeMainMenu extends FXGLMenu {
                     }
                 }
                 consApp.consController.initControls(newKeyMap);
-                Alert alert = new Alert(AlertType.INFORMATION);
-                alert.setHeaderText("Saved");
-                alert.setContentText(
-                        "Key changes saved.");
-                alert.showAndWait();
+                UIFactory.getDialogBox().showMessageBox("Key changes saved.");
             }
         });
         MenuItem itemRestore = new MenuItem(mainWidth, "Restore to Default");
@@ -506,7 +524,7 @@ public final class ConsumeMainMenu extends FXGLMenu {
         return new MenuContent(center, itemSave, itemRestore);
     }
 
-    private void refreshSaveList() {
+    /*private void refreshSaveList() {
         itemContinue.setEnabled(
                 SaveLoadManager.INSTANCE.loadFileNames().isPresent()
                         && SaveLoadManager.INSTANCE.loadFileNames().get()
@@ -520,7 +538,7 @@ public final class ConsumeMainMenu extends FXGLMenu {
             }
         }
         saveList.getItems().removeAll(removes);
-    }
+    }*/
 
     private void switchMenuTo(MenuBox menu) {
         Node oldMenu = getChildren().get(3);
