@@ -9,7 +9,6 @@ import java.util.Optional;
 import com.almasb.consume.ConsumeApp;
 import com.almasb.consume.Types.Actions;
 import com.almasb.consume.Types.Element;
-import com.almasb.fxgl.asset.AssetManager;
 import com.almasb.fxgl.asset.SaveLoadManager;
 import com.almasb.fxgl.event.MenuEvent;
 import com.almasb.fxgl.ui.FXGLMenu;
