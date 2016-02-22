@@ -203,7 +203,7 @@ public class ConsumeApp extends GameApplication {
 	protected void initUI() {
 		gScene = new GameScene(assets.getText("dialogue/scene_0.txt"), assets, this);
 		gScene.setTranslateX(140);
-		gScene.setTranslateY(260);
+		gScene.setTranslateY(230);
 		gScene.setScaleX(1.75);
 		gScene.setScaleY(1.75);
 		gScene.playScene();

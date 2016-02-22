@@ -173,6 +173,8 @@ public class LevelMenu extends Group{
 
 		private Background defBack;
 		private Texture icon;
+		private Background hovBack;
+		private Background preBack;
 
 		public MenuItem(Texture ico) {
 			icon = ico;
@@ -180,6 +182,8 @@ public class LevelMenu extends Group{
 					new Stop[] { new Stop(0.5, Color.DARKRED), new Stop(1, Color.RED) });
 
 			defBack = new Background(new BackgroundFill(new Color(0,0,0,0.4), new CornerRadii(7), new Insets(1)));
+			hovBack = new Background(new BackgroundFill(gradient, new CornerRadii(5), new Insets(1)));
+			preBack = new Background(new BackgroundFill(Color.GOLD, new CornerRadii(5), new Insets(1)));
 			this.setBackground(defBack);
 			this.setBorder(new Border(
 					new BorderStroke(Color.WHITE, BorderStrokeStyle.SOLID, new CornerRadii(5), BorderWidths.DEFAULT)));
@@ -192,7 +196,7 @@ public class LevelMenu extends Group{
 			getChildren().addAll(icon, bg);
 
 			setOnMouseEntered(event -> {
-				this.setBackground(new Background(new BackgroundFill(gradient, new CornerRadii(5), new Insets(1))));
+				this.setBackground(hovBack);
 			});
 
 			setOnMouseExited(event -> {
@@ -200,11 +204,11 @@ public class LevelMenu extends Group{
 			});
 
 			setOnMousePressed(event -> {
-				this.setBackground(new Background(new BackgroundFill(Color.GOLD, new CornerRadii(5), new Insets(1))));
+				this.setBackground(preBack);
 			});
 
 			setOnMouseReleased(event -> {
-				this.setBackground(new Background(new BackgroundFill(gradient, new CornerRadii(5), new Insets(1))));
+				this.setBackground(hovBack);
 			});
 		}
 

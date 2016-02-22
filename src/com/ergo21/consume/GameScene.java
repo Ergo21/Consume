@@ -13,15 +13,26 @@ import com.almasb.fxgl.asset.Texture;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.geometry.HPos;
+import javafx.geometry.Insets;
 import javafx.scene.Group;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundFill;
+import javafx.scene.layout.Border;
+import javafx.scene.layout.BorderStroke;
+import javafx.scene.layout.BorderStrokeStyle;
+import javafx.scene.layout.BorderWidths;
 import javafx.scene.layout.ColumnConstraints;
+import javafx.scene.layout.CornerRadii;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Region;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Rectangle;
+import javafx.scene.paint.CycleMethod;
+import javafx.scene.paint.LinearGradient;
+import javafx.scene.paint.Stop;
 import javafx.scene.text.Text;
 
 public class GameScene extends Group {
@@ -48,35 +59,45 @@ public class GameScene extends Group {
 		icon = new ImageView();
 		icon.setPreserveRatio(true);
 		icon.setFitWidth(60);
-		grid.setHgap(1);
-		Rectangle rNam = new Rectangle(64, 20, Color.WHITE);
-		rNam.setStroke(Color.BLACK);
-		//rNam.setStrokeWidth(1.5);
-		Rectangle rLin = new Rectangle(280, 85, Color.WHITE);
-		rLin.setStroke(Color.BLACK);
-		//rLin.setStrokeWidth(1.5);
-		Rectangle rIco = new Rectangle(64, 65, Color.WHITE);
-		rIco.setStroke(Color.BLACK);
-		//rIco.setStrokeWidth(1.5);
-		icon.setTranslateX(2);
+		
+		LinearGradient gradient = new LinearGradient(0, 1, 0, 0, true, CycleMethod.NO_CYCLE, new Stop[] { new Stop(0.25, Color.DARKRED), new Stop(1, Color.RED) });	
+		grid.setBackground(new Background(new BackgroundFill(gradient, new CornerRadii(5), new Insets(0))));
+		grid.setBorder(new Border(
+				new BorderStroke(Color.BLACK, BorderStrokeStyle.SOLID, new CornerRadii(4), BorderWidths.DEFAULT)));
+		
+		Region rNam = new Region(); 
+		rNam.setMinSize(64, 20);
+		rNam.setMaxSize(64, 20);
+		rNam.setBorder(new Border(
+				new BorderStroke(Color.BLACK, BorderStrokeStyle.SOLID, new CornerRadii(4,0,0,0, false), new BorderWidths(0, 2, 1, 0), new Insets(0,0,-2,0))));
+	
+		Region rLin = new Region();
+		rLin.setMinSize(280, 85);
+		rLin.setMaxSize(280, 85);
+		
+		Region rIco = new Region();
+		rIco.setMinSize(64, 65);
+		rIco.setMaxSize(64, 65);
+		rIco.setBorder(new Border(
+				new BorderStroke(Color.BLACK, BorderStrokeStyle.SOLID, new CornerRadii(0,0,0,4, false), new BorderWidths(1, 2, 0, 0), new Insets(0,0,2,0))));
+	
+		icon.setTranslateX(1);
 		icon.imageProperty().addListener(new ChangeListener<Image>(){
 			@Override
 			public void changed(ObservableValue<? extends Image> observable, Image oldValue, Image newValue) {
 				double ratio = 60/newValue.getWidth();
-				icon.setTranslateY((rIco.getHeight() - newValue.getHeight()*ratio)/2);
+				icon.setTranslateY((65 - newValue.getHeight()*ratio)/2);
 			}
 		});
 		
 		Group icoGro = new Group(rIco,icon);
-		icoGro.setTranslateX(-0.5);
-		icoGro.setTranslateY(-1.5);
 		
 		grid.add(new TextBox(rNam,name, true), 0, 0);
 		grid.add(new TextBox(rLin,line, false), 1, 0, 1, 2);
 		grid.add(icoGro, 0, 1);
 		//grid.setGridLinesVisible(true);
-		grid.setMinSize(340, 170);
-		grid.setMaxSize(340, 170);
+		grid.setMinSize(344, 85);
+		grid.setMaxSize(344, 85);
 		ColumnConstraints c = new ColumnConstraints();
 		c.setMinWidth(64);
 		c.setHalignment(HPos.CENTER);
@@ -174,10 +195,10 @@ public class GameScene extends Group {
 	}
 	
 	private class TextBox extends AnchorPane{
-		private Rectangle background;
+		private Region background;
 		private Text text;
 		
-		private TextBox(Rectangle back, Text tex, boolean centerX){
+		private TextBox(Region back, Text tex, boolean centerX){
 			super();
 			background = back;
 			text = tex;
