@@ -101,14 +101,21 @@ public class LevelParser {
 					e.setProperty("sceneName", scTe);
 					rect.setFill(Color.YELLOW);
 					break;
+				case 'a':
+				case 'A':
 				case 'b':
 					e = new Entity(Types.Type.BLOCK);
 					e.setProperty(Property.SUB_TYPE, Block.BARRIER);
 					e.setProperty("state", "idle");
 					e.setProperty("start", "none");
 					e.setCollidable(true);
-					rect.setFill(Color.BLUE);
+					e.setProperty("blockImg", line.charAt(j)); //See activateBarrier() in ConsumeApp for pic choice
+					e.setVisible(false);
 					break;
+				case 'B':{
+					//TODO: BOSS SPAWNER, add Boss, add Boss Health Bar, bind viewport to center of arena, start scene
+					break;
+				}
 				case 'd':
 				case 'D':
 				case 'e':
@@ -296,6 +303,13 @@ public class LevelParser {
 						}
 					}
 					break;
+				case 's':
+				case 'S':
+				case 't':
+				case 'T':{
+					//TODO: ENEMY SPAWNER
+					break;
+				}
 				case 'u':
 				case 'U':
 				case 'v':

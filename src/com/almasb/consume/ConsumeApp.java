@@ -1,6 +1,8 @@
 package com.almasb.consume;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
@@ -203,9 +205,9 @@ public class ConsumeApp extends GameApplication {
 	protected void initUI() {
 		gScene = new GameScene(assets.getText("dialogue/scene_0.txt"), assets, this);
 		gScene.setTranslateX(140);
-		gScene.setTranslateY(230);
-		gScene.setScaleX(1.75);
-		gScene.setScaleY(1.75);
+		gScene.setTranslateY(250);
+		gScene.setScaleX(1.4);
+		gScene.setScaleY(1.4);
 		gScene.playScene();
 
 		hud = new PlayerHUD(player.<Player> getProperty(Property.DATA).getMaxHealth(),
@@ -747,22 +749,106 @@ public class ConsumeApp extends GameApplication {
 
 	private void activateBarrier(Entity block) {
 		block.setProperty("state", "dying");
+		ArrayList<Entity> barriers = new ArrayList<Entity>();
+		barriers.add(block);
 
 		for (Entity b : getSceneManager().getEntitiesInRange(
 				new Rectangle2D(block.getTranslateX() - 40, block.getTranslateY() - 40, 120, 120), Type.BLOCK)) {
 			if (b.getProperty(Property.SUB_TYPE) == Block.BARRIER && !"dying".equals(b.getProperty("state"))) {
-				activateBarrier(b);
+				barriers.add(b);
+				barriers.addAll(collectBarriers(b));
 			}
 		}
+		
+		if((char)block.getProperty("blockImg") == 'a'){ 
+			barriers.sort(new Comparator<Entity>(){
+				@Override
+				public int compare(Entity arg0, Entity arg1) {
+					if(arg0.getTranslateY() < arg1.getTranslateY()){
+						return 1;
+					}
+					else if(arg0.getTranslateY() == arg1.getTranslateY()){
+						return 0;
+					}
+					else{
+						return -1;
+					}
+			}});
+		}
+		else{
+			barriers.sort(new Comparator<Entity>(){
+				@Override
+				public int compare(Entity arg0, Entity arg1) {
+					if(arg0.getTranslateY() < arg1.getTranslateY()){
+						return -1;
+					}
+					else if(arg0.getTranslateY() == arg1.getTranslateY()){
+						return 0;
+					}
+					else{
+						return 1;
+					}
+			}});
+		}
+		
+		for(int i = 0; i < barriers.size(); i++){
+			Entity e = barriers.get(i);
+			getSceneManager().removeEntity(e);
+			Entity e2 = new Entity(Type.PLATFORM);
+			e2.setPosition(e.getTranslateX(), e.getTranslateY());
+			e2.setVisible(false);
+			if((char)e.getProperty("blockImg") == 'a'){	
+				Texture t = assets.getTexture(FileNames.FIREBALL_PROJ);
+				t.setScaleY(-1);
+				t.setPreserveRatio(true);
+				t.setFitWidth(Config.BLOCK_SIZE);
+				t.setTranslateY(-Config.BLOCK_SIZE/2);
+				e2.setGraphics(t);	
+			}
+			else if((char)e.getProperty("blockImg") == 'A'){
+				Texture t = assets.getTexture(FileNames.U_STONE_BLOCK);
+				t.setScaleY(-1);
+				t.setPreserveRatio(true);
+				t.setFitWidth(Config.BLOCK_SIZE);
+				//t.setTranslateY(-Config.BLOCK_SIZE/2);
+				e2.setGraphics(t);
+			}
+			else{
+				Texture t = assets.getTexture(FileNames.DES_CRATE_BLOCK);
+				t.setScaleY(-1);
+				t.setPreserveRatio(true);
+				t.setFitWidth(Config.BLOCK_SIZE);
+				//t.setTranslateY(-Config.BLOCK_SIZE/2);
+				e2.setGraphics(t);
+			}
+			
 
-		getSceneManager().removeEntity(block);
-		Entity e = new Entity(Type.PLATFORM);
-		e.setPosition(block.getTranslateX(), block.getTranslateY());
-		Rectangle rect = new Rectangle(40, 40);
-		rect.setFill(Color.GREY);
-		e.setGraphics(rect);
-
-		getSceneManager().addEntities(e);
+			getSceneManager().addEntities(e2);
+			this.getTimerManager().runOnceAfter(new Runnable(){
+				@Override
+				public void run() {
+					e2.setVisible(true);
+				}
+			}, Duration.seconds(0.5).multiply(i));
+			
+		}
+		
+	}
+	
+	private ArrayList<Entity> collectBarriers(Entity block){
+		block.setProperty("state", "dying");
+		ArrayList<Entity> barriers = new ArrayList<Entity>();
+		
+		for (Entity b : getSceneManager().getEntitiesInRange(
+				new Rectangle2D(block.getTranslateX() - 40, block.getTranslateY() - 40, 120, 120), Type.BLOCK)) {
+			if (b.getProperty(Property.SUB_TYPE) == Block.BARRIER && !"dying".equals(b.getProperty("state"))) {
+				barriers.add(b);
+				barriers.addAll(collectBarriers(b));
+			}
+		}
+		
+		
+		return barriers;
 	}
 
 	public void destroyBlock(Entity block) {
