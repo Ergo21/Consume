@@ -2,6 +2,7 @@ package com.almasb.consume;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -14,6 +15,8 @@ import com.almasb.consume.Types.Element;
 import com.almasb.consume.Types.Platform;
 import com.almasb.consume.Types.Powerup;
 import com.almasb.consume.Types.Property;
+import com.almasb.consume.Types.Type;
+import com.almasb.consume.ai.ESpawnerControl;
 import com.almasb.fxgl.asset.Texture;
 import com.almasb.fxgl.entity.Entity;
 import com.ergo21.consume.FileNames;
@@ -114,6 +117,7 @@ public class LevelParser {
 					break;
 				case 'B':{
 					//TODO: BOSS SPAWNER, add Boss, add Boss Health Bar, bind viewport to center of arena, start scene
+					
 					break;
 				}
 				case 'd':
@@ -308,6 +312,21 @@ public class LevelParser {
 				case 't':
 				case 'T':{
 					//TODO: ENEMY SPAWNER
+					Entity en = new Entity(Type.ENEMY_SPAWNER);
+					rect.setFill(Color.RED);
+					en.setPosition(en.getPosition().add(j * Config.BLOCK_SIZE, i * Config.BLOCK_SIZE));
+					en.setGraphics(rect);
+					
+					en.setCollidable(false);
+					en.addControl(getSpawner(line.charAt(j), levelNumber, en));
+					en.addFXGLEventHandler(Event.ENEMY_FIRED, event -> {
+						if(en != null && en.getControl(ESpawnerControl.class) != null){
+							consApp.getSceneManager().addEntities(en.getControl(ESpawnerControl.class).spawnEnemy());
+						}
+					});
+					
+					level.entities.add(en);
+					
 					break;
 				}
 				case 'u':
@@ -505,6 +524,74 @@ public class LevelParser {
 				return consApp.assets.getTexture(FileNames.FESTIVAL_BACK_1);
 			}
 		}
+	}
+	
+	private ESpawnerControl getSpawner(char c, int level, Entity spawner){
+		switch(level){
+			case 0:
+			case 1:
+			case 2:{
+				if(c == 's'){
+					return new ESpawnerControl(consApp, (Function<Point2D, Entity>) (t) -> consApp.eSpawner.spawnEloko(t), 
+											1);
+				}
+				else if (c == 'S'){
+
+				}
+				else if (c == 't'){
+
+				}
+				else{
+					
+				}
+				break;
+			}
+			case 3:
+			case 4:
+			case 5:{
+				
+				break;
+			}
+			case 6:
+			case 7:
+			case 8:{
+				
+				break;
+			}
+			case 9:
+			case 10:
+			case 11:{
+				
+				break;
+			}
+			case 12:
+			case 13:
+			case 14:{
+				
+				break;
+			}
+			case 15:
+			case 16:
+			case 17:{
+				
+				break;
+			}
+			case 18:
+			case 19:
+			case 20:{
+				
+				break;
+			}
+			case 21:
+			case 22:
+			case 23:{
+				
+				break;
+			}
+		}
+		
+		return new ESpawnerControl(consApp, (Function<Point2D, Entity>) (t) -> consApp.eSpawner.spawnEloko(t), 
+				1);
 	}
 
 	public static class LevelData {

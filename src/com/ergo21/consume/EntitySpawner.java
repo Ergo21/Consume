@@ -285,7 +285,7 @@ public class EntitySpawner {
 		enemy.addControl(new ConsumeControl(consApp.player));
 		enemy.addFXGLEventHandler(Event.DEATH, this::onEnemyDeath);
 		enemy.addFXGLEventHandler(Event.ENEMY_FIRED, event -> {
-			consApp.consController.enemyShootProjectile(Element.NEUTRAL2, enemy);
+			//consApp.consController.enemyShootProjectile(Element.NEUTRAL2, enemy);
 		});
 		
 		enemy.setVisible(false);
