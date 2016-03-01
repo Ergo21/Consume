@@ -13,8 +13,17 @@ public class SeekControl implements Control {
 		this.target = target;
 	}
 
+	private int frames = 10;
 	@Override
-	public void onUpdate(Entity entity, long now) {
+	public void onUpdate(Entity entity, long now){
+		frames++;
+		if(frames >= 2){
+			actualUpdate(entity, now);
+			frames = 0;
+		}
+	}
+	
+	public void actualUpdate(Entity entity, long now) {
 		if (target.getPosition().distance(entity.getPosition()) <= 200) {
 			if (Math.abs(target.getTranslateY() - entity.getTranslateY()) <= 10) {
 				boolean right = target.getTranslateX() - entity.getTranslateX() > 0;

@@ -1,5 +1,7 @@
 package com.ergo21.consume;
 
+import java.util.ArrayList;
+
 import com.almasb.consume.Config;
 import com.almasb.consume.ConsumeApp;
 import com.almasb.fxgl.asset.Texture;
@@ -20,14 +22,20 @@ import javafx.scene.paint.Color;
 import javafx.scene.paint.CycleMethod;
 import javafx.scene.paint.LinearGradient;
 import javafx.scene.paint.Stop;
+import javafx.scene.shape.Line;
+import javafx.scene.shape.Polygon;
 import javafx.scene.shape.Rectangle;
 
 public class LevelMenu extends Group{
 	private ConsumeApp consApp;
 	private MenuItem finalLevel;
+	private ArrayList<MenuItem> mIList;
+	
 	public LevelMenu(ConsumeApp a){
 		super();
 		consApp = a;
+		
+		mIList = new ArrayList<MenuItem>();
 		
 		Rectangle bg = new Rectangle(consApp.getWidth(), consApp.getHeight());
 		bg.setFill(Color.OLIVE);
@@ -85,6 +93,8 @@ public class LevelMenu extends Group{
 				}
 				
 			}
+			
+			mIList.add(but);
 		}
 		gp.setHgap(40);
 		gp.setVgap(20);
@@ -169,6 +179,12 @@ public class LevelMenu extends Group{
 		finalLevel.setVisible(v);
 	}
 	
+	public void setLevelComplete(int l){
+		if(l > 0 || l <= mIList.size()){
+			mIList.get(l-1).setComplete();
+		}
+	}
+	
 	private class MenuItem extends StackPane {
 
 		private Background defBack;
@@ -216,6 +232,49 @@ public class LevelMenu extends Group{
 			this.setOnMouseClicked(event -> {
 				action.run();
 			});
+		}
+		
+		public void setComplete(){
+			Line l1 = new Line(0,0, this.getWidth(), this.getHeight());
+			Line l2 = new Line(this.getWidth(),0, 0, this.getHeight());
+			//double rLen = Math.sqrt((Math.pow(this.getWidth(), 2) + Math.pow(this.getHeight(), 2)));
+			double rLen = this.getWidth(); 
+			Rectangle r1 = new Rectangle(0,0, rLen, 5);
+			Rectangle r2 = new Rectangle(this.getWidth(),0, rLen, 5);
+			Polygon s1 = new Polygon(0, (rLen-5)/2,
+									(rLen-5)/2, (rLen-5)/2,
+									(rLen-5)/2, 0,
+									(rLen+5)/2, 0,
+									(rLen+5)/2, (rLen-5)/2,
+									rLen, (rLen-5)/2,
+									rLen, (rLen+5)/2,
+									(rLen+5)/2, (rLen+5)/2,
+									(rLen+5)/2, rLen,
+									(rLen-5)/2, rLen,
+									(rLen-5)/2, (rLen+5)/2,
+									0, (rLen+5)/2);
+			s1.setFill(Color.RED);
+			s1.setRotate(45);
+			s1.setStroke(Color.BLACK);
+			s1.setStrokeWidth(3);
+			r1.setFill(Color.RED);
+			r1.setStroke(Color.BLACK);
+			r1.setStrokeWidth(3);
+			r1.setRotate(45);
+			r2.setFill(Color.RED);
+			r2.setStroke(Color.BLACK);
+			r2.setStrokeWidth(3);
+			r2.setRotate(-45);
+			//l1.setScaleX(2);
+			//l2.setScaleX(2);
+			//l1.setFill(Color.RED);
+			//l2.setFill(Color.RED);
+			l1.setStrokeWidth(5);
+			l2.setStrokeWidth(5);
+			l1.setStroke(Color.RED);
+			l2.setStroke(Color.RED);
+			
+			getChildren().addAll(s1);
 		}
 	}
 }

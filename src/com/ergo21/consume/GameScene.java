@@ -7,7 +7,6 @@ import com.almasb.consume.Config;
 import com.almasb.consume.ConsumeApp;
 import com.almasb.consume.Types.Type;
 import com.almasb.consume.ai.PhysicsControl;
-import com.almasb.fxgl.asset.Assets;
 import com.almasb.fxgl.asset.Texture;
 
 import javafx.beans.value.ChangeListener;
@@ -42,12 +41,10 @@ public class GameScene extends Group {
 	private Text name;
 	private Text line;
 	private ImageView icon;
-	private Assets assets;
 	private ConsumeApp app;
 
-	public GameScene(List<String> values, Assets as, ConsumeApp a) {
+	public GameScene(List<String> values, ConsumeApp a) {
 		super();
-		assets = as;
 		app = a;
 		script = new ArrayList<SceneLine>();
 		currentLine = 0;
@@ -121,25 +118,30 @@ public class GameScene extends Group {
 
 	private Texture getIconFile(String icoNam) {
 		if(!Config.RELEASE){
-			return assets.getTexture(FileNames.EMPTY);
+			return getTexture(FileNames.EMPTY);
 		}
 		switch(icoNam){
 			case "PLAYER":
-				return assets.getTexture(FileNames.PLAYER_ICON);
+				return getTexture(FileNames.PLAYER_ICON);
 			case "GENTLEMAN":
-				return assets.getTexture(FileNames.GENTLEMAN_ICON);
+				return getTexture(FileNames.GENTLEMAN_ICON);
 			case "ANUBIS":
-				return assets.getTexture(FileNames.ANUBIS_ICON);
+				return getTexture(FileNames.ANUBIS_ICON);
 			case "ESHU":
-				return assets.getTexture(FileNames.ESHU_ICON);
+				return getTexture(FileNames.ESHU_ICON);
 			case "KIBO":
-				return assets.getTexture(FileNames.KIBO_ICON);
+				return getTexture(FileNames.KIBO_ICON);
 			case "SHAKA":
-				return assets.getTexture(FileNames.SHAKA_ICON);
+				return getTexture(FileNames.SHAKA_ICON);
 			case "SHANGO":
-				return assets.getTexture(FileNames.SHANGO_ICON);
+				return getTexture(FileNames.SHANGO_ICON);
 		}
-		return assets.getTexture(FileNames.EMPTY);
+		return getTexture(FileNames.EMPTY);
+	}
+
+	private Texture getTexture(String address) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 	public boolean updateScript() {
@@ -188,10 +190,6 @@ public class GameScene extends Group {
 		name.setText(sceneLine.getName());
 		line.setText(sceneLine.getSentence());
 		icon.setImage(sceneLine.getIcon().getImage());
-	}
-
-	public Assets getAssets() {
-		return assets;
 	}
 	
 	private class TextBox extends AnchorPane{

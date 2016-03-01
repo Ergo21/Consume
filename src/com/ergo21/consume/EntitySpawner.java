@@ -74,7 +74,7 @@ public class EntitySpawner {
 
 		enemy.setGraphics(rect);
 		enemy.setCollidable(true);
-		enemy.setProperty(Property.DATA, new Enemy(consApp.assets.getText("enemies/enemy_FireElemental.txt")));
+		enemy.setProperty(Property.DATA, new Enemy(consApp.getAssetManager().loadText("enemies/enemy_FireElemental.txt")));
 		enemy.setProperty("physics", consApp.physics);
 		enemy.setPosition(spawnPoint.getX(), spawnPoint.getY());
 		enemy.addControl(new PhysicsControl(consApp.physics));
@@ -94,7 +94,7 @@ public class EntitySpawner {
 
 		enemy.setGraphics(rect);
 		enemy.setCollidable(true);
-		enemy.setProperty(Property.DATA, new Enemy(consApp.assets.getText("enemies/enemy_FireElemental.txt")));
+		enemy.setProperty(Property.DATA, new Enemy(consApp.getAssetManager().loadText("enemies/enemy_FireElemental.txt")));
 		enemy.setProperty("physics", consApp.physics);
 		enemy.setProperty("shover", true);
 		enemy.setPosition(spawnPoint.getX(), spawnPoint.getY());
@@ -134,7 +134,7 @@ public class EntitySpawner {
 				default: break;
 			}
 		}
-		ePic.addControl(new AnimatedEnemyControl(enemy, hashMap, consApp.getAssetManager().loadTexture(FileNames.ZULU_SH_TEX)));
+		ePic.addControl(new AnimatedEnemyControl(enemy, hashMap, consApp.getTexture(FileNames.ZULU_SH_TEX)));
 		ePic.addFXGLEventHandler(Event.DEATH, (event) -> consApp.getSceneManager().removeEntity(ePic));
 		enemy.aliveProperty().addListener(new ChangeListener<Boolean>(){
 			@Override
@@ -156,7 +156,7 @@ public class EntitySpawner {
 
 		enemy.setGraphics(rect);
 		enemy.setCollidable(true);
-		enemy.setProperty(Property.DATA, new Enemy(consApp.assets.getText("enemies/enemy_FireElemental.txt")));
+		enemy.setProperty(Property.DATA, new Enemy(consApp.getAssetManager().loadText("enemies/enemy_FireElemental.txt")));
 		enemy.setProperty("physics", consApp.physics);
 		enemy.setProperty("shover", true);
 		enemy.setPosition(spawnPoint.getX(), spawnPoint.getY());
@@ -193,7 +193,7 @@ public class EntitySpawner {
 				default: break;
 			}
 		}
-		ePic.addControl(new AnimatedEnemyControl(enemy, hashMap, consApp.getAssetManager().loadTexture(FileNames.SCARAB_TEX)));
+		ePic.addControl(new AnimatedEnemyControl(enemy, hashMap, consApp.getTexture(FileNames.SCARAB_TEX)));
 		ePic.addFXGLEventHandler(Event.DEATH, (event) -> consApp.getSceneManager().removeEntity(ePic));
 		enemy.aliveProperty().addListener(new ChangeListener<Boolean>(){
 			@Override
@@ -215,7 +215,7 @@ public class EntitySpawner {
 
 		enemy.setGraphics(rect);
 		enemy.setCollidable(true);
-		enemy.setProperty(Property.DATA, new Enemy(consApp.assets.getText("enemies/enemy_FireElemental.txt")));
+		enemy.setProperty(Property.DATA, new Enemy(consApp.getAssetManager().loadText("enemies/enemy_FireElemental.txt")));
 		enemy.setProperty("physics", consApp.physics);
 		enemy.setProperty("shover", true);
 		enemy.setProperty("facingRight", false);
@@ -255,7 +255,7 @@ public class EntitySpawner {
 				default: break;
 			}
 		}
-		ePic.addControl(new AnimatedEnemyControl(enemy, hashMap, consApp.getAssetManager().loadTexture(FileNames.LOCUST_TEX)));
+		ePic.addControl(new AnimatedEnemyControl(enemy, hashMap, consApp.getTexture(FileNames.LOCUST_TEX)));
 		ePic.addFXGLEventHandler(Event.DEATH, (event) -> consApp.getSceneManager().removeEntity(ePic));
 		enemy.aliveProperty().addListener(new ChangeListener<Boolean>(){
 			@Override
@@ -277,7 +277,7 @@ public class EntitySpawner {
 
 		enemy.setGraphics(rect);
 		enemy.setCollidable(true);
-		enemy.setProperty(Property.DATA, new Enemy(consApp.assets.getText("enemies/enemy_FireElemental.txt")));
+		enemy.setProperty(Property.DATA, new Enemy(consApp.getAssetManager().loadText("enemies/enemy_FireElemental.txt")));
 		enemy.setProperty("physics", consApp.physics);
 		enemy.setProperty("facingRight", true);
 		enemy.setPosition(spawnPoint.getX(), spawnPoint.getY());
@@ -317,7 +317,7 @@ public class EntitySpawner {
 				default: break;
 			}
 		}
-		ePic.addControl(new AnimatedEnemyControl(enemy, hashMap, consApp.getAssetManager().loadTexture(FileNames.ELOKO_TEX)));
+		ePic.addControl(new AnimatedEnemyControl(enemy, hashMap, consApp.getTexture(FileNames.ELOKO_TEX)));
 		ePic.addFXGLEventHandler(Event.DEATH, (event) -> consApp.getSceneManager().removeEntity(ePic));
 		enemy.aliveProperty().addListener(new ChangeListener<Boolean>(){
 			@Override
@@ -339,7 +339,7 @@ public class EntitySpawner {
 
 		enemy.setGraphics(rect);
 		enemy.setCollidable(true);
-		enemy.setProperty(Property.DATA, new Enemy(consApp.assets.getText("enemies/enemy_FireElemental.txt")));
+		enemy.setProperty(Property.DATA, new Enemy(consApp.getAssetManager().loadText("enemies/enemy_FireElemental.txt")));
 		enemy.setProperty("physics", consApp.physics);
 		enemy.setProperty("facingRight", true);
 		enemy.setPosition(spawnPoint.getX(), spawnPoint.getY());
@@ -379,7 +379,7 @@ public class EntitySpawner {
 				default: break;
 			}
 		}
-		ePic.addControl(new AnimatedEnemyControl(enemy, hashMap, consApp.getAssetManager().loadTexture(FileNames.MUMMY_TEX)));
+		ePic.addControl(new AnimatedEnemyControl(enemy, hashMap, consApp.getTexture(FileNames.MUMMY_TEX)));
 		ePic.addFXGLEventHandler(Event.DEATH, (event) -> consApp.getSceneManager().removeEntity(ePic));
 		enemy.aliveProperty().addListener(new ChangeListener<Boolean>(){
 			@Override
@@ -401,7 +401,7 @@ public class EntitySpawner {
 
 		enemy.setGraphics(rect);
 		enemy.setCollidable(true);
-		enemy.setProperty(Property.DATA, new Enemy(consApp.assets.getText("enemies/enemy_FireElemental.txt")));
+		enemy.setProperty(Property.DATA, new Enemy(consApp.getAssetManager().loadText("enemies/enemy_FireElemental.txt")));
 		enemy.setProperty("physics", consApp.physics);
 		enemy.setProperty("facingRight", true);
 		enemy.setPosition(spawnPoint.getX(), spawnPoint.getY());
@@ -443,7 +443,7 @@ public class EntitySpawner {
 				default: break;
 			}
 		}
-		ePic.addControl(new AnimatedEnemyControl(enemy, hashMap, consApp.getAssetManager().loadTexture(FileNames.BANDIT_S_TEX)));
+		ePic.addControl(new AnimatedEnemyControl(enemy, hashMap, consApp.getTexture(FileNames.BANDIT_S_TEX)));
 		ePic.addFXGLEventHandler(Event.DEATH, (event) -> consApp.getSceneManager().removeEntity(ePic));
 		enemy.aliveProperty().addListener(new ChangeListener<Boolean>(){
 			@Override
@@ -465,7 +465,7 @@ public class EntitySpawner {
 
 		enemy.setGraphics(rect);
 		enemy.setCollidable(true);
-		enemy.setProperty(Property.DATA, new Enemy(consApp.assets.getText("enemies/enemy_FireElemental.txt")));
+		enemy.setProperty(Property.DATA, new Enemy(consApp.getAssetManager().loadText("enemies/enemy_FireElemental.txt")));
 		enemy.setProperty("physics", consApp.physics);
 		enemy.setProperty("facingRight", true);
 		enemy.setPosition(spawnPoint.getX(), spawnPoint.getY());
@@ -507,7 +507,7 @@ public class EntitySpawner {
 				default: break;
 			}
 		}
-		ePic.addControl(new AnimatedEnemyControl(enemy, hashMap, consApp.getAssetManager().loadTexture(FileNames.ZULU_SP_TEX)));
+		ePic.addControl(new AnimatedEnemyControl(enemy, hashMap, consApp.getTexture(FileNames.ZULU_SP_TEX)));
 		ePic.addFXGLEventHandler(Event.DEATH, (event) -> consApp.getSceneManager().removeEntity(ePic));
 		enemy.aliveProperty().addListener(new ChangeListener<Boolean>(){
 			@Override
@@ -529,7 +529,7 @@ public class EntitySpawner {
 
 		enemy.setGraphics(rect);
 		enemy.setCollidable(true);
-		enemy.setProperty(Property.DATA, new Enemy(consApp.assets.getText("enemies/enemy_FireElemental.txt")));
+		enemy.setProperty(Property.DATA, new Enemy(consApp.getAssetManager().loadText("enemies/enemy_FireElemental.txt")));
 		enemy.setProperty("physics", consApp.physics);
 		enemy.setProperty("facingRight", true);
 		enemy.setPosition(spawnPoint.getX(), spawnPoint.getY());
@@ -580,7 +580,7 @@ public class EntitySpawner {
 				default: break;
 			}
 		}
-		ePic.addControl(new AnimatedEnemyControl(enemy, hashMap, consApp.getAssetManager().loadTexture(FileNames.SCORPION_TEX)));
+		ePic.addControl(new AnimatedEnemyControl(enemy, hashMap, consApp.getTexture(FileNames.SCORPION_TEX)));
 		ePic.addFXGLEventHandler(Event.DEATH, (event) -> consApp.getSceneManager().removeEntity(ePic));
 		enemy.aliveProperty().addListener(new ChangeListener<Boolean>(){
 			@Override
@@ -603,7 +603,7 @@ public class EntitySpawner {
 
 		enemy.setGraphics(rect);
 		enemy.setCollidable(false);
-		enemy.setProperty(Property.DATA, new Enemy(consApp.assets.getText("enemies/enemy_FireElemental.txt")));
+		enemy.setProperty(Property.DATA, new Enemy(consApp.getAssetManager().loadText("enemies/enemy_FireElemental.txt")));
 		enemy.setProperty("physics", consApp.physics);
 		enemy.setProperty("facingRight", false);
 		enemy.setPosition(spawnPoint.getX(), spawnPoint.getY());
@@ -631,12 +631,12 @@ public class EntitySpawner {
 		Rectangle rect = new Rectangle(40, 40);
 		rect.setFill(Color.RED);
 
-		Texture t = consApp.assets.getTexture(FileNames.COFFIN_BLOCK);
+		Texture t = consApp.getTexture(FileNames.COFFIN_BLOCK);
 		t.setPreserveRatio(true);
 		t.setFitHeight(80);
 		enemy.setGraphics(t);
 		enemy.setCollidable(false);
-		enemy.setProperty(Property.DATA, new Enemy(consApp.assets.getText("enemies/enemy_FireElemental.txt")));
+		enemy.setProperty(Property.DATA, new Enemy(consApp.getAssetManager().loadText("enemies/enemy_FireElemental.txt")));
 		enemy.setProperty("physics", consApp.physics);
 		enemy.setProperty("facingRight", false);
 		enemy.setPosition(spawnPoint.getX(), spawnPoint.getY());
@@ -665,7 +665,7 @@ public class EntitySpawner {
 
 		enemy.setGraphics(rect);
 		enemy.setCollidable(true);
-		enemy.setProperty(Property.DATA, new Enemy(consApp.assets.getText("enemies/enemy_FireElemental.txt")));
+		enemy.setProperty(Property.DATA, new Enemy(consApp.getAssetManager().loadText("enemies/enemy_FireElemental.txt")));
 		enemy.setProperty("physics", consApp.physics);
 		enemy.setProperty("facingRight", false);
 		enemy.setPosition(spawnPoint.getX(), spawnPoint.getY());
@@ -716,7 +716,7 @@ public class EntitySpawner {
 				default: break;
 			}
 		}
-		ePic.addControl(new AnimatedEnemyControl(enemy, hashMap, consApp.getAssetManager().loadTexture(FileNames.GOLEM_TEX)));
+		ePic.addControl(new AnimatedEnemyControl(enemy, hashMap, consApp.getTexture(FileNames.GOLEM_TEX)));
 		ePic.addFXGLEventHandler(Event.DEATH, (event) -> consApp.getSceneManager().removeEntity(ePic));
 		enemy.aliveProperty().addListener(new ChangeListener<Boolean>(){
 			@Override
@@ -738,7 +738,7 @@ public class EntitySpawner {
 
 		enemy.setGraphics(rect);
 		enemy.setCollidable(true);
-		enemy.setProperty(Property.DATA, new Enemy(consApp.assets.getText("enemies/enemy_FireElemental.txt")));
+		enemy.setProperty(Property.DATA, new Enemy(consApp.getAssetManager().loadText("enemies/enemy_FireElemental.txt")));
 		enemy.setProperty("physics", consApp.physics);
 		enemy.setPosition(spawnPoint.getX(), spawnPoint.getY());
 		enemy.addControl(new PhysicsControl(consApp.physics));
@@ -778,7 +778,7 @@ public class EntitySpawner {
 				default: break;
 			}
 		}
-		ePic.addControl(new AnimatedEnemyControl(enemy, hashMap, consApp.getAssetManager().loadTexture(FileNames.MUSICIAN_TEX)));
+		ePic.addControl(new AnimatedEnemyControl(enemy, hashMap, consApp.getTexture(FileNames.MUSICIAN_TEX)));
 		ePic.addFXGLEventHandler(Event.DEATH, (event) -> consApp.getSceneManager().removeEntity(ePic));
 		enemy.aliveProperty().addListener(new ChangeListener<Boolean>(){
 			@Override
@@ -800,7 +800,7 @@ public class EntitySpawner {
 
 		enemy.setGraphics(rect);
 		enemy.setCollidable(true);
-		enemy.setProperty(Property.DATA, new Enemy(consApp.assets.getText("enemies/enemy_FireElemental.txt")));
+		enemy.setProperty(Property.DATA, new Enemy(consApp.getAssetManager().loadText("enemies/enemy_FireElemental.txt")));
 		enemy.setProperty("physics", consApp.physics);
 		enemy.setProperty("shover", true);
 		enemy.setPosition(spawnPoint.getX(), spawnPoint.getY());
@@ -837,7 +837,7 @@ public class EntitySpawner {
 				default: break;
 			}
 		}
-		ePic.addControl(new AnimatedEnemyControl(enemy, hashMap, consApp.getAssetManager().loadTexture(FileNames.DANCERS_TEX)));
+		ePic.addControl(new AnimatedEnemyControl(enemy, hashMap, consApp.getTexture(FileNames.DANCERS_TEX)));
 		ePic.addFXGLEventHandler(Event.DEATH, (event) -> consApp.getSceneManager().removeEntity(ePic));
 		enemy.aliveProperty().addListener(new ChangeListener<Boolean>(){
 			@Override
@@ -859,7 +859,7 @@ public class EntitySpawner {
 
 		enemy.setGraphics(rect);
 		enemy.setCollidable(true);
-		enemy.setProperty(Property.DATA, new Enemy(consApp.assets.getText("enemies/enemy_FireElemental.txt")));
+		enemy.setProperty(Property.DATA, new Enemy(consApp.getAssetManager().loadText("enemies/enemy_FireElemental.txt")));
 		enemy.setProperty("physics", consApp.physics);
 		enemy.setProperty("shover", true);
 		enemy.setPosition(spawnPoint.getX(), spawnPoint.getY());
@@ -906,7 +906,7 @@ public class EntitySpawner {
 				default: break;
 			}
 		}
-		ePic.addControl(new AnimatedEnemyControl(enemy, hashMap, consApp.getAssetManager().loadTexture(FileNames.DOG_TEX)));
+		ePic.addControl(new AnimatedEnemyControl(enemy, hashMap, consApp.getTexture(FileNames.DOG_TEX)));
 		ePic.addFXGLEventHandler(Event.DEATH, (event) -> consApp.getSceneManager().removeEntity(ePic));
 		enemy.aliveProperty().addListener(new ChangeListener<Boolean>(){
 			@Override
@@ -928,7 +928,7 @@ public class EntitySpawner {
 
 		enemy.setGraphics(rect);
 		enemy.setCollidable(true);
-		enemy.setProperty(Property.DATA, new Enemy(consApp.assets.getText("enemies/enemy_FireElemental.txt")));
+		enemy.setProperty(Property.DATA, new Enemy(consApp.getAssetManager().loadText("enemies/enemy_FireElemental.txt")));
 		enemy.setProperty("physics", consApp.physics);
 		enemy.setProperty("shover", true);
 		enemy.setPosition(spawnPoint.getX(), spawnPoint.getY());
@@ -966,7 +966,7 @@ public class EntitySpawner {
 				default: break;
 			}
 		}
-		ePic.addControl(new AnimatedEnemyControl(enemy, hashMap, consApp.getAssetManager().loadTexture(FileNames.ICE_SPIRIT_TEX)));
+		ePic.addControl(new AnimatedEnemyControl(enemy, hashMap, consApp.getTexture(FileNames.ICE_SPIRIT_TEX)));
 		ePic.addFXGLEventHandler(Event.DEATH, (event) -> consApp.getSceneManager().removeEntity(ePic));
 		enemy.aliveProperty().addListener(new ChangeListener<Boolean>(){
 			@Override
@@ -988,7 +988,7 @@ public class EntitySpawner {
 
 		enemy.setGraphics(rect);
 		enemy.setCollidable(true);
-		enemy.setProperty(Property.DATA, new Enemy(consApp.assets.getText("enemies/enemy_FireElemental.txt")));
+		enemy.setProperty(Property.DATA, new Enemy(consApp.getAssetManager().loadText("enemies/enemy_FireElemental.txt")));
 		enemy.setProperty("physics", consApp.physics);
 		enemy.setProperty("facingRight", false);
 		enemy.setPosition(spawnPoint.getX(), spawnPoint.getY());
@@ -1034,7 +1034,7 @@ public class EntitySpawner {
 				default: break;
 			}
 		}
-		ePic.addControl(new AnimatedEnemyControl(enemy, hashMap, consApp.getAssetManager().loadTexture(FileNames.CANNON_TEX)));
+		ePic.addControl(new AnimatedEnemyControl(enemy, hashMap, consApp.getTexture(FileNames.CANNON_TEX)));
 		ePic.addFXGLEventHandler(Event.DEATH, (event) -> consApp.getSceneManager().removeEntity(ePic));
 		enemy.aliveProperty().addListener(new ChangeListener<Boolean>(){
 			@Override
@@ -1056,7 +1056,7 @@ public class EntitySpawner {
 
 		enemy.setGraphics(rect);
 		enemy.setCollidable(true);
-		enemy.setProperty(Property.DATA, new Enemy(consApp.assets.getText("enemies/enemy_FireElemental.txt")));
+		enemy.setProperty(Property.DATA, new Enemy(consApp.getAssetManager().loadText("enemies/enemy_FireElemental.txt")));
 		enemy.setProperty("physics", consApp.physics);
 		enemy.setProperty("facingRight", false);
 		enemy.setPosition(spawnPoint.getX(), spawnPoint.getY());
@@ -1102,7 +1102,7 @@ public class EntitySpawner {
 				default: break;
 			}
 		}
-		ePic.addControl(new AnimatedEnemyControl(enemy, hashMap, consApp.getAssetManager().loadTexture(FileNames.BRITISH_TEX)));
+		ePic.addControl(new AnimatedEnemyControl(enemy, hashMap, consApp.getTexture(FileNames.BRITISH_TEX)));
 		ePic.addFXGLEventHandler(Event.DEATH, (event) -> consApp.getSceneManager().removeEntity(ePic));
 		enemy.aliveProperty().addListener(new ChangeListener<Boolean>(){
 			@Override
@@ -1124,7 +1124,7 @@ public class EntitySpawner {
 
 		enemy.setGraphics(rect);
 		enemy.setCollidable(true);
-		enemy.setProperty(Property.DATA, new Enemy(consApp.assets.getText("enemies/enemy_FireElemental.txt")));
+		enemy.setProperty(Property.DATA, new Enemy(consApp.getAssetManager().loadText("enemies/enemy_FireElemental.txt")));
 		enemy.setProperty("physics", consApp.physics);
 		enemy.setProperty("facingRight", false);
 		enemy.setPosition(spawnPoint.getX(), spawnPoint.getY());
@@ -1157,7 +1157,7 @@ public class EntitySpawner {
 				default: break;
 			}
 		}
-		ePic.addControl(new AnimatedEnemyControl(enemy, hashMap, consApp.getAssetManager().loadTexture(FileNames.BRITISH_TEX)));
+		ePic.addControl(new AnimatedEnemyControl(enemy, hashMap, consApp.getTexture(FileNames.BRITISH_TEX)));
 		ePic.addFXGLEventHandler(Event.DEATH, (event) -> consApp.getSceneManager().removeEntity(ePic));
 		enemy.aliveProperty().addListener(new ChangeListener<Boolean>(){
 			@Override
@@ -1180,7 +1180,7 @@ public class EntitySpawner {
 		enemy.setGraphics(rect);
 		enemy.setCollidable(true);
 		enemy.setVisible(false);
-		enemy.setProperty(Property.DATA, new Enemy(consApp.assets.getText("enemies/enemy_FireElemental.txt")));
+		enemy.setProperty(Property.DATA, new Enemy(consApp.getAssetManager().loadText("enemies/enemy_FireElemental.txt")));
 		enemy.setProperty("physics", consApp.physics);
 		enemy.setProperty("facingRight", true);
 		enemy.setProperty("jumping", false);
@@ -1207,7 +1207,7 @@ public class EntitySpawner {
 				default: break;
 			}
 		}
-		ePic.addControl(new AnimatedEnemyControl(enemy, hashMap, consApp.getAssetManager().loadTexture(FileNames.BANDIT_K_TEX)));
+		ePic.addControl(new AnimatedEnemyControl(enemy, hashMap, consApp.getTexture(FileNames.BANDIT_K_TEX)));
 		ePic.addFXGLEventHandler(Event.DEATH, (event) -> consApp.getSceneManager().removeEntity(ePic));
 		enemy.aliveProperty().addListener(new ChangeListener<Boolean>(){
 			@Override
@@ -1238,7 +1238,7 @@ public class EntitySpawner {
 		enemy.setGraphics(rect);
 		enemy.setCollidable(true);
 		enemy.setVisible(false);
-		enemy.setProperty(Property.DATA, new Enemy(consApp.assets.getText("enemies/enemy_FireElemental.txt")));
+		enemy.setProperty(Property.DATA, new Enemy(consApp.getAssetManager().loadText("enemies/enemy_FireElemental.txt")));
 		enemy.setProperty("physics", consApp.physics);
 		enemy.setProperty("facingRight", true);
 		enemy.setProperty("jumping", false);
@@ -1265,7 +1265,7 @@ public class EntitySpawner {
 				default: break;
 			}
 		}
-		ePic.addControl(new AnimatedEnemyControl(enemy, hashMap, consApp.getAssetManager().loadTexture(FileNames.ZULU_K_TEX)));
+		ePic.addControl(new AnimatedEnemyControl(enemy, hashMap, consApp.getTexture(FileNames.ZULU_K_TEX)));
 		ePic.addFXGLEventHandler(Event.DEATH, (event) -> consApp.getSceneManager().removeEntity(ePic));
 		enemy.aliveProperty().addListener(new ChangeListener<Boolean>(){
 			@Override
@@ -1296,7 +1296,7 @@ public class EntitySpawner {
 		enemy.setGraphics(rect);
 		enemy.setCollidable(true);
 		enemy.setVisible(false);
-		enemy.setProperty(Property.DATA, new Enemy(consApp.assets.getText("enemies/enemy_FireElemental.txt")));
+		enemy.setProperty(Property.DATA, new Enemy(consApp.getAssetManager().loadText("enemies/enemy_FireElemental.txt")));
 		enemy.setProperty("physics", consApp.physics);
 		enemy.setProperty("facingRight", false);
 		enemy.setProperty("jumping", false);
@@ -1343,7 +1343,7 @@ public class EntitySpawner {
 				default: break;
 			}
 		}
-		ePic.addControl(new AnimatedEnemyControl(enemy, hashMap, consApp.getAssetManager().loadTexture(FileNames.BANDIT_M_TEX)));
+		ePic.addControl(new AnimatedEnemyControl(enemy, hashMap, consApp.getTexture(FileNames.BANDIT_M_TEX)));
 		ePic.addFXGLEventHandler(Event.DEATH, (event) -> consApp.getSceneManager().removeEntity(ePic));
 		enemy.aliveProperty().addListener(new ChangeListener<Boolean>(){
 			@Override
@@ -1366,7 +1366,7 @@ public class EntitySpawner {
 
 		enemy.setGraphics(rect);
 		enemy.setCollidable(true);
-		enemy.setProperty(Property.DATA, new Enemy(consApp.assets.getText("enemies/enemy_FireElemental.txt")));
+		enemy.setProperty(Property.DATA, new Enemy(consApp.getAssetManager().loadText("enemies/enemy_FireElemental.txt")));
 		enemy.setProperty(Property.SUB_TYPE, Type.BOSS);
 		enemy.setProperty("physics", consApp.physics);
 		enemy.setProperty("shover", true);
@@ -1386,7 +1386,7 @@ public class EntitySpawner {
 		enemy.setGraphics(rect);
 		enemy.setVisible(false);
 		enemy.setCollidable(false);
-		enemy.setProperty(Property.DATA, new Enemy(consApp.assets.getText("enemies/enemy_FireElemental.txt")));
+		enemy.setProperty(Property.DATA, new Enemy(consApp.getAssetManager().loadText("enemies/enemy_FireElemental.txt")));
 		enemy.setProperty(Property.SUB_TYPE, Type.BOSS);
 		enemy.setProperty("physics", consApp.physics);
 		enemy.setProperty("shover", true);
@@ -1446,7 +1446,7 @@ public class EntitySpawner {
 				default: break;
 			}
 		}
-		ePic.addControl(new AnimatedElephantControl(enemy, hashMap, consApp.getAssetManager().loadTexture(FileNames.SAND_ELEPHANT_TEX)));
+		ePic.addControl(new AnimatedElephantControl(enemy, hashMap, consApp.getTexture(FileNames.SAND_ELEPHANT_TEX)));
 		ePic.addFXGLEventHandler(Event.DEATH, (event) -> consApp.getSceneManager().removeEntity(ePic));
 		enemy.aliveProperty().addListener(new ChangeListener<Boolean>(){
 			@Override
@@ -1469,7 +1469,7 @@ public class EntitySpawner {
 		enemy.setGraphics(rect);
 		enemy.setVisible(false);
 		enemy.setCollidable(true);
-		enemy.setProperty(Property.DATA, new Enemy(consApp.assets.getText("enemies/enemy_FireElemental.txt")));
+		enemy.setProperty(Property.DATA, new Enemy(consApp.getAssetManager().loadText("enemies/enemy_FireElemental.txt")));
 		enemy.setProperty(Property.SUB_TYPE, Type.BOSS);
 		enemy.setProperty("physics", consApp.physics);
 		enemy.setProperty("shover", true);
@@ -1497,7 +1497,7 @@ public class EntitySpawner {
 				default: break;
 			}
 		}
-		ePic.addControl(new AnimatedEnemyControl(enemy, hashMap, consApp.getAssetManager().loadTexture(FileNames.ANUBIS_TEX)));
+		ePic.addControl(new AnimatedEnemyControl(enemy, hashMap, consApp.getTexture(FileNames.ANUBIS_TEX)));
 		ePic.addFXGLEventHandler(Event.DEATH, (event) -> consApp.getSceneManager().removeEntity(ePic));
 		enemy.aliveProperty().addListener(new ChangeListener<Boolean>(){
 			@Override
@@ -1553,7 +1553,7 @@ public class EntitySpawner {
 		enemy.setGraphics(rect);
 		enemy.setVisible(true);
 		enemy.setCollidable(true);
-		enemy.setProperty(Property.DATA, new Enemy(consApp.assets.getText("enemies/enemy_FireElemental.txt")));
+		enemy.setProperty(Property.DATA, new Enemy(consApp.getAssetManager().loadText("enemies/enemy_FireElemental.txt")));
 		enemy.setProperty(Property.SUB_TYPE, Type.BOSS);
 		enemy.setProperty("physics", consApp.physics);
 		enemy.setProperty("shover", true);
@@ -1657,7 +1657,7 @@ public class EntitySpawner {
 				default: break;
 			}
 		}
-		ePic.addControl(new AnimatedEnemyControl(enemy, hashMap, consApp.getAssetManager().loadTexture(FileNames.SHANGO_TEX)));
+		ePic.addControl(new AnimatedEnemyControl(enemy, hashMap, consApp.getTexture(FileNames.SHANGO_TEX)));
 		ePic.addFXGLEventHandler(Event.DEATH, (event) -> consApp.getSceneManager().removeEntity(ePic));
 		enemy.aliveProperty().addListener(new ChangeListener<Boolean>(){
 			@Override
@@ -1680,7 +1680,7 @@ public class EntitySpawner {
 		enemy.setGraphics(rect);
 		enemy.setVisible(true);
 		enemy.setCollidable(true);
-		enemy.setProperty(Property.DATA, new Enemy(consApp.assets.getText("enemies/enemy_FireElemental.txt")));
+		enemy.setProperty(Property.DATA, new Enemy(consApp.getAssetManager().loadText("enemies/enemy_FireElemental.txt")));
 		enemy.setProperty(Property.SUB_TYPE, Type.BOSS);
 		enemy.setProperty("physics", consApp.physics);
 		enemy.setProperty("shover", true);
@@ -1794,7 +1794,7 @@ public class EntitySpawner {
 				default: break;
 			}
 		}
-		ePic.addControl(new AnimatedEnemyControl(enemy, hashMap, consApp.getAssetManager().loadTexture(FileNames.KIBO_TEX)));
+		ePic.addControl(new AnimatedEnemyControl(enemy, hashMap, consApp.getTexture(FileNames.KIBO_TEX)));
 		ePic.addFXGLEventHandler(Event.DEATH, (event) -> consApp.getSceneManager().removeEntity(ePic));
 		enemy.aliveProperty().addListener(new ChangeListener<Boolean>(){
 			@Override
@@ -1817,7 +1817,7 @@ public class EntitySpawner {
 		enemy.setGraphics(rect);
 		enemy.setVisible(true);
 		enemy.setCollidable(true);
-		enemy.setProperty(Property.DATA, new Enemy(consApp.assets.getText("enemies/enemy_FireElemental.txt")));
+		enemy.setProperty(Property.DATA, new Enemy(consApp.getAssetManager().loadText("enemies/enemy_FireElemental.txt")));
 		enemy.setProperty(Property.SUB_TYPE, Type.BOSS);
 		enemy.setProperty("physics", consApp.physics);
 		enemy.setProperty("shover", true);
@@ -1962,7 +1962,7 @@ public class EntitySpawner {
 				default: break;
 			}
 		}
-		ePic.addControl(new AnimatedEnemyControl(enemy, hashMap, consApp.getAssetManager().loadTexture(FileNames.GENTLEMAN_TEX)));
+		ePic.addControl(new AnimatedEnemyControl(enemy, hashMap, consApp.getTexture(FileNames.GENTLEMAN_TEX)));
 		ePic.addFXGLEventHandler(Event.DEATH, (event) -> consApp.getSceneManager().removeEntity(ePic));
 		enemy.aliveProperty().addListener(new ChangeListener<Boolean>(){
 			@Override
@@ -1986,7 +1986,7 @@ public class EntitySpawner {
 		enemy.setGraphics(rect);
 		enemy.setVisible(true);
 		enemy.setCollidable(true);
-		enemy.setProperty(Property.DATA, new Enemy(consApp.assets.getText("enemies/enemy_FireElemental.txt")));
+		enemy.setProperty(Property.DATA, new Enemy(consApp.getAssetManager().loadText("enemies/enemy_FireElemental.txt")));
 		enemy.setProperty(Property.SUB_TYPE, Type.BOSS);
 		enemy.setProperty("physics", consApp.physics);
 		enemy.setProperty("shover", true);
@@ -2077,7 +2077,7 @@ public class EntitySpawner {
 				default: break;
 			}
 		}
-		ePic.addControl(new AnimatedEnemyControl(enemy, hashMap, consApp.getAssetManager().loadTexture(FileNames.SHAKA_TEX)));
+		ePic.addControl(new AnimatedEnemyControl(enemy, hashMap, consApp.getTexture(FileNames.SHAKA_TEX)));
 		ePic.addFXGLEventHandler(Event.DEATH, (event) -> consApp.getSceneManager().removeEntity(ePic));
 		enemy.aliveProperty().addListener(new ChangeListener<Boolean>(){
 			@Override
@@ -2100,7 +2100,7 @@ public class EntitySpawner {
 		enemy.setGraphics(rect);
 		enemy.setVisible(true);
 		enemy.setCollidable(true);
-		enemy.setProperty(Property.DATA, new Enemy(consApp.assets.getText("enemies/enemy_FireElemental.txt")));
+		enemy.setProperty(Property.DATA, new Enemy(consApp.getAssetManager().loadText("enemies/enemy_FireElemental.txt")));
 		enemy.setProperty(Property.SUB_TYPE, Type.BOSS);
 		enemy.setProperty("physics", consApp.physics);
 		enemy.setProperty("shover", true);
@@ -2152,7 +2152,7 @@ public class EntitySpawner {
 				default: break;
 			}
 		}
-		ePic.addControl(new AnimatedEnemyControl(enemy, hashMap, consApp.getAssetManager().loadTexture(FileNames.ESHU_TEX)));
+		ePic.addControl(new AnimatedEnemyControl(enemy, hashMap, consApp.getTexture(FileNames.ESHU_TEX)));
 		ePic.addFXGLEventHandler(Event.DEATH, (event) -> consApp.getSceneManager().removeEntity(ePic));
 		enemy.aliveProperty().addListener(new ChangeListener<Boolean>(){
 			@Override
@@ -2200,14 +2200,22 @@ public class EntitySpawner {
 			
 			Texture t;
 			if(enemy.getProperty(Property.SUB_TYPE) == Type.BOSS){
-				t = consApp.assets.getTexture(FileNames.POWERUP_BLOCK);
+				t = consApp.getTexture(FileNames.POWERUP_BLOCK);
 				t.setPreserveRatio(true);
 				t.setFitHeight(30);
 			}
 			else{
-				t = consApp.assets.getTexture(FileNames.FOOD_BLOCK);
+				t = consApp.getTexture(FileNames.FOOD_BLOCK);
 				t.setPreserveRatio(true);
 				t.setFitHeight(20);
+
+				consApp.getTimerManager().runOnceAfter(() -> {
+					consApp.getTimerManager().runAtIntervalWhile(() -> {
+						e.setVisible(!e.isVisible());
+					}, Duration.seconds(0.1), e.aliveProperty());
+				}, Duration.seconds(5));
+					
+				consApp.getTimerManager().runOnceAfter(() -> e.fireFXGLEvent(new FXGLEvent(Event.DEATH)), Duration.seconds(10));
 			}
 			
 			if(Config.RELEASE && t != null){
@@ -2260,4 +2268,5 @@ public class EntitySpawner {
 			}
 		}
 	}
+	
 }

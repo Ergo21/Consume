@@ -24,7 +24,7 @@ public class DogControl extends AbstractControl {
 		
 	}
 
-	@Override
+	@Override	
 	public void onUpdate(Entity entity, long now) {
 		if(isTargetInRange()){
 			if (firstTimeSaw == -1) {

@@ -20,8 +20,17 @@ public class MummyControl extends AbstractControl {
 		playerSeen = false;
 	}
 
+	private int frames = 10;
 	@Override
-	public void onUpdate(Entity entity, long now) {
+	public void onUpdate(Entity entity, long now){
+		frames++;
+		if(frames >= 5){
+			actualUpdate(entity, now);
+			frames = 0;
+		}
+	}
+	
+	public void actualUpdate(Entity entity, long now) {
 		if (isTargetInRange() && !playerSeen) {
 			playerSeen = true;
 		} else if (!isTargetInRange() && playerSeen) {

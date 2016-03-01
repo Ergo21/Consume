@@ -33,6 +33,7 @@ public class PhysicsControl extends AbstractControl {
 		entity.setProperty(Property.ENABLE_GRAVITY, true);
 	}
 
+
 	@Override
 	public void onUpdate(Entity entity, long now) {
 		physics.moveX(entity, (int) velocity.getX());

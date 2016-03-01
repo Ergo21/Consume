@@ -272,4 +272,8 @@ public class AnimatedPlayerControl implements Control {
 		
 		return curTex;
 	}
+
+	public void setPlayer(Entity play) {
+		player = play;
+	}
 }

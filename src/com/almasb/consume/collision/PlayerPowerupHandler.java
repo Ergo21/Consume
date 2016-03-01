@@ -39,6 +39,8 @@ public class PlayerPowerupHandler extends CollisionHandler {
 		if(playerData.getCurrentHealth() <= 0){
 			return;
 		}
+		
+		int tLNo;
 
 		switch (type) {
 		case INC_MANA_REGEN:
@@ -73,6 +75,10 @@ public class PlayerPowerupHandler extends CollisionHandler {
 				playerData.getPowers().add(Element.NEUTRAL2);
 			}
 			playerData.getLevsComp().add(playerData.getCurrentLevel());
+			
+			tLNo = playerData.getCurrentLevel();
+			tLNo /= 3;
+			consApp.levelMenu.setLevelComplete(tLNo);
 			consApp.showLevelScreen();
 			break;
 		case FIRE:
@@ -80,6 +86,11 @@ public class PlayerPowerupHandler extends CollisionHandler {
 				playerData.getPowers().add(Element.FIRE);
 			}
 			playerData.getLevsComp().add(playerData.getCurrentLevel());
+			
+			tLNo = playerData.getCurrentLevel();
+			tLNo /= 3;
+			consApp.levelMenu.setLevelComplete(tLNo);
+			
 			consApp.showLevelScreen();
 			break;
 		case EARTH:
@@ -87,6 +98,11 @@ public class PlayerPowerupHandler extends CollisionHandler {
 				playerData.getPowers().add(Element.EARTH);
 			}
 			playerData.getLevsComp().add(playerData.getCurrentLevel());
+			
+			tLNo = playerData.getCurrentLevel();
+			tLNo /= 3;
+			consApp.levelMenu.setLevelComplete(tLNo);
+			
 			consApp.showLevelScreen();
 			break;
 		case LIGHTNING: 
@@ -94,6 +110,11 @@ public class PlayerPowerupHandler extends CollisionHandler {
 				playerData.getPowers().add(Element.LIGHTNING);
 			}
 			playerData.getLevsComp().add(playerData.getCurrentLevel());
+			
+			tLNo = playerData.getCurrentLevel();
+			tLNo /= 3;
+			consApp.levelMenu.setLevelComplete(tLNo);
+			
 			consApp.showLevelScreen();
 			break;
 		case METAL:
@@ -101,6 +122,11 @@ public class PlayerPowerupHandler extends CollisionHandler {
 				playerData.getPowers().add(Element.METAL);
 			}
 			playerData.getLevsComp().add(playerData.getCurrentLevel());
+			
+			tLNo = playerData.getCurrentLevel();
+			tLNo /= 3;
+			consApp.levelMenu.setLevelComplete(tLNo);
+			
 			consApp.showLevelScreen();
 			break;
 		case DEATH:
@@ -108,6 +134,11 @@ public class PlayerPowerupHandler extends CollisionHandler {
 				playerData.getPowers().add(Element.DEATH);
 			}
 			playerData.getLevsComp().add(playerData.getCurrentLevel());
+			
+			tLNo = playerData.getCurrentLevel();
+			tLNo /= 3;
+			consApp.levelMenu.setLevelComplete(tLNo);
+			
 			consApp.showLevelScreen();
 			break;
 		case CONSUME:
@@ -115,6 +146,11 @@ public class PlayerPowerupHandler extends CollisionHandler {
 				playerData.getPowers().add(Element.CONSUME);
 			}
 			playerData.getLevsComp().add(playerData.getCurrentLevel());
+			
+			tLNo = playerData.getCurrentLevel();
+			tLNo /= 3;
+			consApp.levelMenu.setLevelComplete(tLNo);
+			
 			consApp.showLevelScreen();
 			break;
 		default:

@@ -17,8 +17,17 @@ public class PatrolControl implements Control {
 		this.patrolPoint = patrolPoint;
 	}
 
+	private int frames = 10;
 	@Override
-	public void onUpdate(Entity entity, long now) {
+	public void onUpdate(Entity entity, long now){
+		frames++;
+		if(frames >= 5){
+			actualUpdate(entity, now);
+			frames = 0;
+		}
+	}
+	
+	public void actualUpdate(Entity entity, long now) {
 		Physics physics = entity.getProperty("physics");
 		boolean canMove = physics.moveX(entity, movingRight ? Speed.ENEMY_PATROL : -Speed.ENEMY_PATROL);
 

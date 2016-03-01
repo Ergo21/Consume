@@ -20,7 +20,7 @@ public class SoundManager {
 	}
 
 	public void setBackgroundMusic(String name){
-		backgroundMusic = app.assets.getMusic(name);
+		backgroundMusic = app.getAssetManager().loadMusic(name);
 		backPaused = false;
 	}
 
@@ -32,8 +32,8 @@ public class SoundManager {
 		if(loadedEffects.containsKey(name)){
 		    app.getAudioManager().playSound(loadedEffects.get(name));
 		}
-		else if(app.assets.getSound(name) != null){
-			loadedEffects.put(name, app.assets.getSound(name));
+		else if(app.getAssetManager().loadSound(name) != null){
+			loadedEffects.put(name, app.getAssetManager().loadSound(name));
 			app.getAudioManager().playSound(loadedEffects.get(name));
 		}
 	}

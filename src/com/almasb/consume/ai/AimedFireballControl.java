@@ -41,8 +41,17 @@ public class AimedFireballControl extends AbstractControl {
 
 	}
 
+	private int frames = 10;
 	@Override
-	public void onUpdate(Entity entity, long now) {
+	public void onUpdate(Entity entity, long now){
+		frames++;
+		if(frames >= 5){
+			actualUpdate(entity, now);
+			frames = 0;
+		}
+	}
+	
+	public void actualUpdate(Entity entity, long now) {
 		if(entity != null && entity.getControl(PhysicsControl.class) != null){
 			entity.getControl(PhysicsControl.class).moveX(movX);
 			entity.getControl(PhysicsControl.class).moveY(movY);

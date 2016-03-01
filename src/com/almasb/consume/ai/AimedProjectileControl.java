@@ -26,8 +26,17 @@ public class AimedProjectileControl extends AbstractControl {
 
 	}
 
+	private int frames = 10;
 	@Override
-	public void onUpdate(Entity entity, long now) {
+	public void onUpdate(Entity entity, long now){
+		frames++;
+		if(frames >= 5){
+			actualUpdate(entity, now);
+			frames = 0;
+		}
+	}
+	
+	public void actualUpdate(Entity entity, long now) {
 		entity.setTranslateX(entity.getTranslateX() + (Math.round(-(float) Math.sin(angle) * Speed.PROJECTILE)));
 		entity.setTranslateY(entity.getTranslateY() + (Math.round((float) Math.cos(angle) * Speed.PROJECTILE)));
 

@@ -311,7 +311,7 @@ public class ConsumeController {
 				return;
 			}
 			if(Config.RELEASE){
-				Texture t = consApp.assets.getTexture("projectiles/Spear SS.png");
+				Texture t = consApp.getTexture("projectiles/Spear SS.png");
 				spc.addTexture(t);
 			}
 			e.addControl(spc);
@@ -347,7 +347,7 @@ public class ConsumeController {
 				e.setGraphics(new Rectangle(10,10));
 				e.setVisible(false);
 				
-				Texture t = consApp.assets.getTexture("projectiles/Coal SS.png");
+				Texture t = consApp.getTexture("projectiles/Coal SS.png");
 				t = t.toStaticAnimatedTexture(3, Duration.seconds(0.5));
 				t.setPreserveRatio(true);
 				t.setFitHeight(15);
@@ -422,8 +422,8 @@ public class ConsumeController {
 				e2.setGraphics(new Rectangle(10,10));
 				e2.setVisible(false);
 				consApp.getTimerManager().runOnceAfter(() ->{
-					Texture t = consApp.assets.getTexture("projectiles/Sand SS.png");
-					Texture t2 = consApp.assets.getTexture("projectiles/Sand SS.png");
+					Texture t = consApp.getTexture("projectiles/Sand SS.png");
+					Texture t2 = consApp.getTexture("projectiles/Sand SS.png");
 					t = t.toStaticAnimatedTexture(3, Config.SAND_DECAY);
 					t.setPreserveRatio(true);
 					t.setFitHeight(20);
@@ -620,7 +620,7 @@ public class ConsumeController {
 				return;
 			}
 			if(Config.RELEASE){
-				Texture t = consApp.assets.getTexture("projectiles/Ankh.png");
+				Texture t = consApp.getTexture("projectiles/Ankh.png");
 				t.setPreserveRatio(true);
 				t.setFitHeight(15);
 				e.setGraphics(t);
@@ -678,14 +678,14 @@ public class ConsumeController {
 					(source.getControl(ShakaControl.class) != null && source.getControl(ShakaControl.class).isShortThrow()) ||
 					(source.getControl(EshuControl.class) != null && source.getControl(EshuControl.class).isShortThrow())){
 				SpearProjectileControl spc = new SpearProjectileControl(source, Speed.PROJECTILE, -Speed.PROJECTILE/2);
-				Texture t = consApp.assets.getTexture("projectiles/Spear SS.png");
+				Texture t = consApp.getTexture("projectiles/Spear SS.png");
 				spc.addTexture(t);
 				e.addControl(spc);
 			}
 			else {
 				SpearProjectileControl spc = new SpearProjectileControl(source);
 				if(Config.RELEASE){
-					Texture t = consApp.assets.getTexture("projectiles/Spear SS.png");
+					Texture t = consApp.getTexture("projectiles/Spear SS.png");
 					spc.addTexture(t);
 				}
 				e.addControl(spc);
@@ -712,7 +712,7 @@ public class ConsumeController {
 				e.setGraphics(new Rectangle(10,10));
 				e.setVisible(false);
 				
-				Texture t = consApp.assets.getTexture("projectiles/Coal SS.png");
+				Texture t = consApp.getTexture("projectiles/Coal SS.png");
 				t = t.toStaticAnimatedTexture(3, Duration.seconds(0.5));
 				t.setPreserveRatio(true);
 				t.setFitHeight(15);
@@ -778,8 +778,8 @@ public class ConsumeController {
 				e2.setGraphics(new Rectangle(10,10));
 				e2.setVisible(false);
 				consApp.getTimerManager().runOnceAfter(() ->{
-					Texture t = consApp.assets.getTexture("projectiles/Sand SS.png");
-					Texture t2 = consApp.assets.getTexture("projectiles/Sand SS.png");
+					Texture t = consApp.getTexture("projectiles/Sand SS.png");
+					Texture t2 = consApp.getTexture("projectiles/Sand SS.png");
 					t = t.toStaticAnimatedTexture(3, Config.SAND_DECAY);
 					t.setPreserveRatio(true);
 					t.setFitHeight(20);
@@ -897,7 +897,7 @@ public class ConsumeController {
 		}
 		case DEATH: {
 			if(Config.RELEASE){
-				Texture t = consApp.assets.getTexture("projectiles/Ankh.png");
+				Texture t = consApp.getTexture("projectiles/Ankh.png");
 				t.setPreserveRatio(true);
 				t.setFitHeight(15);
 				e.setGraphics(t);
@@ -970,7 +970,7 @@ public class ConsumeController {
 			e.setGraphics(new Rectangle(10,10));
 			e.setVisible(false);
 			
-			Texture t = consApp.assets.getTexture("projectiles/Coal SS.png");
+			Texture t = consApp.getTexture("projectiles/Coal SS.png");
 			t = t.toStaticAnimatedTexture(3, Duration.seconds(0.5));
 			t.setPreserveRatio(true);
 			t.setFitHeight(15);
@@ -1049,7 +1049,7 @@ public class ConsumeController {
 		
 			e.setPosition(source.getPosition().add((source.getWidth() / 2), 0));
 			e.setCollidable(true);
-			Texture t = consApp.assets.getTexture(FileNames.STONE_PROJ);
+			Texture t = consApp.getTexture(FileNames.STONE_PROJ);
 			t.setPreserveRatio(true);
 			t.setFitHeight(10);
 			e.setGraphics(t);
@@ -1120,7 +1120,7 @@ public class ConsumeController {
 		
 		e.setPosition(source.getPosition().add(7, source.getHeight()/4 - 5));
 		e.setCollidable(true);
-		Texture t = consApp.assets.getTexture(FileNames.FIREBALL_PROJ);
+		Texture t = consApp.getTexture(FileNames.FIREBALL_PROJ);
 		t.setPreserveRatio(false);
 		t.setFitWidth(10);
 		t.setFitHeight(10);
@@ -1314,7 +1314,7 @@ public class ConsumeController {
 		g.setFill(Color.GOLDENROD);
 		e.setGraphics(g);
 		e.setProperty(Property.ENABLE_GRAVITY, false);
-		e.addControl(new PillarControl(consApp.assets.getTexture(FileNames.S_N_SAND_BLOCK)));
+		e.addControl(new PillarControl(consApp.getTexture(FileNames.S_N_SAND_BLOCK)));
 
 		consApp.getSceneManager().addEntities(e);
 	}

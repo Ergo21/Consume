@@ -103,6 +103,19 @@ public class LevelParser {
 					String scTe = "dialogue/scene_" + levelNumber + "_" + scNo + ".txt";
 					e.setProperty("sceneName", scTe);
 					rect.setFill(Color.YELLOW);
+					
+					int tLNo = levelNumber;
+					
+					if(tLNo%3 == 0){
+						tLNo += 2;
+					}
+					else if(tLNo%3 == 1){
+						tLNo += 1;
+					}
+					
+					if(consApp.playerData.getLevsComp().contains(tLNo)){
+						e.setCollidable(false);
+					}
 					break;
 				case 'a':
 				case 'A':
@@ -139,11 +152,11 @@ public class LevelParser {
 					
 					if(Config.RELEASE){
 						switch(line.charAt(j)){
-							case 'd': t = consApp.assets.getTexture(FileNames.DES_THATCH_BLOCK); break;
-							case 'D': t = consApp.assets.getTexture(FileNames.DES_CRATE_BLOCK); break;
-							case 'e': t = consApp.assets.getTexture(FileNames.DES_SANDSTONE_BLOCK); break;
-							case 'E': t = consApp.assets.getTexture(FileNames.DES_BRICK_BLOCK); break;
-							case 'f': t = consApp.assets.getTexture(FileNames.DES_ICE_BLOCK); break;
+							case 'd': t = consApp.getTexture(FileNames.DES_THATCH_BLOCK); break;
+							case 'D': t = consApp.getTexture(FileNames.DES_CRATE_BLOCK); break;
+							case 'e': t = consApp.getTexture(FileNames.DES_SANDSTONE_BLOCK); break;
+							case 'E': t = consApp.getTexture(FileNames.DES_BRICK_BLOCK); break;
+							case 'f': t = consApp.getTexture(FileNames.DES_ICE_BLOCK); break;
 						}
 						t.setPreserveRatio(true);
 						t.setFitHeight(40);
@@ -160,17 +173,17 @@ public class LevelParser {
 					if(Config.RELEASE){
 						if(i >= 1 && data.get(i-1) != null && (data.get(i-1).charAt(j) != 'i' && data.get(i-1).charAt(j) != 'I' && data.get(i-1).charAt(j) != 'j')){
 							if(line.charAt(j) == 'I'){
-								t = consApp.assets.getTexture(FileNames.G_DIRT_BLOCK);
+								t = consApp.getTexture(FileNames.G_DIRT_BLOCK);
 							}
 							else if (line.charAt(j) == 'j'){
-								t = consApp.assets.getTexture(FileNames.ST_DIRT_BLOCK);
+								t = consApp.getTexture(FileNames.ST_DIRT_BLOCK);
 							}
 							else{
-								t = consApp.assets.getTexture(FileNames.S_DIRT_BLOCK);
+								t = consApp.getTexture(FileNames.S_DIRT_BLOCK);
 							}
 						}
 						else{
-							t = consApp.assets.getTexture(FileNames.U_DIRT_BLOCK);
+							t = consApp.getTexture(FileNames.U_DIRT_BLOCK);
 						}
 						
 						if(j >= 1 && line.charAt(j-1) == line.charAt(j) && level.entities.get(level.entities.size() - 1).getScaleX() == 1){
@@ -188,14 +201,14 @@ public class LevelParser {
 					if(Config.RELEASE){
 						if(i >= 1 && data.get(i-1) != null && (data.get(i-1).charAt(j) != 'k' && data.get(i-1).charAt(j) != 'K')){
 							if(line.charAt(j) == 'K'){
-								t = consApp.assets.getTexture(FileNames.G_SAND_BLOCK);
+								t = consApp.getTexture(FileNames.G_SAND_BLOCK);
 							}
 							else{
-								t = consApp.assets.getTexture(FileNames.S_SAND_BLOCK);
+								t = consApp.getTexture(FileNames.S_SAND_BLOCK);
 							}
 						}
 						else{
-							t = consApp.assets.getTexture(FileNames.U_SAND_BLOCK);
+							t = consApp.getTexture(FileNames.U_SAND_BLOCK);
 						}
 						if(j >= 1 && line.charAt(j-1) == line.charAt(j) && level.entities.get(level.entities.size() - 1).getScaleX() == 1){
 							e.setScaleX(-1);
@@ -212,14 +225,14 @@ public class LevelParser {
 					if(Config.RELEASE){
 						if(i >= 1 && data.get(i-1) != null && (data.get(i-1).charAt(j) != 'l' && data.get(i-1).charAt(j) != 'L')){
 							if(line.charAt(j) == 'L'){
-								t = consApp.assets.getTexture(FileNames.G_N_SAND_BLOCK);
+								t = consApp.getTexture(FileNames.G_N_SAND_BLOCK);
 							}
 							else{
-								t = consApp.assets.getTexture(FileNames.S_N_SAND_BLOCK);
+								t = consApp.getTexture(FileNames.S_N_SAND_BLOCK);
 							}
 						}
 						else{
-							t = consApp.assets.getTexture(FileNames.U_N_SAND_BLOCK);
+							t = consApp.getTexture(FileNames.U_N_SAND_BLOCK);
 						}
 						if(j >= 1 && line.charAt(j-1) == line.charAt(j) && level.entities.get(level.entities.size() - 1).getScaleX() == 1){
 							e.setScaleX(-1);
@@ -236,14 +249,14 @@ public class LevelParser {
 					if(Config.RELEASE){
 						if(i >= 1 && data.get(i-1) != null && (data.get(i-1).charAt(j) != 'm' && data.get(i-1).charAt(j) != 'M')){
 							if(line.charAt(j) == 'M'){
-								t = consApp.assets.getTexture(FileNames.SN_STONE_BLOCK);
+								t = consApp.getTexture(FileNames.SN_STONE_BLOCK);
 							}
 							else{
-								t = consApp.assets.getTexture(FileNames.S_STONE_BLOCK);
+								t = consApp.getTexture(FileNames.S_STONE_BLOCK);
 							}
 						}
 						else{
-							t = consApp.assets.getTexture(FileNames.U_STONE_BLOCK);
+							t = consApp.getTexture(FileNames.U_STONE_BLOCK);
 						}
 						if(j >= 1 && line.charAt(j-1) == line.charAt(j) && level.entities.get(level.entities.size() - 1).getScaleX() == 1){
 							e.setScaleX(-1);
@@ -258,10 +271,10 @@ public class LevelParser {
 					rect.setFill(Color.BROWN);
 					if(Config.RELEASE){
 						if(i >= 1 && data.get(i-1) != null && (data.get(i-1).charAt(j) != 'n')){
-							t = consApp.assets.getTexture(FileNames.S_SANDSTONE_BLOCK);
+							t = consApp.getTexture(FileNames.S_SANDSTONE_BLOCK);
 						}
 						else{
-							t = consApp.assets.getTexture(FileNames.U_SANDSTONE_BLOCK);
+							t = consApp.getTexture(FileNames.U_SANDSTONE_BLOCK);
 						}
 						if(j >= 1 && line.charAt(j-1) == line.charAt(j) && level.entities.get(level.entities.size() - 1).getScaleX() == 1){
 							e.setScaleX(-1);
@@ -276,7 +289,7 @@ public class LevelParser {
 					e.setCollidable(true);
 					rect.setFill(Color.GREY);
 					if(Config.RELEASE){
-						t = consApp.assets.getTexture(FileNames.LADDER_BLOCK);
+						t = consApp.getTexture(FileNames.LADDER_BLOCK);
 						t.setPreserveRatio(true);
 						t.setFitHeight(40);
 					}
@@ -292,13 +305,13 @@ public class LevelParser {
 						rect.setFill(Color.BLACK);
 						if(Config.RELEASE){
 							if(line.charAt(j) == 'q'){
-								t = consApp.assets.getTexture(FileNames.W_DOOR);
+								t = consApp.getTexture(FileNames.W_DOOR);
 							}
 							else if(line.charAt(j) == 'Q'){
-								t = consApp.assets.getTexture(FileNames.S_DOOR);
+								t = consApp.getTexture(FileNames.S_DOOR);
 							}
 							else{
-								t = consApp.assets.getTexture(FileNames.CAVE);				
+								t = consApp.getTexture(FileNames.CAVE);				
 							}
 						
 							t.setPreserveRatio(true);
@@ -346,7 +359,7 @@ public class LevelParser {
 					e.setCollidable(true);
 					rect.setFill(Color.PURPLE);
 					if(Config.RELEASE){
-						t = consApp.assets.getTexture(FileNames.POWERUP_BLOCK);
+						t = consApp.getTexture(FileNames.POWERUP_BLOCK);
 						t.setPreserveRatio(true);
 						t.setFitHeight(30);
 						e.setPosition(0, 10);
@@ -357,7 +370,7 @@ public class LevelParser {
 					e.setCollidable(false);
 					rect.setFill(Color.BLUEVIOLET);
 					if(Config.RELEASE){
-						t = consApp.assets.getTexture(FileNames.CORPSE_BLOCK);
+						t = consApp.getTexture(FileNames.CORPSE_BLOCK);
 						t.setPreserveRatio(true);
 						t.setFitWidth(60);
 						e.setPosition(0, 24);
@@ -368,7 +381,7 @@ public class LevelParser {
 					e.setCollidable(false);
 					rect.setFill(Color.VIOLET);
 					if(Config.RELEASE){
-						t = consApp.assets.getTexture(FileNames.COFFIN_BLOCK);
+						t = consApp.getTexture(FileNames.COFFIN_BLOCK);
 						t.setPreserveRatio(true);
 						t.setFitHeight(80);
 						e.setPosition(0, -40);
@@ -462,66 +475,66 @@ public class LevelParser {
 	private Texture getBackground(int levelNumber) {
 
 		if(!Config.RELEASE){
-			return consApp.assets.getTexture("forest1.jpg");
+			return consApp.getTexture("forest1.jpg");
 		}
 		
 		switch(levelNumber){
 			case 0: {
-				return consApp.assets.getTexture(FileNames.FOREST1_BACK_1);
+				return consApp.getTexture(FileNames.FOREST1_BACK_1);
 			}
 			case 1: {
-				return consApp.assets.getTexture(FileNames.FOREST1_BACK_2);
+				return consApp.getTexture(FileNames.FOREST1_BACK_2);
 			}
 			case 2: {
-				return consApp.assets.getTexture(FileNames.FOREST1_BACK_3);
+				return consApp.getTexture(FileNames.FOREST1_BACK_3);
 			}
 			case 3:
 			case 4:
 			case 5: {
-				return consApp.assets.getTexture(FileNames.DESERT_BACK_1);
+				return consApp.getTexture(FileNames.DESERT_BACK_1);
 			}
 			case 6: {
-				return consApp.assets.getTexture(FileNames.PYRAMID_BACK_1);
+				return consApp.getTexture(FileNames.PYRAMID_BACK_1);
 			}
 			case 7:
 			case 8: {
-				return consApp.assets.getTexture(FileNames.PYRAMID_BACK_2);
+				return consApp.getTexture(FileNames.PYRAMID_BACK_2);
 			}
 			case 9:
 			case 10:
 			case 11: {
-				return consApp.assets.getTexture(FileNames.FESTIVAL_BACK_1);
+				return consApp.getTexture(FileNames.FESTIVAL_BACK_1);
 			}
 			case 12: {
-				return consApp.assets.getTexture(FileNames.FOREST1_BACK_2);
+				return consApp.getTexture(FileNames.FOREST1_BACK_2);
 			}
 			case 13: {
-				return consApp.assets.getTexture(FileNames.FOREST1_BACK_3);
+				return consApp.getTexture(FileNames.FOREST1_BACK_3);
 			}
 			case 14: {
-				return consApp.assets.getTexture(FileNames.EMPIRE_BACK_2);
+				return consApp.getTexture(FileNames.EMPIRE_BACK_2);
 			}
 			case 15: {
-				return consApp.assets.getTexture(FileNames.MOUNTAIN_BACK_1);
+				return consApp.getTexture(FileNames.MOUNTAIN_BACK_1);
 			}
 			case 16:
 			case 17: {
-				return consApp.assets.getTexture(FileNames.MOUNTAIN_BACK_2);
+				return consApp.getTexture(FileNames.MOUNTAIN_BACK_2);
 			}
 			case 18:
 			case 19:
 			case 20: {
-				return consApp.assets.getTexture(FileNames.COLONY_BACK_1);
+				return consApp.getTexture(FileNames.COLONY_BACK_1);
 			}
 			case 21:
 			case 22: {
-				return consApp.assets.getTexture(FileNames.EMPIRE_BACK_1);
+				return consApp.getTexture(FileNames.EMPIRE_BACK_1);
 			}
 			case 23: {
-				return consApp.assets.getTexture(FileNames.EMPIRE_BACK_2);
+				return consApp.getTexture(FileNames.EMPIRE_BACK_2);
 			}
 			default: {
-				return consApp.assets.getTexture(FileNames.FESTIVAL_BACK_1);
+				return consApp.getTexture(FileNames.FESTIVAL_BACK_1);
 			}
 		}
 	}
@@ -536,57 +549,157 @@ public class LevelParser {
 											1);
 				}
 				else if (c == 'S'){
-
+					return new ESpawnerControl(consApp, (Function<Point2D, Entity>) (t) -> consApp.eSpawner.spawnBKnifer(t), 
+							1);
 				}
 				else if (c == 't'){
-
+					return new ESpawnerControl(consApp, (Function<Point2D, Entity>) (t) -> consApp.eSpawner.spawnBSpearEnemy(t), 
+							1);
 				}
 				else{
-					
+					return new ESpawnerControl(consApp, (Function<Point2D, Entity>) (t) -> consApp.eSpawner.spawnEloko(t), 
+							1);
 				}
-				break;
 			}
 			case 3:
 			case 4:
 			case 5:{
-				
-				break;
+				if(c == 's'){
+					return new ESpawnerControl(consApp, (Function<Point2D, Entity>) (t) -> consApp.eSpawner.spawnScarab(t), 
+											1);
+				}
+				else if (c == 'S'){
+					return new ESpawnerControl(consApp, (Function<Point2D, Entity>) (t) -> consApp.eSpawner.spawnLocust(t), 
+							1);
+				}
+				else if (c == 't'){
+					return new ESpawnerControl(consApp, (Function<Point2D, Entity>) (t) -> consApp.eSpawner.spawnScorpion(t), 
+							1);
+				}
+				else{
+					return new ESpawnerControl(consApp, (Function<Point2D, Entity>) (t) -> consApp.eSpawner.spawnStoneEnemy(t), 
+							1);
+				}
 			}
 			case 6:
 			case 7:
 			case 8:{
-				
-				break;
+				if(c == 's'){
+					return new ESpawnerControl(consApp, (Function<Point2D, Entity>) (t) -> consApp.eSpawner.spawnScarab(t), 
+											1);
+				}
+				else if (c == 'S'){
+					return new ESpawnerControl(consApp, (Function<Point2D, Entity>) (t) -> consApp.eSpawner.spawnScorpion(t), 
+							1);
+				}
+				else if (c == 't'){
+					return new ESpawnerControl(consApp, (Function<Point2D, Entity>) (t) -> consApp.eSpawner.spawnBurner(t), 
+							1);
+				}
+				else{
+					return new ESpawnerControl(consApp, (Function<Point2D, Entity>) (t) -> consApp.eSpawner.spawnIceSpirit(t), 
+							1);
+				}
 			}
 			case 9:
 			case 10:
 			case 11:{
-				
-				break;
+				if(c == 's'){
+					return new ESpawnerControl(consApp, (Function<Point2D, Entity>) (t) -> consApp.eSpawner.spawnMusician(t), 
+											1);
+				}
+				else if (c == 'S'){
+					return new ESpawnerControl(consApp, (Function<Point2D, Entity>) (t) -> consApp.eSpawner.spawnDancer(t), 
+							1);
+				}
+				else if (c == 't'){
+					return new ESpawnerControl(consApp, (Function<Point2D, Entity>) (t) -> consApp.eSpawner.spawnDog(t), 
+							1);
+				}
+				else{
+					return new ESpawnerControl(consApp, (Function<Point2D, Entity>) (t) -> consApp.eSpawner.spawnDog(t), 
+							1);
+				}
 			}
 			case 12:
 			case 13:
 			case 14:{
-				
-				break;
+				if(c == 's'){
+					return new ESpawnerControl(consApp, (Function<Point2D, Entity>) (t) -> consApp.eSpawner.spawnEloko(t), 
+											1);
+				}
+				else if (c == 'S'){
+					return new ESpawnerControl(consApp, (Function<Point2D, Entity>) (t) -> consApp.eSpawner.spawnBKnifer(t), 
+							1);
+				}
+				else if (c == 't'){
+					return new ESpawnerControl(consApp, (Function<Point2D, Entity>) (t) -> consApp.eSpawner.spawnBSpearEnemy(t), 
+							1);
+				}
+				else{
+					return new ESpawnerControl(consApp, (Function<Point2D, Entity>) (t) -> consApp.eSpawner.spawnMagician(t), 
+							1);
+				}
 			}
 			case 15:
 			case 16:
 			case 17:{
-				
-				break;
+				if(c == 's'){
+					return new ESpawnerControl(consApp, (Function<Point2D, Entity>) (t) -> consApp.eSpawner.spawnIceSpirit(t), 
+											1);
+				}
+				else if (c == 'S'){
+					return new ESpawnerControl(consApp, (Function<Point2D, Entity>) (t) -> consApp.eSpawner.spawnStoneEnemy(t), 
+							1);
+				}
+				else if (c == 't'){
+					return new ESpawnerControl(consApp, (Function<Point2D, Entity>) (t) -> consApp.eSpawner.spawnIceSpirit(t), 
+							1);
+				}
+				else{
+					return new ESpawnerControl(consApp, (Function<Point2D, Entity>) (t) -> consApp.eSpawner.spawnStoneEnemy(t), 
+							1);
+				}
 			}
 			case 18:
 			case 19:
 			case 20:{
-				
-				break;
+				if(c == 's'){
+					return new ESpawnerControl(consApp, (Function<Point2D, Entity>) (t) -> consApp.eSpawner.spawnCannon(t), 
+											1);
+				}
+				else if (c == 'S'){
+					return new ESpawnerControl(consApp, (Function<Point2D, Entity>) (t) -> consApp.eSpawner.spawnBayoneter(t), 
+							1);
+				}
+				else if (c == 't'){
+					return new ESpawnerControl(consApp, (Function<Point2D, Entity>) (t) -> consApp.eSpawner.spawnRifler(t), 
+							1);
+				}
+				else{
+					return new ESpawnerControl(consApp, (Function<Point2D, Entity>) (t) -> consApp.eSpawner.spawnBayoneter(t), 
+							1);
+				}
 			}
 			case 21:
 			case 22:
 			case 23:{
-				
-				break;
+				if(c == 's'){
+					return new ESpawnerControl(consApp, (Function<Point2D, Entity>) (t) -> consApp.eSpawner.spawnZKnifer(t), 
+											1);
+				}
+				else if (c == 'S'){
+					return new ESpawnerControl(consApp, (Function<Point2D, Entity>) (t) -> consApp.eSpawner.spawnZSpearEnemy(t), 
+							1);
+				}
+				else if (c == 't'){
+					return new ESpawnerControl(consApp, (Function<Point2D, Entity>) (t) -> consApp.eSpawner.spawnCharger(t), 
+							1);
+				}
+				else{
+					return new ESpawnerControl(consApp, (Function<Point2D, Entity>) (t) -> consApp.eSpawner.spawnZKnifer(t), 
+							1);
+				}
 			}
 		}
 		

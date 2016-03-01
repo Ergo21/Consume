@@ -24,8 +24,17 @@ public class IngestControl extends AbstractControl {
 		// TODO Auto-generated method stub
 	}
 
+	private int frames = 10;
 	@Override
-	public void onUpdate(Entity entity, long now) {
+	public void onUpdate(Entity entity, long now){
+		frames++;
+		if(frames >= 5){
+			actualUpdate(entity, now);
+			frames = 0;
+		}
+	}
+	
+	public void actualUpdate(Entity entity, long now) {
 		// PhysicsControl control = entity.getControl(PhysicsControl.class);
 		if (created == 0) {
 			created = now;

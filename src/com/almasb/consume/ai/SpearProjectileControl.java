@@ -32,8 +32,17 @@ public class SpearProjectileControl extends AbstractControl {
 		customVelocity = true;
 	}
 
+	private int frames = 10;
 	@Override
-	public void onUpdate(Entity entity, long now) {
+	public void onUpdate(Entity entity, long now){
+		frames++;
+		if(frames >= 5){
+			actualUpdate(entity, now);
+			frames = 0;
+		}
+	}
+	
+	public void actualUpdate(Entity entity, long now) {
 		PhysicsControl pc = entity.getControl(PhysicsControl.class);
 		if(pc != null && curTex != null){
 			if(pc.getVelocity().getY() < -1 && curFra != 0){

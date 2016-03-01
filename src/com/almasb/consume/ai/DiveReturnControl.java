@@ -20,7 +20,7 @@ public class DiveReturnControl extends AbstractControl {
 		originalY = oY;
 	}
 
-	@Override
+	@Override	
 	public void onUpdate(Entity entity, long now) {
 		if (isTargetInRange() && notDived) {
 			dive += Config.ENEMY_DIVEBOMB_ACC;

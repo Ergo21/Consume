@@ -26,8 +26,17 @@ public class MusicianControl extends AbstractControl {
 		played = false;
 	}
 
+	private int frames = 10;
 	@Override
-	public void onUpdate(Entity entity, long now) {
+	public void onUpdate(Entity entity, long now){
+		frames++;
+		if(frames >= 5){
+			actualUpdate(entity, now);
+			frames = 0;
+		}
+	}
+	
+	public void actualUpdate(Entity entity, long now) {
 		if (entity.getControl(PhysicsControl.class).getJump() != jump) {
 			entity.getControl(PhysicsControl.class).setJump(jump);
 		}
