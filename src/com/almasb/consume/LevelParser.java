@@ -130,7 +130,10 @@ public class LevelParser {
 					break;
 				case 'B':{
 					//TODO: BOSS SPAWNER, add Boss, add Boss Health Bar, bind viewport to center of arena, start scene
+					e = new Entity(Type.BOSS_SPAWNER);
+					rect.setFill(Color.RED);
 					
+					e.setCollidable(false);
 					break;
 				}
 				case 'd':

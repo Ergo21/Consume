@@ -1,5 +1,9 @@
 package com.ergo21.consume;
 
+import com.almasb.consume.Types.Property;
+import com.almasb.fxgl.entity.Entity;
+
+import javafx.animation.FadeTransition;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.value.ChangeListener;
@@ -13,6 +17,7 @@ import javafx.scene.paint.Paint;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.transform.Rotate;
 import javafx.scene.transform.Translate;
+import javafx.util.Duration;
 
 public class PlayerHUD extends Group {
 
@@ -20,8 +25,10 @@ public class PlayerHUD extends Group {
 	protected IntegerProperty maxMana = new SimpleIntegerProperty();
 	protected IntegerProperty curHealth = new SimpleIntegerProperty();
 	protected IntegerProperty curMana = new SimpleIntegerProperty();
+	protected IntegerProperty bossHealth = new SimpleIntegerProperty();
 	private ValueBar healthBar;
 	private ValueBar manaBar;
+	private ValueBar bossHealthBar;
 
 	private Label healthLab;
 	private Label manaLab;
@@ -56,6 +63,7 @@ public class PlayerHUD extends Group {
 				updateValues();
 			}
 		});
+
 		healthBar = new ValueBar(95, 20, curHealth, maxHealth, Color.RED);
 		healthBar.getTransforms().add(new Rotate(270));
 		healthBar.getTransforms().add(new Translate(-10, 15, 0));
@@ -77,6 +85,26 @@ public class PlayerHUD extends Group {
 		getChildren().addAll(grid, healthBar, manaBar);
 
 		updateValues();
+	}
+	
+	public void setBossBar(Entity boss){
+		getChildren().remove(bossHealthBar);
+		
+		bossHealthBar = new ValueBar(95, 20, boss.<Enemy>getProperty(Property.DATA).curHealth, boss.<Enemy>getProperty(Property.DATA).maxHealth, Color.YELLOW);
+		bossHealthBar.getTransforms().add(new Rotate(270));
+		bossHealthBar.getTransforms().add(new Translate(-10, 580, 0));
+		boss.<Enemy>getProperty(Property.DATA).curHealth.addListener(new ChangeListener<Number>(){
+			@Override
+			public void changed(ObservableValue<? extends Number> arg0, Number arg1, Number arg2) {
+				if(arg2.intValue() <= 0){
+					FadeTransition ft = new FadeTransition(Duration.seconds(1), bossHealthBar);
+					ft.setFromValue(1);
+					ft.setToValue(0);
+					ft.setOnFinished((event)-> bossHealthBar.setVisible(false));
+					ft.play();
+				}
+			}});
+		getChildren().add(bossHealthBar);
 	}
 
 	public IntegerProperty MaxHealthProperty() {

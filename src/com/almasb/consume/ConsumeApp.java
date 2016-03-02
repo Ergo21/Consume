@@ -77,7 +77,7 @@ public class ConsumeApp extends GameApplication {
 
 	private List<Level> levels;
 
-	private PlayerHUD hud;
+	public PlayerHUD hud;
 	private ConsumeGameMenu consGameMenu;
 	private ConsumeMainMenu consMainMenu;
 	private Text performance = new Text();

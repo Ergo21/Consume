@@ -5,14 +5,18 @@ import java.util.List;
 
 import com.almasb.consume.Config;
 import com.almasb.consume.ConsumeApp;
+import com.almasb.consume.Types;
 import com.almasb.consume.Types.Type;
+import com.almasb.consume.ai.CameraControl;
 import com.almasb.consume.ai.PhysicsControl;
 import com.almasb.fxgl.asset.Texture;
+import com.almasb.fxgl.entity.Entity;
 
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
+import javafx.geometry.Point2D;
 import javafx.scene.Group;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -110,7 +114,13 @@ public class GameScene extends Group {
 			tVal = tVal.substring(tVal.indexOf('"') + 1, tVal.lastIndexOf('"'));
 			String lin = tVal.trim();
 
-			script.add(new SceneLine(nam, getIconFile(icoNam), lin));
+			if(val.indexOf("*") != -1 && val.indexOf("*", val.indexOf("*")+1) != -1) { 
+				String command = val.substring(val.indexOf("*")+1, val.indexOf("*", val.indexOf("*")+1)).toLowerCase();
+				script.add(new SceneLine(nam, getIconFile(icoNam), lin, getRunnable(command)));
+			}
+			else{
+				script.add(new SceneLine(nam, getIconFile(icoNam), lin, ()->{}));
+			}
 		}
 
 		setValues(script.get(currentLine));
@@ -118,30 +128,25 @@ public class GameScene extends Group {
 
 	private Texture getIconFile(String icoNam) {
 		if(!Config.RELEASE){
-			return getTexture(FileNames.EMPTY);
+			return app.getTexture(FileNames.EMPTY);
 		}
 		switch(icoNam){
 			case "PLAYER":
-				return getTexture(FileNames.PLAYER_ICON);
+				return app.getTexture(FileNames.PLAYER_ICON);
 			case "GENTLEMAN":
-				return getTexture(FileNames.GENTLEMAN_ICON);
+				return app.getTexture(FileNames.GENTLEMAN_ICON);
 			case "ANUBIS":
-				return getTexture(FileNames.ANUBIS_ICON);
+				return app.getTexture(FileNames.ANUBIS_ICON);
 			case "ESHU":
-				return getTexture(FileNames.ESHU_ICON);
+				return app.getTexture(FileNames.ESHU_ICON);
 			case "KIBO":
-				return getTexture(FileNames.KIBO_ICON);
+				return app.getTexture(FileNames.KIBO_ICON);
 			case "SHAKA":
-				return getTexture(FileNames.SHAKA_ICON);
+				return app.getTexture(FileNames.SHAKA_ICON);
 			case "SHANGO":
-				return getTexture(FileNames.SHANGO_ICON);
+				return app.getTexture(FileNames.SHANGO_ICON);
 		}
-		return getTexture(FileNames.EMPTY);
-	}
-
-	private Texture getTexture(String address) {
-		// TODO Auto-generated method stub
-		return null;
+		return app.getTexture(FileNames.EMPTY);
 	}
 
 	public boolean updateScript() {
@@ -169,8 +174,14 @@ public class GameScene extends Group {
 			String icoNam = tVal.substring(0, tVal.indexOf(')'));
 			tVal = tVal.substring(tVal.indexOf('"') + 1, tVal.lastIndexOf('"'));
 			String lin = tVal.trim();
-
-			script.add(new SceneLine(nam, getIconFile(icoNam), lin));
+			
+			if(val.indexOf("*") != -1 && val.indexOf("*", val.indexOf("*")+1) != -1) { 
+				String command = val.substring(val.indexOf("*")+1, val.indexOf("*", val.indexOf("*")+1)).toLowerCase();
+				script.add(new SceneLine(nam, getIconFile(icoNam), lin, getRunnable(command)));
+			}
+			else{
+				script.add(new SceneLine(nam, getIconFile(icoNam), lin, ()->{}));
+			}
 		}
 
 		setValues(script.get(currentLine));
@@ -190,8 +201,51 @@ public class GameScene extends Group {
 		name.setText(sceneLine.getName());
 		line.setText(sceneLine.getSentence());
 		icon.setImage(sceneLine.getIcon().getImage());
+		sceneLine.getRunnable().run();
 	}
 	
+	private Runnable getRunnable(String method){
+		String value = method.substring(method.indexOf('(') + 1, method.indexOf(')'));
+		
+		if(method.contains("spawnboss")){
+			Point2D p;
+			if(!app.getSceneManager().getEntities(Types.Type.BOSS_SPAWNER).isEmpty()){
+				p = app.getSceneManager().getEntities(Types.Type.BOSS_SPAWNER).get(0).getPosition();
+			}
+			else{
+				p = new Point2D(0,0);
+			}
+			
+			switch(Integer.parseInt(value)){
+			case 0: return ()-> setupBoss(app.eSpawner.spawnEshuBoss(p));
+			case 1: return ()-> setupBoss(app.eSpawner.spawnSandBoss(p));
+			case 2: return ()-> setupBoss(app.eSpawner.spawnAnubisBoss(p));
+			case 3: return ()-> setupBoss(app.eSpawner.spawnShangoBoss(p));
+			case 4: return ()-> setupBoss(app.eSpawner.spawnKiboBoss(p));
+			case 5: return ()-> setupBoss(app.eSpawner.spawnGentlemanBoss(p));
+			case 6: return ()-> setupBoss(app.eSpawner.spawnEshuBoss(p));
+			
+			}
+		}
+		else if(method.contains("activateboss")){
+			
+		}
+		
+		return ()->{};
+		
+	}
+	
+	private void setupBoss(Entity e) {
+		// TODO Auto-generated method stub
+		app.hud.setBossBar(e);
+		Entity e2 = Entity.noType();
+		e2.setPosition(app.player.getPosition());
+		e2.addControl(new CameraControl(app.player.getPosition().add(Config.BLOCK_SIZE*5,0)));
+		e2.setVisible(false);
+		app.getSceneManager().bindViewportOrigin(e2, 320, 180, true);
+		app.getSceneManager().addEntities(e, e2);
+	}
+
 	private class TextBox extends AnchorPane{
 		private Region background;
 		private Text text;

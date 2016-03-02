@@ -22,7 +22,6 @@ import javafx.scene.paint.Color;
 import javafx.scene.paint.CycleMethod;
 import javafx.scene.paint.LinearGradient;
 import javafx.scene.paint.Stop;
-import javafx.scene.shape.Line;
 import javafx.scene.shape.Polygon;
 import javafx.scene.shape.Rectangle;
 
@@ -235,12 +234,7 @@ public class LevelMenu extends Group{
 		}
 		
 		public void setComplete(){
-			Line l1 = new Line(0,0, this.getWidth(), this.getHeight());
-			Line l2 = new Line(this.getWidth(),0, 0, this.getHeight());
-			//double rLen = Math.sqrt((Math.pow(this.getWidth(), 2) + Math.pow(this.getHeight(), 2)));
-			double rLen = this.getWidth(); 
-			Rectangle r1 = new Rectangle(0,0, rLen, 5);
-			Rectangle r2 = new Rectangle(this.getWidth(),0, rLen, 5);
+			double rLen = this.getWidth() - 5; 
 			Polygon s1 = new Polygon(0, (rLen-5)/2,
 									(rLen-5)/2, (rLen-5)/2,
 									(rLen-5)/2, 0,
@@ -257,23 +251,6 @@ public class LevelMenu extends Group{
 			s1.setRotate(45);
 			s1.setStroke(Color.BLACK);
 			s1.setStrokeWidth(3);
-			r1.setFill(Color.RED);
-			r1.setStroke(Color.BLACK);
-			r1.setStrokeWidth(3);
-			r1.setRotate(45);
-			r2.setFill(Color.RED);
-			r2.setStroke(Color.BLACK);
-			r2.setStrokeWidth(3);
-			r2.setRotate(-45);
-			//l1.setScaleX(2);
-			//l2.setScaleX(2);
-			//l1.setFill(Color.RED);
-			//l2.setFill(Color.RED);
-			l1.setStrokeWidth(5);
-			l2.setStrokeWidth(5);
-			l1.setStroke(Color.RED);
-			l2.setStroke(Color.RED);
-			
 			getChildren().addAll(s1);
 		}
 	}

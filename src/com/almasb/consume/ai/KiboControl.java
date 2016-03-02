@@ -48,6 +48,9 @@ public class KiboControl extends AbstractControl {
 	private int frames = 10;
 	@Override
 	public void onUpdate(Entity entity, long now){
+		if(consApp.gScene.isVisible()){
+			return;
+		}
 		frames++;
 		if(frames >= 5){
 			actualUpdate(entity, now);
