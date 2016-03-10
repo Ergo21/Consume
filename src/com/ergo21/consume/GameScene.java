@@ -235,8 +235,7 @@ public class GameScene extends Group {
 		
 	}
 	
-	private void setupBoss(Entity e) {
-		// TODO Auto-generated method stub
+	public void setupBoss(Entity e) {
 		app.hud.setBossBar(e);
 		Entity e2 = Entity.noType();
 		e2.setPosition(app.player.getPosition());

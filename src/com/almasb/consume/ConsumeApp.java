@@ -179,7 +179,7 @@ public class ConsumeApp extends GameApplication {
 		physicsManager.addCollisionHandler(new PlayerPowerupHandler(this));
 		physicsManager.addCollisionHandler(new PlayerEnemyHandler(this));
 		physicsManager.addCollisionHandler(new ProjectileEnemyHandler(this));
-		physicsManager.addCollisionHandler(new PlayerBlockHandler((String scName) -> {
+		physicsManager.addCollisionHandler(new PlayerBlockHandler(this, (String scName) -> {
 			gScene.changeScene(getAssetManager().loadText(scName));
 			gScene.playScene();
 		}));

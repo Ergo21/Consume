@@ -16,6 +16,7 @@ import com.almasb.consume.Types.Platform;
 import com.almasb.consume.Types.Powerup;
 import com.almasb.consume.Types.Property;
 import com.almasb.consume.Types.Type;
+import com.almasb.consume.ai.CollideSpawnerControl;
 import com.almasb.consume.ai.ESpawnerControl;
 import com.almasb.fxgl.asset.Texture;
 import com.almasb.fxgl.entity.Entity;
@@ -134,6 +135,47 @@ public class LevelParser {
 					rect.setFill(Color.RED);
 					
 					e.setCollidable(false);
+					break;
+				}
+				case 'c':
+				case 'C':{
+					Entity en = new Entity(Type.BLOCK);
+					en.setProperty(Property.SUB_TYPE, Type.ENEMY_SPAWNER);
+					rect.setFill(Color.RED);
+					en.setPosition(en.getPosition().add(j * Config.BLOCK_SIZE, (i * Config.BLOCK_SIZE) - Config.BLOCK_SIZE/2));
+					en.setGraphics(rect);
+					
+					en.setCollidable(true);
+					if(line.charAt(j) == 'c'){
+						en.addControl(new CollideSpawnerControl(
+								(Function<Point2D, Entity>) (tS) -> consApp.eSpawner.spawnMummy(tS), 
+								2, en.getPosition().add(-Config.BLOCK_SIZE*2, Config.BLOCK_SIZE/2), 
+								en.getPosition().add(Config.BLOCK_SIZE*2, Config.BLOCK_SIZE/2)));
+						en.addFXGLEventHandler(Event.ENEMY_FIRED, event -> {
+							if(en != null && en.getControl(CollideSpawnerControl.class) != null){
+								ArrayList<Entity> ens = en.getControl(CollideSpawnerControl.class).spawnEnemy();
+								for(Entity enV : ens){
+									consApp.getSceneManager().addEntities(enV);
+								}
+								
+							}
+						});
+					}
+					else{
+						en.addControl(new CollideSpawnerControl(
+								(Function<Point2D, Entity>) (tS) -> consApp.eSpawner.spawnSandBoss(tS), 
+								1, en.getPosition().add(Config.BLOCK_SIZE*8, Config.BLOCK_SIZE/2)));
+						en.addFXGLEventHandler(Event.ENEMY_FIRED, event -> {
+							if(en != null && en.getControl(CollideSpawnerControl.class) != null){
+								ArrayList<Entity> ens = en.getControl(CollideSpawnerControl.class).spawnEnemy();
+								consApp.gScene.setupBoss(ens.get(0));
+							}
+						});
+					}
+					
+					
+					
+					level.entities.add(en);
 					break;
 				}
 				case 'd':

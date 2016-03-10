@@ -786,7 +786,8 @@ public class ConsumeController {
 					t2 = t2.toStaticAnimatedTexture(3, Config.SAND_DECAY);
 					t2.setPreserveRatio(true);
 					t2.setFitHeight(20);
-					if(!consApp.player.<Boolean>getProperty("facingRight")){
+					if(consApp.player.<Boolean>getProperty("facingRight") != null
+						&& !consApp.player.<Boolean>getProperty("facingRight")){
 						t.setScaleX(t.getScaleX()*-1);
 						t2.setScaleX(t2.getScaleX()*-1);
 					}

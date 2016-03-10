@@ -3,20 +3,25 @@ package com.almasb.consume.collision;
 import java.util.ArrayList;
 import java.util.function.Consumer;
 
+import com.almasb.consume.ConsumeApp;
+import com.almasb.consume.Event;
 import com.almasb.consume.Types.Block;
 import com.almasb.consume.Types.Property;
 import com.almasb.consume.Types.Type;
 import com.almasb.consume.ai.PhysicsControl;
 import com.almasb.fxgl.entity.Entity;
+import com.almasb.fxgl.entity.FXGLEvent;
 import com.almasb.fxgl.physics.CollisionHandler;
 
 public class PlayerBlockHandler extends CollisionHandler {
 
+	private ConsumeApp consApp;
 	private Consumer<String> changeScene;
 	private ArrayList<Entity> laddersOn;
 
-	public PlayerBlockHandler(Consumer<String> chSc) {
+	public PlayerBlockHandler(ConsumeApp cA, Consumer<String> chSc) {
 		super(Type.PLAYER, Type.BLOCK);
+		consApp = cA;
 		changeScene = chSc;
 		laddersOn = new ArrayList<>();
 	}
@@ -53,6 +58,10 @@ public class PlayerBlockHandler extends CollisionHandler {
 			}
 			player.setProperty(Property.ENABLE_GRAVITY, false);
 			player.getControl(PhysicsControl.class).moveY(0);
+		}
+		else if(block.getProperty(Property.SUB_TYPE) == Type.ENEMY_SPAWNER){
+			block.fireFXGLEvent(new FXGLEvent(Event.ENEMY_FIRED));
+			consApp.getSceneManager().removeEntity(block);
 		}
 	}
 
