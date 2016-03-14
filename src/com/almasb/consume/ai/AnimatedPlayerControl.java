@@ -249,7 +249,12 @@ public class AnimatedPlayerControl implements Control {
 			case IDLE:
 			case JUMP:
 			case MOVE:
-				curTex = elementAnimations.get(playerData.getElement()).get(ac);
+				if(playerData.getElement() == Element.NEUTRAL && playerData.getWeaponThrown() ){
+					curTex = elementAnimations.get(Element.CONSUME).get(ac);
+				}
+				else{
+					curTex = elementAnimations.get(playerData.getElement()).get(ac);
+				}
 				break;
 			case JATK:
 				if(playerData.getElement() == Element.EARTH){

@@ -1,0 +1,6 @@
+Eshu (ESHU)= "Pathetic."
+Eshu (ESHU) *bossturn(right)*= "I'll be back next month, see that you have my tribute by then."
+Seble (PLAYER) *turn(right)*= "What are we supposed to eat? We can't give tribute if we die!"
+Eshu (ESHU)= "Eat your dead boy. I killed plenty of them. Your choice."
+() *level(next)* = ""
+END

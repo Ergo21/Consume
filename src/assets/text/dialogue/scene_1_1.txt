@@ -1,0 +1,7 @@
+Eshu (ESHU) *spawnboss(0)*= "Are you going to give me the food, or do I have to kill more of you?"
+Seble (PLAYER)= "This is our food, we worked for it."
+Eshu (ESHU)= "And I work to take it from you. If you can't defend it why shouldn't I have it."
+Seble (PLAYER)= "That's..."
+Eshu (ESHU)= "The strong struggle atop the pile of the weak."
+Seble (PLAYER)= "I'M NOT WEAK!"
+END

@@ -5,6 +5,9 @@ import java.util.List;
 
 import com.almasb.consume.Types.Element;
 
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.ReadOnlyBooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleObjectProperty;
 
@@ -14,6 +17,7 @@ public class Player extends Enemy{
 	private ArrayList<Integer> upgradesCollected;
 	private ArrayList<Integer> levelsCompleted;
 	private int currentLevel;
+	private BooleanProperty weaponThrown;
 
 	public Player(List<String> prop) {
 		super(prop);
@@ -22,6 +26,7 @@ public class Player extends Enemy{
 		currentLevel = 0;
 		upgradesCollected = new ArrayList<Integer>();
 		levelsCompleted = new ArrayList<Integer>();
+		weaponThrown = new SimpleBooleanProperty(false);
 	}
 	
 	public Player(GameSave g){
@@ -33,6 +38,7 @@ public class Player extends Enemy{
 		manaReg = new SimpleIntegerProperty(g.getManaReg());
 		maxHealth = new SimpleIntegerProperty(g.getMaxHealth());
 		maxMana = new SimpleIntegerProperty(g.getMaxMana());
+		weaponThrown = new SimpleBooleanProperty(false);
 		name = g.getName();
 		powers = g.getPowers();
 		resists = g.getResists();
@@ -113,6 +119,14 @@ public class Player extends Enemy{
 			break;
 		}
 		}
+	}
+	
+	public boolean getWeaponThrown(){
+		return weaponThrown.get();
+	}
+	
+	public void setWeaponThrown(ReadOnlyBooleanProperty b){
+		weaponThrown.bind(b);
 	}
 	
 	public int getCurrentLevel(){

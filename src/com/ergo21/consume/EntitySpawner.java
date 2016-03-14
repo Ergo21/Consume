@@ -36,6 +36,7 @@ import com.almasb.consume.ai.DiveBombControl;
 import com.almasb.consume.ai.DiveReturnControl;
 import com.almasb.consume.ai.DogControl;
 import com.almasb.consume.ai.EshuControl;
+import com.almasb.consume.ai.EshuIControl;
 import com.almasb.consume.ai.GentlemanControl;
 import com.almasb.consume.ai.KiboControl;
 import com.almasb.consume.ai.KniferControl;
@@ -1379,7 +1380,7 @@ public class EntitySpawner {
 	}
 	
 	public Entity spawnSandBoss(Point2D spawnPoint) {
-		Entity enemy = new Entity(Type.ENEMY);
+		Entity enemy = new Entity(Type.BOSS);
 		Rectangle rect = new Rectangle(60, 20); //60 High, 20 start
 		rect.setFill(Color.RED);
 
@@ -1421,7 +1422,7 @@ public class EntitySpawner {
 		enemy.setProperty("jumping", false);
 		enemy.setProperty("attacking", false);
 		
-		Entity ePic = new Entity(Type.ENEMY);
+		Entity ePic = new Entity(Type.BOSS);
 		ePic.setVisible(true);
 		ePic.setCollidable(false);
 		ePic.setPosition(spawnPoint.getX(), spawnPoint.getY());
@@ -1462,7 +1463,7 @@ public class EntitySpawner {
 	}
 	
 	public Entity spawnAnubisBoss(Point2D spawnPoint) {
-		Entity enemy = new Entity(Type.ENEMY);
+		Entity enemy = new Entity(Type.BOSS);
 		Rectangle rect = new Rectangle(20, 30);
 		rect.setFill(Color.RED);
 
@@ -1479,7 +1480,7 @@ public class EntitySpawner {
 		enemy.setPosition(spawnPoint.getX(), spawnPoint.getY());
 		enemy.addControl(new PhysicsControl(consApp.physics));
 		enemy.addControl(new AnubisControl(consApp, consApp.player));
-		Entity ePic = new Entity(Type.ENEMY);
+		Entity ePic = new Entity(Type.BOSS);
 		ePic.setVisible(true);
 		ePic.setCollidable(false);
 		ePic.setPosition(spawnPoint.getX(), spawnPoint.getY());
@@ -1546,7 +1547,7 @@ public class EntitySpawner {
 	}
 	
 	public Entity spawnShangoBoss(Point2D spawnPoint) {
-		Entity enemy = new Entity(Type.ENEMY);
+		Entity enemy = new Entity(Type.BOSS);
 		Rectangle rect = new Rectangle(20, 30);
 		rect.setFill(Color.RED);
 
@@ -1632,7 +1633,7 @@ public class EntitySpawner {
 		enemy.setProperty("jumping", false);
 		enemy.setProperty("attacking", false);
 		
-		Entity ePic = new Entity(Type.ENEMY);
+		Entity ePic = new Entity(Type.BOSS);
 		ePic.setVisible(true);
 		ePic.setCollidable(false);
 		ePic.setPosition(spawnPoint.getX(), spawnPoint.getY());
@@ -1673,7 +1674,7 @@ public class EntitySpawner {
 	}
 	
 	public Entity spawnKiboBoss(Point2D spawnPoint) {
-		Entity enemy = new Entity(Type.ENEMY);
+		Entity enemy = new Entity(Type.BOSS);
 		Rectangle rect = new Rectangle(20, 30);
 		rect.setFill(Color.RED);
 
@@ -1769,7 +1770,7 @@ public class EntitySpawner {
 		enemy.setProperty("jumping", false);
 		enemy.setProperty("attacking", false);
 		
-		Entity ePic = new Entity(Type.ENEMY);
+		Entity ePic = new Entity(Type.BOSS);
 		ePic.setVisible(true);
 		ePic.setCollidable(false);
 		ePic.setPosition(spawnPoint.getX(), spawnPoint.getY());
@@ -1810,7 +1811,7 @@ public class EntitySpawner {
 	}
 	
 	public Entity spawnGentlemanBoss(Point2D spawnPoint) {
-		Entity enemy = new Entity(Type.ENEMY);
+		Entity enemy = new Entity(Type.BOSS);
 		Rectangle rect = new Rectangle(20, 30);
 		rect.setFill(Color.RED);
 
@@ -1937,7 +1938,7 @@ public class EntitySpawner {
 		enemy.setProperty("jumping", false);
 		enemy.setProperty("attacking", false);
 		
-		Entity ePic = new Entity(Type.ENEMY);
+		Entity ePic = new Entity(Type.BOSS);
 		ePic.setVisible(true);
 		ePic.setCollidable(false);
 		ePic.setPosition(spawnPoint.getX(), spawnPoint.getY());
@@ -1979,7 +1980,7 @@ public class EntitySpawner {
 	
 
 	public Entity spawnShakaBoss(Point2D spawnPoint) {
-		Entity enemy = new Entity(Type.ENEMY);
+		Entity enemy = new Entity(Type.BOSS);
 		Rectangle rect = new Rectangle(20, 30);
 		rect.setFill(Color.RED);
 
@@ -2052,7 +2053,7 @@ public class EntitySpawner {
 		enemy.setProperty("jumping", false);
 		enemy.setProperty("attacking", false);
 		
-		Entity ePic = new Entity(Type.ENEMY);
+		Entity ePic = new Entity(Type.BOSS);
 		ePic.setVisible(true);
 		ePic.setCollidable(false);
 		ePic.setPosition(spawnPoint.getX(), spawnPoint.getY());
@@ -2093,7 +2094,7 @@ public class EntitySpawner {
 	}
 	
 	public Entity spawnEshuBoss(Point2D spawnPoint) {
-		Entity enemy = new Entity(Type.ENEMY);
+		Entity enemy = new Entity(Type.BOSS);
 		Rectangle rect = new Rectangle(20, 40);
 		rect.setFill(Color.RED);
 
@@ -2127,7 +2128,82 @@ public class EntitySpawner {
 		enemy.setProperty("jumping", false);
 		enemy.setProperty("attacking", false);
 		
-		Entity ePic = new Entity(Type.ENEMY);
+		Entity ePic = new Entity(Type.BOSS);
+		ePic.setVisible(true);
+		ePic.setCollidable(false);
+		ePic.setPosition(spawnPoint.getX(), spawnPoint.getY());
+		ePic.translateXProperty().bind(enemy.translateXProperty());
+		ePic.translateYProperty().bind(enemy.translateYProperty().add(10));
+		int fS = 300;
+		HashMap<Types.AnimationActions, AnimationDetails> hashMap = new HashMap<>();
+		for(Types.AnimationActions aa : Types.AnimationActions.values()){
+			switch(aa){
+				case ATK: hashMap.put(aa, new AnimationDetails(
+						new Rectangle2D	(0,   3*fS, 2*fS, fS), 2, 1, true)); break;
+				case IDLE: hashMap.put(aa, new AnimationDetails(
+						new Rectangle2D	(0,   0*fS, 1*fS, fS), 1, 1, true)); break;
+				case JATK: hashMap.put(aa, new AnimationDetails(
+						new Rectangle2D	(fS,  4*fS, 1*fS, fS), 1, 1, true)); break;
+				case JUMP: hashMap.put(aa, new AnimationDetails(
+						new Rectangle2D	(0,   4*fS, 1*fS, fS), 1, 1, true)); break;
+				case MATK: hashMap.put(aa, new AnimationDetails(
+						new Rectangle2D	(0,   2*fS, 4*fS, fS), 4, 1, true)); break;
+				case MOVE: hashMap.put(aa, new AnimationDetails(
+						new Rectangle2D	(0,   1*fS, 4*fS, fS), 4, 1, true)); break;
+				default: break;
+			}
+		}
+		ePic.addControl(new AnimatedEnemyControl(enemy, hashMap, consApp.getTexture(FileNames.ESHU_TEX)));
+		ePic.addFXGLEventHandler(Event.DEATH, (event) -> consApp.getSceneManager().removeEntity(ePic));
+		enemy.aliveProperty().addListener(new ChangeListener<Boolean>(){
+			@Override
+			public void changed(ObservableValue<? extends Boolean> arg0, Boolean arg1, Boolean arg2) {
+				if(!arg2){
+					consApp.getTimerManager().runOnceAfter(() -> ePic.fireFXGLEvent(new FXGLEvent(Event.DEATH)), Duration.seconds(0.01));
+				}
+			}});
+		
+		consApp.getSceneManager().addEntities(ePic);
+
+		return enemy;
+	}
+	
+	public Entity spawnEshuIBoss(Point2D spawnPoint) {
+		Entity enemy = new Entity(Type.BOSS);
+		Rectangle rect = new Rectangle(20, 40);
+		rect.setFill(Color.RED);
+
+		enemy.setGraphics(rect);
+		enemy.setVisible(true);
+		enemy.setCollidable(true);
+		enemy.setProperty(Property.DATA, new Enemy(consApp.getAssetManager().loadText("enemies/enemy_FireElemental.txt")));
+		enemy.setProperty(Property.SUB_TYPE, Type.BOSS);
+		enemy.setProperty("physics", consApp.physics);
+		enemy.setProperty("shover", true);
+		enemy.setProperty("facingRight", false);
+		enemy.setPosition(spawnPoint.getX(), spawnPoint.getY());
+		enemy.addControl(new PhysicsControl(consApp.physics));
+		enemy.addControl(new EshuIControl(consApp, consApp.player));
+		enemy.addFXGLEventHandler(Event.DEATH, this::onEnemyDeath);
+		enemy.addFXGLEventHandler(Event.ENEMY_FIRED, event -> {
+			if((enemy != null && (boolean)enemy.getProperty("jumping"))){
+				consApp.consController.enemyStabDown(enemy);
+			}
+			else if((enemy != null && enemy.getControl(PhysicsControl.class) != null && enemy.getControl(PhysicsControl.class).getVelocity().getX() == 0)){
+				consApp.consController.enemyShootProjectile(Element.NEUTRAL, enemy);
+				consApp.getTimerManager().runOnceAfter(() -> {
+					if(enemy != null && enemy.getControl(EshuIControl.class) != null){			
+						enemy.getControl(EshuIControl.class).setAttackComplete(true, true);
+					}			
+				}, Config.ESHU_SPEAR_DECAY);	
+			}
+		});
+		
+		enemy.setVisible(false);
+		enemy.setProperty("jumping", false);
+		enemy.setProperty("attacking", false);
+		
+		Entity ePic = new Entity(Type.BOSS);
 		ePic.setVisible(true);
 		ePic.setCollidable(false);
 		ePic.setPosition(spawnPoint.getX(), spawnPoint.getY());

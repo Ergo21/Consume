@@ -18,11 +18,14 @@ import com.almasb.consume.Types.Powerup;
 import com.almasb.consume.Types.Property;
 import com.almasb.consume.Types.Type;
 import com.almasb.consume.ai.AnimatedPlayerControl;
+import com.almasb.consume.ai.CameraControl;
 import com.almasb.consume.ai.DemoAnimatedPlayerControl;
 import com.almasb.consume.ai.PhysicsControl;
 import com.almasb.consume.collision.PlayerBlockHandler;
+import com.almasb.consume.collision.PlayerBossHandler;
 import com.almasb.consume.collision.PlayerEnemyHandler;
 import com.almasb.consume.collision.PlayerPowerupHandler;
+import com.almasb.consume.collision.ProjectileBossHandler;
 import com.almasb.consume.collision.ProjectileEnemyHandler;
 import com.almasb.consume.collision.ProjectilePlayerHandler;
 import com.almasb.fxgl.GameApplication;
@@ -54,6 +57,8 @@ import com.ergo21.consume.SoundManager;
 import javafx.animation.FadeTransition;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.geometry.Point2D;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.input.KeyCode;
@@ -61,6 +66,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 import javafx.util.Duration;
+import javafx.util.Pair;
 
 public class ConsumeApp extends GameApplication {
 
@@ -100,6 +106,7 @@ public class ConsumeApp extends GameApplication {
 	private AnimatedPlayerControl playAni;
 	private Point2D spawnPoint;
 	
+	private Pair<Point2D, Point2D> limits; //First is upper left limit, second bottom right limit
 
 	@Override
 	protected void initSettings(GameSettings settings) {
@@ -179,6 +186,8 @@ public class ConsumeApp extends GameApplication {
 		physicsManager.addCollisionHandler(new PlayerPowerupHandler(this));
 		physicsManager.addCollisionHandler(new PlayerEnemyHandler(this));
 		physicsManager.addCollisionHandler(new ProjectileEnemyHandler(this));
+		physicsManager.addCollisionHandler(new PlayerBossHandler(this));
+		physicsManager.addCollisionHandler(new ProjectileBossHandler(this));
 		physicsManager.addCollisionHandler(new PlayerBlockHandler(this, (String scName) -> {
 			gScene.changeScene(getAssetManager().loadText(scName));
 			gScene.playScene();
@@ -429,6 +438,16 @@ public class ConsumeApp extends GameApplication {
 						showLevelScreen();
 					}
 				}, KeyCode.L);
+				
+				getInputManager().addAction(new UserAction("Next Level") {
+					@Override
+					protected void onActionBegin() {
+						playerData.setCurrentLevel(playerData.getCurrentLevel() + 1);
+						changeLevel();
+					}
+				}, KeyCode.P);
+				
+				
 	}
 
 	@Override
@@ -532,7 +551,7 @@ public class ConsumeApp extends GameApplication {
 	    getSceneManager().getEntities().forEach(getSceneManager()::removeEntity);
 		Level level = levels.get(lev);
 		spawnPoint = level.getSpawnPoint();
-		getSceneManager().setLimits(level.getUpperLeftLimit(), level.getLowerRightLimit());	
+		limits = new Pair<Point2D, Point2D>(level.getUpperLeftLimit(), level.getLowerRightLimit());
 
 		// add level objects
 		for (Entity e : level.getEntitiesAsArray()) {
@@ -604,6 +623,7 @@ public class ConsumeApp extends GameApplication {
 				playerData.setCurrentMana(playerData.getMaxMana());
 			}
 			getSceneManager().getEntities().forEach(getSceneManager()::removeEntity);
+			hud.setBossHealthBarVisible(false);
 			levels.set(playerData.getCurrentLevel(), parser.parse(playerData.getCurrentLevel()));
 			getInputManager().setProcessActions(true);
 			
@@ -731,8 +751,69 @@ public class ConsumeApp extends GameApplication {
 
 		player.addFXGLEventHandler(Event.PLAYER_DEATH, this::playerDied);
 
-		getSceneManager().bindViewportOrigin(player, 320, 180, true);
+		Entity camera = Entity.noType();
+		double camX = player.getPosition().getX();
+		double camY = player.getPosition().getY();
+		if(camX < limits.getKey().getX() + 320){
+			camX = limits.getKey().getX() + 320;
+		}
+		else if(camX > limits.getValue().getX() - 320){
+			camX = limits.getValue().getX() - 320;
+		}
+		if(camY < limits.getKey().getY() + 180){
+			camY = limits.getKey().getY() + 180;
+		}
+		else if(camY > limits.getValue().getY() - 180){
+			camY = limits.getValue().getY() - 180;
+		}
+		camera.setPosition(camX, camY);
+		player.translateXProperty().addListener(new ChangeListener<Number>(){
+			@Override
+			public void changed(ObservableValue<? extends Number> arg0, Number arg1, Number arg2) {
+				if(!camera.translateXProperty().isBound() && 
+					(arg2.intValue() >= limits.getKey().getX() + 320 && 
+					arg2.intValue() <= limits.getValue().getX() - 320)){
+					camera.translateXProperty().bind(player.translateXProperty());
+				}
+				else if(camera.translateXProperty().isBound() && 
+						(arg2.intValue() < limits.getKey().getX() + 320 || 
+						arg2.intValue() > limits.getValue().getX() - 320)){
+					camera.translateXProperty().unbind();
+					if(arg2.intValue() < limits.getKey().getX() + 320){
+						camera.setTranslateX(limits.getKey().getX() + 320);
+					}
+					else{
+						camera.setTranslateX(limits.getValue().getX() - 320);
+					}
+					
+				}
+			}
+		});
+		player.translateYProperty().addListener(new ChangeListener<Number>(){
+			@Override
+			public void changed(ObservableValue<? extends Number> arg0, Number arg1, Number arg2) {
+				if(!camera.translateYProperty().isBound() && 
+					(arg2.intValue() >= limits.getKey().getY() + 180 && 
+					arg2.intValue() <= limits.getValue().getY() - 180)){
+					camera.translateYProperty().bind(player.translateYProperty());
+				}
+				else if(camera.translateYProperty().isBound() && 
+						(arg2.intValue() < limits.getKey().getY() + 180 || 
+						arg2.intValue() > limits.getValue().getY() - 180)){
+					camera.translateYProperty().unbind();
+					if(arg2.intValue() < limits.getKey().getY() + 180){
+						camera.setTranslateY(limits.getKey().getY() + 180);
+					}
+					else{
+						camera.setTranslateY(limits.getValue().getY() - 180);
+					}
+					
+				}
+			}
+		});
+		camera.setVisible(false);
 		
+		getSceneManager().bindViewportOrigin(camera, 320, 180);
 		
 		Entity pPicBox = new Entity(Type.PLAYER_PIC_BOX);
 		pPicBox.setCollidable(false);
@@ -765,7 +846,7 @@ public class ConsumeApp extends GameApplication {
 
 		getSceneManager().addEntities(powerStatus);*/
 
-		getSceneManager().addEntities(player, pPicBox);
+		getSceneManager().addEntities(player, pPicBox, camera);
 	}
 
 	private HashMap<Element, Texture> getPlayerImages() {

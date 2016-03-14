@@ -275,7 +275,6 @@ public class ConsumeController {
 		consApp.sSettings.setControls(currentKeys);
 	}
 
-	private Entity spear;
 	private boolean fired;
 	private boolean slashed;
 
@@ -304,8 +303,8 @@ public class ConsumeController {
 		switch (element) {
 		case NEUTRAL: {
 			SpearProjectileControl spc = new SpearProjectileControl(consApp.player);
-			if (spear == null || !consApp.getSceneManager().getEntities().contains(spear)) {
-				spear = e;
+			if (!consApp.playerData.getWeaponThrown()) {
+				consApp.playerData.setWeaponThrown(e.aliveProperty());
 				consApp.soundManager.playSFX(FileNames.SPEAR_THROW);
 			} else {
 				return;

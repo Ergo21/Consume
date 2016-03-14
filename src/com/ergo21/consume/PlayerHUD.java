@@ -106,6 +106,12 @@ public class PlayerHUD extends Group {
 			}});
 		getChildren().add(bossHealthBar);
 	}
+	
+	public void setBossHealthBarVisible(boolean v){
+		if(bossHealthBar != null){
+			bossHealthBar.setVisible(v);
+		}
+	}
 
 	public IntegerProperty MaxHealthProperty() {
 		return maxHealth;

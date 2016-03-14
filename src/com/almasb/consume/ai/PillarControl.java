@@ -31,14 +31,10 @@ public class PillarControl extends AbstractControl {
 		// TODO Auto-generated method stub
 	}
 
-	private int frames = 10;
 	@Override
 	public void onUpdate(Entity entity, long now){
-		frames++;
-		if(frames >= 5){
 			actualUpdate(entity, now);
-			frames = 0;
-		}
+		
 	}
 	
 	public void actualUpdate(Entity entity, long now) {

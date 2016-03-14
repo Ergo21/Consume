@@ -6,11 +6,13 @@ import java.util.List;
 import com.almasb.consume.Config;
 import com.almasb.consume.ConsumeApp;
 import com.almasb.consume.Types;
+import com.almasb.consume.Config.Speed;
 import com.almasb.consume.Types.Type;
 import com.almasb.consume.ai.CameraControl;
 import com.almasb.consume.ai.PhysicsControl;
 import com.almasb.fxgl.asset.Texture;
 import com.almasb.fxgl.entity.Entity;
+import com.almasb.fxgl.event.MenuEvent;
 
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -217,26 +219,86 @@ public class GameScene extends Group {
 			}
 			
 			switch(Integer.parseInt(value)){
-			case 0: return ()-> setupBoss(app.eSpawner.spawnEshuBoss(p));
-			case 1: return ()-> setupBoss(app.eSpawner.spawnSandBoss(p));
-			case 2: return ()-> setupBoss(app.eSpawner.spawnAnubisBoss(p));
-			case 3: return ()-> setupBoss(app.eSpawner.spawnShangoBoss(p));
-			case 4: return ()-> setupBoss(app.eSpawner.spawnKiboBoss(p));
-			case 5: return ()-> setupBoss(app.eSpawner.spawnGentlemanBoss(p));
-			case 6: return ()-> setupBoss(app.eSpawner.spawnEshuBoss(p));
+			case 0: return ()-> setupBoss(app.eSpawner.spawnEshuIBoss(p), false);
+			case 1: return ()-> setupBoss(app.eSpawner.spawnSandBoss(p), true);
+			case 2: return ()-> setupBoss(app.eSpawner.spawnAnubisBoss(p), true);
+			case 3: return ()-> setupBoss(app.eSpawner.spawnShangoBoss(p), true);
+			case 4: return ()-> setupBoss(app.eSpawner.spawnKiboBoss(p), true);
+			case 5: return ()-> setupBoss(app.eSpawner.spawnGentlemanBoss(p), true);
+			case 6: return ()-> setupBoss(app.eSpawner.spawnEshuBoss(p), true);
 			
 			}
 		}
-		else if(method.contains("activateboss")){
+		else if(method.contains("bossturn")){
+			return ()-> {
+				List<Entity> bosses = app.getSceneManager().getEntities(Type.BOSS);
+				if(bosses.get(0) != null){
+					bosses.get(0).setProperty("facingRight", value.contains("right"));
+				}
+			};
+					
+		}
+		else if(method.contains("turn")){
+			return ()-> app.player.setProperty("facingRight", value.contains("right"));
 			
+		}
+		else if(method.contains("bossmove")){
+			return ()-> {
+				List<Entity> bosses = app.getSceneManager().getEntities(Type.BOSS);
+				for(Entity boss : bosses){
+					if(boss != null && boss.getControl(PhysicsControl.class) != null){
+						boss.getControl(PhysicsControl.class).moveX
+							(value.contains("right") ? Speed.PLAYER_MOVE*3/4 : -Speed.PLAYER_MOVE*3/4);
+						boss.setProperty("facingRight", value.contains("right"));
+						break;
+					}
+				}
+				
+			};
+					
+		}
+		else if(method.contains("move")){
+			return ()-> {
+				app.player.getControl(PhysicsControl.class).moveX
+					(value.contains("right") ? Speed.PLAYER_MOVE*3/4 : -Speed.PLAYER_MOVE*3/4);
+				app.player.setProperty("facingRight", value.contains("right"));
+					};
+		}
+		else if(method.contains("bossstop")){
+			return ()-> {
+				List<Entity> bosses = app.getSceneManager().getEntities(Type.BOSS);
+				if(bosses.get(0) != null && bosses.get(0).getControl(PhysicsControl.class) != null){
+					bosses.get(0).getControl(PhysicsControl.class).moveX(0);
+				}
+			};
+					
+		}
+		else if(method.contains("stop")){
+			return ()-> app.player.getControl(PhysicsControl.class).moveX(0);
+		}
+		else if(method.contains("level")){
+			if(value.contains("next")){
+				return ()->{
+					app.playerData.setCurrentLevel(app.playerData.getCurrentLevel() + 1);
+					app.changeLevel();
+				};
+			}
+			else if(value.contains("screen")){
+				return ()->{
+					app.showLevelScreen();
+					this.fireEvent(new MenuEvent(MenuEvent.RESUME));
+				};
+			}
 		}
 		
 		return ()->{};
 		
 	}
 	
-	public void setupBoss(Entity e) {
-		app.hud.setBossBar(e);
+	public void setupBoss(Entity e, boolean bossBarVisible) {
+		if(bossBarVisible){
+			app.hud.setBossBar(e);
+		}
 		Entity e2 = Entity.noType();
 		e2.setPosition(app.player.getPosition());
 		e2.addControl(new CameraControl(app.player.getPosition().add(Config.BLOCK_SIZE*5,0)));

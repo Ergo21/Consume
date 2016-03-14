@@ -77,6 +77,7 @@ public class LevelParser {
 				case '3':
 					e = new Entity(Types.Type.LIMIT);
 					e.setCollidable(true);
+					e.setVisible(false);
 					rect.setFill(Color.CYAN);
 					
 					if(level.uLLim == null){
@@ -98,6 +99,9 @@ public class LevelParser {
 					e.setProperty(Property.SUB_TYPE, Block.SCENE);
 					e.setProperty("played", false);
 					e.setCollidable(true);
+					e.setVisible(false);
+					e.setPosition(0, -Config.BLOCK_SIZE);
+					rect.setHeight(Config.BLOCK_SIZE*2);
 					String chTe = "" + line.charAt(j);
 					int scNo = Integer.parseInt(chTe);
 					scNo -= 4;
@@ -133,7 +137,7 @@ public class LevelParser {
 					//TODO: BOSS SPAWNER, add Boss, add Boss Health Bar, bind viewport to center of arena, start scene
 					e = new Entity(Type.BOSS_SPAWNER);
 					rect.setFill(Color.RED);
-					
+					e.setVisible(false);
 					e.setCollidable(false);
 					break;
 				}
@@ -168,12 +172,10 @@ public class LevelParser {
 						en.addFXGLEventHandler(Event.ENEMY_FIRED, event -> {
 							if(en != null && en.getControl(CollideSpawnerControl.class) != null){
 								ArrayList<Entity> ens = en.getControl(CollideSpawnerControl.class).spawnEnemy();
-								consApp.gScene.setupBoss(ens.get(0));
+								consApp.gScene.setupBoss(ens.get(0), true);
 							}
 						});
 					}
-					
-					
 					
 					level.entities.add(en);
 					break;
@@ -216,7 +218,8 @@ public class LevelParser {
 					e.setProperty(Property.SUB_TYPE, Platform.INDESTRUCTIBLE);
 					rect.setFill(Color.BROWN);
 					if(Config.RELEASE){
-						if(i >= 1 && data.get(i-1) != null && (data.get(i-1).charAt(j) != 'i' && data.get(i-1).charAt(j) != 'I' && data.get(i-1).charAt(j) != 'j')){
+						if(i >= 1 && data.get(i-1) != null && 
+							(data.get(i-1).charAt(j) != 'i' && data.get(i-1).charAt(j) != 'I' && data.get(i-1).charAt(j) != 'j')){
 							if(line.charAt(j) == 'I'){
 								t = consApp.getTexture(FileNames.G_DIRT_BLOCK);
 							}
@@ -369,12 +372,12 @@ public class LevelParser {
 				case 'S':
 				case 't':
 				case 'T':{
-					//TODO: ENEMY SPAWNER
 					Entity en = new Entity(Type.ENEMY_SPAWNER);
 					rect.setFill(Color.RED);
 					en.setPosition(en.getPosition().add(j * Config.BLOCK_SIZE, i * Config.BLOCK_SIZE));
 					en.setGraphics(rect);
 					
+					en.setVisible(false);
 					en.setCollidable(false);
 					en.addControl(getSpawner(line.charAt(j), levelNumber, en));
 					en.addFXGLEventHandler(Event.ENEMY_FIRED, event -> {
@@ -410,6 +413,16 @@ public class LevelParser {
 						e.setPosition(0, 10);
 					}
 					break;
+				case 'W':
+					e = new Entity(Types.Type.PLATFORM);
+					e.setCollidable(true);
+					rect.setFill(Color.ORANGERED);
+					t = consApp.getTexture(FileNames.FIREBALL_PROJ);
+					t.setScaleY(-1);
+					t.setPreserveRatio(true);
+					t.setFitWidth(Config.BLOCK_SIZE);
+					t.setTranslateY(-Config.BLOCK_SIZE/2);
+					break;
 				case 'x':
 					e = new Entity(Types.Type.PROP);
 					e.setCollidable(false);
@@ -431,6 +444,30 @@ public class LevelParser {
 						t.setFitHeight(80);
 						e.setPosition(0, -40);
 					}
+					break;
+					
+				case 'y':		//TODO: Add mother
+					e = new Entity(Types.Type.PROP);
+					e.setCollidable(false);
+					rect.setFill(Color.BLUEVIOLET);
+					/*if(Config.RELEASE){
+						t = consApp.getTexture(FileNames.CORPSE_BLOCK);
+						t.setPreserveRatio(true);
+						t.setFitWidth(60);
+						e.setPosition(0, 24);
+					}*/
+					break;
+				case 'Y':		//TODO: Add mother
+					e = new Entity(Types.Type.PROP);
+					e.setCollidable(false);
+					rect.setFill(Color.VIOLET);
+					/*if(Config.RELEASE){
+						t = consApp.getTexture(FileNames.COFFIN_BLOCK);
+						t.setPreserveRatio(true);
+						t.setFitHeight(80);
+						e.setPosition(0, -40);
+					}*/
+					break;
 				}
 
 				if (e != null) {
@@ -528,10 +565,10 @@ public class LevelParser {
 				return consApp.getTexture(FileNames.FOREST1_BACK_1);
 			}
 			case 1: {
-				return consApp.getTexture(FileNames.FOREST1_BACK_2);
+				return consApp.getTexture(FileNames.FOREST1_BACK_3);
 			}
 			case 2: {
-				return consApp.getTexture(FileNames.FOREST1_BACK_3);
+				return consApp.getTexture(FileNames.EMPIRE_BACK_2);
 			}
 			case 3:
 			case 4:

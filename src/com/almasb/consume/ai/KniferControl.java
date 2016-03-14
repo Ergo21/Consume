@@ -79,7 +79,7 @@ public class KniferControl extends AbstractControl {
 			}
 		}
 		else{
-			entity.getControl(PhysicsControl.class).moveX(vel);
+			entity.getControl(PhysicsControl.class).moveX(0);
 		}
 		
 	}
@@ -93,7 +93,7 @@ public class KniferControl extends AbstractControl {
 	}
 
 	private boolean isTargetInRange() {
-		return target.getPosition().distance(entity.getPosition()) <= Config.ENEMY_FIRE_RANGE;
+		return target.getPosition().distance(entity.getPosition()) <= Config.ENEMY_FIRE_RANGE*1.2;
 	}
 	
 	private boolean isTargetClose() {
