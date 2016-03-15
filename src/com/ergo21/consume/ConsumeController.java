@@ -694,7 +694,7 @@ public class ConsumeController {
 			break;
 		}
 		case NEUTRAL2: {
-			e.setVisible(true);
+			e.setVisible(false);
 			e.setCollidable(true);
 			e.setPosition(source.getPosition());
 			e.setGraphics(new Rectangle(0, 0, source.getWidth(), source.getHeight()));

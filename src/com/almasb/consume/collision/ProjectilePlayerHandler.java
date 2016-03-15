@@ -78,17 +78,16 @@ public class ProjectilePlayerHandler extends CollisionHandler {
 			modifier = "x2";
 		}
 
-		Entity e = Entity.noType().setPosition(player.getTranslateX(), player.getTranslateY())
+		//Shows Damage
+		/*Entity e = Entity.noType().setPosition(player.getTranslateX(), player.getTranslateY())
 				.setGraphics(new Text(damage + "!  " + modifier));
-
 		app.getSceneManager().addEntities(e);
-
 		FadeTransition ft = new FadeTransition(Duration.seconds(1.5), e);
 		ft.setToValue(0);
 		ft.setOnFinished(event -> {
 			app.getSceneManager().removeEntity(e);
 		});
-		ft.play();
+		ft.play();*/
 
 		playerData.takeDamage(damage);
 
@@ -106,12 +105,17 @@ public class ProjectilePlayerHandler extends CollisionHandler {
 			player.setCollidable(false);
 			player.setProperty("stunned", true);
 
-			Entity e2 = Entity.noType().setGraphics(new Text("INVINCIBLE"));
+			/*Entity e2 = Entity.noType().setGraphics(new Text("INVINCIBLE"));
 			e2.translateXProperty().bind(player.translateXProperty());
 			e2.translateYProperty().bind(player.translateYProperty().subtract(20));
-
-			app.getSceneManager().addEntities(e2);
-
+			app.getSceneManager().addEntities(e2);*/
+			app.getTimerManager().runOnceAfter(() -> {
+				//app.getSceneManager().removeEntity(e2);
+				if(player != null){
+					player.setCollidable(true);
+				}
+			} , Duration.seconds(2));
+			
 			app.getTimerManager().runOnceAfter(() -> {
 				if(player != null){
 					if(player.getControl(PhysicsControl.class) != null){
@@ -120,13 +124,7 @@ public class ProjectilePlayerHandler extends CollisionHandler {
 					player.setProperty("stunned", false);
 				}
 			} , Duration.seconds(0.5));
-
-			app.getTimerManager().runOnceAfter(() -> {
-				app.getSceneManager().removeEntity(e2);
-				if(player != null){
-					player.setCollidable(true);
-				}
-			} , Duration.seconds(2));
+			
 		}
 
 		app.getSceneManager().removeEntity(projectile);

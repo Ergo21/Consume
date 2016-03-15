@@ -66,12 +66,20 @@ public class PlayerEnemyHandler extends CollisionHandler {
 		if(playerData.getCurrentHealth() > 0){
 			player.setCollidable(false);
 			player.setProperty("stunned", true);
-			Entity e = Entity.noType().setGraphics(new Text("INVINCIBLE"));
+			
+			//Show invincibility
+			/*Entity e = Entity.noType().setGraphics(new Text("INVINCIBLE"));
 			e.translateXProperty().bind(player.translateXProperty());
 			e.translateYProperty().bind(player.translateYProperty().subtract(20));
-
-			consApp.getSceneManager().addEntities(e);
-
+			consApp.getSceneManager().addEntities(e);*/
+			consApp.getTimerManager().runOnceAfter(() -> {
+				//consApp.getSceneManager().removeEntity(e);
+				if(player != null){
+					player.setCollidable(true);
+				}
+			} , Duration.seconds(2));
+			
+			
 			consApp.getTimerManager().runOnceAfter(() -> {
 				if(player != null){
 					if(player.getControl(PhysicsControl.class) != null){
@@ -81,12 +89,7 @@ public class PlayerEnemyHandler extends CollisionHandler {
 				}
 			} , Duration.seconds(0.5));
 
-			consApp.getTimerManager().runOnceAfter(() -> {
-				consApp.getSceneManager().removeEntity(e);
-				if(player != null){
-					player.setCollidable(true);
-				}
-			} , Duration.seconds(2));
+			
 		}
 	}
 }

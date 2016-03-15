@@ -18,7 +18,7 @@ public class ConsumeControl extends AbstractControl {
 	
 	public ConsumeControl(Entity target) {
 		this.target = target;
-		vel = Speed.ENEMY_PATROL/2;
+		vel = -Speed.ENEMY_PATROL/2;
 		created = 0;
 		playerSeen = false;
 	}

@@ -69,7 +69,10 @@ public class ESpawnerControl extends AbstractControl {
 	}
 
 	private boolean isTargetInRange() {
-		return (consApp.player.getPosition().getX() - entity.getPosition().getX() > 380 || consApp.player.getPosition().getX() - entity.getPosition().getX() < -340) &&
-				(consApp.player.getPosition().getY() - entity.getPosition().getY() < 200 || consApp.player.getPosition().getY() - entity.getPosition().getY() > -200);
+		double difX = consApp.player.getPosition().getX() - entity.getPosition().getX();
+		double difY = consApp.player.getPosition().getY() - entity.getPosition().getY();
+		return(((difX > 380 && difX < 460) || (difX < -340 && difX > -420)) &&
+			(difY < 200 && difY > -200));
+		
 	}
 }

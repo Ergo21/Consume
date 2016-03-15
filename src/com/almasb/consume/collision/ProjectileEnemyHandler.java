@@ -71,17 +71,16 @@ public class ProjectileEnemyHandler extends CollisionHandler {
 			modifier = "x2";
 		}
 
-		Entity e = Entity.noType().setPosition(enemy.getTranslateX(), enemy.getTranslateY())
+		//Shows Damage
+		/*Entity e = Entity.noType().setPosition(enemy.getTranslateX(), enemy.getTranslateY())
 				.setGraphics(new Text(damage + "!  " + modifier));
-
 		app.getSceneManager().addEntities(e);
-
 		FadeTransition ft = new FadeTransition(Duration.seconds(1.5), e);
 		ft.setToValue(0);
 		ft.setOnFinished(event -> {
 			app.getSceneManager().removeEntity(e);
 		});
-		ft.play();
+		ft.play();*/
 
 		enemyData.takeDamage(damage);
 

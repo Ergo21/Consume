@@ -278,7 +278,7 @@ public class EntitySpawner {
 
 		enemy.setGraphics(rect);
 		enemy.setCollidable(true);
-		enemy.setProperty(Property.DATA, new Enemy(consApp.getAssetManager().loadText("enemies/enemy_FireElemental.txt")));
+		enemy.setProperty(Property.DATA, new Enemy(consApp.getAssetManager().loadText(FileNames.STATS_ELOKO)));
 		enemy.setProperty("physics", consApp.physics);
 		enemy.setProperty("facingRight", true);
 		enemy.setPosition(spawnPoint.getX(), spawnPoint.getY());
@@ -402,7 +402,7 @@ public class EntitySpawner {
 
 		enemy.setGraphics(rect);
 		enemy.setCollidable(true);
-		enemy.setProperty(Property.DATA, new Enemy(consApp.getAssetManager().loadText("enemies/enemy_FireElemental.txt")));
+		enemy.setProperty(Property.DATA, new Enemy(consApp.getAssetManager().loadText(FileNames.STATS_BANDIT_SPEAR)));
 		enemy.setProperty("physics", consApp.physics);
 		enemy.setProperty("facingRight", true);
 		enemy.setPosition(spawnPoint.getX(), spawnPoint.getY());
@@ -1181,7 +1181,7 @@ public class EntitySpawner {
 		enemy.setGraphics(rect);
 		enemy.setCollidable(true);
 		enemy.setVisible(false);
-		enemy.setProperty(Property.DATA, new Enemy(consApp.getAssetManager().loadText("enemies/enemy_FireElemental.txt")));
+		enemy.setProperty(Property.DATA, new Enemy(consApp.getAssetManager().loadText(FileNames.STATS_BANDIT_KNIFE)));
 		enemy.setProperty("physics", consApp.physics);
 		enemy.setProperty("facingRight", true);
 		enemy.setProperty("jumping", false);

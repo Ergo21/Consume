@@ -1,0 +1,8 @@
+Name="Eloko"
+Health="3"
+Mana="10"
+ManaR="1"
+Element="CONSUME"
+Resists=""
+Weak=""
+Spritesheet=""

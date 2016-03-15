@@ -1,0 +1,8 @@
+Name="Bandit (Knife)"
+Health="3"
+Mana="10"
+ManaR="1"
+Element="NEUTRAL"
+Resists=""
+Weak=""
+Spritesheet=""

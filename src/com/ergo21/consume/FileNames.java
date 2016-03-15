@@ -101,9 +101,11 @@ public final class FileNames{
 	public static final String LADDER_BLOCK		= "statics/ladder.png";
 	public static final String FOOD_BLOCK		= "statics/food 1.png";
 	public static final String POWERUP_BLOCK	= "statics/food 2.png";
+	public static final String MOTHER_LYING 	= "statics/mother_lying.png";
+	public static final String MOTHER_STAND 	= "statics/mother_stand.png";
 	
 	public static final String FIREBALL_PROJ	= "projectiles/fireball.png";
-	public static final String STONE_PROJ	= "projectiles/stone.png";
+	public static final String STONE_PROJ		= "projectiles/stone.png";
 	
 	public static final String ANUBIS_TEX		= "spritesheets/anubis SS.png";
 	public static final String BANDIT_K_TEX		= "spritesheets/bandit_K SS.png";
@@ -130,4 +132,9 @@ public final class FileNames{
 	public static final String ZULU_K_TEX 		= "spritesheets/zulu_K SS.png";
 	public static final String ZULU_SH_TEX 		= "spritesheets/zulu_Sh SS.png";
 	public static final String ZULU_SP_TEX 		= "spritesheets/zulu_Sp SS.png";
+
+	
+	public static final String STATS_ELOKO 			= "enemies/Eloko.txt";
+	public static final String STATS_BANDIT_KNIFE	= "enemies/Bandit(Knife).txt";
+	public static final String STATS_BANDIT_SPEAR	= "enemies/Bandit(Spear).txt";
 }

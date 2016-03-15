@@ -18,7 +18,6 @@ import com.almasb.consume.Types.Powerup;
 import com.almasb.consume.Types.Property;
 import com.almasb.consume.Types.Type;
 import com.almasb.consume.ai.AnimatedPlayerControl;
-import com.almasb.consume.ai.CameraControl;
 import com.almasb.consume.ai.DemoAnimatedPlayerControl;
 import com.almasb.consume.ai.PhysicsControl;
 import com.almasb.consume.collision.PlayerBlockHandler;
