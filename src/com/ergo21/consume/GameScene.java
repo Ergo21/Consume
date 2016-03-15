@@ -232,8 +232,11 @@ public class GameScene extends Group {
 		else if(method.contains("bossturn")){
 			return ()-> {
 				List<Entity> bosses = app.getSceneManager().getEntities(Type.BOSS);
-				if(bosses.get(0) != null){
-					bosses.get(0).setProperty("facingRight", value.contains("right"));
+				for(Entity boss : bosses){
+					if(boss != null && boss.getControl(PhysicsControl.class) != null){
+						boss.setProperty("facingRight", value.contains("right"));
+						break;
+					}
 				}
 			};
 					
@@ -267,9 +270,12 @@ public class GameScene extends Group {
 		else if(method.contains("bossstop")){
 			return ()-> {
 				List<Entity> bosses = app.getSceneManager().getEntities(Type.BOSS);
-				if(bosses.get(0) != null && bosses.get(0).getControl(PhysicsControl.class) != null){
-					bosses.get(0).getControl(PhysicsControl.class).moveX(0);
-				}
+				for(Entity boss : bosses){
+					if(boss != null && boss.getControl(PhysicsControl.class) != null){
+						boss.getControl(PhysicsControl.class).moveX(0);
+						break;
+					}
+				}	
 			};
 					
 		}
@@ -303,7 +309,7 @@ public class GameScene extends Group {
 		e2.setPosition(app.player.getPosition());
 		e2.addControl(new CameraControl(app.player.getPosition().add(Config.BLOCK_SIZE*5,0)));
 		e2.setVisible(false);
-		app.getSceneManager().bindViewportOrigin(e2, 320, 180, true);
+		app.getSceneManager().bindViewportOrigin(e2, 320, 180);
 		app.getSceneManager().addEntities(e, e2);
 	}
 

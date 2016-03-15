@@ -360,7 +360,7 @@ public class ConsumeApp extends GameApplication {
 				getInputManager().addAction(new UserAction("Spawn Stone Spirit"){
 					@Override
 					protected void onActionBegin() {
-						getSceneManager().addEntities(eSpawner.spawnStoneEnemy(spawnPoint.add(900, -60)));
+						getSceneManager().addEntities(eSpawner.spawnStoneEnemy(spawnPoint.add(900, -100)));
 					}
 				}, KeyCode.NUMPAD6);
 				getInputManager().addAction(new UserAction("Spawn Wall Burner"){

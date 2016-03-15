@@ -302,17 +302,44 @@ public class ConsumeController {
 
 		switch (element) {
 		case NEUTRAL: {
-			SpearProjectileControl spc = new SpearProjectileControl(consApp.player);
 			if (!consApp.playerData.getWeaponThrown()) {
 				consApp.playerData.setWeaponThrown(e.aliveProperty());
 				consApp.soundManager.playSFX(FileNames.SPEAR_THROW);
 			} else {
 				return;
 			}
-			if(Config.RELEASE){
-				Texture t = consApp.getTexture("projectiles/Spear SS.png");
-				spc.addTexture(t);
+			e.setGraphics(new Rectangle(30,5));
+			e.setVisible(false);
+				
+			Texture t = consApp.getTexture("projectiles/Spear SS.png");
+			t.setPreserveRatio(true);
+			t.setFitWidth(30);
+			if(!consApp.player.<Boolean>getProperty("facingRight")){
+				t.setScaleX(t.getScaleX()*-1);
 			}
+			Entity ePic = new Entity(Type.ENEMY_PROJECTILE);
+			ePic.setProperty(Property.SUB_TYPE, element);
+			ePic.setPosition(e.getPosition());
+			if(consApp.player.<Boolean>getProperty("facingRight")){
+				ePic.translateXProperty().bind(e.translateXProperty());
+			}
+			else{
+				ePic.translateXProperty().bind(e.translateXProperty());
+			}			
+			ePic.translateYProperty().bind(e.translateYProperty());
+			e.aliveProperty().addListener(new ChangeListener<Boolean>(){
+				@Override
+				public void changed(ObservableValue<? extends Boolean> arg0, Boolean arg1, Boolean arg2) {
+					if(!arg2){
+						consApp.getTimerManager().runOnceAfter(() -> {consApp.getSceneManager().removeEntity(ePic);}, Duration.seconds(0.01));
+					}
+				}});
+			ePic.setCollidable(false);
+			ePic.setGraphics(t);
+			consApp.getSceneManager().addEntities(ePic);
+			
+			
+			SpearProjectileControl spc = new SpearProjectileControl(consApp.player, ePic);
 			e.addControl(spc);
 			break;
 		}
@@ -676,17 +703,74 @@ public class ConsumeController {
 			if((source.getControl(SpearThrowerControl.class) != null && source.getControl(SpearThrowerControl.class).isShortThrow()) ||
 					(source.getControl(ShakaControl.class) != null && source.getControl(ShakaControl.class).isShortThrow()) ||
 					(source.getControl(EshuControl.class) != null && source.getControl(EshuControl.class).isShortThrow())){
-				SpearProjectileControl spc = new SpearProjectileControl(source, Speed.PROJECTILE, -Speed.PROJECTILE/2);
+				
+				e.setGraphics(new Rectangle(30,5));
+				e.setVisible(false);
+					
 				Texture t = consApp.getTexture("projectiles/Spear SS.png");
-				spc.addTexture(t);
+				t.setPreserveRatio(true);
+				t.setFitWidth(30);
+				if(!source.<Boolean>getProperty("facingRight")){
+					t.setScaleX(t.getScaleX()*-1);
+				}
+				Entity ePic = new Entity(Type.ENEMY_PROJECTILE);
+				ePic.setProperty(Property.SUB_TYPE, element);
+				ePic.setPosition(e.getPosition());
+				if(source.<Boolean>getProperty("facingRight")){
+					ePic.translateXProperty().bind(e.translateXProperty().add(-60));
+				}
+				else{
+					ePic.translateXProperty().bind(e.translateXProperty());
+				}			
+				ePic.translateYProperty().bind(e.translateYProperty().add(-5));
+				e.aliveProperty().addListener(new ChangeListener<Boolean>(){
+					@Override
+					public void changed(ObservableValue<? extends Boolean> arg0, Boolean arg1, Boolean arg2) {
+						if(!arg2){
+							consApp.getTimerManager().runOnceAfter(() -> {consApp.getSceneManager().removeEntity(ePic);}, Duration.seconds(0.01));
+						}
+					}});
+				ePic.setCollidable(false);
+				ePic.setGraphics(t);
+				consApp.getSceneManager().addEntities(ePic);
+				
+				
+				SpearProjectileControl spc = new SpearProjectileControl(source, ePic, Speed.PROJECTILE, -Speed.PROJECTILE/2);
 				e.addControl(spc);
 			}
 			else {
-				SpearProjectileControl spc = new SpearProjectileControl(source);
-				if(Config.RELEASE){
-					Texture t = consApp.getTexture("projectiles/Spear SS.png");
-					spc.addTexture(t);
+				e.setGraphics(new Rectangle(30,5));
+				e.setVisible(false);
+					
+				Texture t = consApp.getTexture("projectiles/Spear SS.png");
+				t.setPreserveRatio(true);
+				t.setFitWidth(30);
+				if(!source.<Boolean>getProperty("facingRight")){
+					t.setScaleX(t.getScaleX()*-1);
 				}
+				Entity ePic = new Entity(Type.ENEMY_PROJECTILE);
+				ePic.setProperty(Property.SUB_TYPE, element);
+				ePic.setPosition(e.getPosition());
+				if(source.<Boolean>getProperty("facingRight")){
+					ePic.translateXProperty().bind(e.translateXProperty().add(-60));
+				}
+				else{
+					ePic.translateXProperty().bind(e.translateXProperty());
+				}			
+				ePic.translateYProperty().bind(e.translateYProperty().add(-5));
+				e.aliveProperty().addListener(new ChangeListener<Boolean>(){
+					@Override
+					public void changed(ObservableValue<? extends Boolean> arg0, Boolean arg1, Boolean arg2) {
+						if(!arg2){
+							consApp.getTimerManager().runOnceAfter(() -> {consApp.getSceneManager().removeEntity(ePic);}, Duration.seconds(0.01));
+						}
+					}});
+				ePic.setCollidable(false);
+				ePic.setGraphics(t);
+				consApp.getSceneManager().addEntities(ePic);
+				
+				
+				SpearProjectileControl spc = new SpearProjectileControl(source, ePic);
 				e.addControl(spc);
 			}
 			consApp.soundManager.playSFX(FileNames.SPEAR_THROW);
@@ -1282,7 +1366,7 @@ public class ConsumeController {
 		});
 
 		
-		e.setVisible(true);
+		e.setVisible(false);
 		e.setGraphics(new Rectangle(0, 0, 15, 30));
 		e.setProperty(Property.ENABLE_GRAVITY, false);
 		e.addControl(new StabDownControl(source));
