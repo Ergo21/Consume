@@ -136,24 +136,34 @@ public final class ConsumeGameMenu extends FXGLMenu {
 
 		levelMenuItem = new MenuItem("Level Menu");
 		levelMenuItem.setAction(() -> {
-			consApp.showLevelScreen();
-			levelMenuItem.fireEvent(new MenuEvent(MenuEvent.RESUME));
-			contentViewer.getChildren().clear();
-			contentViewer.getChildren().add(powerList);
+			UIFactory.getDialogBox().showConfirmationBox("All progress in this level will be lost. Return to the Level Menu?", (b) -> {
+				if(b){
+					consApp.showLevelScreen();
+					levelMenuItem.fireEvent(new MenuEvent(MenuEvent.RESUME));
+					contentViewer.getChildren().clear();
+					contentViewer.getChildren().add(powerList);
+				}
+			});
+			
 		});
 
 		MenuItem itemExit = new MenuItem("Main Menu");
 		itemExit.setAction(() -> {
-			consApp.indiLoop.stop();
-			consApp.soundManager.stopAll();
-			consApp.soundManager.setBackgroundMusic(FileNames.THEME_MUSIC);
-	        consApp.soundManager.getBackgroundMusic().setCycleCount(Integer.MAX_VALUE);
-	        consApp.soundManager.playBackgroundMusic();
+			UIFactory.getDialogBox().showConfirmationBox("All progress in this game will be lost. Return to the Main Menu?", (b) -> {
+				if(b){
+					consApp.indiLoop.stop();
+					consApp.soundManager.stopAll();
+					consApp.soundManager.setBackgroundMusic(FileNames.THEME_MUSIC);
+		        	consApp.soundManager.getBackgroundMusic().setCycleCount(Integer.MAX_VALUE);
+		        	consApp.soundManager.playBackgroundMusic();
 
-	        itemExit.fireEvent(new MenuEvent(MenuEvent.EXIT));
+		        	itemExit.fireEvent(new MenuEvent(MenuEvent.EXIT));
 
-			contentViewer.getChildren().clear();
-			contentViewer.getChildren().add(powerList);
+					contentViewer.getChildren().clear();
+					contentViewer.getChildren().add(powerList);
+				}
+			});
+			
 		});
 
 		MenuBox menu = new MenuBox(5, itemPowers, itemOptions, levelMenuItem, itemExit);

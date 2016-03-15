@@ -2,12 +2,10 @@ package com.almasb.consume.ai;
 
 import com.almasb.consume.Config.Speed;
 import com.almasb.consume.Event;
-import com.almasb.fxgl.asset.Texture;
 import com.almasb.fxgl.entity.AbstractControl;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.FXGLEvent;
 
-import javafx.geometry.Rectangle2D;
 
 public class SpearProjectileControl extends AbstractControl {
 	private boolean facingRight;
