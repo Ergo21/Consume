@@ -110,7 +110,7 @@ public class ConsumeApp extends GameApplication {
 	@Override
 	protected void initSettings(GameSettings settings) {
 		settings.setTitle("Consume");
-		settings.setVersion("dev version");
+		settings.setVersion("Alpha dev version");
 		settings.setWidth(640);
 		settings.setHeight(360);
 		settings.setFullScreen(false);
@@ -445,6 +445,16 @@ public class ConsumeApp extends GameApplication {
 						changeLevel();
 					}
 				}, KeyCode.P);
+				
+				getInputManager().addAction(new UserAction("Entity number") {
+					@Override
+					protected void onActionBegin() {
+						System.out.println("Entity #: " + getSceneManager().getEntities().size());
+						System.out.println("Platforms #: " + getSceneManager().getEntities(Types.Type.PLATFORM).size());
+						//System.out.println("Blocks #: " + getSceneManager().getEntities(Types.Type.).size());
+						
+					}
+				}, KeyCode.O);
 				
 				
 	}

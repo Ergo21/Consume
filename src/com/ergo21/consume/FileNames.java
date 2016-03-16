@@ -64,23 +64,28 @@ public final class FileNames{
 	
 	
 	public static final String U_DIRT_BLOCK		= "statics/dirt 1.png";
+	public static final String U_DIRT_LINE		= "statics/dirt line.png";
 	public static final String S_DIRT_BLOCK		= "statics/dirt 2.png";
 	public static final String G_DIRT_BLOCK		= "statics/dirt 3.png";
 	public static final String ST_DIRT_BLOCK	= "statics/dirt 4.png";
 
 	public static final String U_SAND_BLOCK 	= "statics/sand 1.png";
+	public static final String U_SAND_LINE 		= "statics/sand line.png";
 	public static final String S_SAND_BLOCK 	= "statics/sand 2.png";
 	public static final String G_SAND_BLOCK 	= "statics/sand 3.png";
 	
 	public static final String U_N_SAND_BLOCK 	= "statics/sand night 1.png";
+	public static final String U_N_SAND_LINE 	= "statics/sand night line.png";
 	public static final String S_N_SAND_BLOCK 	= "statics/sand night 2.png";
 	public static final String G_N_SAND_BLOCK 	= "statics/sand night 3.png";
 
 	public static final String U_STONE_BLOCK 	= "statics/stone 1.png";
+	public static final String U_STONE_LINE 	= "statics/stone line.png";
 	public static final String S_STONE_BLOCK 	= "statics/stone 2.png";
 	public static final String SN_STONE_BLOCK 	= "statics/stone 3.png";
 
 	public static final String U_SANDSTONE_BLOCK = "statics/sandstone 1.png";
+	public static final String U_SANDSTONE_LINE  = "statics/sandstone line.png";
 	public static final String S_SANDSTONE_BLOCK = "statics/sandstone 2.png";
 
 	

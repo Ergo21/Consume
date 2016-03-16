@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import javafx.geometry.Point2D;
+import javafx.geometry.Rectangle2D;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 
@@ -214,121 +215,251 @@ public class LevelParser {
 				case 'i':
 				case 'I':
 				case 'j':
-					e = new Entity(Types.Type.PLATFORM);
-					e.setProperty(Property.SUB_TYPE, Platform.INDESTRUCTIBLE);
-					rect.setFill(Color.BROWN);
-					if(Config.RELEASE){
-						if(i >= 1 && data.get(i-1) != null && 
-							(data.get(i-1).charAt(j) != 'i' && data.get(i-1).charAt(j) != 'I' && data.get(i-1).charAt(j) != 'j')){
-							if(line.charAt(j) == 'I'){
-								t = consApp.getTexture(FileNames.G_DIRT_BLOCK);
-							}
-							else if (line.charAt(j) == 'j'){
-								t = consApp.getTexture(FileNames.ST_DIRT_BLOCK);
+					if(j + 1 < line.length() && line.charAt(j) == line.charAt(j+1) && 
+							(data.get(i-1).charAt(j) == 'i' || data.get(i-1).charAt(j) == 'I' || data.get(i-1).charAt(j) == 'j')){
+						int len = 1;
+						for(int b = 1; b + j < line.length(); b++){
+							if(len < 40 && i >= 1 && data.get(i-1) != null && 
+									(data.get(i-1).charAt(j + b) == 'i' || data.get(i-1).charAt(j + b) == 'I' || data.get(i-1).charAt(j + b) == 'j')){
+								len++;
 							}
 							else{
-								t = consApp.getTexture(FileNames.S_DIRT_BLOCK);
+								break;
 							}
 						}
-						else{
-							t = consApp.getTexture(FileNames.U_DIRT_BLOCK);
-						}
 						
-						if(j >= 1 && line.charAt(j-1) == line.charAt(j) && level.entities.get(level.entities.size() - 1).getScaleX() == 1){
-							e.setScaleX(-1);
+						Entity en = new Entity(Types.Type.PLATFORM);
+						en.setProperty(Property.SUB_TYPE, Platform.INDESTRUCTIBLE);
+						Texture tex = consApp.getTexture(FileNames.U_DIRT_LINE);
+						tex = tex.subTexture(new Rectangle2D(0,0,200*len, 200));
+						tex.setPreserveRatio(true);
+						tex.setFitHeight(Config.BLOCK_SIZE);
+						en.setGraphics(tex);
+						en.setPosition(en.getPosition().add(j * Config.BLOCK_SIZE, i * Config.BLOCK_SIZE));
+						j = j + len - 1;
+						level.entities.add(en);
+					}
+					else{
+						e = new Entity(Types.Type.PLATFORM);
+						e.setProperty(Property.SUB_TYPE, Platform.INDESTRUCTIBLE);
+						rect.setFill(Color.BROWN);
+						if(Config.RELEASE){
+							if(i >= 1 && data.get(i-1) != null && 
+									(data.get(i-1).charAt(j) != 'i' && data.get(i-1).charAt(j) != 'I' && data.get(i-1).charAt(j) != 'j')){
+								if(line.charAt(j) == 'I'){
+									t = consApp.getTexture(FileNames.G_DIRT_BLOCK);
+								}
+								else if (line.charAt(j) == 'j'){
+									t = consApp.getTexture(FileNames.ST_DIRT_BLOCK);
+								}
+								else{
+									t = consApp.getTexture(FileNames.S_DIRT_BLOCK);
+								}
+							}
+							else{
+								t = consApp.getTexture(FileNames.U_DIRT_BLOCK);
+							}
+						
+							if(j >= 1 && line.charAt(j-1) == line.charAt(j) && level.entities.get(level.entities.size() - 1).getScaleX() == 1){
+								e.setScaleX(-1);
+							}
+							t.setPreserveRatio(true);
+							t.setFitHeight(40);
 						}
-						t.setPreserveRatio(true);
-						t.setFitHeight(40);
 					}
 					break;
 				case 'k':
 				case 'K':
-					e = new Entity(Types.Type.PLATFORM);
-					e.setProperty(Property.SUB_TYPE, Platform.INDESTRUCTIBLE);
-					rect.setFill(Color.BROWN);
-					if(Config.RELEASE){
-						if(i >= 1 && data.get(i-1) != null && (data.get(i-1).charAt(j) != 'k' && data.get(i-1).charAt(j) != 'K')){
-							if(line.charAt(j) == 'K'){
-								t = consApp.getTexture(FileNames.G_SAND_BLOCK);
+					if(j + 1 < line.length() && line.charAt(j) == line.charAt(j+1) && 
+						(data.get(i-1).charAt(j) == 'k' || data.get(i-1).charAt(j) == 'K')){
+						int len = 1;
+						for(int b = 1; b + j < line.length(); b++){
+							if(len < 40 && i >= 1 && data.get(i-1) != null && 
+									(data.get(i-1).charAt(j + b) == 'k' || data.get(i-1).charAt(j + b) == 'K')){
+								len++;
 							}
 							else{
-								t = consApp.getTexture(FileNames.S_SAND_BLOCK);
+								break;
 							}
 						}
-						else{
-							t = consApp.getTexture(FileNames.U_SAND_BLOCK);
+				
+						Entity en = new Entity(Types.Type.PLATFORM);
+						en.setProperty(Property.SUB_TYPE, Platform.INDESTRUCTIBLE);
+						Texture tex = consApp.getTexture(FileNames.U_SAND_LINE);
+						tex = tex.subTexture(new Rectangle2D(0,0,200*len, 200));
+						tex.setPreserveRatio(true);
+						tex.setFitHeight(Config.BLOCK_SIZE);
+						en.setGraphics(tex);
+						en.setPosition(en.getPosition().add(j * Config.BLOCK_SIZE, i * Config.BLOCK_SIZE));
+						j = j + len - 1;
+						level.entities.add(en);
+					}
+					else{
+						e = new Entity(Types.Type.PLATFORM);
+						e.setProperty(Property.SUB_TYPE, Platform.INDESTRUCTIBLE);
+						rect.setFill(Color.BROWN);
+						if(Config.RELEASE){
+							if(i >= 1 && data.get(i-1) != null && (data.get(i-1).charAt(j) != 'k' && data.get(i-1).charAt(j) != 'K')){
+								if(line.charAt(j) == 'K'){
+									t = consApp.getTexture(FileNames.G_SAND_BLOCK);
+								}
+								else{
+									t = consApp.getTexture(FileNames.S_SAND_BLOCK);
+								}
+							}
+							else{
+								t = consApp.getTexture(FileNames.U_SAND_BLOCK);
+							}
+							if(j >= 1 && line.charAt(j-1) == line.charAt(j) && level.entities.get(level.entities.size() - 1).getScaleX() == 1){
+								e.setScaleX(-1);
+							}
+							t.setPreserveRatio(true);
+							t.setFitHeight(40);
 						}
-						if(j >= 1 && line.charAt(j-1) == line.charAt(j) && level.entities.get(level.entities.size() - 1).getScaleX() == 1){
-							e.setScaleX(-1);
-						}
-						t.setPreserveRatio(true);
-						t.setFitHeight(40);
 					}
 					break;
 				case 'l':
 				case 'L':
-					e = new Entity(Types.Type.PLATFORM);
-					e.setProperty(Property.SUB_TYPE, Platform.INDESTRUCTIBLE);
-					rect.setFill(Color.BROWN);
-					if(Config.RELEASE){
-						if(i >= 1 && data.get(i-1) != null && (data.get(i-1).charAt(j) != 'l' && data.get(i-1).charAt(j) != 'L')){
-							if(line.charAt(j) == 'L'){
-								t = consApp.getTexture(FileNames.G_N_SAND_BLOCK);
+					if(j + 1 < line.length() && line.charAt(j) == line.charAt(j+1) && 
+						(data.get(i-1).charAt(j) == 'l' || data.get(i-1).charAt(j) == 'L')){
+						int len = 1;
+						for(int b = 1; b + j < line.length(); b++){
+							if(len < 40 && i >= 1 && data.get(i-1) != null && 
+								(data.get(i-1).charAt(j + b) == 'l' || data.get(i-1).charAt(j + b) == 'L')){
+								len++;
 							}
 							else{
-								t = consApp.getTexture(FileNames.S_N_SAND_BLOCK);
+								break;
 							}
 						}
-						else{
-							t = consApp.getTexture(FileNames.U_N_SAND_BLOCK);
+			
+						Entity en = new Entity(Types.Type.PLATFORM);
+						en.setProperty(Property.SUB_TYPE, Platform.INDESTRUCTIBLE);
+						Texture tex = consApp.getTexture(FileNames.U_N_SAND_LINE);
+						tex = tex.subTexture(new Rectangle2D(0,0,200*len, 200));
+						tex.setPreserveRatio(true);
+						tex.setFitHeight(Config.BLOCK_SIZE);
+						en.setGraphics(tex);
+						en.setPosition(en.getPosition().add(j * Config.BLOCK_SIZE, i * Config.BLOCK_SIZE));
+						j = j + len - 1;
+						level.entities.add(en);
+					}
+					else{
+						e = new Entity(Types.Type.PLATFORM);
+						e.setProperty(Property.SUB_TYPE, Platform.INDESTRUCTIBLE);
+						rect.setFill(Color.BROWN);
+						if(Config.RELEASE){
+							if(i >= 1 && data.get(i-1) != null && (data.get(i-1).charAt(j) != 'l' && data.get(i-1).charAt(j) != 'L')){
+								if(line.charAt(j) == 'L'){
+									t = consApp.getTexture(FileNames.G_N_SAND_BLOCK);
+								}
+								else{
+									t = consApp.getTexture(FileNames.S_N_SAND_BLOCK);
+								}
+							}
+							else{
+								t = consApp.getTexture(FileNames.U_N_SAND_BLOCK);
+							}
+							if(j >= 1 && line.charAt(j-1) == line.charAt(j) && level.entities.get(level.entities.size() - 1).getScaleX() == 1){
+								e.setScaleX(-1);
+							}
+							t.setPreserveRatio(true);
+							t.setFitHeight(40);
 						}
-						if(j >= 1 && line.charAt(j-1) == line.charAt(j) && level.entities.get(level.entities.size() - 1).getScaleX() == 1){
-							e.setScaleX(-1);
-						}
-						t.setPreserveRatio(true);
-						t.setFitHeight(40);
 					}
 					break;
 				case 'm':
 				case 'M':
-					e = new Entity(Types.Type.PLATFORM);
-					e.setProperty(Property.SUB_TYPE, Platform.INDESTRUCTIBLE);
-					rect.setFill(Color.BROWN);
-					if(Config.RELEASE){
-						if(i >= 1 && data.get(i-1) != null && (data.get(i-1).charAt(j) != 'm' && data.get(i-1).charAt(j) != 'M')){
-							if(line.charAt(j) == 'M'){
-								t = consApp.getTexture(FileNames.SN_STONE_BLOCK);
+					if(j + 1 < line.length() && line.charAt(j) == line.charAt(j+1) && 
+						(data.get(i-1).charAt(j) == 'm' || data.get(i-1).charAt(j) == 'M')){
+						int len = 1;
+						for(int b = 1; b + j < line.length(); b++){
+							if(len < 40 && i >= 1 && data.get(i-1) != null && 
+								(data.get(i-1).charAt(j + b) == 'm' || data.get(i-1).charAt(j + b) == 'M')){
+								len++;
 							}
 							else{
-								t = consApp.getTexture(FileNames.S_STONE_BLOCK);
+								break;
 							}
 						}
-						else{
-							t = consApp.getTexture(FileNames.U_STONE_BLOCK);
+			
+						Entity en = new Entity(Types.Type.PLATFORM);
+						en.setProperty(Property.SUB_TYPE, Platform.INDESTRUCTIBLE);
+						Texture tex = consApp.getTexture(FileNames.U_STONE_LINE);
+						tex = tex.subTexture(new Rectangle2D(0,0,200*len, 200));
+						tex.setPreserveRatio(true);
+						tex.setFitHeight(Config.BLOCK_SIZE);
+						en.setGraphics(tex);
+						en.setPosition(en.getPosition().add(j * Config.BLOCK_SIZE, i * Config.BLOCK_SIZE));
+						j = j + len - 1;
+						level.entities.add(en);
+					}
+					else{
+						e = new Entity(Types.Type.PLATFORM);
+						e.setProperty(Property.SUB_TYPE, Platform.INDESTRUCTIBLE);
+						rect.setFill(Color.BROWN);
+						if(Config.RELEASE){
+							if(i >= 1 && data.get(i-1) != null && (data.get(i-1).charAt(j) != 'm' && data.get(i-1).charAt(j) != 'M')){
+								if(line.charAt(j) == 'M'){
+									t = consApp.getTexture(FileNames.SN_STONE_BLOCK);
+								}
+								else{
+									t = consApp.getTexture(FileNames.S_STONE_BLOCK);
+								}
+							}
+							else{
+								t = consApp.getTexture(FileNames.U_STONE_BLOCK);
+							}
+							if(j >= 1 && line.charAt(j-1) == line.charAt(j) && level.entities.get(level.entities.size() - 1).getScaleX() == 1){
+								e.setScaleX(-1);
+							}
+							t.setPreserveRatio(true);
+							t.setFitHeight(40);
 						}
-						if(j >= 1 && line.charAt(j-1) == line.charAt(j) && level.entities.get(level.entities.size() - 1).getScaleX() == 1){
-							e.setScaleX(-1);
-						}
-						t.setPreserveRatio(true);
-						t.setFitHeight(40);
 					}
 					break;
 				case 'n':
-					e = new Entity(Types.Type.PLATFORM);
-					e.setProperty(Property.SUB_TYPE, Platform.INDESTRUCTIBLE);
-					rect.setFill(Color.BROWN);
-					if(Config.RELEASE){
-						if(i >= 1 && data.get(i-1) != null && (data.get(i-1).charAt(j) != 'n')){
-							t = consApp.getTexture(FileNames.S_SANDSTONE_BLOCK);
+					if(j + 1 < line.length() && line.charAt(j) == line.charAt(j+1) && 
+						(data.get(i-1).charAt(j) == 'n')){
+						int len = 1;
+						for(int b = 1; b + j < line.length(); b++){
+							if(len < 40 && i >= 1 && data.get(i-1) != null && 
+								(data.get(i-1).charAt(j + b) == 'n')){
+								len++;
+							}
+							else{
+								break;
+							}
 						}
-						else{
-							t = consApp.getTexture(FileNames.U_SANDSTONE_BLOCK);
+			
+						Entity en = new Entity(Types.Type.PLATFORM);
+						en.setProperty(Property.SUB_TYPE, Platform.INDESTRUCTIBLE);
+						Texture tex = consApp.getTexture(FileNames.U_STONE_LINE);
+						tex = tex.subTexture(new Rectangle2D(0,0,200*len, 200));
+						tex.setPreserveRatio(true);
+						tex.setFitHeight(Config.BLOCK_SIZE);
+						en.setGraphics(tex);
+						en.setPosition(en.getPosition().add(j * Config.BLOCK_SIZE, i * Config.BLOCK_SIZE));
+						j = j + len - 1;
+						level.entities.add(en);
+					}
+					else{
+						e = new Entity(Types.Type.PLATFORM);
+						e.setProperty(Property.SUB_TYPE, Platform.INDESTRUCTIBLE);
+						rect.setFill(Color.BROWN);
+						if(Config.RELEASE){
+							if(i >= 1 && data.get(i-1) != null && (data.get(i-1).charAt(j) != 'n')){
+								t = consApp.getTexture(FileNames.S_SANDSTONE_BLOCK);
+							}
+							else{
+								t = consApp.getTexture(FileNames.U_SANDSTONE_BLOCK);
+							}
+							if(j >= 1 && line.charAt(j-1) == line.charAt(j) && level.entities.get(level.entities.size() - 1).getScaleX() == 1){
+								e.setScaleX(-1);
+							}
+							t.setPreserveRatio(true);
+							t.setFitHeight(40);
 						}
-						if(j >= 1 && line.charAt(j-1) == line.charAt(j) && level.entities.get(level.entities.size() - 1).getScaleX() == 1){
-							e.setScaleX(-1);
-						}
-						t.setPreserveRatio(true);
-						t.setFitHeight(40);
 					}
 					break;
 				case 'p':
