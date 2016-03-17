@@ -12,7 +12,6 @@ import com.almasb.fxgl.util.Version;
 import com.sun.javafx.scene.control.skin.LabeledText;
 
 import javafx.animation.FadeTransition;
-import javafx.application.Platform;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
@@ -20,7 +19,6 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.concurrent.Task;
 import javafx.event.EventHandler;
 import javafx.geometry.Pos;
 import javafx.scene.Group;
@@ -65,6 +63,8 @@ public final class ConsumeMainMenu extends FXGLMenu {
     //private MenuItem itemContinue;
     private MenuContent emptyMenu;
     private MenuBox menuContent;
+    private MenuBox menuControls;
+    private MenuItem nGPlus;
     
     private Group fadeGroup;
 
@@ -78,14 +78,14 @@ public final class ConsumeMainMenu extends FXGLMenu {
         emptyMenu = new MenuContent();
         consApp.getAudioManager().setGlobalMusicVolume(consApp.sSettings.getBackMusicVolume());
 		consApp.getAudioManager().setGlobalSoundVolume(consApp.sSettings.getSFXVolume());
-        MenuBox menu = createMainMenu();
+        menuControls = createMainMenu();
         menuX = 50;
-        menuY = consApp.getHeight() / 2 - menu.getLayoutHeight() / 2;
+        menuY = consApp.getHeight() / 2 - menuControls.getLayoutHeight() / 2;
 
         // just a placeholder
         menuContent = new MenuBox((int) consApp.getWidth() - 300 - 50);
         menuContent.setTranslateX(300);
-        menuContent.setTranslateY(menu.getTranslateY());
+        menuContent.setTranslateY(menuControls.getTranslateY());
         menuContent.setVisible(false);
 
         Rectangle bg = new Rectangle(consApp.getWidth(), consApp.getHeight());
@@ -95,14 +95,14 @@ public final class ConsumeMainMenu extends FXGLMenu {
         title.setTranslateX(
                 consApp.getWidth() / 2 - title.getLayoutWidth() / 2);
         title.setTranslateY(
-                menu.getTranslateY() / 2 - title.getLayoutHeight() / 2);
+                menuControls.getTranslateY() / 2 - title.getLayoutHeight() / 2);
 
         Text version = new Text("v" + consApp.getSettings().getVersion());
         version.setTranslateY(consApp.getHeight() - 2);
         version.setFill(Color.WHITE);
         version.setFont(Font.font(18));
 
-        fadeGroup = new Group(title, version, menu, menuContent);
+        fadeGroup = new Group(title, version, menuControls, menuContent);
         getChildren().setAll(bg, fadeGroup);
 
         Music m = consApp.getAssetManager().loadMusic(FileNames.THEME_MUSIC);
@@ -160,68 +160,18 @@ public final class ConsumeMainMenu extends FXGLMenu {
             }
         });*/
 
-    	MenuItem itemNewGamePlus = new MenuItem(mainWidth, "New Game+");
-        itemNewGamePlus.setAction(() -> {
-            switchMenuContentTo(emptyMenu);
-            Rectangle bg = new Rectangle(consApp.getWidth(),
-                    consApp.getHeight());
-            bg.setFill(Color.rgb(10, 1, 1));
-            bg.setOpacity(1);
-            FadeTransition ft = new FadeTransition(Duration.seconds(1), bg);
-            ft.setFromValue(1);
-            ft.setToValue(0);
-            ft.setOnFinished(evt -> consApp.getSceneManager().removeUINode(bg));
-
-            consApp.newGamePlusGame = true;
-            
-            itemNewGamePlus.fireEvent(new MenuEvent(MenuEvent.NEW_GAME));
-
-            FadeTransition ft2 = new FadeTransition(Duration.seconds(1), bg);
-            ft2.setFromValue(1);
-            ft2.setToValue(1);
-            ft2.setOnFinished(evt -> ft.play());
-            ft2.play();
-            consApp.getSceneManager().addUINodes(bg);
+    	nGPlus = new MenuItem(mainWidth, "New Game+");
+    	nGPlus.setAction(() -> {
+        	consApp.newGamePlusGame = true;
+            createNewGame(nGPlus);
         });
         
-        itemNewGamePlus.setEnabled(consApp.sSettings.getNewGamePlusUnlocked());
+        nGPlus.setEnabled(consApp.sSettings.getNewGamePlusUnlocked());
     	
         MenuItem itemNewGame = new MenuItem(mainWidth, "New Game");
         itemNewGame.setAction(() -> {
-            switchMenuContentTo(emptyMenu);
-            Rectangle bg = new Rectangle(consApp.getWidth(),
-                    consApp.getHeight());
-            bg.setFill(Color.rgb(10, 1, 1));
-            bg.setOpacity(1);
-            FadeTransition ft = new FadeTransition(Duration.seconds(1), bg);
-            ft.setFromValue(1);
-            ft.setToValue(0);
-            ft.setOnFinished(evt -> consApp.getSceneManager().removeUINode(bg));
-
-            consApp.newGamePlusGame = false;
-       
-            
-            Task<Void> loadLevel = new Task<Void>(){
-				@Override
-				protected Void call() throws Exception {
-					Platform.runLater(() -> {
-						itemNewGame.fireEvent(new MenuEvent(MenuEvent.NEW_GAME));
-					});
-					
-					return null;
-				}
-            };
-            loadLevel.setOnSucceeded((e) -> {
-            	consApp.getSceneManager().addUINodes(bg);
-            	consApp.getTimerManager().runOnceAfter(() -> ft.play(), Duration.seconds(0.2));
-            });
-
-            FadeTransition ft2 = new FadeTransition(Duration.seconds(1), fadeGroup);
-            ft2.setFromValue(1);
-            ft2.setToValue(0);
-            ft2.setOnFinished(evt -> loadLevel.run());
-            
-            ft2.play();
+        	consApp.newGamePlusGame = false;
+            createNewGame(itemNewGame);
         });
 
         /*MenuItem itemLoad = new MenuItem(mainWidth, "Load");
@@ -241,7 +191,7 @@ public final class ConsumeMainMenu extends FXGLMenu {
         itemExit.setAction(
                 () -> itemExit.fireEvent(new MenuEvent(MenuEvent.EXIT)));
 
-        MenuBox menu = new MenuBox(mainWidth, itemNewGamePlus, itemNewGame,
+        MenuBox menu = new MenuBox(mainWidth, nGPlus, itemNewGame,
         			itemOptions, itemExtra, itemExit);
         menu.setTranslateX(50);
         menu.setTranslateY(
@@ -249,7 +199,43 @@ public final class ConsumeMainMenu extends FXGLMenu {
         return menu;
     }
 
-    /*private MenuContent createContentLoadConsume() {
+    private void createNewGame(MenuItem mI) {
+    	for(Node m: menuControls.getChildren()){
+    		if(m.getClass() == MenuItem.class){
+    			((MenuItem) m).setEnabled(false);
+    		}
+    	}
+    	
+    	switchMenuContentTo(emptyMenu);
+   
+    	FadeTransition ft = new FadeTransition(Duration.seconds(1), fadeGroup);
+        ft.setFromValue(0);
+        ft.setToValue(1);
+    	
+        FadeTransition ft2 = new FadeTransition(Duration.seconds(1), fadeGroup);
+        ft2.setFromValue(1);
+        ft2.setToValue(0);
+        ft2.setOnFinished(evt -> {
+        	ft.play();
+        	mI.fireEvent(new MenuEvent(MenuEvent.NEW_GAME));
+        	for(Node m: menuControls.getChildren()){
+        		if(m.getClass() == MenuItem.class){
+        			if(m == nGPlus){
+        				((MenuItem) m).setEnabled(consApp.sSettings.getNewGamePlusUnlocked());
+        			}
+        			else{
+        				((MenuItem) m).setEnabled(true);
+        			}
+        		}
+        	}
+        	
+        });
+        ft2.setAutoReverse(true);
+        
+        ft2.play();
+	}
+
+	/*private MenuContent createContentLoadConsume() {
         refreshSaveList();
         saveList.prefHeightProperty()
                 .bind(Bindings.size(saveList.getItems()).multiply(36));

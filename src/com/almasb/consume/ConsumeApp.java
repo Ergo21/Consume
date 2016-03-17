@@ -58,7 +58,6 @@ import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import javafx.concurrent.Task;
 import javafx.geometry.Point2D;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.input.KeyCode;
@@ -92,6 +91,13 @@ public class ConsumeApp extends GameApplication {
 
 	private boolean playerDied = false;
 
+	private Rectangle fadeScreen;
+	private FadeTransition fadeIn;
+	private FadeTransition fadeOut;
+	private Runnable fInComMet;
+	private Runnable fOutComMet;
+	private boolean firstPlay;
+	
 	public GameScene gScene;
 	public ConsumeController consController;
 
@@ -174,12 +180,9 @@ public class ConsumeApp extends GameApplication {
 		
 		eSpawner = new EntitySpawner(this);
 
-		System.out.println("Before Init levels");
 		initLevels();
-		System.out.println("After Init levels");
 
 		loadLevel(playerData.getCurrentLevel());
-		System.out.println("After load levels");
 	}
 
 	@Override
@@ -238,7 +241,29 @@ public class ConsumeApp extends GameApplication {
 
 		///debug.setTranslateX(450);
 		//debug.setTranslateY(100);
-		getSceneManager().addUINodes(gScene, hud, performance);
+		fadeScreen = new Rectangle(this.getSettings().getWidth(), this.getSettings().getHeight());
+		fadeScreen.setFill(Color.BLACK);
+		fadeIn = new FadeTransition(Duration.seconds(1), fadeScreen);
+        fadeIn.setFromValue(1);
+        fadeIn.setToValue(0);
+        fadeIn.setOnFinished((e) -> {
+        	if(fInComMet != null){
+        		fInComMet.run();
+        		fInComMet = null;
+        	}
+        });
+		fadeOut = new FadeTransition(Duration.seconds(1), fadeScreen);
+        fadeOut.setFromValue(0);
+        fadeOut.setToValue(1);
+        fadeOut.setOnFinished((e) -> {
+        	if(fOutComMet != null){
+        		fOutComMet.run();
+        		fOutComMet = null;
+        	}
+        });
+		firstPlay = false;
+        
+		getSceneManager().addUINodes(gScene, hud, performance, fadeScreen);
 
         hud.CurHealthProperty().bind(playerData.CurrentHealthProperty());
         hud.CurManaProperty().bind(playerData.CurrentManaProperty());
@@ -510,6 +535,13 @@ public class ConsumeApp extends GameApplication {
 	
 	@Override
 	protected void onUpdate() {
+		if(!firstPlay){
+			firstPlay = true;
+			getTimerManager().runOnceAfter(() -> {
+				fadeIn.play();
+			}, Duration.seconds(0.5));
+		}
+		
 		if(playerData.getCurrentMana() == playerData.getMaxMana()){
 			regenTime = getNow();
 		}
@@ -584,7 +616,9 @@ public class ConsumeApp extends GameApplication {
 
 	@Override
 	public void onMenuClose(){
-		soundManager.playBackgroundMusic();
+		if(soundManager != null){
+			soundManager.playBackgroundMusic();
+		}
 	}
 
 	private void loadLevel(int lev) {
@@ -625,50 +659,25 @@ public class ConsumeApp extends GameApplication {
 
 	public void changeLevel() {
 		getInputManager().setProcessActions(false);
-		Rectangle bg1 = new Rectangle(this.getWidth(), this.getHeight());
-		Rectangle bg2 = new Rectangle(this.getWidth(), this.getHeight());
-		bg1.setFill(Color.rgb(10, 1, 1));
-		bg2.setFill(Color.rgb(10, 1, 1));
-		bg1.setOpacity(0);
-		getSceneManager().addUINodes(bg1);
-		FadeTransition ft = new FadeTransition(Duration.seconds(0.5), bg1);
-		ft.setFromValue(0);
-		ft.setToValue(1);
-		FadeTransition ft2 = new FadeTransition(Duration.seconds(0.5), bg2);
-		ft2.setFromValue(1);
-		ft2.setToValue(0);
 		
-		Task<Void> faTas = new Task<Void>(){
-			@Override
-			protected Void call() throws Exception {
-				getSceneManager().addUINodes(bg2);
-				getSceneManager().removeUINode(bg1);
-				if(playerData.getCurrentHealth() <= 0){
-					playerData.setCurrentHealth(playerData.getMaxHealth());
-					playerData.setCurrentMana(playerData.getMaxMana());
-				}
-				getSceneManager().getEntities().forEach(getSceneManager()::removeEntity);
-				hud.setBossHealthBarVisible(false);
-				levels.set(playerData.getCurrentLevel(), parser.parse(playerData.getCurrentLevel()));
-				getInputManager().setProcessActions(true);
-				
-				loadLevel(playerData.getCurrentLevel());
-				
-				getSceneManager().removeUINode(levelMenu);
-				return null;
+		fOutComMet = () -> {
+			if(playerData.getCurrentHealth() <= 0){
+				playerData.setCurrentHealth(playerData.getMaxHealth());
+				playerData.setCurrentMana(playerData.getMaxMana());
 			}
+			getSceneManager().getEntities().forEach(getSceneManager()::removeEntity);
+			hud.setBossHealthBarVisible(false);
+			levels.set(playerData.getCurrentLevel(), parser.parse(playerData.getCurrentLevel()));
+			getInputManager().setProcessActions(true);
+					
+			loadLevel(playerData.getCurrentLevel());
+				
+			getSceneManager().removeUINode(levelMenu);
+			
+			getTimerManager().runOnceAfter(() -> fadeIn.play(), Duration.seconds(0.5));
 		};
-		ft.setOnFinished(evt -> {
-			faTas.run();
-			faTas.setOnSucceeded((e) -> {
-				getTimerManager().runOnceAfter(() -> ft2.play(), Duration.seconds(0.5));
-			});
-		});
-		ft2.setOnFinished(evt -> {
-			getSceneManager().removeUINode(bg1);
-		});
+		fadeOut.play();
 		
-		ft.play();
 	}
 
 	public void showLevelScreen(){
