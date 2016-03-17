@@ -324,7 +324,7 @@ public class ConsumeController {
 				ePic.translateXProperty().bind(e.translateXProperty());
 			}
 			else{
-				ePic.translateXProperty().bind(e.translateXProperty());
+				ePic.translateXProperty().bind(e.translateXProperty().add(-20));
 			}			
 			ePic.translateYProperty().bind(e.translateYProperty());
 			e.aliveProperty().addListener(new ChangeListener<Boolean>(){
@@ -716,13 +716,14 @@ public class ConsumeController {
 				Entity ePic = new Entity(Type.ENEMY_PROJECTILE);
 				ePic.setProperty(Property.SUB_TYPE, element);
 				ePic.setPosition(e.getPosition());
+
 				if(source.<Boolean>getProperty("facingRight")){
-					ePic.translateXProperty().bind(e.translateXProperty().add(-60));
+					ePic.translateXProperty().bind(e.translateXProperty().add(10));
 				}
 				else{
-					ePic.translateXProperty().bind(e.translateXProperty());
+					ePic.translateXProperty().bind(e.translateXProperty().add(-10));
 				}			
-				ePic.translateYProperty().bind(e.translateYProperty().add(-5));
+				ePic.translateYProperty().bind(e.translateYProperty());
 				e.aliveProperty().addListener(new ChangeListener<Boolean>(){
 					@Override
 					public void changed(ObservableValue<? extends Boolean> arg0, Boolean arg1, Boolean arg2) {
@@ -741,7 +742,7 @@ public class ConsumeController {
 			else {
 				e.setGraphics(new Rectangle(30,5));
 				e.setVisible(false);
-					
+
 				Texture t = consApp.getTexture("projectiles/Spear SS.png");
 				t.setPreserveRatio(true);
 				t.setFitWidth(30);
@@ -752,12 +753,12 @@ public class ConsumeController {
 				ePic.setProperty(Property.SUB_TYPE, element);
 				ePic.setPosition(e.getPosition());
 				if(source.<Boolean>getProperty("facingRight")){
-					ePic.translateXProperty().bind(e.translateXProperty().add(-60));
+					ePic.translateXProperty().bind(e.translateXProperty().add(10));
 				}
 				else{
-					ePic.translateXProperty().bind(e.translateXProperty());
+					ePic.translateXProperty().bind(e.translateXProperty().add(10));
 				}			
-				ePic.translateYProperty().bind(e.translateYProperty().add(-5));
+				ePic.translateYProperty().bind(e.translateYProperty());
 				e.aliveProperty().addListener(new ChangeListener<Boolean>(){
 					@Override
 					public void changed(ObservableValue<? extends Boolean> arg0, Boolean arg1, Boolean arg2) {

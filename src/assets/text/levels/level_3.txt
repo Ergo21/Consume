@@ -1,10 +1,11 @@
-i                      d               u    i0
+i                      d               u                      i0
 i iiiii                dU              i    i0
 i    ii                di                   i0
 i                      i         i          i0
 i                  B                        i0 
-i 1         5q             i                i0 
-iiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii       i0
+i 1          q             i                i0 
+immmmmmmmmmmmmmmmmmMMMMMMMMMMMMMMMMMM       i0
+iiiIIjjkkKKllLLmmMMiiIIjjkkKKllLLmmMM       i0
 i   d       p                               i0
 i v d       p                               i0
 iiiiiiiiiiiipiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii0

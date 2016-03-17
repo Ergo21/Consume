@@ -39,6 +39,7 @@ import javafx.scene.paint.CycleMethod;
 import javafx.scene.paint.LinearGradient;
 import javafx.scene.paint.Stop;
 import javafx.scene.text.Text;
+import javafx.util.Pair;
 
 public class GameScene extends Group {
 
@@ -301,16 +302,16 @@ public class GameScene extends Group {
 		
 	}
 	
-	public void setupBoss(Entity e, boolean bossBarVisible) {
+	public void setupBoss(Pair<Entity,Entity> p, boolean bossBarVisible) {
 		if(bossBarVisible){
-			app.hud.setBossBar(e);
+			app.hud.setBossBar(p.getKey());
 		}
 		Entity e2 = Entity.noType();
 		e2.setPosition(app.player.getPosition());
 		e2.addControl(new CameraControl(app.player.getPosition().add(Config.BLOCK_SIZE*5,0)));
 		e2.setVisible(false);
 		app.getSceneManager().bindViewportOrigin(e2, 320, 180);
-		app.getSceneManager().addEntities(e, e2);
+		app.getSceneManager().addEntities(p.getKey(), p.getValue(), e2);
 	}
 
 	private class TextBox extends AnchorPane{

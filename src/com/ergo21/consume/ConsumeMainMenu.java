@@ -12,6 +12,7 @@ import com.almasb.fxgl.util.Version;
 import com.sun.javafx.scene.control.skin.LabeledText;
 
 import javafx.animation.FadeTransition;
+import javafx.application.Platform;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
@@ -19,6 +20,7 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.concurrent.Task;
 import javafx.event.EventHandler;
 import javafx.geometry.Pos;
 import javafx.scene.Group;
@@ -62,6 +64,9 @@ public final class ConsumeMainMenu extends FXGLMenu {
     private ListView<String> saveList;
     //private MenuItem itemContinue;
     private MenuContent emptyMenu;
+    private MenuBox menuContent;
+    
+    private Group fadeGroup;
 
     public ConsumeMainMenu(ConsumeApp app) {
         super(app);
@@ -78,7 +83,7 @@ public final class ConsumeMainMenu extends FXGLMenu {
         menuY = consApp.getHeight() / 2 - menu.getLayoutHeight() / 2;
 
         // just a placeholder
-        MenuBox menuContent = new MenuBox((int) consApp.getWidth() - 300 - 50);
+        menuContent = new MenuBox((int) consApp.getWidth() - 300 - 50);
         menuContent.setTranslateX(300);
         menuContent.setTranslateY(menu.getTranslateY());
         menuContent.setVisible(false);
@@ -97,7 +102,8 @@ public final class ConsumeMainMenu extends FXGLMenu {
         version.setFill(Color.WHITE);
         version.setFont(Font.font(18));
 
-        getChildren().setAll(bg, title, version, menu, menuContent);
+        fadeGroup = new Group(title, version, menu, menuContent);
+        getChildren().setAll(bg, fadeGroup);
 
         Music m = consApp.getAssetManager().loadMusic(FileNames.THEME_MUSIC);
         m.setCycleCount(Integer.MAX_VALUE);
@@ -193,15 +199,29 @@ public final class ConsumeMainMenu extends FXGLMenu {
             ft.setOnFinished(evt -> consApp.getSceneManager().removeUINode(bg));
 
             consApp.newGamePlusGame = false;
+       
             
-            itemNewGame.fireEvent(new MenuEvent(MenuEvent.NEW_GAME));
+            Task<Void> loadLevel = new Task<Void>(){
+				@Override
+				protected Void call() throws Exception {
+					Platform.runLater(() -> {
+						itemNewGame.fireEvent(new MenuEvent(MenuEvent.NEW_GAME));
+					});
+					
+					return null;
+				}
+            };
+            loadLevel.setOnSucceeded((e) -> {
+            	consApp.getSceneManager().addUINodes(bg);
+            	consApp.getTimerManager().runOnceAfter(() -> ft.play(), Duration.seconds(0.2));
+            });
 
-            FadeTransition ft2 = new FadeTransition(Duration.seconds(1), bg);
+            FadeTransition ft2 = new FadeTransition(Duration.seconds(1), fadeGroup);
             ft2.setFromValue(1);
-            ft2.setToValue(1);
-            ft2.setOnFinished(evt -> ft.play());
+            ft2.setToValue(0);
+            ft2.setOnFinished(evt -> loadLevel.run());
+            
             ft2.play();
-            consApp.getSceneManager().addUINodes(bg);
         });
 
         /*MenuItem itemLoad = new MenuItem(mainWidth, "Load");
@@ -540,7 +560,7 @@ public final class ConsumeMainMenu extends FXGLMenu {
     }*/
 
     private void switchMenuTo(MenuBox menu) {
-        Node oldMenu = getChildren().get(3);
+        Node oldMenu = fadeGroup.getChildren().get(2);
 
         FadeTransition ft = new FadeTransition(Duration.seconds(0.33), oldMenu);
         ft.setToValue(0);
@@ -548,7 +568,7 @@ public final class ConsumeMainMenu extends FXGLMenu {
             menu.setTranslateX(menuX);
             menu.setTranslateY(menuY);
             menu.setOpacity(0);
-            getChildren().set(3, menu);
+            fadeGroup.getChildren().set(2, menu);
             oldMenu.setOpacity(1);
 
             FadeTransition ft2 = new FadeTransition(Duration.seconds(0.33),
@@ -564,7 +584,7 @@ public final class ConsumeMainMenu extends FXGLMenu {
     private void switchMenuContentTo(MenuContent content) {
         content.setTranslateX(menuX * 2 + 200);
         content.setTranslateY(menuY);
-        getChildren().set(4, content);
+        fadeGroup.getChildren().set(3, content);
     }
 
     private static class Title extends StackPane {

@@ -10,6 +10,7 @@ import javafx.geometry.Point2D;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
+import javafx.util.Pair;
 
 import com.almasb.consume.Types.Block;
 import com.almasb.consume.Types.Element;
@@ -153,14 +154,14 @@ public class LevelParser {
 					en.setCollidable(true);
 					if(line.charAt(j) == 'c'){
 						en.addControl(new CollideSpawnerControl(
-								(Function<Point2D, Entity>) (tS) -> consApp.eSpawner.spawnMummy(tS), 
+								(Function<Point2D, Pair<Entity, Entity>>) (tS) -> consApp.eSpawner.spawnMummy(tS), 
 								2, en.getPosition().add(-Config.BLOCK_SIZE*2, Config.BLOCK_SIZE/2), 
 								en.getPosition().add(Config.BLOCK_SIZE*2, Config.BLOCK_SIZE/2)));
 						en.addFXGLEventHandler(Event.ENEMY_FIRED, event -> {
 							if(en != null && en.getControl(CollideSpawnerControl.class) != null){
-								ArrayList<Entity> ens = en.getControl(CollideSpawnerControl.class).spawnEnemy();
-								for(Entity enV : ens){
-									consApp.getSceneManager().addEntities(enV);
+								ArrayList<Pair<Entity,Entity>> ens = en.getControl(CollideSpawnerControl.class).getEnemies();
+								for(Pair<Entity,Entity> enV : ens){
+									consApp.getSceneManager().addEntities(enV.getKey(), enV.getValue());
 								}
 								
 							}
@@ -168,12 +169,13 @@ public class LevelParser {
 					}
 					else{
 						en.addControl(new CollideSpawnerControl(
-								(Function<Point2D, Entity>) (tS) -> consApp.eSpawner.spawnSandBoss(tS), 
+								(Function<Point2D, Pair<Entity,Entity>>) (tS) -> consApp.eSpawner.spawnSandBoss(tS), 
 								1, en.getPosition().add(Config.BLOCK_SIZE*8, Config.BLOCK_SIZE/2)));
 						en.addFXGLEventHandler(Event.ENEMY_FIRED, event -> {
 							if(en != null && en.getControl(CollideSpawnerControl.class) != null){
-								ArrayList<Entity> ens = en.getControl(CollideSpawnerControl.class).spawnEnemy();
+								ArrayList<Pair<Entity,Entity>> ens = en.getControl(CollideSpawnerControl.class).getEnemies();
 								consApp.gScene.setupBoss(ens.get(0), true);
+								consApp.getSceneManager().addEntities(ens.get(0).getValue());
 							}
 						});
 					}
@@ -215,12 +217,19 @@ public class LevelParser {
 				case 'i':
 				case 'I':
 				case 'j':
-					if(j + 1 < line.length() && line.charAt(j) == line.charAt(j+1) && 
-							(data.get(i-1).charAt(j) == 'i' || data.get(i-1).charAt(j) == 'I' || data.get(i-1).charAt(j) == 'j')){
+				case 'k':
+				case 'K':
+				case 'l':
+				case 'L':
+				case 'm':
+				case 'M':
+					if(i >= 1 && j + 1 < line.length() && isSameZone(line.charAt(j), line.charAt(j+1)) && 
+								isPlatform(data.get(i-1).charAt(j))){
 						int len = 1;
 						for(int b = 1; b + j < line.length(); b++){
 							if(len < 40 && i >= 1 && data.get(i-1) != null && 
-									(data.get(i-1).charAt(j + b) == 'i' || data.get(i-1).charAt(j + b) == 'I' || data.get(i-1).charAt(j + b) == 'j')){
+									isSameZone(line.charAt(j), line.charAt(j + b)) &&
+									isPlatform(data.get(i-1).charAt(j + b))){
 								len++;
 							}
 							else{
@@ -230,7 +239,7 @@ public class LevelParser {
 						
 						Entity en = new Entity(Types.Type.PLATFORM);
 						en.setProperty(Property.SUB_TYPE, Platform.INDESTRUCTIBLE);
-						Texture tex = consApp.getTexture(FileNames.U_DIRT_LINE);
+						Texture tex = consApp.getTexture(getZoneLine(line.charAt(j)));
 						tex = tex.subTexture(new Rectangle2D(0,0,200*len, 200));
 						tex.setPreserveRatio(true);
 						tex.setFitHeight(Config.BLOCK_SIZE);
@@ -246,170 +255,12 @@ public class LevelParser {
 						if(Config.RELEASE){
 							if(i >= 1 && data.get(i-1) != null && 
 									(data.get(i-1).charAt(j) != 'i' && data.get(i-1).charAt(j) != 'I' && data.get(i-1).charAt(j) != 'j')){
-								if(line.charAt(j) == 'I'){
-									t = consApp.getTexture(FileNames.G_DIRT_BLOCK);
-								}
-								else if (line.charAt(j) == 'j'){
-									t = consApp.getTexture(FileNames.ST_DIRT_BLOCK);
-								}
-								else{
-									t = consApp.getTexture(FileNames.S_DIRT_BLOCK);
-								}
+								t = consApp.getTexture(getSurfaceTexture(line.charAt(j)));
 							}
 							else{
-								t = consApp.getTexture(FileNames.U_DIRT_BLOCK);
+								t = consApp.getTexture(getUnderTexture(line.charAt(j)));
 							}
 						
-							if(j >= 1 && line.charAt(j-1) == line.charAt(j) && level.entities.get(level.entities.size() - 1).getScaleX() == 1){
-								e.setScaleX(-1);
-							}
-							t.setPreserveRatio(true);
-							t.setFitHeight(40);
-						}
-					}
-					break;
-				case 'k':
-				case 'K':
-					if(j + 1 < line.length() && line.charAt(j) == line.charAt(j+1) && 
-						(data.get(i-1).charAt(j) == 'k' || data.get(i-1).charAt(j) == 'K')){
-						int len = 1;
-						for(int b = 1; b + j < line.length(); b++){
-							if(len < 40 && i >= 1 && data.get(i-1) != null && 
-									(data.get(i-1).charAt(j + b) == 'k' || data.get(i-1).charAt(j + b) == 'K')){
-								len++;
-							}
-							else{
-								break;
-							}
-						}
-				
-						Entity en = new Entity(Types.Type.PLATFORM);
-						en.setProperty(Property.SUB_TYPE, Platform.INDESTRUCTIBLE);
-						Texture tex = consApp.getTexture(FileNames.U_SAND_LINE);
-						tex = tex.subTexture(new Rectangle2D(0,0,200*len, 200));
-						tex.setPreserveRatio(true);
-						tex.setFitHeight(Config.BLOCK_SIZE);
-						en.setGraphics(tex);
-						en.setPosition(en.getPosition().add(j * Config.BLOCK_SIZE, i * Config.BLOCK_SIZE));
-						j = j + len - 1;
-						level.entities.add(en);
-					}
-					else{
-						e = new Entity(Types.Type.PLATFORM);
-						e.setProperty(Property.SUB_TYPE, Platform.INDESTRUCTIBLE);
-						rect.setFill(Color.BROWN);
-						if(Config.RELEASE){
-							if(i >= 1 && data.get(i-1) != null && (data.get(i-1).charAt(j) != 'k' && data.get(i-1).charAt(j) != 'K')){
-								if(line.charAt(j) == 'K'){
-									t = consApp.getTexture(FileNames.G_SAND_BLOCK);
-								}
-								else{
-									t = consApp.getTexture(FileNames.S_SAND_BLOCK);
-								}
-							}
-							else{
-								t = consApp.getTexture(FileNames.U_SAND_BLOCK);
-							}
-							if(j >= 1 && line.charAt(j-1) == line.charAt(j) && level.entities.get(level.entities.size() - 1).getScaleX() == 1){
-								e.setScaleX(-1);
-							}
-							t.setPreserveRatio(true);
-							t.setFitHeight(40);
-						}
-					}
-					break;
-				case 'l':
-				case 'L':
-					if(j + 1 < line.length() && line.charAt(j) == line.charAt(j+1) && 
-						(data.get(i-1).charAt(j) == 'l' || data.get(i-1).charAt(j) == 'L')){
-						int len = 1;
-						for(int b = 1; b + j < line.length(); b++){
-							if(len < 40 && i >= 1 && data.get(i-1) != null && 
-								(data.get(i-1).charAt(j + b) == 'l' || data.get(i-1).charAt(j + b) == 'L')){
-								len++;
-							}
-							else{
-								break;
-							}
-						}
-			
-						Entity en = new Entity(Types.Type.PLATFORM);
-						en.setProperty(Property.SUB_TYPE, Platform.INDESTRUCTIBLE);
-						Texture tex = consApp.getTexture(FileNames.U_N_SAND_LINE);
-						tex = tex.subTexture(new Rectangle2D(0,0,200*len, 200));
-						tex.setPreserveRatio(true);
-						tex.setFitHeight(Config.BLOCK_SIZE);
-						en.setGraphics(tex);
-						en.setPosition(en.getPosition().add(j * Config.BLOCK_SIZE, i * Config.BLOCK_SIZE));
-						j = j + len - 1;
-						level.entities.add(en);
-					}
-					else{
-						e = new Entity(Types.Type.PLATFORM);
-						e.setProperty(Property.SUB_TYPE, Platform.INDESTRUCTIBLE);
-						rect.setFill(Color.BROWN);
-						if(Config.RELEASE){
-							if(i >= 1 && data.get(i-1) != null && (data.get(i-1).charAt(j) != 'l' && data.get(i-1).charAt(j) != 'L')){
-								if(line.charAt(j) == 'L'){
-									t = consApp.getTexture(FileNames.G_N_SAND_BLOCK);
-								}
-								else{
-									t = consApp.getTexture(FileNames.S_N_SAND_BLOCK);
-								}
-							}
-							else{
-								t = consApp.getTexture(FileNames.U_N_SAND_BLOCK);
-							}
-							if(j >= 1 && line.charAt(j-1) == line.charAt(j) && level.entities.get(level.entities.size() - 1).getScaleX() == 1){
-								e.setScaleX(-1);
-							}
-							t.setPreserveRatio(true);
-							t.setFitHeight(40);
-						}
-					}
-					break;
-				case 'm':
-				case 'M':
-					if(j + 1 < line.length() && line.charAt(j) == line.charAt(j+1) && 
-						(data.get(i-1).charAt(j) == 'm' || data.get(i-1).charAt(j) == 'M')){
-						int len = 1;
-						for(int b = 1; b + j < line.length(); b++){
-							if(len < 40 && i >= 1 && data.get(i-1) != null && 
-								(data.get(i-1).charAt(j + b) == 'm' || data.get(i-1).charAt(j + b) == 'M')){
-								len++;
-							}
-							else{
-								break;
-							}
-						}
-			
-						Entity en = new Entity(Types.Type.PLATFORM);
-						en.setProperty(Property.SUB_TYPE, Platform.INDESTRUCTIBLE);
-						Texture tex = consApp.getTexture(FileNames.U_STONE_LINE);
-						tex = tex.subTexture(new Rectangle2D(0,0,200*len, 200));
-						tex.setPreserveRatio(true);
-						tex.setFitHeight(Config.BLOCK_SIZE);
-						en.setGraphics(tex);
-						en.setPosition(en.getPosition().add(j * Config.BLOCK_SIZE, i * Config.BLOCK_SIZE));
-						j = j + len - 1;
-						level.entities.add(en);
-					}
-					else{
-						e = new Entity(Types.Type.PLATFORM);
-						e.setProperty(Property.SUB_TYPE, Platform.INDESTRUCTIBLE);
-						rect.setFill(Color.BROWN);
-						if(Config.RELEASE){
-							if(i >= 1 && data.get(i-1) != null && (data.get(i-1).charAt(j) != 'm' && data.get(i-1).charAt(j) != 'M')){
-								if(line.charAt(j) == 'M'){
-									t = consApp.getTexture(FileNames.SN_STONE_BLOCK);
-								}
-								else{
-									t = consApp.getTexture(FileNames.S_STONE_BLOCK);
-								}
-							}
-							else{
-								t = consApp.getTexture(FileNames.U_STONE_BLOCK);
-							}
 							if(j >= 1 && line.charAt(j-1) == line.charAt(j) && level.entities.get(level.entities.size() - 1).getScaleX() == 1){
 								e.setScaleX(-1);
 							}
@@ -513,7 +364,10 @@ public class LevelParser {
 					en.addControl(getSpawner(line.charAt(j), levelNumber, en));
 					en.addFXGLEventHandler(Event.ENEMY_FIRED, event -> {
 						if(en != null && en.getControl(ESpawnerControl.class) != null){
-							consApp.getSceneManager().addEntities(en.getControl(ESpawnerControl.class).spawnEnemy());
+							Pair<Entity,Entity> tEn = en.getControl(ESpawnerControl.class).spawnEnemy();
+							if(tEn != null){
+								consApp.getSceneManager().addEntities(tEn.getKey(), tEn.getValue());
+							}
 						}
 					});
 					
@@ -629,6 +483,51 @@ public class LevelParser {
 		return level;
 	}
 
+	private String getSurfaceTexture(char p) {
+		switch(p){
+			case 'i':
+				return FileNames.S_DIRT_BLOCK;
+			case 'I':
+				return FileNames.G_DIRT_BLOCK;
+			case 'j':
+				return FileNames.ST_DIRT_BLOCK;
+			case 'k':
+				return FileNames.S_SAND_BLOCK;
+			case 'K':
+				return FileNames.G_SAND_BLOCK;
+			case 'l':
+				return FileNames.S_N_SAND_BLOCK;
+			case 'L':
+				return FileNames.G_N_SAND_BLOCK;
+			case 'm':
+				return FileNames.S_STONE_BLOCK;
+			case 'M':
+				return FileNames.SN_STONE_BLOCK;
+		}
+
+		return FileNames.S_DIRT_BLOCK;
+	}
+	
+	private String getUnderTexture(char p){
+		switch(p){
+		case 'i':
+		case 'I':
+		case 'j':
+			return FileNames.U_DIRT_BLOCK;
+		case 'k':
+		case 'K':
+			return FileNames.U_SAND_BLOCK;
+		case 'l':
+		case 'L':
+			return FileNames.U_N_SAND_BLOCK;
+		case 'm':
+		case 'M':
+			return FileNames.U_STONE_BLOCK;
+	}
+
+	return FileNames.U_DIRT_BLOCK;
+	}
+
 	private ArrayList<Entity> getBackgroundEntities(int levelNumber, Level level, Point2D backY) {
 		ArrayList<Entity> backEn = new ArrayList<Entity>();
 		
@@ -683,6 +582,53 @@ public class LevelParser {
 		}
 
 		return backEn;
+	}
+	
+	private boolean isSameZone(char p, char p2){
+		if(p == 'i' || p == 'I' || p == 'j'){
+			if(p2 == 'i' || p2 == 'I' || p2 == 'j'){
+				return true;
+			}
+		}
+		else if(p == 'k' || p == 'K'){
+			if(p2 == 'k' || p2 == 'K'){
+				return true;
+			}
+		}
+		else if(p == 'l' || p == 'L'){
+			if(p2 == 'l' || p2 == 'L'){
+				return true;
+			}
+		}
+		else if(p == 'm' || p == 'M'){
+			if(p2 == 'm' || p2 == 'M'){
+				return true;
+			}
+		}
+		
+		return false;
+	}
+	private boolean isPlatform(char p){
+		if(p == 'i' || p == 'I' || p == 'j' || p == 'k' || p == 'K' ||
+				p == 'l' || p == 'L' || p == 'm' || p == 'M'){
+			return true;
+		}
+		return false;
+	}
+	
+	private String getZoneLine(char p){
+		if(p == 'i' || p == 'I' || p == 'j'){
+			return FileNames.U_DIRT_LINE;
+		}
+		else if(p == 'k' || p == 'K'){
+			return FileNames.U_SAND_LINE;
+		}
+		else if(p == 'l' || p == 'L'){
+			return FileNames.U_N_SAND_LINE;
+		}
+		else{
+			return FileNames.U_STONE_LINE;
+		}
 	}
 
 	private Texture getBackground(int levelNumber) {
@@ -758,19 +704,19 @@ public class LevelParser {
 			case 1:
 			case 2:{
 				if(c == 's'){
-					return new ESpawnerControl(consApp, (Function<Point2D, Entity>) (t) -> consApp.eSpawner.spawnEloko(t), 
+					return new ESpawnerControl(consApp, (Function<Point2D, Pair<Entity, Entity>>) (t) -> consApp.eSpawner.spawnEloko(t), 
 											1);
 				}
 				else if (c == 'S'){
-					return new ESpawnerControl(consApp, (Function<Point2D, Entity>) (t) -> consApp.eSpawner.spawnBKnifer(t), 
+					return new ESpawnerControl(consApp, (Function<Point2D, Pair<Entity, Entity>>) (t) -> consApp.eSpawner.spawnBKnifer(t), 
 							1);
 				}
 				else if (c == 't'){
-					return new ESpawnerControl(consApp, (Function<Point2D, Entity>) (t) -> consApp.eSpawner.spawnBSpearEnemy(t), 
+					return new ESpawnerControl(consApp, (Function<Point2D, Pair<Entity, Entity>>) (t) -> consApp.eSpawner.spawnBSpearEnemy(t), 
 							1);
 				}
 				else{
-					return new ESpawnerControl(consApp, (Function<Point2D, Entity>) (t) -> consApp.eSpawner.spawnEloko(t), 
+					return new ESpawnerControl(consApp, (Function<Point2D, Pair<Entity, Entity>>) (t) -> consApp.eSpawner.spawnEloko(t), 
 							1);
 				}
 			}
@@ -778,19 +724,19 @@ public class LevelParser {
 			case 4:
 			case 5:{
 				if(c == 's'){
-					return new ESpawnerControl(consApp, (Function<Point2D, Entity>) (t) -> consApp.eSpawner.spawnScarab(t), 
+					return new ESpawnerControl(consApp, (Function<Point2D, Pair<Entity, Entity>>) (t) -> consApp.eSpawner.spawnScarab(t), 
 											1);
 				}
 				else if (c == 'S'){
-					return new ESpawnerControl(consApp, (Function<Point2D, Entity>) (t) -> consApp.eSpawner.spawnLocust(t), 
+					return new ESpawnerControl(consApp, (Function<Point2D, Pair<Entity, Entity>>) (t) -> consApp.eSpawner.spawnLocust(t), 
 							1);
 				}
 				else if (c == 't'){
-					return new ESpawnerControl(consApp, (Function<Point2D, Entity>) (t) -> consApp.eSpawner.spawnScorpion(t), 
+					return new ESpawnerControl(consApp, (Function<Point2D, Pair<Entity, Entity>>) (t) -> consApp.eSpawner.spawnScorpion(t), 
 							1);
 				}
 				else{
-					return new ESpawnerControl(consApp, (Function<Point2D, Entity>) (t) -> consApp.eSpawner.spawnStoneEnemy(t), 
+					return new ESpawnerControl(consApp, (Function<Point2D, Pair<Entity, Entity>>) (t) -> consApp.eSpawner.spawnStoneEnemy(t), 
 							1);
 				}
 			}
@@ -798,19 +744,19 @@ public class LevelParser {
 			case 7:
 			case 8:{
 				if(c == 's'){
-					return new ESpawnerControl(consApp, (Function<Point2D, Entity>) (t) -> consApp.eSpawner.spawnScarab(t), 
+					return new ESpawnerControl(consApp, (Function<Point2D, Pair<Entity, Entity>>) (t) -> consApp.eSpawner.spawnScarab(t), 
 											1);
 				}
 				else if (c == 'S'){
-					return new ESpawnerControl(consApp, (Function<Point2D, Entity>) (t) -> consApp.eSpawner.spawnScorpion(t), 
+					return new ESpawnerControl(consApp, (Function<Point2D, Pair<Entity, Entity>>) (t) -> consApp.eSpawner.spawnScorpion(t), 
 							1);
 				}
 				else if (c == 't'){
-					return new ESpawnerControl(consApp, (Function<Point2D, Entity>) (t) -> consApp.eSpawner.spawnBurner(t), 
+					return new ESpawnerControl(consApp, (Function<Point2D, Pair<Entity, Entity>>) (t) -> consApp.eSpawner.spawnBurner(t), 
 							1);
 				}
 				else{
-					return new ESpawnerControl(consApp, (Function<Point2D, Entity>) (t) -> consApp.eSpawner.spawnIceSpirit(t), 
+					return new ESpawnerControl(consApp, (Function<Point2D, Pair<Entity, Entity>>) (t) -> consApp.eSpawner.spawnIceSpirit(t), 
 							1);
 				}
 			}
@@ -818,19 +764,19 @@ public class LevelParser {
 			case 10:
 			case 11:{
 				if(c == 's'){
-					return new ESpawnerControl(consApp, (Function<Point2D, Entity>) (t) -> consApp.eSpawner.spawnMusician(t), 
+					return new ESpawnerControl(consApp, (Function<Point2D, Pair<Entity, Entity>>) (t) -> consApp.eSpawner.spawnMusician(t), 
 											1);
 				}
 				else if (c == 'S'){
-					return new ESpawnerControl(consApp, (Function<Point2D, Entity>) (t) -> consApp.eSpawner.spawnDancer(t), 
+					return new ESpawnerControl(consApp, (Function<Point2D, Pair<Entity, Entity>>) (t) -> consApp.eSpawner.spawnDancer(t), 
 							1);
 				}
 				else if (c == 't'){
-					return new ESpawnerControl(consApp, (Function<Point2D, Entity>) (t) -> consApp.eSpawner.spawnDog(t), 
+					return new ESpawnerControl(consApp, (Function<Point2D, Pair<Entity, Entity>>) (t) -> consApp.eSpawner.spawnDog(t), 
 							1);
 				}
 				else{
-					return new ESpawnerControl(consApp, (Function<Point2D, Entity>) (t) -> consApp.eSpawner.spawnDog(t), 
+					return new ESpawnerControl(consApp, (Function<Point2D, Pair<Entity, Entity>>) (t) -> consApp.eSpawner.spawnDog(t), 
 							1);
 				}
 			}
@@ -838,19 +784,19 @@ public class LevelParser {
 			case 13:
 			case 14:{
 				if(c == 's'){
-					return new ESpawnerControl(consApp, (Function<Point2D, Entity>) (t) -> consApp.eSpawner.spawnEloko(t), 
+					return new ESpawnerControl(consApp, (Function<Point2D, Pair<Entity, Entity>>) (t) -> consApp.eSpawner.spawnEloko(t), 
 											1);
 				}
 				else if (c == 'S'){
-					return new ESpawnerControl(consApp, (Function<Point2D, Entity>) (t) -> consApp.eSpawner.spawnBKnifer(t), 
+					return new ESpawnerControl(consApp, (Function<Point2D, Pair<Entity, Entity>>) (t) -> consApp.eSpawner.spawnBKnifer(t), 
 							1);
 				}
 				else if (c == 't'){
-					return new ESpawnerControl(consApp, (Function<Point2D, Entity>) (t) -> consApp.eSpawner.spawnBSpearEnemy(t), 
+					return new ESpawnerControl(consApp, (Function<Point2D, Pair<Entity, Entity>>) (t) -> consApp.eSpawner.spawnBSpearEnemy(t), 
 							1);
 				}
 				else{
-					return new ESpawnerControl(consApp, (Function<Point2D, Entity>) (t) -> consApp.eSpawner.spawnMagician(t), 
+					return new ESpawnerControl(consApp, (Function<Point2D, Pair<Entity, Entity>>) (t) -> consApp.eSpawner.spawnMagician(t), 
 							1);
 				}
 			}
@@ -858,19 +804,19 @@ public class LevelParser {
 			case 16:
 			case 17:{
 				if(c == 's'){
-					return new ESpawnerControl(consApp, (Function<Point2D, Entity>) (t) -> consApp.eSpawner.spawnIceSpirit(t), 
+					return new ESpawnerControl(consApp, (Function<Point2D, Pair<Entity, Entity>>) (t) -> consApp.eSpawner.spawnIceSpirit(t), 
 											1);
 				}
 				else if (c == 'S'){
-					return new ESpawnerControl(consApp, (Function<Point2D, Entity>) (t) -> consApp.eSpawner.spawnStoneEnemy(t), 
+					return new ESpawnerControl(consApp, (Function<Point2D, Pair<Entity, Entity>>) (t) -> consApp.eSpawner.spawnStoneEnemy(t), 
 							1);
 				}
 				else if (c == 't'){
-					return new ESpawnerControl(consApp, (Function<Point2D, Entity>) (t) -> consApp.eSpawner.spawnIceSpirit(t), 
+					return new ESpawnerControl(consApp, (Function<Point2D, Pair<Entity, Entity>>) (t) -> consApp.eSpawner.spawnIceSpirit(t), 
 							1);
 				}
 				else{
-					return new ESpawnerControl(consApp, (Function<Point2D, Entity>) (t) -> consApp.eSpawner.spawnStoneEnemy(t), 
+					return new ESpawnerControl(consApp, (Function<Point2D, Pair<Entity, Entity>>) (t) -> consApp.eSpawner.spawnStoneEnemy(t), 
 							1);
 				}
 			}
@@ -878,19 +824,19 @@ public class LevelParser {
 			case 19:
 			case 20:{
 				if(c == 's'){
-					return new ESpawnerControl(consApp, (Function<Point2D, Entity>) (t) -> consApp.eSpawner.spawnCannon(t), 
+					return new ESpawnerControl(consApp, (Function<Point2D, Pair<Entity, Entity>>) (t) -> consApp.eSpawner.spawnCannon(t), 
 											1);
 				}
 				else if (c == 'S'){
-					return new ESpawnerControl(consApp, (Function<Point2D, Entity>) (t) -> consApp.eSpawner.spawnBayoneter(t), 
+					return new ESpawnerControl(consApp, (Function<Point2D, Pair<Entity, Entity>>) (t) -> consApp.eSpawner.spawnBayoneter(t), 
 							1);
 				}
 				else if (c == 't'){
-					return new ESpawnerControl(consApp, (Function<Point2D, Entity>) (t) -> consApp.eSpawner.spawnRifler(t), 
+					return new ESpawnerControl(consApp, (Function<Point2D, Pair<Entity, Entity>>) (t) -> consApp.eSpawner.spawnRifler(t), 
 							1);
 				}
 				else{
-					return new ESpawnerControl(consApp, (Function<Point2D, Entity>) (t) -> consApp.eSpawner.spawnBayoneter(t), 
+					return new ESpawnerControl(consApp, (Function<Point2D, Pair<Entity, Entity>>) (t) -> consApp.eSpawner.spawnBayoneter(t), 
 							1);
 				}
 			}
@@ -898,25 +844,25 @@ public class LevelParser {
 			case 22:
 			case 23:{
 				if(c == 's'){
-					return new ESpawnerControl(consApp, (Function<Point2D, Entity>) (t) -> consApp.eSpawner.spawnZKnifer(t), 
+					return new ESpawnerControl(consApp, (Function<Point2D, Pair<Entity, Entity>>) (t) -> consApp.eSpawner.spawnZKnifer(t), 
 											1);
 				}
 				else if (c == 'S'){
-					return new ESpawnerControl(consApp, (Function<Point2D, Entity>) (t) -> consApp.eSpawner.spawnZSpearEnemy(t), 
+					return new ESpawnerControl(consApp, (Function<Point2D, Pair<Entity, Entity>>) (t) -> consApp.eSpawner.spawnZSpearEnemy(t), 
 							1);
 				}
 				else if (c == 't'){
-					return new ESpawnerControl(consApp, (Function<Point2D, Entity>) (t) -> consApp.eSpawner.spawnCharger(t), 
+					return new ESpawnerControl(consApp, (Function<Point2D, Pair<Entity, Entity>>) (t) -> consApp.eSpawner.spawnCharger(t), 
 							1);
 				}
 				else{
-					return new ESpawnerControl(consApp, (Function<Point2D, Entity>) (t) -> consApp.eSpawner.spawnZKnifer(t), 
+					return new ESpawnerControl(consApp, (Function<Point2D, Pair<Entity, Entity>>) (t) -> consApp.eSpawner.spawnZKnifer(t), 
 							1);
 				}
 			}
 		}
 		
-		return new ESpawnerControl(consApp, (Function<Point2D, Entity>) (t) -> consApp.eSpawner.spawnEloko(t), 
+		return new ESpawnerControl(consApp, (Function<Point2D, Pair<Entity, Entity>>) (t) -> consApp.eSpawner.spawnEloko(t), 
 				1);
 	}
 

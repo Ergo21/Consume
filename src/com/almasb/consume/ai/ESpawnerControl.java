@@ -12,21 +12,22 @@ import com.almasb.fxgl.time.TimerManager;
 
 import javafx.geometry.Point2D;
 import javafx.util.Duration;
+import javafx.util.Pair;
 
 public class ESpawnerControl extends AbstractControl {
 
 	private ConsumeApp consApp;
-	private Function<Point2D, Entity> spawnMethod;
-	private ArrayList<Entity> enemiesSpawned;
+	private Function<Point2D, Pair<Entity,Entity>> spawnMethod;
+	private ArrayList<Pair<Pair<Entity,Entity>, Boolean>> enemies;
 	private int maxEnemies;
 	private long countDown;
 	
-	public ESpawnerControl(ConsumeApp cApp, Function<Point2D, Entity> sMethod, int maxEne) {
+	public ESpawnerControl(ConsumeApp cApp, Function<Point2D, Pair<Entity,Entity>> sMethod, int maxEne) {
 		consApp = cApp;
 		spawnMethod = sMethod;
 		maxEnemies = maxEne;
 		countDown = 0;
-		enemiesSpawned = new ArrayList<Entity>();
+		enemies = new ArrayList<Pair<Pair<Entity,Entity>, Boolean>>();
 	}
 
 	private int frames = 10;
@@ -40,13 +41,24 @@ public class ESpawnerControl extends AbstractControl {
 	}
 	
 	public void actualUpdate(Entity entity, long now) {
-		for(Entity e : enemiesSpawned){
-			if(!e.isAlive()){
-				consApp.getTimerManager().runOnceAfter(() -> enemiesSpawned.remove(e), Duration.seconds(0.01));
+		for(Pair<Pair<Entity,Entity>, Boolean> p : enemies){
+			if(!p.getKey().getKey().isAlive() && p.getValue()){
+				consApp.getTimerManager().runOnceAfter(() -> enemies.remove(p), Duration.seconds(0.01));
 			}
 		}
 		
-		if(enemiesSpawned.size() < maxEnemies){
+		if(enemies.size() < maxEnemies*2){
+			enemies.add(generateEnemy());
+		}
+		
+		int spawned = 0;
+		for(Pair<Pair<Entity,Entity>, Boolean> p : enemies){
+			if(p.getValue()){
+				spawned++;
+			}
+		}
+		
+		if(spawned < maxEnemies){
 			if(isTargetInRange() && now - countDown > TimerManager.secondsToNanos(1)){
 				entity.fireFXGLEvent(new FXGLEvent(Event.ENEMY_FIRED));
 				countDown = now;
@@ -57,15 +69,25 @@ public class ESpawnerControl extends AbstractControl {
 		}
 	}
 	
-	public Entity spawnEnemy(){
-		enemiesSpawned.add(spawnMethod.apply(entity.getPosition()));
-		return enemiesSpawned.get(enemiesSpawned.size()-1);
+	private Pair<Pair<Entity,Entity>, Boolean> generateEnemy(){
+		return new Pair<Pair<Entity,Entity>, Boolean>(spawnMethod.apply(entity.getPosition()), false);
+	}
+	
+	public Pair<Entity,Entity> spawnEnemy(){
+		for(Pair<Pair<Entity,Entity>, Boolean> p : enemies){
+			if(!p.getValue()){
+				enemies.add(new Pair<Pair<Entity,Entity>, Boolean>(p.getKey(),true));
+				enemies.remove(p);
+				return enemies.get(enemies.size()-1).getKey();
+			}
+		}
+		
+		return null;
 	}
 
 	@Override
 	protected void initEntity(Entity entity) {
-		// TODO Auto-generated method stub
-
+		
 	}
 
 	private boolean isTargetInRange() {

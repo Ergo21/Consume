@@ -12,6 +12,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 import javafx.util.Duration;
+import javafx.util.Pair;
 
 import com.almasb.consume.Config;
 import com.almasb.consume.ConsumeApp;
@@ -88,7 +89,7 @@ public class EntitySpawner {
 		return enemy;
 	}
 
-	public Entity spawnCharger(Point2D spawnPoint) {
+	public Pair<Entity, Entity> spawnCharger(Point2D spawnPoint) {
 		Entity enemy = new Entity(Type.ENEMY);
 		Rectangle rect = new Rectangle(20, 30);
 		rect.setFill(Color.RED);
@@ -145,12 +146,12 @@ public class EntitySpawner {
 				}
 			}});
 		
-		consApp.getSceneManager().addEntities(ePic);
+		//consApp.getSceneManager().addEntities(ePic);
 
-		return enemy;
+		return new Pair<Entity, Entity>(enemy, ePic);
 	}
 
-	public Entity spawnScarab(Point2D spawnPoint) {
+	public Pair<Entity, Entity> spawnScarab(Point2D spawnPoint) {
 		Entity enemy = new Entity(Type.ENEMY);
 		Rectangle rect = new Rectangle(35, 15);
 		rect.setFill(Color.RED);
@@ -204,12 +205,12 @@ public class EntitySpawner {
 				}
 			}});
 		
-		consApp.getSceneManager().addEntities(ePic);
+		//consApp.getSceneManager().addEntities(ePic);
 
-		return enemy;
+		return new Pair<Entity, Entity>(enemy, ePic);
 	}
 
-	public Entity spawnLocust(Point2D spawnPoint) {
+	public Pair<Entity, Entity> spawnLocust(Point2D spawnPoint) {
 		Entity enemy = new Entity(Type.ENEMY);
 		Rectangle rect = new Rectangle(30, 30);
 		rect.setFill(Color.RED);
@@ -266,12 +267,12 @@ public class EntitySpawner {
 				}
 			}});
 		
-		consApp.getSceneManager().addEntities(ePic);
+		////consApp.getSceneManager().addEntities(ePic);
 
-		return enemy;
+		return new Pair<Entity, Entity>(enemy, ePic);
 	}
 	
-	public Entity spawnEloko(Point2D spawnPoint){
+	public Pair<Entity, Entity> spawnEloko(Point2D spawnPoint){
 		Entity enemy = new Entity(Type.ENEMY);
 		Rectangle rect = new Rectangle(20, 30);
 		rect.setFill(Color.RED);
@@ -328,12 +329,12 @@ public class EntitySpawner {
 				}
 			}});
 		
-		consApp.getSceneManager().addEntities(ePic);
+		//consApp.getSceneManager().addEntities(ePic);
 
-		return enemy;
+		return new Pair<Entity, Entity>(enemy, ePic);
 	}
 	
-	public Entity spawnMummy(Point2D spawnPoint){
+	public Pair<Entity, Entity> spawnMummy(Point2D spawnPoint){
 		Entity enemy = new Entity(Type.ENEMY);
 		Rectangle rect = new Rectangle(20, 30);
 		rect.setFill(Color.RED);
@@ -390,12 +391,12 @@ public class EntitySpawner {
 				}
 			}});
 		
-		consApp.getSceneManager().addEntities(ePic);
+		//consApp.getSceneManager().addEntities(ePic);
 
-		return enemy;
+		return new Pair<Entity, Entity>(enemy, ePic);
 	}
 	
-	public Entity spawnBSpearEnemy(Point2D spawnPoint){
+	public Pair<Entity, Entity> spawnBSpearEnemy(Point2D spawnPoint){
 		Entity enemy = new Entity(Type.ENEMY);
 		Rectangle rect = new Rectangle(20, 30);
 		rect.setFill(Color.RED);
@@ -454,12 +455,12 @@ public class EntitySpawner {
 				}
 			}});
 		
-		consApp.getSceneManager().addEntities(ePic);
+		//consApp.getSceneManager().addEntities(ePic);
 
-		return enemy;
+		return new Pair<Entity, Entity>(enemy, ePic);
 	}
 	
-	public Entity spawnZSpearEnemy(Point2D spawnPoint){
+	public Pair<Entity, Entity> spawnZSpearEnemy(Point2D spawnPoint){
 		Entity enemy = new Entity(Type.ENEMY);
 		Rectangle rect = new Rectangle(20, 30);
 		rect.setFill(Color.RED);
@@ -518,12 +519,12 @@ public class EntitySpawner {
 				}
 			}});
 		
-		consApp.getSceneManager().addEntities(ePic);
+		//consApp.getSceneManager().addEntities(ePic);
 
-		return enemy;
+		return new Pair<Entity, Entity>(enemy, ePic);
 	}
 	
-	public Entity spawnScorpion(Point2D spawnPoint){
+	public Pair<Entity, Entity> spawnScorpion(Point2D spawnPoint){
 		Entity enemy = new Entity(Type.ENEMY);
 		Rectangle rect = new Rectangle(25, 20);
 		rect.setFill(Color.RED);
@@ -591,9 +592,9 @@ public class EntitySpawner {
 				}
 			}});
 		
-		consApp.getSceneManager().addEntities(ePic);
+		//consApp.getSceneManager().addEntities(ePic);
 
-		return enemy;
+		return new Pair<Entity, Entity>(enemy, ePic);
 	}
 	
 	//TODO: Not currently used
@@ -627,15 +628,11 @@ public class EntitySpawner {
 		return enemy;
 	}
 	
-	public Entity spawnBurner(Point2D spawnPoint){
+	public Pair<Entity, Entity> spawnBurner(Point2D spawnPoint){
 		Entity enemy = new Entity(Type.ENEMY);
 		Rectangle rect = new Rectangle(40, 40);
 		rect.setFill(Color.RED);
 
-		Texture t = consApp.getTexture(FileNames.COFFIN_BLOCK);
-		t.setPreserveRatio(true);
-		t.setFitHeight(80);
-		enemy.setGraphics(t);
 		enemy.setCollidable(false);
 		enemy.setProperty(Property.DATA, new Enemy(consApp.getAssetManager().loadText("enemies/enemy_FireElemental.txt")));
 		enemy.setProperty("physics", consApp.physics);
@@ -655,11 +652,30 @@ public class EntitySpawner {
 				}			
 			}, Config.ENEMY_FIRE_THROW_DELAY);
 		});
+		
+		Entity ePic = new Entity(Type.ENEMY);
+		ePic.setVisible(true);
+		ePic.setCollidable(false);
+		Texture t = consApp.getTexture(FileNames.COFFIN_BLOCK);
+		t.setPreserveRatio(true);
+		t.setFitHeight(80);
+		ePic.setGraphics(t);
+		ePic.setPosition(spawnPoint.getX(), spawnPoint.getY());
+		ePic.translateXProperty().bind(enemy.translateXProperty());
+		ePic.translateYProperty().bind(enemy.translateYProperty());
+		ePic.addFXGLEventHandler(Event.DEATH, (event) -> consApp.getSceneManager().removeEntity(ePic));
+		enemy.aliveProperty().addListener(new ChangeListener<Boolean>(){
+			@Override
+			public void changed(ObservableValue<? extends Boolean> arg0, Boolean arg1, Boolean arg2) {
+				if(!arg2){
+					consApp.getTimerManager().runOnceAfter(() -> ePic.fireFXGLEvent(new FXGLEvent(Event.DEATH)), Duration.seconds(0.01));
+				}
+			}});
 
-		return enemy;
+		return new Pair<Entity, Entity>(enemy, ePic);
 	}
 	
-	public Entity spawnStoneEnemy(Point2D spawnPoint){
+	public Pair<Entity, Entity> spawnStoneEnemy(Point2D spawnPoint){
 		Entity enemy = new Entity(Type.ENEMY);
 		Rectangle rect = new Rectangle(20, 40);
 		rect.setFill(Color.RED);
@@ -727,12 +743,12 @@ public class EntitySpawner {
 				}
 			}});
 		
-		consApp.getSceneManager().addEntities(ePic);
+		//consApp.getSceneManager().addEntities(ePic);
 		
-		return enemy;
+		return new Pair<Entity, Entity>(enemy, ePic);
 	}
 	
-	public Entity spawnMusician(Point2D spawnPoint) {
+	public Pair<Entity, Entity> spawnMusician(Point2D spawnPoint) {
 		Entity enemy = new Entity(Type.ENEMY);
 		Rectangle rect = new Rectangle(20, 30);
 		rect.setFill(Color.RED);
@@ -789,12 +805,12 @@ public class EntitySpawner {
 				}
 			}});
 		
-		consApp.getSceneManager().addEntities(ePic);
+		//consApp.getSceneManager().addEntities(ePic);
 
-		return enemy;
+		return new Pair<Entity, Entity>(enemy, ePic);
 	}
 	
-	public Entity spawnDancer(Point2D spawnPoint) {
+	public Pair<Entity, Entity> spawnDancer(Point2D spawnPoint) {
 		Entity enemy = new Entity(Type.ENEMY);
 		Rectangle rect = new Rectangle(20, 30);
 		rect.setFill(Color.RED);
@@ -848,12 +864,12 @@ public class EntitySpawner {
 				}
 			}});
 		
-		consApp.getSceneManager().addEntities(ePic);
+		//consApp.getSceneManager().addEntities(ePic);
 
-		return enemy;
+		return new Pair<Entity, Entity>(enemy, ePic);
 	}
 	
-	public Entity spawnDog(Point2D spawnPoint) {
+	public Pair<Entity, Entity> spawnDog(Point2D spawnPoint) {
 		Entity enemy = new Entity(Type.ENEMY);
 		Rectangle rect = new Rectangle(40, 20);
 		rect.setFill(Color.RED);
@@ -917,12 +933,12 @@ public class EntitySpawner {
 				}
 			}});
 		
-		consApp.getSceneManager().addEntities(ePic);
+		//consApp.getSceneManager().addEntities(ePic);
 
-		return enemy;
+		return new Pair<Entity, Entity>(enemy, ePic);
 	}
 	
-	public Entity spawnIceSpirit(Point2D spawnPoint) {
+	public Pair<Entity, Entity> spawnIceSpirit(Point2D spawnPoint) {
 		Entity enemy = new Entity(Type.ENEMY);
 		Rectangle rect = new Rectangle(30, 30);
 		rect.setFill(Color.RED);
@@ -977,12 +993,12 @@ public class EntitySpawner {
 				}
 			}});
 		
-		consApp.getSceneManager().addEntities(ePic);
+		//consApp.getSceneManager().addEntities(ePic);
 
-		return enemy;
+		return new Pair<Entity, Entity>(enemy, ePic);
 	}
 	
-	public Entity spawnCannon(Point2D spawnPoint){
+	public Pair<Entity, Entity> spawnCannon(Point2D spawnPoint){
 		Entity enemy = new Entity(Type.ENEMY);
 		Rectangle rect = new Rectangle(40, 20);
 		rect.setFill(Color.RED);
@@ -1045,12 +1061,12 @@ public class EntitySpawner {
 				}
 			}});
 		
-		consApp.getSceneManager().addEntities(ePic);
+		//consApp.getSceneManager().addEntities(ePic);
 
-		return enemy;
+		return new Pair<Entity, Entity>(enemy, ePic);
 	}
 	
-	public Entity spawnRifler(Point2D spawnPoint){
+	public Pair<Entity, Entity> spawnRifler(Point2D spawnPoint){
 		Entity enemy = new Entity(Type.ENEMY);
 		Rectangle rect = new Rectangle(20, 30);
 		rect.setFill(Color.RED);
@@ -1113,12 +1129,12 @@ public class EntitySpawner {
 				}
 			}});
 		
-		consApp.getSceneManager().addEntities(ePic);
+		//consApp.getSceneManager().addEntities(ePic);
 
-		return enemy;
+		return new Pair<Entity, Entity>(enemy, ePic);
 	}
 	
-	public Entity spawnBayoneter(Point2D spawnPoint){
+	public Pair<Entity, Entity> spawnBayoneter(Point2D spawnPoint){
 		Entity enemy = new Entity(Type.ENEMY);
 		Rectangle rect = new Rectangle(20, 30);
 		rect.setFill(Color.RED);
@@ -1168,12 +1184,12 @@ public class EntitySpawner {
 				}
 			}});
 		
-		consApp.getSceneManager().addEntities(ePic);
+		//consApp.getSceneManager().addEntities(ePic);
 
-		return enemy;
+		return new Pair<Entity, Entity>(enemy, ePic);
 	}
 	
-	public Entity spawnBKnifer(Point2D spawnPoint){
+	public Pair<Entity, Entity> spawnBKnifer(Point2D spawnPoint){
 		Entity enemy = new Entity(Type.ENEMY);
 		Rectangle rect = new Rectangle(20, 30);
 		rect.setFill(Color.RED);
@@ -1226,12 +1242,12 @@ public class EntitySpawner {
 				enemy.setProperty("attacking", false);
 			}, Config.CONSUME_DECAY);
 		});
-		consApp.getSceneManager().addEntities(ePic);
+		//consApp.getSceneManager().addEntities(ePic);
 
-		return enemy;
+		return new Pair<Entity, Entity>(enemy, ePic);
 	}
 	
-	public Entity spawnZKnifer(Point2D spawnPoint){
+	public Pair<Entity, Entity> spawnZKnifer(Point2D spawnPoint){
 		Entity enemy = new Entity(Type.ENEMY);
 		Rectangle rect = new Rectangle(20, 30);
 		rect.setFill(Color.RED);
@@ -1284,12 +1300,12 @@ public class EntitySpawner {
 				enemy.setProperty("attacking", false);
 			}, Config.CONSUME_DECAY);
 		});
-		consApp.getSceneManager().addEntities(ePic);
+		//consApp.getSceneManager().addEntities(ePic);
 
-		return enemy;
+		return new Pair<Entity, Entity>(enemy, ePic);
 	}
 	
-	public Entity spawnMagician(Point2D spawnPoint){
+	public Pair<Entity, Entity> spawnMagician(Point2D spawnPoint){
 		Entity enemy = new Entity(Type.ENEMY);
 		Rectangle rect = new Rectangle(20, 30);
 		rect.setFill(Color.RED);
@@ -1354,9 +1370,9 @@ public class EntitySpawner {
 				}
 			}});
 		
-		consApp.getSceneManager().addEntities(ePic);
+		//consApp.getSceneManager().addEntities(ePic);
 
-		return enemy;
+		return new Pair<Entity, Entity>(enemy, ePic);
 	}
 	
 	//TODO: Not currently used
@@ -1379,7 +1395,7 @@ public class EntitySpawner {
 		return enemy;
 	}
 	
-	public Entity spawnSandBoss(Point2D spawnPoint) {
+	public Pair<Entity, Entity> spawnSandBoss(Point2D spawnPoint) {
 		Entity enemy = new Entity(Type.BOSS);
 		Rectangle rect = new Rectangle(60, 20); //60 High, 20 start
 		rect.setFill(Color.RED);
@@ -1457,12 +1473,12 @@ public class EntitySpawner {
 				}
 			}});
 		
-		consApp.getSceneManager().addEntities(ePic);
+		//consApp.getSceneManager().addEntities(ePic);
 
-		return enemy;
+		return new Pair<Entity, Entity>(enemy, ePic);
 	}
 	
-	public Entity spawnAnubisBoss(Point2D spawnPoint) {
+	public Pair<Entity, Entity> spawnAnubisBoss(Point2D spawnPoint) {
 		Entity enemy = new Entity(Type.BOSS);
 		Rectangle rect = new Rectangle(20, 30);
 		rect.setFill(Color.RED);
@@ -1542,11 +1558,11 @@ public class EntitySpawner {
 			}
 		});
 
-		consApp.getSceneManager().addEntities(ePic);
-		return enemy;
+		//consApp.getSceneManager().addEntities(ePic);
+		return new Pair<Entity, Entity>(enemy, ePic);
 	}
 	
-	public Entity spawnShangoBoss(Point2D spawnPoint) {
+	public Pair<Entity, Entity> spawnShangoBoss(Point2D spawnPoint) {
 		Entity enemy = new Entity(Type.BOSS);
 		Rectangle rect = new Rectangle(20, 30);
 		rect.setFill(Color.RED);
@@ -1668,12 +1684,12 @@ public class EntitySpawner {
 				}
 			}});
 		
-		consApp.getSceneManager().addEntities(ePic);
+		//consApp.getSceneManager().addEntities(ePic);
 
-		return enemy;
+		return new Pair<Entity, Entity>(enemy, ePic);
 	}
 	
-	public Entity spawnKiboBoss(Point2D spawnPoint) {
+	public Pair<Entity, Entity> spawnKiboBoss(Point2D spawnPoint) {
 		Entity enemy = new Entity(Type.BOSS);
 		Rectangle rect = new Rectangle(20, 30);
 		rect.setFill(Color.RED);
@@ -1805,12 +1821,12 @@ public class EntitySpawner {
 				}
 			}});
 		
-		consApp.getSceneManager().addEntities(ePic);
+		//consApp.getSceneManager().addEntities(ePic);
 
-		return enemy;
+		return new Pair<Entity, Entity>(enemy, ePic);
 	}
 	
-	public Entity spawnGentlemanBoss(Point2D spawnPoint) {
+	public Pair<Entity, Entity> spawnGentlemanBoss(Point2D spawnPoint) {
 		Entity enemy = new Entity(Type.BOSS);
 		Rectangle rect = new Rectangle(20, 30);
 		rect.setFill(Color.RED);
@@ -1973,13 +1989,13 @@ public class EntitySpawner {
 				}
 			}});
 		
-		consApp.getSceneManager().addEntities(ePic);
+		//consApp.getSceneManager().addEntities(ePic);
 
-		return enemy;
+		return new Pair<Entity, Entity>(enemy, ePic);
 	}
 	
 
-	public Entity spawnShakaBoss(Point2D spawnPoint) {
+	public Pair<Entity, Entity> spawnShakaBoss(Point2D spawnPoint) {
 		Entity enemy = new Entity(Type.BOSS);
 		Rectangle rect = new Rectangle(20, 30);
 		rect.setFill(Color.RED);
@@ -2088,12 +2104,12 @@ public class EntitySpawner {
 				}
 			}});
 		
-		consApp.getSceneManager().addEntities(ePic);
+		//consApp.getSceneManager().addEntities(ePic);
 
-		return enemy;
+		return new Pair<Entity, Entity>(enemy, ePic);
 	}
 	
-	public Entity spawnEshuBoss(Point2D spawnPoint) {
+	public Pair<Entity, Entity> spawnEshuBoss(Point2D spawnPoint) {
 		Entity enemy = new Entity(Type.BOSS);
 		Rectangle rect = new Rectangle(20, 40);
 		rect.setFill(Color.RED);
@@ -2163,12 +2179,12 @@ public class EntitySpawner {
 				}
 			}});
 		
-		consApp.getSceneManager().addEntities(ePic);
+		//consApp.getSceneManager().addEntities(ePic);
 
-		return enemy;
+		return new Pair<Entity, Entity>(enemy, ePic);
 	}
 	
-	public Entity spawnEshuIBoss(Point2D spawnPoint) {
+	public Pair<Entity, Entity> spawnEshuIBoss(Point2D spawnPoint) {
 		Entity enemy = new Entity(Type.BOSS);
 		Rectangle rect = new Rectangle(20, 40);
 		rect.setFill(Color.RED);
@@ -2238,9 +2254,9 @@ public class EntitySpawner {
 				}
 			}});
 		
-		consApp.getSceneManager().addEntities(ePic);
+		//consApp.getSceneManager().addEntities(ePic);
 
-		return enemy;
+		return new Pair<Entity, Entity>(enemy, ePic);
 	}
 
 	private void onEnemyDeath(FXGLEvent event) {
