@@ -21,6 +21,10 @@ public class Physics {
 		grid = new HashMap<>();
 	}
 	
+	public void resetLevel(){
+		curLev = -1;
+	}
+	
 	private void updatePlatforms(){
 		List<Entity> nPla = app.getSceneManager().getEntities(Type.PLATFORM);
 		if(nPla == null || nPla.isEmpty()){
@@ -51,10 +55,18 @@ public class Physics {
 		for(Entity e : platforms){
 			int x = (int)e.getPosition().getX()/Config.BLOCK_SIZE;
 			int y = (int)e.getPosition().getY()/Config.BLOCK_SIZE;
-			if(!grid.containsKey(x)){
-				grid.put(x, new HashMap<>());
+			int w = (int)e.getWidth()/Config.BLOCK_SIZE;
+			int h = (int)e.getHeight()/Config.BLOCK_SIZE;
+			
+			for(int i = 0; i < w; i++){
+				for(int j = 0; j < h; j++){
+					if(!grid.containsKey(x+i)){
+						grid.put(x+i, new HashMap<>());
+					}
+					grid.get(x+i).put(y+j, e);
+				}
 			}
-			grid.get(x).put(y, e);
+			
 		}
 	}
 	
@@ -66,69 +78,77 @@ public class Physics {
 		int yMax = (int)(e.getPosition().getY()+e.getHeight())/Config.BLOCK_SIZE;
 		
 		//TopLeft
-		if(grid.containsKey(xMin) && grid.get(xMin).containsKey(yMin)){
+		if(grid.containsKey(xMin) && grid.get(xMin).containsKey(yMin) && 
+				grid.get(xMin).get(yMin) != null){
 			platToCheck.add(grid.get(xMin).get(yMin));
 		}
-		if(grid.containsKey(xMin-1) && grid.get(xMin-1).containsKey(yMin)){
+		if(grid.containsKey(xMin-1) && grid.get(xMin-1).containsKey(yMin) &&
+				grid.get(xMin-1).get(yMin) != null){
 			platToCheck.add(grid.get(xMin-1).get(yMin));
 		}
-		if(grid.containsKey(xMin) && grid.get(xMin).containsKey(yMin-1)){
-			platToCheck.add(grid.get(xMin).get(yMin));
+		if(grid.containsKey(xMin) && grid.get(xMin).containsKey(yMin-1) &&
+				grid.get(xMin).get(yMin) != null){
+			platToCheck.add(grid.get(xMin).get(yMin-1));
 		}
 		
 		//TopRight
 		if(grid.containsKey(xMax) && grid.get(xMax).containsKey(yMin)){
-			if(!platToCheck.contains(platToCheck.add(grid.get(xMax).get(yMin)))){
+			if(!platToCheck.contains(platToCheck.add(grid.get(xMax).get(yMin))) && 
+					grid.get(xMax).get(yMin) != null){
 				platToCheck.add(grid.get(xMax).get(yMin));
 			}		
 		}
 		if(grid.containsKey(xMax+1) && grid.get(xMax+1).containsKey(yMin)){
-			if(!platToCheck.contains(platToCheck.add(grid.get(xMax+1).get(yMin)))){
+			if(!platToCheck.contains(platToCheck.add(grid.get(xMax+1).get(yMin))) &&
+					grid.get(xMax+1).get(yMin) != null){
 				platToCheck.add(grid.get(xMax+1).get(yMin));
 			}
 		}
 		if(grid.containsKey(xMax) && grid.get(xMax).containsKey(yMin-1)){
-			if(!platToCheck.contains(platToCheck.add(grid.get(xMax).get(yMin-1)))){
+			if(!platToCheck.contains(platToCheck.add(grid.get(xMax).get(yMin-1))) &&
+					grid.get(xMax).get(yMin-1) != null){
 				platToCheck.add(grid.get(xMax).get(yMin-1));
 			}	
 		}
 		
 		//BottomLeft
 		if(grid.containsKey(xMin) && grid.get(xMin).containsKey(yMax)){
-			if(!platToCheck.contains(platToCheck.add(grid.get(xMin).get(yMax)))){
+			if(!platToCheck.contains(platToCheck.add(grid.get(xMin).get(yMax))) && 
+					grid.get(xMin).get(yMax) != null){
 				platToCheck.add(grid.get(xMin).get(yMax));
 			}		
 		}
 		if(grid.containsKey(xMin-1) && grid.get(xMin-1).containsKey(yMax)){
-			if(!platToCheck.contains(platToCheck.add(grid.get(xMin-1).get(yMax)))){
+			if(!platToCheck.contains(platToCheck.add(grid.get(xMin-1).get(yMax))) &&
+					grid.get(xMin-1).get(yMax) != null){
 				platToCheck.add(grid.get(xMin-1).get(yMax));
 			}		
 		}
 		if(grid.containsKey(xMin) && grid.get(xMin).containsKey(yMax+1)){
-			if(!platToCheck.contains(platToCheck.add(grid.get(xMin).get(yMax+1)))){
+			if(!platToCheck.contains(platToCheck.add(grid.get(xMin).get(yMax+1))) &&
+					grid.get(xMin).get(yMax+1) != null){
 				platToCheck.add(grid.get(xMin).get(yMax+1));
 			}		
 		}
 		
 		//BottomRight
 		if(grid.containsKey(xMax) && grid.get(xMax).containsKey(yMax)){
-			if(!platToCheck.contains(platToCheck.add(grid.get(xMax).get(yMax)))){
+			if(!platToCheck.contains(platToCheck.add(grid.get(xMax).get(yMax))) &&
+					grid.get(xMax).get(yMax) != null){
 				platToCheck.add(grid.get(xMax).get(yMax));
 			}		
 		}
 		if(grid.containsKey(xMax+1) && grid.get(xMax+1).containsKey(yMax)){
-			if(!platToCheck.contains(platToCheck.add(grid.get(xMax+1).get(yMax)))){
+			if(!platToCheck.contains(platToCheck.add(grid.get(xMax+1).get(yMax))) &&
+					grid.get(xMax+1).get(yMax) != null){
 				platToCheck.add(grid.get(xMax+1).get(yMax));
 			}		
 		}
 		if(grid.containsKey(xMax) && grid.get(xMax).containsKey(yMax+1)){
-			if(!platToCheck.contains(platToCheck.add(grid.get(xMax).get(yMax+1)))){
+			if(!platToCheck.contains(platToCheck.add(grid.get(xMax).get(yMax+1))) &&
+					grid.get(xMax).get(yMax+1) != null){
 				platToCheck.add(grid.get(xMax).get(yMax+1));
 			}		
-		}
-		
-		if(e == app.player){
-			System.out.println("Platforms to check: " + platToCheck.size());
 		}
 		
 		return platToCheck;
