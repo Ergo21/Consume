@@ -80,7 +80,7 @@ public class ConsumeApp extends GameApplication {
 	public EntitySpawner eSpawner;
 	public IndependentLoop indiLoop;
 
-	private List<Level> levels;
+	//private ArrayList<Level> levels;
 
 	public PlayerHUD hud;
 	private ConsumeGameMenu consGameMenu;
@@ -263,8 +263,8 @@ public class ConsumeApp extends GameApplication {
         });
 		firstPlay = false;
         
-		getSceneManager().addUINodes(gScene, hud, performance, fadeScreen);
-
+		getSceneManager().addUINodes(gScene, hud, performance, levelMenu, fadeScreen);
+		levelMenu.setVisible(false);
         hud.CurHealthProperty().bind(playerData.CurrentHealthProperty());
         hud.CurManaProperty().bind(playerData.CurrentManaProperty());
         hud.MaxHealthProperty().bind(playerData.MaxHealthProperty());
@@ -287,7 +287,9 @@ public class ConsumeApp extends GameApplication {
 				.collect(Collectors.toList());
 
 		parser = new LevelParser(this, levelData);
-		levels = parser.parseAll();
+		/*levels = new ArrayList<Level>();
+		levels.add(parser.parse(0));*/
+		//parser.parseAll();
 	}
 
 	@Override
@@ -313,7 +315,7 @@ public class ConsumeApp extends GameApplication {
 				getInputManager().addAction(new UserAction("Spawn Bandit Spear Thrower"){
 					@Override
 					protected void onActionBegin() {
-						Pair<Entity, Entity> pEn = eSpawner.spawnBSpearEnemy(spawnPoint.add(900, -60));
+						Pair<Entity, Entity> pEn = eSpawner.spawnBSpearEnemy(spawnPoint.add(500, -100));
 						getSceneManager().addEntities(pEn.getKey(), pEn.getValue());
 					}
 				}, KeyCode.DIGIT3);
@@ -404,7 +406,7 @@ public class ConsumeApp extends GameApplication {
 				getInputManager().addAction(new UserAction("Spawn Stone Spirit"){
 					@Override
 					protected void onActionBegin() {
-						Pair<Entity, Entity> pEn = eSpawner.spawnStoneEnemy(spawnPoint.add(900, -100));
+						Pair<Entity, Entity> pEn = eSpawner.spawnStoneEnemy(spawnPoint.add(500, -100));
 						getSceneManager().addEntities(pEn.getKey(), pEn.getValue());
 					}
 				}, KeyCode.NUMPAD6);
@@ -623,7 +625,7 @@ public class ConsumeApp extends GameApplication {
 
 	private void loadLevel(int lev) {
 	    getSceneManager().getEntities().forEach(getSceneManager()::removeEntity);
-		Level level = levels.get(lev);
+		Level level = parser.parse(lev);
 		spawnPoint = level.getSpawnPoint();
 		limits = new Pair<Point2D, Point2D>(level.getUpperLeftLimit(), level.getLowerRightLimit());
 
@@ -653,7 +655,6 @@ public class ConsumeApp extends GameApplication {
 		// add player
 		initPlayer(spawnPoint);
 		playerDied = false;
-
 		
 	}
 
@@ -667,35 +668,43 @@ public class ConsumeApp extends GameApplication {
 			}
 			getSceneManager().getEntities().forEach(getSceneManager()::removeEntity);
 			hud.setBossHealthBarVisible(false);
-			levels.set(playerData.getCurrentLevel(), parser.parse(playerData.getCurrentLevel()));
+			//levels.set(playerData.getCurrentLevel(), parser.parse(playerData.getCurrentLevel()));
 			getInputManager().setProcessActions(true);
 					
 			loadLevel(playerData.getCurrentLevel());
-				
-			getSceneManager().removeUINode(levelMenu);
+			
+			levelMenu.setVisible(false);
 			
 			getTimerManager().runOnceAfter(() -> fadeIn.play(), Duration.seconds(0.5));
 		};
+		fadeScreen.setVisible(true);
 		fadeOut.play();
 		
 	}
 
 	public void showLevelScreen(){
 		//TODO
-		consGameMenu.updatePowerMenu(playerData);
+		fOutComMet = () -> {
+			consGameMenu.updatePowerMenu(playerData);
 
-		//this.getInputManager().
-		//this.getSceneManager().closeGameMenu();
-		this.soundManager.stopAll();
-		this.soundManager.setBackgroundMusic(FileNames.THEME_MUSIC);
-		if(playerData.getLevsComp().size() > 5){
-			levelMenu.setFinalLevelVisible(true);
-		}
-		else{
-			levelMenu.setFinalLevelVisible(false);
-		}
-		this.getSceneManager().removeUINode(levelMenu);
-		this.getSceneManager().addUINodes(levelMenu);
+			//this.getInputManager().
+			//this.getSceneManager().closeGameMenu();
+			this.soundManager.stopAll();
+			this.soundManager.setBackgroundMusic(FileNames.THEME_MUSIC);
+			if(playerData.getLevsComp().size() > 5){
+				levelMenu.setFinalLevelVisible(true);
+			}
+			else{
+				levelMenu.setFinalLevelVisible(false);
+			}
+			levelMenu.setVisible(true);
+			
+			getTimerManager().runOnceAfter(() -> fadeIn.play(), Duration.seconds(0.5));
+		};
+		fInComMet = () -> {
+			fadeScreen.setVisible(false);
+		};
+		fadeOut.play();
 	}
 
 	@Override
