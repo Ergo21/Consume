@@ -706,7 +706,7 @@ public class ConsumeController {
 				
 				e.setGraphics(new Rectangle(30,5));
 				e.setVisible(false);
-					
+
 				Texture t = consApp.getTexture("projectiles/Spear SS.png");
 				t.setPreserveRatio(true);
 				t.setFitWidth(30);
@@ -718,10 +718,10 @@ public class ConsumeController {
 				ePic.setPosition(e.getPosition());
 
 				if(source.<Boolean>getProperty("facingRight")){
-					ePic.translateXProperty().bind(e.translateXProperty().add(10));
+					ePic.translateXProperty().bind(e.translateXProperty().add(5));
 				}
 				else{
-					ePic.translateXProperty().bind(e.translateXProperty().add(-10));
+					ePic.translateXProperty().bind(e.translateXProperty().add(-5));
 				}			
 				ePic.translateYProperty().bind(e.translateYProperty());
 				e.aliveProperty().addListener(new ChangeListener<Boolean>(){
@@ -753,10 +753,10 @@ public class ConsumeController {
 				ePic.setProperty(Property.SUB_TYPE, element);
 				ePic.setPosition(e.getPosition());
 				if(source.<Boolean>getProperty("facingRight")){
-					ePic.translateXProperty().bind(e.translateXProperty().add(10));
+					ePic.translateXProperty().bind(e.translateXProperty().add(5));
 				}
 				else{
-					ePic.translateXProperty().bind(e.translateXProperty().add(10));
+					ePic.translateXProperty().bind(e.translateXProperty().add(-5));
 				}			
 				ePic.translateYProperty().bind(e.translateYProperty());
 				e.aliveProperty().addListener(new ChangeListener<Boolean>(){
