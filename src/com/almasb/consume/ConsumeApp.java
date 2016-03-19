@@ -911,7 +911,6 @@ public class ConsumeApp extends GameApplication {
 		if (!playerDied){
 			player.setProperty("stunned", true);
 			playerDied = true;
-			physics.resetLevel();
 			getTimerManager().runOnceAfter(this::changeLevel, Duration.seconds(0.5));
 		}
 	}

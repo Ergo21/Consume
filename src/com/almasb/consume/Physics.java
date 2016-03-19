@@ -12,7 +12,6 @@ public class Physics {
 
 	private ConsumeApp app;
 	private List<Entity> platforms;
-	private int curLev = -1;
 	private HashMap<Integer, HashMap<Integer, Entity>> grid;
 	
 	public Physics(ConsumeApp app) {
@@ -21,32 +20,15 @@ public class Physics {
 		grid = new HashMap<>();
 	}
 	
-	public void resetLevel(){
-		curLev = -1;
-	}
-	
 	private void updatePlatforms(){
 		List<Entity> nPla = app.getSceneManager().getEntities(Type.PLATFORM);
 		if(nPla == null || nPla.isEmpty()){
 			return;
 		}
 		
-		if(platforms.size() != nPla.size()){
-			platforms = nPla;
-			curLev = app.playerData.getCurrentLevel();
-			gridPlatforms();
-			return;
-		}
-		else{
-			for(Entity e : nPla){
-				if(!platforms.contains(e)){
-					platforms = nPla;
-					curLev = app.playerData.getCurrentLevel();
-					gridPlatforms();
-					return;
-				}
-			}
-		}
+		platforms = nPla;
+		gridPlatforms();
+		app.getSceneManager().setPlatformsChanged(false);
 	}
 
 	private void gridPlatforms(){
@@ -162,7 +144,7 @@ public class Physics {
 	 * @return
 	 */
 	public boolean moveX(Entity e, int value) {
-		if(curLev != app.playerData.getCurrentLevel()){
+		if(app.getSceneManager().getPlatformsChanged()){
 			updatePlatforms();
 		}
 		
@@ -193,7 +175,7 @@ public class Physics {
 	}
 
 	public void moveY(Entity e, int value) {
-		if(curLev != app.playerData.getCurrentLevel()){
+		if(app.getSceneManager().getPlatformsChanged()){
 			updatePlatforms();
 		}
 		
