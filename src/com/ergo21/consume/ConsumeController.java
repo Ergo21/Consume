@@ -351,13 +351,13 @@ public class ConsumeController {
 			consApp.getTimerManager().runOnceAfter(() -> slashed = false, Config.CONSUME_DECAY.multiply(2));
 			slashed = true;
 			
-			e.setVisible(true);
+			e.setVisible(false);
 			e.setCollidable(true);
 			//e.setPosition(e.getPosition().add(4, 0));
 			e.setPosition(consApp.player.getPosition());
 			e.setGraphics(new Rectangle(0, 0, consApp.player.getWidth(), consApp.player.getHeight()));
 			e.setProperty(Property.ENABLE_GRAVITY, false);
-			e.addControl(new KnifeControl(consApp.player));
+			e.addControl(new KnifeControl(consApp.player, 5, 30));
 			break;
 		}
 		case FIRE: {
@@ -784,7 +784,7 @@ public class ConsumeController {
 			e.setPosition(source.getPosition());
 			e.setGraphics(new Rectangle(0, 0, source.getWidth(), source.getHeight()));
 			e.setProperty(Property.ENABLE_GRAVITY, false);
-			e.addControl(new KnifeControl(source));
+			e.addControl(new KnifeControl(source, 5, 20));
 			break;
 		}
 		case FIRE: {

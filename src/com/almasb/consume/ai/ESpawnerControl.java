@@ -21,6 +21,7 @@ public class ESpawnerControl extends AbstractControl {
 	private ArrayList<Pair<Pair<Entity,Entity>, Boolean>> enemies;
 	private int maxEnemies;
 	private long countDown;
+	private boolean generated = false;
 	
 	public ESpawnerControl(ConsumeApp cApp, Function<Point2D, Pair<Entity,Entity>> sMethod, int maxEne) {
 		consApp = cApp;
@@ -41,14 +42,21 @@ public class ESpawnerControl extends AbstractControl {
 	}
 	
 	public void actualUpdate(Entity entity, long now) {
+		if(!generated){
+			while(enemies.size() < maxEnemies){
+				enemies.add(generateEnemy());
+			}
+			generated = true;
+		}
+		
 		for(Pair<Pair<Entity,Entity>, Boolean> p : enemies){
 			if(!p.getKey().getKey().isAlive() && p.getValue()){
 				consApp.getTimerManager().runOnceAfter(() -> enemies.remove(p), Duration.seconds(0.01));
 			}
 		}
 		
-		if(enemies.size() < maxEnemies*2){
-			enemies.add(generateEnemy());
+		if(enemies.isEmpty()){
+			entity.fireFXGLEvent(new FXGLEvent(Event.DEATH));
 		}
 		
 		int spawned = 0;
@@ -91,8 +99,8 @@ public class ESpawnerControl extends AbstractControl {
 	}
 
 	private boolean isTargetInRange() {
-		double difX = consApp.player.getPosition().getX() - entity.getPosition().getX();
-		double difY = consApp.player.getPosition().getY() - entity.getPosition().getY();
+		double difX = consApp.camera.getPosition().getX() - entity.getPosition().getX();
+		double difY = consApp.camera.getPosition().getY() - entity.getPosition().getY();
 		return(((difX > 380 && difX < 460) || (difX < -340 && difX > -420)) &&
 			(difY < 200 && difY > -200));
 		

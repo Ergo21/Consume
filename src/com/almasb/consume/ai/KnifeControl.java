@@ -14,10 +14,14 @@ public class KnifeControl extends AbstractControl {
 	private Entity source;
 	private long created;
 	private int curStartDif = 0;
+	private int maxDif;
+	private int speed;
 
-	public KnifeControl(Entity source) {
+	public KnifeControl(Entity source, int spd, int mDis) {
 		this.source = source;
 		created = 0;
+		speed = Math.abs(spd);
+		maxDif = Math.abs(mDis);
 	}
 
 	@Override
@@ -43,15 +47,20 @@ public class KnifeControl extends AbstractControl {
 			PhysicsControl pcc = source.getControl(PhysicsControl.class);
 			if ((boolean) source.getProperty("facingRight")) {
 				entity.setPosition(nPos.add(curStartDif, 0));
-				pc.moveX((int)pcc.getVelocity().getX() + 1);
+				if(curStartDif < maxDif){
+					pc.moveX((int)pcc.getVelocity().getX() + speed);
+				}
+				
 			} else {
 				entity.setPosition(nPos.add(-curStartDif, 0));
-				pc.moveX((int)pcc.getVelocity().getX() - 1);
+				if(curStartDif < maxDif){
+					pc.moveX((int)pcc.getVelocity().getX() - speed);
+				}
 			}
 			
 			//pc.moveY((int)(nPos.getY() - entity.getPosition().getY()));
-			if(curStartDif < 20){
-				curStartDif++;
+			if(curStartDif < maxDif){
+				curStartDif += speed;
 			}
 			
 			//entity.setPosition(nPos);

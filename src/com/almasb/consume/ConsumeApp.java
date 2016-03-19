@@ -75,6 +75,7 @@ public class ConsumeApp extends GameApplication {
 
 	public Entity player;
 	public Player playerData;
+	public Entity camera;
 
 	public Physics physics = new Physics(this);
 	public EntitySpawner eSpawner;
@@ -151,10 +152,32 @@ public class ConsumeApp extends GameApplication {
 	@Override
 	protected void initAssets() throws Exception {
 		assets = new HashMap<String, Texture>();
+		
+		printMemoryUsage("Assets Init");
 		/*if(assets == null){
 			//assets = getAssetManager().cache();
 			//assets.logCached();
 		}*/
+	}
+	
+	private long lastMemory = 0;
+	public void printMemoryUsage(String label){
+		Runtime run = Runtime.getRuntime();
+		
+		long aMem = run.totalMemory();
+		long fMem = run.freeMemory();
+		long uMem = aMem - fMem;
+		int  cMem = (int)uMem - (int)lastMemory;
+		lastMemory = uMem;
+		
+		System.out.println(label + " {");
+		System.out.println("Free memory: " + fMem);
+		System.out.println("Allocated memory: " + aMem);
+		System.out.println("Using memory: " + uMem);
+		//System.out.println("Max memory: " + run.maxMemory());
+		System.out.println("Used memory changed: " + cMem);
+		System.out.println("}");
+		System.out.println();
 	}
 
 	@Override
@@ -179,10 +202,13 @@ public class ConsumeApp extends GameApplication {
 		}
 		
 		eSpawner = new EntitySpawner(this);
+		
+		printMemoryUsage("Game Init");
 
 		initLevels();
-
+		printMemoryUsage("Levels Init");
 		loadLevel(playerData.getCurrentLevel());
+		printMemoryUsage("Levels Load");
 	}
 
 	@Override
@@ -216,6 +242,8 @@ public class ConsumeApp extends GameApplication {
 				a.setProperty("inDoor", false);
 			}
 		});
+		
+		printMemoryUsage("Physics Init");
 	}
 
 	//private Text debug = new Text();
@@ -278,7 +306,8 @@ public class ConsumeApp extends GameApplication {
         soundManager.playBackgroundMusic();
 
         indiLoop = new IndependentLoop(this);
-        indiLoop.start();
+        //indiLoop.start();
+		printMemoryUsage("UI Init");
 	}
 
 	private void initLevels() {
@@ -514,7 +543,12 @@ public class ConsumeApp extends GameApplication {
 					}
 				}, KeyCode.O);
 				
-				
+				getInputManager().addAction(new UserAction("Memory test"){
+					@Override
+					protected void onActionBegin() {
+						printMemoryUsage("Manual memory test");
+					}
+				}, KeyCode.M);
 	}
 
 	@Override
@@ -624,8 +658,11 @@ public class ConsumeApp extends GameApplication {
 	}
 
 	private void loadLevel(int lev) {
+		printMemoryUsage("Load Level Begin");
 	    getSceneManager().getEntities().forEach(getSceneManager()::removeEntity);
+		printMemoryUsage("Load Level After remove");
 		Level level = parser.parse(lev);
+		printMemoryUsage("Load Level After parse");
 		spawnPoint = level.getSpawnPoint();
 		limits = new Pair<Point2D, Point2D>(level.getUpperLeftLimit(), level.getLowerRightLimit());
 
@@ -647,15 +684,19 @@ public class ConsumeApp extends GameApplication {
 			}
 
 		}
+		
+		printMemoryUsage("Load Level After add");
 
 		if(gScene != null){
 			gScene.endScene();
 		}
 
+		printMemoryUsage("Load Level Before Player");
 		// add player
 		initPlayer(spawnPoint);
 		playerDied = false;
 		
+		printMemoryUsage("Load Level End");
 	}
 
 	public void changeLevel() {
@@ -783,7 +824,7 @@ public class ConsumeApp extends GameApplication {
 	//Entity powerStatus;
 
 	private void initPlayer(Point2D point) {
-
+		printMemoryUsage("Init player begin");
 		player = new Entity(Type.PLAYER);
 		
 		player.setPosition(point.getX(), point.getY()).setCollidable(true)
@@ -799,7 +840,9 @@ public class ConsumeApp extends GameApplication {
 
 		player.addFXGLEventHandler(Event.PLAYER_DEATH, this::playerDied);
 
-		Entity camera = Entity.noType();
+		printMemoryUsage("Init player 1");
+		
+		camera = Entity.noType();
 		double camX = player.getPosition().getX();
 		double camY = player.getPosition().getY();
 		if(camX < limits.getKey().getX() + 320){
@@ -863,12 +906,16 @@ public class ConsumeApp extends GameApplication {
 		
 		getSceneManager().bindViewportOrigin(camera, 320, 180);
 		
+		printMemoryUsage("Init player 2");
+		
 		Entity pPicBox = new Entity(Type.PLAYER_PIC_BOX);
 		pPicBox.setCollidable(false);
 		if(Config.RELEASE){
 			if(playAni == null){
+				printMemoryUsage("Before Animated player control");
 				playAni = new AnimatedPlayerControl(player, playerData, getPlayerImages(), getAssetManager().
-						loadTexture("spritesheets/player/Shared SS.png"));
+						loadTexture("spritesheets/player/Player SS.png"));
+				printMemoryUsage("After Animated player control");
 			}
 			else{
 				playAni.setPlayer(player);
@@ -885,6 +932,7 @@ public class ConsumeApp extends GameApplication {
 		pPicBox.translateXProperty().bind(player.translateXProperty().add(pPicBox.getTranslateX()));
 		pPicBox.translateYProperty().bind(player.translateYProperty().add(pPicBox.getTranslateY()));
 
+		printMemoryUsage("Init player 3");
 		/*powerStatus = Entity.noType();
 		powerStatus.translateXProperty().bind(player.translateXProperty());
 		powerStatus.translateYProperty().bind(player.translateYProperty().subtract(40));
@@ -895,13 +943,14 @@ public class ConsumeApp extends GameApplication {
 		getSceneManager().addEntities(powerStatus);*/
 
 		getSceneManager().addEntities(player, pPicBox, camera);
+		printMemoryUsage("Init player end");
 	}
 
-	private HashMap<Element, Texture> getPlayerImages() {
-		HashMap<Element, Texture> pTex = new HashMap<Element, Texture>();
-		for(Element el : Types.Element.values()){
-			pTex.put(el, getAssetManager().
-					loadTexture("spritesheets/player/" + el.toString() + " SS.png"));
+	private HashMap<Element, Integer> getPlayerImages() {
+		HashMap<Element, Integer> pTex = new HashMap<Element, Integer>();
+		Element[] eles = Types.Element.values();
+		for(int i = 0; i < eles.length; i++){
+			pTex.put(eles[i], 1500*i);
 		}
 		
 		return pTex;
@@ -913,6 +962,10 @@ public class ConsumeApp extends GameApplication {
 			playerDied = true;
 			getTimerManager().runOnceAfter(this::changeLevel, Duration.seconds(0.5));
 		}
+	}
+	
+	public void resetWorld(){
+		playAni = null;
 	}
 
 	private void activateBarrier(Entity block) {

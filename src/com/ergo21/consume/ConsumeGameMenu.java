@@ -156,6 +156,7 @@ public final class ConsumeGameMenu extends FXGLMenu {
 					consApp.soundManager.setBackgroundMusic(FileNames.THEME_MUSIC);
 		        	consApp.soundManager.getBackgroundMusic().setCycleCount(Integer.MAX_VALUE);
 		        	consApp.soundManager.playBackgroundMusic();
+		        	consApp.resetWorld();
 
 		        	itemExit.fireEvent(new MenuEvent(MenuEvent.EXIT));
 

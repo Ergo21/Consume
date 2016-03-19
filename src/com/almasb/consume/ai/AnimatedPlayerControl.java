@@ -43,87 +43,72 @@ public class AnimatedPlayerControl implements Control {
 	}
 
 
-	private HashMap<Element, HashMap<AnimationChannel, Texture>> elementAnimations = new HashMap<>();
-	private HashMap<AnimationChannel, Texture> sharedAnimations = new HashMap<>();
+	private HashMap<Element, Integer> elementLocation;
+	private HashMap<AnimationChannel, Double> animationLength;
+	private Texture playerSS;
 	private Entity player;
 	private Player playerData;
 	
+	private long lastMemory = 0;
+	public void printMemoryUsage(String label){
+		Runtime run = Runtime.getRuntime();
+		
+		long aMem = run.totalMemory();
+		long fMem = run.freeMemory();
+		long uMem = aMem - fMem;
+		int  cMem = (int)uMem - (int)lastMemory;
+		lastMemory = uMem;
+		
+		System.out.println(label + " {");
+		System.out.println("Free memory: " + fMem);
+		System.out.println("Allocated memory: " + aMem);
+		System.out.println("Using memory: " + uMem);
+		//System.out.println("Max memory: " + run.maxMemory());
+		System.out.println("Used memory changed: " + cMem);
+		System.out.println("}");
+		System.out.println();
+	}
 
-	public AnimatedPlayerControl(Entity p, Player pD, HashMap<Element, Texture> hashMap, Texture sharedSS) {
+	public AnimatedPlayerControl(Entity p, Player pD, HashMap<Element, Integer> eL, Texture pSS) {
+		printMemoryUsage("Start APC");
 		player = p;
 		playerData = pD;
+		playerSS = pSS;
+		elementLocation = eL;
+		animationLength = new HashMap<>();
 		
-		for(Element el : hashMap.keySet()){
-			HashMap<AnimationChannel, Texture> ani = new HashMap<>();
-			for(AnimationChannel ac : AnimationChannel.values()){
-				switch(ac){
-					case IDLE:{
-						ani.put(ac, 
-								hashMap.get(el).subTexture(ac.area).
-									toStaticAnimatedTexture(ac.frames, Duration.seconds(1)));
-						break;
-					}
-					case MOVE:{
-						ani.put(ac, 
-								hashMap.get(el).subTexture(ac.area).
-									toStaticAnimatedTexture(ac.frames, Duration.seconds(1)));
-						break;
-					}
-					case MATK:{
-						ani.put(ac, 
-								hashMap.get(el).subTexture(ac.area));
-						break;
-					}
-					case HIT:{
-						ani.put(ac, 
-								hashMap.get(el).subTexture(ac.area).
-									toStaticAnimatedTexture(ac.frames, Duration.seconds(1)));
-						break;
-					}
-					case ATK:{
-						if(el == Element.EARTH){
-							ani.put(ac, 
-									hashMap.get(el).subTexture(AnimationChannel.EARTH_ATK.area));
-						}
-						else{
-							ani.put(ac, 
-									hashMap.get(el).subTexture(ac.area));
-						}
-						break;
-					}
-					case JUMP:{
-						ani.put(ac, 
-								hashMap.get(el).subTexture(ac.area).
-									toStaticAnimatedTexture(ac.frames, Duration.seconds(1)));
-						break;
-					}
-					case JATK:{
-						if(el == Element.EARTH){
-							ani.put(ac, 
-									hashMap.get(el).subTexture(AnimationChannel.EARTH_JATK.area));
-						}
-						else{
-							ani.put(ac, 
-									hashMap.get(el).subTexture(ac.area).
-										toStaticAnimatedTexture(ac.frames, Duration.seconds(1)));
-						}
-						break;
-					}
-					default:
+		printMemoryUsage("Assigned APC");
+		/*ani.put(ac, 
+				hashMap.get(el).subTexture(ac.area).
+				toStaticAnimatedTexture(ac.frames, Duration.seconds(1)));*/
+		
+		for(AnimationChannel ac : AnimationChannel.values()){
+			switch(ac){
+				case IDLE:
+				case MOVE:
+				case HIT:
+				case JUMP:
+				case JATK:
+				
+				case EAT:
+				case HOLD:{
+					animationLength.put(ac, 1.0);
+					break;
+				}
+				case ATK:
+				case EARTH_ATK:
+				case EARTH_JATK:
+				case MATK:
+				case CLIMB:{
+					animationLength.put(ac, 0.5);
 					break;
 				}
 			}
-			elementAnimations.put(el, ani);
 		}
 		
-		sharedAnimations.put(AnimationChannel.HOLD, 
-				sharedSS.subTexture(AnimationChannel.HOLD.area).
-					toStaticAnimatedTexture(AnimationChannel.HOLD.frames, Duration.seconds(1)));
-		sharedAnimations.put(AnimationChannel.CLIMB, 
-				sharedSS.subTexture(AnimationChannel.CLIMB.area).
-					toStaticAnimatedTexture(AnimationChannel.CLIMB.frames, Duration.seconds(0.5)));
-		sharedAnimations.put(AnimationChannel.EAT, 
-				sharedSS.subTexture(AnimationChannel.EAT.area));
+		storeAnimations();
+		
+		printMemoryUsage("End APC");
 	}
 
 	@Override
@@ -147,14 +132,14 @@ public class AnimatedPlayerControl implements Control {
 		PhysicsControl pc = player.getControl(PhysicsControl.class);
 		if (pc != null) {
 			if(player.<Boolean> getProperty("stunned")){
-				t = getTexture(AnimationChannel.HIT);
+				t = getTexture(AnimationChannel.HIT, playerData.getElement());
 				t.setPreserveRatio(true);
 				t.setTranslateX(-30);
 				t.setTranslateY(-40);
 				t.setFitHeight(75);	
 			}
 			else if(player.<Boolean> getProperty("eating")){
-				t = getTexture(AnimationChannel.EAT);
+				t = getTexture(AnimationChannel.EAT, playerData.getElement());
 				t.setPreserveRatio(true);
 				t.setTranslateX(-30);
 				t.setTranslateY(-40);
@@ -162,10 +147,10 @@ public class AnimatedPlayerControl implements Control {
 			}
 			else if(player.<Boolean> getProperty("climb")){
 				if(player.<Boolean> getProperty("climbing")){
-					t = getTexture(AnimationChannel.CLIMB);
+					t = getTexture(AnimationChannel.CLIMB, playerData.getElement());
 				}
 				else{
-					t = getTexture(AnimationChannel.HOLD);
+					t = getTexture(AnimationChannel.HOLD, playerData.getElement());
 				}
 				t.setPreserveRatio(true);
 				t.setTranslateX(-30);
@@ -174,10 +159,20 @@ public class AnimatedPlayerControl implements Control {
 			}
 			else if(player.<Boolean> getProperty("jumping")){
 				if(player.<Boolean> getProperty("attacking")){
-					t = getTexture(AnimationChannel.JATK);
+					if(playerData.getElement() == Element.EARTH){
+						t = getTexture(AnimationChannel.EARTH_JATK, playerData.getElement());
+					}
+					else{
+						t = getTexture(AnimationChannel.JATK, playerData.getElement());
+					}
 				}
 				else{
-					t = getTexture(AnimationChannel.JUMP);
+					if(playerData.getElement() == Element.NEUTRAL && playerData.getWeaponThrown()){
+						t = getTexture(AnimationChannel.JUMP, Element.CONSUME);
+					}
+					else{
+						t = getTexture(AnimationChannel.JUMP, playerData.getElement());
+					}
 				}
 				t.setPreserveRatio(true);
 				t.setTranslateX(-31);
@@ -186,10 +181,15 @@ public class AnimatedPlayerControl implements Control {
 			}
 			else if (pc.getVelocity().getX() != 0) {
 				if(player.<Boolean> getProperty("attacking")){
-					t = getTexture(AnimationChannel.MATK);
+					t = getTexture(AnimationChannel.MATK, playerData.getElement());
 				}
 				else{
-					t = getTexture(AnimationChannel.MOVE);
+					if(playerData.getElement() == Element.NEUTRAL && playerData.getWeaponThrown()){
+						t = getTexture(AnimationChannel.MOVE, Element.CONSUME);
+					}
+					else{
+						t = getTexture(AnimationChannel.MOVE, playerData.getElement());
+					}
 				}
 				t.setPreserveRatio(true);
 				t.setTranslateX(-30);
@@ -197,14 +197,24 @@ public class AnimatedPlayerControl implements Control {
 				t.setFitHeight(75);	
 			} 
 			else if(player.<Boolean> getProperty("attacking")){
-				t = getTexture(AnimationChannel.ATK);
+				if(playerData.getElement() == Element.EARTH){
+					t = getTexture(AnimationChannel.EARTH_ATK, playerData.getElement());
+				}
+				else{
+					t = getTexture(AnimationChannel.ATK, playerData.getElement());
+				}
 				t.setPreserveRatio(true);
 				t.setTranslateX(-30);
 				t.setTranslateY(-40);
 				t.setFitHeight(75);	
 			}
 			else {
-				t = getTexture(AnimationChannel.IDLE);
+				if(playerData.getElement() == Element.NEUTRAL && playerData.getWeaponThrown()){
+					t = getTexture(AnimationChannel.IDLE, Element.CONSUME);
+				}
+				else{
+					t = getTexture(AnimationChannel.IDLE, playerData.getElement());
+				}
 				t.setPreserveRatio(true);
 				t.setTranslateX(-30);
 				t.setTranslateY(-40);
@@ -220,62 +230,86 @@ public class AnimatedPlayerControl implements Control {
 		return t;
 	}
 	
-	private Texture getTexture(AnimationChannel ac){
-		if(curTexVal != null && curTexVal.getKey() == playerData.getElement() && curTexVal.getValue() == ac && curTex != null){
+	private HashMap<AnimationChannel, HashMap<Element, Texture>> storedAnim = new HashMap<>();
+	
+	private Texture getTexture(AnimationChannel ac, Element el){
+		if(curTexVal != null && curTexVal.getKey() == el && curTexVal.getValue() == ac && curTex != null){
 			return curTex;
 		}
 		
+		curTexVal = new Pair<Element, AnimationChannel>(el, ac);
+		
+		Rectangle2D area;
+		
 		switch(ac){
 			case ATK:
-				if(playerData.getElement() == Element.EARTH){
-					curTex = elementAnimations.get(playerData.getElement()).get(AnimationChannel.ATK)
-							.toStaticAnimatedTexture(AnimationChannel.EARTH_ATK.frames, Duration.seconds(0.5));
-				}
-				else{
-					curTex = elementAnimations.get(playerData.getElement()).get(AnimationChannel.ATK)
-							.toStaticAnimatedTexture(AnimationChannel.ATK.frames, Duration.seconds(0.5));
-				}	
-				break;
-			case CLIMB:
-			case HOLD:
-				curTex = sharedAnimations.get(ac);
-				break;
-			case EAT:
-				curTex = sharedAnimations.get(ac).toStaticAnimatedTexture(ac.frames, Duration.seconds(1));
-				break;
+			case EARTH_ATK:
 			case HIT:
-				curTex = elementAnimations.get(playerData.getElement()).get(AnimationChannel.HIT);
-				break;
+			case JATK:
+			case EARTH_JATK:
+			case MATK:
+
 			case IDLE:
 			case JUMP:
 			case MOVE:
-				if(playerData.getElement() == Element.NEUTRAL && playerData.getWeaponThrown() ){
-					curTex = elementAnimations.get(Element.CONSUME).get(ac);
+				if(!storedAnim.containsKey(ac) || !storedAnim.get(ac).containsKey(el)){
+					area = new Rectangle2D(ac.area.getMinX(), ac.area.getMinY() + elementLocation.get(el), 
+													ac.area.getWidth(), ac.area.getHeight());
+				
+					curTex = playerSS.subTexture(area).toStaticAnimatedTexture(ac.frames, Duration.seconds(animationLength.get(ac)));	
 				}
 				else{
-					curTex = elementAnimations.get(playerData.getElement()).get(ac);
+					curTex = storedAnim.get(ac).get(playerData.getElement());
 				}
 				break;
-			case JATK:
-				if(playerData.getElement() == Element.EARTH){
-					curTex = elementAnimations.get(playerData.getElement()).get(ac).
-								toStaticAnimatedTexture(AnimationChannel.EARTH_JATK.frames, Duration.seconds(0.5));
+			case CLIMB:
+			case HOLD:
+			case EAT:
+				if(!storedAnim.containsKey(ac)){
+					area = new Rectangle2D(ac.area.getMinX(), (ac.area.getMinY() + 12000), 
+					ac.area.getWidth(), ac.area.getHeight());
+
+					curTex = playerSS.subTexture(area).toStaticAnimatedTexture(ac.frames, Duration.seconds(animationLength.get(ac)));	
 				}
 				else{
-					curTex = elementAnimations.get(playerData.getElement()).get(ac);
+					curTex = storedAnim.get(ac).get(storedAnim.get(ac).keySet().toArray()[0]);
 				}
-				break;
-			case MATK:
-				curTex = elementAnimations.get(playerData.getElement()).get(ac)
-							.toStaticAnimatedTexture(ac.frames, Duration.seconds(0.5));
-				break;
-			default:
 				break;
 		}
 		
-		curTexVal = new Pair<Element, AnimationChannel>(playerData.getElement(), ac);
+		
+		
+		if(isValidToStore(ac, playerData.getElement())){
+			if(!storedAnim.containsKey(ac)){
+				storedAnim.put(ac, new HashMap<Element, Texture>());
+			}
+			storedAnim.get(ac).put(playerData.getElement(), curTex);
+		}
 		
 		return curTex;
+	}
+	
+	private void storeAnimations(){
+		for(AnimationChannel ac : AnimationChannel.values()){
+			for(Element e : Element.values()){
+				if(isValidToStore(ac, e)){
+					getTexture(ac, e);
+				}
+			}
+		}
+	}
+
+	private boolean isValidToStore(AnimationChannel ac, Element el) {
+		if((ac.frames == 1 || ac == AnimationChannel.IDLE || 
+				ac == AnimationChannel.CLIMB || ac == AnimationChannel.MOVE)){
+			if(ac == AnimationChannel.HOLD || ac == AnimationChannel.CLIMB){
+				return !storedAnim.containsKey(ac);
+			}
+			else{
+				return (!storedAnim.containsKey(ac) || !storedAnim.get(ac).containsKey(el));
+			}
+		}
+		return false;
 	}
 
 	public void setPlayer(Entity play) {

@@ -370,6 +370,9 @@ public class LevelParser {
 							}
 						}
 					});
+					en.addFXGLEventHandler(Event.DEATH, event -> {
+						consApp.getSceneManager().removeEntity(en);
+					});
 					
 					level.entities.add(en);
 					
