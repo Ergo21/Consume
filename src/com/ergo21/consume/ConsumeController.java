@@ -1278,7 +1278,7 @@ public class ConsumeController {
 			e.setProperty(Property.SUB_TYPE, Element.NEUTRAL);
 		}
 		
-		e.setPosition(source.getPosition().add(12.5, source.getHeight()));
+		e.setPosition(source.getPosition().add(source.getWidth()/2, source.getHeight()));
 		e.setCollidable(true);
 		
 		Arc tA1 = new Arc(0, 0, 25, 35, 0, 180);

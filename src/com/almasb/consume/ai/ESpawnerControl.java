@@ -11,27 +11,29 @@ import com.almasb.fxgl.entity.FXGLEvent;
 import com.almasb.fxgl.time.TimerManager;
 
 import javafx.geometry.Point2D;
-import javafx.util.Duration;
 import javafx.util.Pair;
 
 public class ESpawnerControl extends AbstractControl {
 
 	private ConsumeApp consApp;
+	private Point2D spawnPoint;
 	private Function<Point2D, Pair<Entity,Entity>> spawnMethod;
-	private ArrayList<Pair<Pair<Entity,Entity>, Boolean>> enemies;
 	private int maxEnemies;
 	private long countDown;
+	private ArrayList<Pair<Entity,Entity>> enemies;
 	private boolean generated = false;
 	
-	public ESpawnerControl(ConsumeApp cApp, Function<Point2D, Pair<Entity,Entity>> sMethod, int maxEne) {
+	public ESpawnerControl(ConsumeApp cApp, Point2D spPoi, Function<Point2D, Pair<Entity,Entity>> sMethod, int maxEne) {
 		consApp = cApp;
+		spawnPoint = spPoi;
 		spawnMethod = sMethod;
 		maxEnemies = maxEne;
 		countDown = 0;
-		enemies = new ArrayList<Pair<Pair<Entity,Entity>, Boolean>>();
+		enemies = new ArrayList<>();
 	}
 
 	private int frames = 10;
+	
 	@Override
 	public void onUpdate(Entity entity, long now){
 		frames++;
@@ -42,55 +44,27 @@ public class ESpawnerControl extends AbstractControl {
 	}
 	
 	public void actualUpdate(Entity entity, long now) {
-		if(!generated){
-			while(enemies.size() < maxEnemies){
-				enemies.add(generateEnemy());
-			}
+		if(enemies.size() == 0 && !generated){
+			generateEnemies();
 			generated = true;
 		}
-		
-		for(Pair<Pair<Entity,Entity>, Boolean> p : enemies){
-			if(!p.getKey().getKey().isAlive() && p.getValue()){
-				consApp.getTimerManager().runOnceAfter(() -> enemies.remove(p), Duration.seconds(0.01));
-			}
-		}
-		
-		if(enemies.isEmpty()){
+		else if(enemies.size() == 0){
 			entity.fireFXGLEvent(new FXGLEvent(Event.DEATH));
 		}
-		
-		int spawned = 0;
-		for(Pair<Pair<Entity,Entity>, Boolean> p : enemies){
-			if(p.getValue()){
-				spawned++;
-			}
-		}
-		
-		if(spawned < maxEnemies){
-			if(isTargetInRange() && now - countDown > TimerManager.secondsToNanos(1)){
-				entity.fireFXGLEvent(new FXGLEvent(Event.ENEMY_FIRED));
-				countDown = now;
-			}
-		}
-		else{
+		else if(isTargetInRange() && now - countDown > TimerManager.secondsToNanos(1)){
+			entity.fireFXGLEvent(new FXGLEvent(Event.ENEMY_FIRED));
 			countDown = now;
 		}
 	}
 	
-	private Pair<Pair<Entity,Entity>, Boolean> generateEnemy(){
-		return new Pair<Pair<Entity,Entity>, Boolean>(spawnMethod.apply(entity.getPosition()), false);
+	private void generateEnemies(){
+		for(int i = 0; i <maxEnemies; i++){
+			enemies.add(spawnMethod.apply(spawnPoint));
+		}
 	}
 	
 	public Pair<Entity,Entity> spawnEnemy(){
-		for(Pair<Pair<Entity,Entity>, Boolean> p : enemies){
-			if(!p.getValue()){
-				enemies.add(new Pair<Pair<Entity,Entity>, Boolean>(p.getKey(),true));
-				enemies.remove(p);
-				return enemies.get(enemies.size()-1).getKey();
-			}
-		}
-		
-		return null;
+		return enemies.remove(0);
 	}
 
 	@Override

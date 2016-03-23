@@ -45,6 +45,7 @@ public class MusicianControl extends AbstractControl {
 		}
 
 		if(!(boolean) entity.getProperty("jumping") && !played && isTargetInRange()){
+			entity.getControl(PhysicsControl.class).moveX(0);
 			entity.fireFXGLEvent(new FXGLEvent(Event.ENEMY_FIRED));
 		}
 		else if (now - lastJumped > TimerManager.toNanos(Config.ENEMY_JUMP_DELAY.add(Config.ENEMY_SOUND_PLAY_DELAY))) {

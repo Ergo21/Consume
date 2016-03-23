@@ -1,6 +1,5 @@
 package com.almasb.consume.ai;
 
-import java.util.Random;
 
 import com.almasb.consume.Config;
 import com.almasb.consume.Event;
@@ -18,7 +17,6 @@ import javafx.util.Duration;
 public class AnubisControl extends AbstractControl {
 
 	private Entity target;
-	private Random ran;
 	private enum BossActions {
 		NONE, MOVE, JUMP, ATTACK, JATTACK
 	}
@@ -36,7 +34,6 @@ public class AnubisControl extends AbstractControl {
 
 	public AnubisControl(ConsumeApp cA, Entity target) {
 		this.target = target;
-		ran = new Random();
 		curAction = BossActions.NONE;
 		consApp = cA;
 	}
@@ -78,7 +75,7 @@ public class AnubisControl extends AbstractControl {
 				}
 				
 				if(now - chooseDelay >= TimerManager.toNanos(Duration.seconds(0.5))){
-					switch(ran.nextInt(3)){
+					switch(consApp.getRandom().nextInt(3)){
 						case 0:{
 							curAction = BossActions.MOVE;
 							break;

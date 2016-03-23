@@ -1,7 +1,5 @@
 package com.almasb.consume.ai;
 
-import java.util.Random;
-
 import com.almasb.consume.Config;
 import com.almasb.consume.Event;
 import com.almasb.consume.Types.Property;
@@ -21,7 +19,6 @@ import javafx.util.Duration;
 public class EshuIControl extends AbstractControl {
 
 	private Entity target;
-	private Random ran;
 	private enum BossActions {
 		NONE, RETURN, JUMP, ATTACK, CATTACK, JATTACK
 	}
@@ -40,7 +37,6 @@ public class EshuIControl extends AbstractControl {
 
 	public EshuIControl(ConsumeApp cA, Entity target) {
 		this.target = target;
-		ran = new Random();
 		curAction = BossActions.NONE;
 		consApp = cA;
 		
@@ -107,7 +103,7 @@ public class EshuIControl extends AbstractControl {
 				}
 				
 				if(now - chooseDelay >= TimerManager.toNanos(Duration.seconds(1))){
-					switch(ran.nextInt(3)){
+					switch(consApp.getRandom().nextInt(3)){
 						case 0:{
 							curAction = BossActions.ATTACK;
 							break;
@@ -124,7 +120,7 @@ public class EshuIControl extends AbstractControl {
 					chooseDelay = -1;
 				}
 				else if(isTargetInRange(1.75)){
-					if(ran.nextBoolean()){
+					if(consApp.getRandom().nextBoolean()){
 						curAction = BossActions.CATTACK;
 					}
 					else{
@@ -158,7 +154,7 @@ public class EshuIControl extends AbstractControl {
 					target.setProperty("stunned", false);
 					target.getControl(PhysicsControl.class).moveX(0);
 					entity.setProperty("facingRight", target.getPosition().getX() >= entity.getPosition().getX());
-					consApp.gScene.changeScene(consApp.getAssetManager().loadText("dialogue/scene_1_2.txt"));
+					consApp.gScene.changeScene(consApp.assets.getText("dialogue/scene_1_2.txt"));
 					consApp.gScene.playScene();
 				}
 				break;

@@ -1,7 +1,7 @@
 package com.almasb.consume.ai;
 
-import java.util.Random;
 
+import com.almasb.consume.ConsumeApp;
 import com.almasb.consume.Event;
 import com.almasb.fxgl.entity.AbstractControl;
 import com.almasb.fxgl.entity.Entity;
@@ -15,8 +15,8 @@ import javafx.util.Duration;
 
 public class SandBossControl extends AbstractControl {
 
+	private ConsumeApp consApp;
 	private Entity target;
-	private Random ran;
 	private enum BossActions {
 		NONE, MERGE, FORM, BLOW, UATK
 	}
@@ -32,9 +32,9 @@ public class SandBossControl extends AbstractControl {
 	private boolean underground;
 	private int form = -1;
 
-	public SandBossControl(Entity target) {
+	public SandBossControl(ConsumeApp cA, Entity target) {
 		this.target = target;
-		ran = new Random();
+		consApp = cA;
 		curAction = BossActions.FORM;
 		underground = true;
 	}
@@ -70,7 +70,7 @@ public class SandBossControl extends AbstractControl {
 				
 				if(now - chooseDelay >= TimerManager.toNanos(Duration.seconds(1))){
 					if(underground){
-						if(ran.nextBoolean()){
+						if(consApp.getRandom().nextBoolean()){
 							curAction = BossActions.FORM;
 						}
 						else{
@@ -81,7 +81,7 @@ public class SandBossControl extends AbstractControl {
 						curAction = BossActions.MERGE;
 					}
 					else{
-						if(ran.nextBoolean()){
+						if(consApp.getRandom().nextBoolean()){
 							curAction = BossActions.MERGE;
 						}
 						else{
@@ -161,7 +161,7 @@ public class SandBossControl extends AbstractControl {
 					entity.setVisible(false);
 					underground = true;
 					if(!start){
-						switch(ran.nextInt(3)){
+						switch(consApp.getRandom().nextInt(3)){
 							case 0:{
 								curPos = startPos; //7.5 of 10
 								break;

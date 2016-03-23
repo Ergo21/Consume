@@ -1,7 +1,5 @@
 package com.almasb.consume.ai;
 
-import java.util.Random;
-
 import com.almasb.consume.Config;
 import com.almasb.consume.Event;
 import com.almasb.consume.Config.Speed;
@@ -18,7 +16,6 @@ import javafx.util.Duration;
 public class ShakaControl extends AbstractControl {
 
 	private Entity target;
-	private Random ran;
 	private enum BossActions {
 		NONE, JUMP, ATTACK, CATTACK
 	}
@@ -37,7 +34,6 @@ public class ShakaControl extends AbstractControl {
 
 	public ShakaControl(ConsumeApp cA, Entity target) {
 		this.target = target;
-		ran = new Random();
 		curAction = BossActions.NONE;
 		consApp = cA;
 	}
@@ -80,7 +76,7 @@ public class ShakaControl extends AbstractControl {
 				}
 				
 				if(now - chooseDelay >= TimerManager.toNanos(Duration.seconds(1))){
-					switch(ran.nextInt(2)){
+					switch(consApp.getRandom().nextInt(2)){
 						case 0:{
 							curAction = BossActions.ATTACK;
 							break;
@@ -93,7 +89,7 @@ public class ShakaControl extends AbstractControl {
 					chooseDelay = -1;
 				}
 				else if(isTargetInRange(1.75)){
-					if(ran.nextBoolean()){
+					if(consApp.getRandom().nextBoolean()){
 						curAction = BossActions.CATTACK;
 					}
 					else{

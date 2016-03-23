@@ -159,7 +159,7 @@ public class LevelParser {
 								en.getPosition().add(Config.BLOCK_SIZE*2, Config.BLOCK_SIZE/2)));
 						en.addFXGLEventHandler(Event.ENEMY_FIRED, event -> {
 							if(en != null && en.getControl(CollideSpawnerControl.class) != null){
-								ArrayList<Pair<Entity,Entity>> ens = en.getControl(CollideSpawnerControl.class).getEnemies();
+								ArrayList<Pair<Entity,Entity>> ens = en.getControl(CollideSpawnerControl.class).spawnEnemies();
 								for(Pair<Entity,Entity> enV : ens){
 									consApp.getSceneManager().addEntities(enV.getKey(), enV.getValue());
 								}
@@ -173,7 +173,7 @@ public class LevelParser {
 								1, en.getPosition().add(Config.BLOCK_SIZE*8, Config.BLOCK_SIZE/2)));
 						en.addFXGLEventHandler(Event.ENEMY_FIRED, event -> {
 							if(en != null && en.getControl(CollideSpawnerControl.class) != null){
-								ArrayList<Pair<Entity,Entity>> ens = en.getControl(CollideSpawnerControl.class).getEnemies();
+								ArrayList<Pair<Entity,Entity>> ens = en.getControl(CollideSpawnerControl.class).spawnEnemies();
 								consApp.gScene.setupBoss(ens.get(0), true);
 								consApp.getSceneManager().addEntities(ens.get(0).getValue());
 							}
@@ -707,19 +707,19 @@ public class LevelParser {
 			case 1:
 			case 2:{
 				if(c == 's'){
-					return new ESpawnerControl(consApp, (Function<Point2D, Pair<Entity, Entity>>) (t) -> consApp.eSpawner.spawnEloko(t), 
+					return new ESpawnerControl(consApp, spawner.getPosition(), (Function<Point2D, Pair<Entity, Entity>>) (t) -> consApp.eSpawner.spawnEloko(t), 
 											1);
 				}
 				else if (c == 'S'){
-					return new ESpawnerControl(consApp, (Function<Point2D, Pair<Entity, Entity>>) (t) -> consApp.eSpawner.spawnBKnifer(t), 
+					return new ESpawnerControl(consApp, spawner.getPosition(),  (Function<Point2D, Pair<Entity, Entity>>) (t) -> consApp.eSpawner.spawnBKnifer(t), 
 							1);
 				}
 				else if (c == 't'){
-					return new ESpawnerControl(consApp, (Function<Point2D, Pair<Entity, Entity>>) (t) -> consApp.eSpawner.spawnBSpearEnemy(t), 
+					return new ESpawnerControl(consApp, spawner.getPosition(), (Function<Point2D, Pair<Entity, Entity>>) (t) -> consApp.eSpawner.spawnBSpearEnemy(t), 
 							1);
 				}
 				else{
-					return new ESpawnerControl(consApp, (Function<Point2D, Pair<Entity, Entity>>) (t) -> consApp.eSpawner.spawnEloko(t), 
+					return new ESpawnerControl(consApp, spawner.getPosition(), (Function<Point2D, Pair<Entity, Entity>>) (t) -> consApp.eSpawner.spawnEloko(t), 
 							1);
 				}
 			}
@@ -727,19 +727,19 @@ public class LevelParser {
 			case 4:
 			case 5:{
 				if(c == 's'){
-					return new ESpawnerControl(consApp, (Function<Point2D, Pair<Entity, Entity>>) (t) -> consApp.eSpawner.spawnScarab(t), 
+					return new ESpawnerControl(consApp, spawner.getPosition(), (Function<Point2D, Pair<Entity, Entity>>) (t) -> consApp.eSpawner.spawnScarab(t), 
 											1);
 				}
 				else if (c == 'S'){
-					return new ESpawnerControl(consApp, (Function<Point2D, Pair<Entity, Entity>>) (t) -> consApp.eSpawner.spawnLocust(t), 
+					return new ESpawnerControl(consApp, spawner.getPosition(), (Function<Point2D, Pair<Entity, Entity>>) (t) -> consApp.eSpawner.spawnLocust(t), 
 							1);
 				}
 				else if (c == 't'){
-					return new ESpawnerControl(consApp, (Function<Point2D, Pair<Entity, Entity>>) (t) -> consApp.eSpawner.spawnScorpion(t), 
+					return new ESpawnerControl(consApp, spawner.getPosition(), (Function<Point2D, Pair<Entity, Entity>>) (t) -> consApp.eSpawner.spawnScorpion(t), 
 							1);
 				}
 				else{
-					return new ESpawnerControl(consApp, (Function<Point2D, Pair<Entity, Entity>>) (t) -> consApp.eSpawner.spawnStoneEnemy(t), 
+					return new ESpawnerControl(consApp, spawner.getPosition(), (Function<Point2D, Pair<Entity, Entity>>) (t) -> consApp.eSpawner.spawnStoneEnemy(t), 
 							1);
 				}
 			}
@@ -747,19 +747,19 @@ public class LevelParser {
 			case 7:
 			case 8:{
 				if(c == 's'){
-					return new ESpawnerControl(consApp, (Function<Point2D, Pair<Entity, Entity>>) (t) -> consApp.eSpawner.spawnScarab(t), 
+					return new ESpawnerControl(consApp, spawner.getPosition(), (Function<Point2D, Pair<Entity, Entity>>) (t) -> consApp.eSpawner.spawnScarab(t), 
 											1);
 				}
 				else if (c == 'S'){
-					return new ESpawnerControl(consApp, (Function<Point2D, Pair<Entity, Entity>>) (t) -> consApp.eSpawner.spawnScorpion(t), 
+					return new ESpawnerControl(consApp, spawner.getPosition(), (Function<Point2D, Pair<Entity, Entity>>) (t) -> consApp.eSpawner.spawnScorpion(t), 
 							1);
 				}
 				else if (c == 't'){
-					return new ESpawnerControl(consApp, (Function<Point2D, Pair<Entity, Entity>>) (t) -> consApp.eSpawner.spawnBurner(t), 
+					return new ESpawnerControl(consApp, spawner.getPosition(), (Function<Point2D, Pair<Entity, Entity>>) (t) -> consApp.eSpawner.spawnBurner(t), 
 							1);
 				}
 				else{
-					return new ESpawnerControl(consApp, (Function<Point2D, Pair<Entity, Entity>>) (t) -> consApp.eSpawner.spawnIceSpirit(t), 
+					return new ESpawnerControl(consApp, spawner.getPosition(), (Function<Point2D, Pair<Entity, Entity>>) (t) -> consApp.eSpawner.spawnIceSpirit(t), 
 							1);
 				}
 			}
@@ -767,19 +767,19 @@ public class LevelParser {
 			case 10:
 			case 11:{
 				if(c == 's'){
-					return new ESpawnerControl(consApp, (Function<Point2D, Pair<Entity, Entity>>) (t) -> consApp.eSpawner.spawnMusician(t), 
+					return new ESpawnerControl(consApp, spawner.getPosition(), (Function<Point2D, Pair<Entity, Entity>>) (t) -> consApp.eSpawner.spawnMusician(t), 
 											1);
 				}
 				else if (c == 'S'){
-					return new ESpawnerControl(consApp, (Function<Point2D, Pair<Entity, Entity>>) (t) -> consApp.eSpawner.spawnDancer(t), 
+					return new ESpawnerControl(consApp, spawner.getPosition(), (Function<Point2D, Pair<Entity, Entity>>) (t) -> consApp.eSpawner.spawnDancer(t), 
 							1);
 				}
 				else if (c == 't'){
-					return new ESpawnerControl(consApp, (Function<Point2D, Pair<Entity, Entity>>) (t) -> consApp.eSpawner.spawnDog(t), 
+					return new ESpawnerControl(consApp, spawner.getPosition(), (Function<Point2D, Pair<Entity, Entity>>) (t) -> consApp.eSpawner.spawnDog(t), 
 							1);
 				}
 				else{
-					return new ESpawnerControl(consApp, (Function<Point2D, Pair<Entity, Entity>>) (t) -> consApp.eSpawner.spawnDog(t), 
+					return new ESpawnerControl(consApp, spawner.getPosition(), (Function<Point2D, Pair<Entity, Entity>>) (t) -> consApp.eSpawner.spawnDog(t), 
 							1);
 				}
 			}
@@ -787,19 +787,19 @@ public class LevelParser {
 			case 13:
 			case 14:{
 				if(c == 's'){
-					return new ESpawnerControl(consApp, (Function<Point2D, Pair<Entity, Entity>>) (t) -> consApp.eSpawner.spawnEloko(t), 
+					return new ESpawnerControl(consApp, spawner.getPosition(), (Function<Point2D, Pair<Entity, Entity>>) (t) -> consApp.eSpawner.spawnEloko(t), 
 											1);
 				}
 				else if (c == 'S'){
-					return new ESpawnerControl(consApp, (Function<Point2D, Pair<Entity, Entity>>) (t) -> consApp.eSpawner.spawnBKnifer(t), 
+					return new ESpawnerControl(consApp, spawner.getPosition(), (Function<Point2D, Pair<Entity, Entity>>) (t) -> consApp.eSpawner.spawnBKnifer(t), 
 							1);
 				}
 				else if (c == 't'){
-					return new ESpawnerControl(consApp, (Function<Point2D, Pair<Entity, Entity>>) (t) -> consApp.eSpawner.spawnBSpearEnemy(t), 
+					return new ESpawnerControl(consApp, spawner.getPosition(), (Function<Point2D, Pair<Entity, Entity>>) (t) -> consApp.eSpawner.spawnBSpearEnemy(t), 
 							1);
 				}
 				else{
-					return new ESpawnerControl(consApp, (Function<Point2D, Pair<Entity, Entity>>) (t) -> consApp.eSpawner.spawnMagician(t), 
+					return new ESpawnerControl(consApp, spawner.getPosition(), (Function<Point2D, Pair<Entity, Entity>>) (t) -> consApp.eSpawner.spawnMagician(t), 
 							1);
 				}
 			}
@@ -807,19 +807,19 @@ public class LevelParser {
 			case 16:
 			case 17:{
 				if(c == 's'){
-					return new ESpawnerControl(consApp, (Function<Point2D, Pair<Entity, Entity>>) (t) -> consApp.eSpawner.spawnIceSpirit(t), 
+					return new ESpawnerControl(consApp, spawner.getPosition(), (Function<Point2D, Pair<Entity, Entity>>) (t) -> consApp.eSpawner.spawnIceSpirit(t), 
 											1);
 				}
 				else if (c == 'S'){
-					return new ESpawnerControl(consApp, (Function<Point2D, Pair<Entity, Entity>>) (t) -> consApp.eSpawner.spawnStoneEnemy(t), 
+					return new ESpawnerControl(consApp, spawner.getPosition(), (Function<Point2D, Pair<Entity, Entity>>) (t) -> consApp.eSpawner.spawnStoneEnemy(t), 
 							1);
 				}
 				else if (c == 't'){
-					return new ESpawnerControl(consApp, (Function<Point2D, Pair<Entity, Entity>>) (t) -> consApp.eSpawner.spawnIceSpirit(t), 
+					return new ESpawnerControl(consApp, spawner.getPosition(), (Function<Point2D, Pair<Entity, Entity>>) (t) -> consApp.eSpawner.spawnIceSpirit(t), 
 							1);
 				}
 				else{
-					return new ESpawnerControl(consApp, (Function<Point2D, Pair<Entity, Entity>>) (t) -> consApp.eSpawner.spawnStoneEnemy(t), 
+					return new ESpawnerControl(consApp, spawner.getPosition(), (Function<Point2D, Pair<Entity, Entity>>) (t) -> consApp.eSpawner.spawnStoneEnemy(t), 
 							1);
 				}
 			}
@@ -827,19 +827,19 @@ public class LevelParser {
 			case 19:
 			case 20:{
 				if(c == 's'){
-					return new ESpawnerControl(consApp, (Function<Point2D, Pair<Entity, Entity>>) (t) -> consApp.eSpawner.spawnCannon(t), 
+					return new ESpawnerControl(consApp, spawner.getPosition(), (Function<Point2D, Pair<Entity, Entity>>) (t) -> consApp.eSpawner.spawnCannon(t), 
 											1);
 				}
 				else if (c == 'S'){
-					return new ESpawnerControl(consApp, (Function<Point2D, Pair<Entity, Entity>>) (t) -> consApp.eSpawner.spawnBayoneter(t), 
+					return new ESpawnerControl(consApp, spawner.getPosition(), (Function<Point2D, Pair<Entity, Entity>>) (t) -> consApp.eSpawner.spawnBayoneter(t), 
 							1);
 				}
 				else if (c == 't'){
-					return new ESpawnerControl(consApp, (Function<Point2D, Pair<Entity, Entity>>) (t) -> consApp.eSpawner.spawnRifler(t), 
+					return new ESpawnerControl(consApp, spawner.getPosition(), (Function<Point2D, Pair<Entity, Entity>>) (t) -> consApp.eSpawner.spawnRifler(t), 
 							1);
 				}
 				else{
-					return new ESpawnerControl(consApp, (Function<Point2D, Pair<Entity, Entity>>) (t) -> consApp.eSpawner.spawnBayoneter(t), 
+					return new ESpawnerControl(consApp, spawner.getPosition(), (Function<Point2D, Pair<Entity, Entity>>) (t) -> consApp.eSpawner.spawnBayoneter(t), 
 							1);
 				}
 			}
@@ -847,25 +847,25 @@ public class LevelParser {
 			case 22:
 			case 23:{
 				if(c == 's'){
-					return new ESpawnerControl(consApp, (Function<Point2D, Pair<Entity, Entity>>) (t) -> consApp.eSpawner.spawnZKnifer(t), 
+					return new ESpawnerControl(consApp, spawner.getPosition(), (Function<Point2D, Pair<Entity, Entity>>) (t) -> consApp.eSpawner.spawnZKnifer(t), 
 											1);
 				}
 				else if (c == 'S'){
-					return new ESpawnerControl(consApp, (Function<Point2D, Pair<Entity, Entity>>) (t) -> consApp.eSpawner.spawnZSpearEnemy(t), 
+					return new ESpawnerControl(consApp, spawner.getPosition(), (Function<Point2D, Pair<Entity, Entity>>) (t) -> consApp.eSpawner.spawnZSpearEnemy(t), 
 							1);
 				}
 				else if (c == 't'){
-					return new ESpawnerControl(consApp, (Function<Point2D, Pair<Entity, Entity>>) (t) -> consApp.eSpawner.spawnCharger(t), 
+					return new ESpawnerControl(consApp, spawner.getPosition(), (Function<Point2D, Pair<Entity, Entity>>) (t) -> consApp.eSpawner.spawnCharger(t), 
 							1);
 				}
 				else{
-					return new ESpawnerControl(consApp, (Function<Point2D, Pair<Entity, Entity>>) (t) -> consApp.eSpawner.spawnZKnifer(t), 
+					return new ESpawnerControl(consApp, spawner.getPosition(), (Function<Point2D, Pair<Entity, Entity>>) (t) -> consApp.eSpawner.spawnZKnifer(t), 
 							1);
 				}
 			}
 		}
 		
-		return new ESpawnerControl(consApp, (Function<Point2D, Pair<Entity, Entity>>) (t) -> consApp.eSpawner.spawnEloko(t), 
+		return new ESpawnerControl(consApp, spawner.getPosition(), (Function<Point2D, Pair<Entity, Entity>>) (t) -> consApp.eSpawner.spawnEloko(t), 
 				1);
 	}
 
@@ -890,6 +890,11 @@ public class LevelParser {
 
 		/* package-private */ Level() {
 
+		}
+		
+		public void clean(){
+			entities.clear();
+			nextLevelEntity = null;
 		}
 
 		private boolean isValid() {

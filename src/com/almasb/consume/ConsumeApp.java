@@ -18,7 +18,6 @@ import com.almasb.consume.Types.Powerup;
 import com.almasb.consume.Types.Property;
 import com.almasb.consume.Types.Type;
 import com.almasb.consume.ai.AnimatedPlayerControl;
-import com.almasb.consume.ai.DemoAnimatedPlayerControl;
 import com.almasb.consume.ai.PhysicsControl;
 import com.almasb.consume.collision.PlayerBlockHandler;
 import com.almasb.consume.collision.PlayerBossHandler;
@@ -28,6 +27,7 @@ import com.almasb.consume.collision.ProjectileBossHandler;
 import com.almasb.consume.collision.ProjectileEnemyHandler;
 import com.almasb.consume.collision.ProjectilePlayerHandler;
 import com.almasb.fxgl.GameApplication;
+import com.almasb.fxgl.asset.Assets;
 import com.almasb.fxgl.asset.SaveLoadManager;
 import com.almasb.fxgl.asset.Texture;
 import com.almasb.fxgl.entity.Entity;
@@ -69,7 +69,7 @@ import javafx.util.Pair;
 
 public class ConsumeApp extends GameApplication {
 
-	private HashMap<String, Texture> assets;
+	public Assets assets;
 	private LevelParser parser;
 	public SoundManager soundManager;
 
@@ -151,13 +151,13 @@ public class ConsumeApp extends GameApplication {
 
 	@Override
 	protected void initAssets() throws Exception {
-		assets = new HashMap<String, Texture>();
+		if(assets == null){
+			printMemoryUsage("Assets Before Init");
+			assets = getAssetManager().cache();
+			printMemoryUsage("Assets After Init");
+			assets.logCached();
+		}
 		
-		printMemoryUsage("Assets Init");
-		/*if(assets == null){
-			//assets = getAssetManager().cache();
-			//assets.logCached();
-		}*/
 	}
 	
 	private long lastMemory = 0;
@@ -182,7 +182,7 @@ public class ConsumeApp extends GameApplication {
 
 	@Override
 	protected void initGame() {
-		playerData = new Player(getAssetManager().loadText("player.txt"));
+		playerData = new Player(assets.getText("player.txt"));
 		if(newGamePlusGame){
 			playerData.getPowers().add(Element.NEUTRAL2);
 			playerData.getPowers().add(Element.FIRE);
@@ -221,7 +221,7 @@ public class ConsumeApp extends GameApplication {
 		physicsManager.addCollisionHandler(new PlayerBossHandler(this));
 		physicsManager.addCollisionHandler(new ProjectileBossHandler(this));
 		physicsManager.addCollisionHandler(new PlayerBlockHandler(this, (String scName) -> {
-			gScene.changeScene(getAssetManager().loadText(scName));
+			gScene.changeScene(assets.getText(scName));
 			gScene.playScene();
 		}));
 		physicsManager.addCollisionHandler(new ProjectilePlayerHandler(this));
@@ -250,7 +250,7 @@ public class ConsumeApp extends GameApplication {
 
 	@Override
 	protected void initUI() {
-		gScene = new GameScene(getAssetManager().loadText("dialogue/scene_0.txt"), this);
+		gScene = new GameScene(assets.getText("dialogue/scene_0.txt"), this);
 		gScene.setTranslateX(140);
 		gScene.setTranslateY(250);
 		gScene.setScaleX(1.4);
@@ -312,7 +312,7 @@ public class ConsumeApp extends GameApplication {
 
 	private void initLevels() {
 		List<LevelData> levelData = IntStream.range(0, Config.MAX_LEVELS)
-				.mapToObj(i -> new LevelData(getAssetManager().loadText("levels/level_" + i + ".txt")))
+				.mapToObj(i -> new LevelData(assets.getText("levels/level_" + i + ".txt")))
 				.collect(Collectors.toList());
 
 		parser = new LevelParser(this, levelData);
@@ -330,14 +330,14 @@ public class ConsumeApp extends GameApplication {
 				getInputManager().addAction(new UserAction("Spawn Bandit Knifer"){
 					@Override
 					protected void onActionBegin() {
-						Pair<Entity, Entity> pEn = eSpawner.spawnBKnifer(spawnPoint.add(900, -60));
+						Pair<Entity, Entity> pEn = eSpawner.spawnBKnifer(spawnPoint.add(500, -100));
 						getSceneManager().addEntities(pEn.getKey(), pEn.getValue());
 					}
 				}, KeyCode.DIGIT1);
 				getInputManager().addAction(new UserAction("Spawn Bandit Magician"){
 					@Override
 					protected void onActionBegin() {
-						Pair<Entity, Entity> pEn = eSpawner.spawnMagician(spawnPoint.add(900, -60));
+						Pair<Entity, Entity> pEn = eSpawner.spawnMagician(spawnPoint.add(500, -100));
 						getSceneManager().addEntities(pEn.getKey(), pEn.getValue());
 					}
 				}, KeyCode.DIGIT2);
@@ -351,84 +351,84 @@ public class ConsumeApp extends GameApplication {
 				getInputManager().addAction(new UserAction("Spawn Rifler"){
 					@Override
 					protected void onActionBegin() {
-						Pair<Entity, Entity> pEn = eSpawner.spawnRifler(spawnPoint.add(900, -60));
+						Pair<Entity, Entity> pEn = eSpawner.spawnRifler(spawnPoint.add(500, -100));
 						getSceneManager().addEntities(pEn.getKey(), pEn.getValue());
 					}
 				}, KeyCode.DIGIT4);
 				getInputManager().addAction(new UserAction("Spawn Bayoneter"){
 					@Override
 					protected void onActionBegin() {
-						Pair<Entity, Entity> pEn = eSpawner.spawnBayoneter(spawnPoint.add(900, -60));
+						Pair<Entity, Entity> pEn = eSpawner.spawnBayoneter(spawnPoint.add(500, -100));
 						getSceneManager().addEntities(pEn.getKey(), pEn.getValue());
 					}
 				}, KeyCode.DIGIT5);
 				getInputManager().addAction(new UserAction("Spawn Cannon"){
 					@Override
 					protected void onActionBegin() {
-						Pair<Entity, Entity> pEn = eSpawner.spawnCannon(spawnPoint.add(900, -60));
+						Pair<Entity, Entity> pEn = eSpawner.spawnCannon(spawnPoint.add(500, -100));
 						getSceneManager().addEntities(pEn.getKey(), pEn.getValue());
 					}
 				}, KeyCode.DIGIT6);
 				getInputManager().addAction(new UserAction("Spawn Dancer"){
 					@Override
 					protected void onActionBegin() {
-						Pair<Entity, Entity> pEn = eSpawner.spawnDancer(spawnPoint.add(900, -60));
+						Pair<Entity, Entity> pEn = eSpawner.spawnDancer(spawnPoint.add(500, -100));
 						getSceneManager().addEntities(pEn.getKey(), pEn.getValue());
 					}
 				}, KeyCode.DIGIT7);
 				getInputManager().addAction(new UserAction("Spawn Dog"){
 					@Override
 					protected void onActionBegin() {
-						Pair<Entity, Entity> pEn = eSpawner.spawnDog(spawnPoint.add(900, -60));
+						Pair<Entity, Entity> pEn = eSpawner.spawnDog(spawnPoint.add(500, -100));
 						getSceneManager().addEntities(pEn.getKey(), pEn.getValue());
 					}
 				}, KeyCode.DIGIT8);
 				getInputManager().addAction(new UserAction("Spawn Eloko") {
 					@Override
 					protected void onActionBegin() {
-						Pair<Entity, Entity> pEn = eSpawner.spawnEloko(spawnPoint.add(900, -60));
+						Pair<Entity, Entity> pEn = eSpawner.spawnEloko(spawnPoint.add(500, -100));
 						getSceneManager().addEntities(pEn.getKey(), pEn.getValue());
 					}
 				}, KeyCode.DIGIT9);
 				getInputManager().addAction(new UserAction("Spawn Ice Spirit"){
 					@Override
 					protected void onActionBegin() {
-						Pair<Entity, Entity> pEn = eSpawner.spawnIceSpirit(spawnPoint.add(900, -90));
+						Pair<Entity, Entity> pEn = eSpawner.spawnIceSpirit(spawnPoint.add(500, -100));
 						getSceneManager().addEntities(pEn.getKey(), pEn.getValue());
 					}
 				}, KeyCode.DIGIT0);
 				getInputManager().addAction(new UserAction("Spawn Locust") {
 					@Override
 					protected void onActionBegin() {
-						Pair<Entity, Entity> pEn = eSpawner.spawnLocust(spawnPoint.add(900, -150));
+						Pair<Entity, Entity> pEn = eSpawner.spawnLocust(spawnPoint.add(500, -100));
 						getSceneManager().addEntities(pEn.getKey(), pEn.getValue());
 					}
 				}, KeyCode.NUMPAD1);
 				getInputManager().addAction(new UserAction("Spawn Mummy"){
 					@Override
 					protected void onActionBegin() {
-						Pair<Entity, Entity> pEn = eSpawner.spawnMummy(spawnPoint.add(900, -60));
+						Pair<Entity, Entity> pEn = eSpawner.spawnMummy(spawnPoint.add(500, -100));
 						getSceneManager().addEntities(pEn.getKey(), pEn.getValue());
 					}
 				}, KeyCode.NUMPAD2);
 				getInputManager().addAction(new UserAction("Spawn Musician"){
 					@Override
 					protected void onActionBegin() {
-						Pair<Entity, Entity> pEn = eSpawner.spawnMusician(spawnPoint.add(900, -60));
+						Pair<Entity, Entity> pEn = eSpawner.spawnMusician(spawnPoint.add(500, -100));
 						getSceneManager().addEntities(pEn.getKey(), pEn.getValue());
 					}
 				}, KeyCode.NUMPAD3);
 				getInputManager().addAction(new UserAction("Spawn Scarab") {
 					@Override
 					protected void onActionBegin() {
-						Pair<Entity, Entity> pEn = eSpawner.spawnScarab(spawnPoint.add(900, -60));
+						Pair<Entity, Entity> pEn = eSpawner.spawnScarab(spawnPoint.add(500, -100));
 						getSceneManager().addEntities(pEn.getKey(), pEn.getValue());
 					}
 				}, KeyCode.NUMPAD4);
 				getInputManager().addAction(new UserAction("Spawn Scorpion"){
 					@Override
 					protected void onActionBegin() {
-						Pair<Entity, Entity> pEn = eSpawner.spawnScorpion(spawnPoint.add(900, -60));
+						Pair<Entity, Entity> pEn = eSpawner.spawnScorpion(spawnPoint.add(500, -100));
 						getSceneManager().addEntities(pEn.getKey(), pEn.getValue());
 					}
 				}, KeyCode.NUMPAD5);
@@ -443,77 +443,77 @@ public class ConsumeApp extends GameApplication {
 					@Override
 					protected void onActionBegin() {
 						//Note that this needs to be spawned in LevelParser
-						Pair<Entity, Entity> pEn = eSpawner.spawnBurner(spawnPoint.add(900, -80));
+						Pair<Entity, Entity> pEn = eSpawner.spawnBurner(spawnPoint.add(500, -100));
 						getSceneManager().addEntities(pEn.getKey(), pEn.getValue());
 					}
 				}, KeyCode.NUMPAD7);
 				getInputManager().addAction(new UserAction("Spawn Zulu Knifer"){
 					@Override
 					protected void onActionBegin() {
-						Pair<Entity, Entity> pEn = eSpawner.spawnZKnifer(spawnPoint.add(900, -60));
+						Pair<Entity, Entity> pEn = eSpawner.spawnZKnifer(spawnPoint.add(500, -100));
 						getSceneManager().addEntities(pEn.getKey(), pEn.getValue());
 					}
 				}, KeyCode.NUMPAD8);
 				getInputManager().addAction(new UserAction("Spawn Zulu Charger") {
 					@Override
 					protected void onActionBegin() {
-						Pair<Entity, Entity> pEn = eSpawner.spawnCharger(spawnPoint.add(900, -60));
+						Pair<Entity, Entity> pEn = eSpawner.spawnCharger(spawnPoint.add(500, -100));
 						getSceneManager().addEntities(pEn.getKey(), pEn.getValue());
 					}
 				}, KeyCode.NUMPAD9);
 				getInputManager().addAction(new UserAction("Spawn Zulu Spear Thrower"){
 					@Override
 					protected void onActionBegin() {
-						Pair<Entity, Entity> pEn = eSpawner.spawnZSpearEnemy(spawnPoint.add(900, -60));
+						Pair<Entity, Entity> pEn = eSpawner.spawnZSpearEnemy(spawnPoint.add(500, -100));
 						getSceneManager().addEntities(pEn.getKey(), pEn.getValue());
 					}
 				}, KeyCode.NUMPAD0);
 				getInputManager().addAction(new UserAction("Spawn Anubis Boss") {
 					@Override
 					protected void onActionBegin() {
-						Pair<Entity, Entity> pEn = eSpawner.spawnAnubisBoss(spawnPoint.add(900, -60));
+						Pair<Entity, Entity> pEn = eSpawner.spawnAnubisBoss(spawnPoint.add(500, -100));
 						getSceneManager().addEntities(pEn.getKey(), pEn.getValue());
 					}
 				}, KeyCode.F1);
 				getInputManager().addAction(new UserAction("Spawn Eshu Boss") {
 					@Override
 					protected void onActionBegin() {
-						Pair<Entity, Entity> pEn = eSpawner.spawnEshuBoss(spawnPoint.add(900, -60));
+						Pair<Entity, Entity> pEn = eSpawner.spawnEshuBoss(spawnPoint.add(500, -100));
 						getSceneManager().addEntities(pEn.getKey(), pEn.getValue());
 					}
 				}, KeyCode.F2);
 				getInputManager().addAction(new UserAction("Spawn Gentleman Boss") {
 					@Override
 					protected void onActionBegin() {
-						Pair<Entity, Entity> pEn = eSpawner.spawnGentlemanBoss(spawnPoint.add(900, -60));
+						Pair<Entity, Entity> pEn = eSpawner.spawnGentlemanBoss(spawnPoint.add(500, -100));
 						getSceneManager().addEntities(pEn.getKey(), pEn.getValue());
 					}
 				}, KeyCode.F3);
 				getInputManager().addAction(new UserAction("Spawn Kibo Boss") {
 					@Override
 					protected void onActionBegin() {
-						Pair<Entity, Entity> pEn = eSpawner.spawnKiboBoss(spawnPoint.add(900, -60));
+						Pair<Entity, Entity> pEn = eSpawner.spawnKiboBoss(spawnPoint.add(500, -100));
 						getSceneManager().addEntities(pEn.getKey(), pEn.getValue());
 					}
 				}, KeyCode.F3);
 				getInputManager().addAction(new UserAction("Spawn Sand Elephant Boss") {
 					@Override
 					protected void onActionBegin() {
-						Pair<Entity, Entity> pEn = eSpawner.spawnSandBoss(spawnPoint.add(900, Config.BLOCK_SIZE/2 -40));
+						Pair<Entity, Entity> pEn = eSpawner.spawnSandBoss(spawnPoint.add(500, -60));// Config.BLOCK_SIZE/2 -40));
 						getSceneManager().addEntities(pEn.getKey(), pEn.getValue());
 					}
 				}, KeyCode.F4);
 				getInputManager().addAction(new UserAction("Spawn Shaka Boss") {
 					@Override
 					protected void onActionBegin() {
-						Pair<Entity, Entity> pEn = eSpawner.spawnShakaBoss(spawnPoint.add(900, -60));
+						Pair<Entity, Entity> pEn = eSpawner.spawnShakaBoss(spawnPoint.add(500, -100));
 						getSceneManager().addEntities(pEn.getKey(), pEn.getValue());
 					}
 				}, KeyCode.F5);
 				getInputManager().addAction(new UserAction("Spawn Shango Boss") {
 					@Override
 					protected void onActionBegin() {
-						Pair<Entity, Entity> pEn = eSpawner.spawnShangoBoss(spawnPoint.add(900, -40));
+						Pair<Entity, Entity> pEn = eSpawner.spawnShangoBoss(spawnPoint.add(500, -100));
 						getSceneManager().addEntities(pEn.getKey(), pEn.getValue());
 					}
 				}, KeyCode.F6);
@@ -697,6 +697,8 @@ public class ConsumeApp extends GameApplication {
 		playerDied = false;
 		
 		printMemoryUsage("Load Level End");
+		
+		level.clean();
 	}
 
 	public void changeLevel() {
@@ -913,8 +915,8 @@ public class ConsumeApp extends GameApplication {
 		if(Config.RELEASE){
 			if(playAni == null){
 				printMemoryUsage("Before Animated player control");
-				playAni = new AnimatedPlayerControl(player, playerData, getPlayerImages(), getAssetManager().
-						loadTexture("spritesheets/player/Player SS.png"));
+				playAni = new AnimatedPlayerControl(player, playerData, getPlayerImages(),
+						assets.getTexture("spritesheets/player/Player SS.png"));
 				printMemoryUsage("After Animated player control");
 			}
 			else{
@@ -923,10 +925,9 @@ public class ConsumeApp extends GameApplication {
 			pPicBox.addControl(playAni);
 		}
 		else{
-			Texture t = getTexture("MC Unarmed.png");
-			pPicBox.addControl(new DemoAnimatedPlayerControl(t));
-			t.setViewport(new Rectangle2D(150, 0, 30, 30));
-			pPicBox.setGraphics(t);
+			Rectangle r = new Rectangle(40, 20);
+			r.setFill(Color.GREEN);
+			pPicBox.setGraphics(r);
 		}
 		
 		pPicBox.translateXProperty().bind(player.translateXProperty().add(pPicBox.getTranslateX()));
@@ -966,6 +967,7 @@ public class ConsumeApp extends GameApplication {
 	
 	public void resetWorld(){
 		playAni = null;
+		getSceneManager().getEntities().forEach(getSceneManager()::removeEntity);
 	}
 
 	private void activateBarrier(Entity block) {
@@ -1057,10 +1059,7 @@ public class ConsumeApp extends GameApplication {
 	}
 	
 	public Texture getTexture(String address) {
-		if(assets.get(address) == null){
-			assets.put(address, getAssetManager().loadTexture(address));
-		}
-		return assets.get(address).copy();
+		return assets.getTexture(address);
 	}
 
 	private ArrayList<Entity> collectBarriers(Entity block){

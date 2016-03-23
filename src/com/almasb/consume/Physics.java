@@ -26,12 +26,16 @@ public class Physics {
 			return;
 		}
 		
+		platforms.clear();
 		platforms = nPla;
 		gridPlatforms();
 		app.getSceneManager().setPlatformsChanged(false);
 	}
 
 	private void gridPlatforms(){
+		for(Integer k : grid.keySet()){
+			grid.get(k).clear();
+		}
 		grid.clear();
 		
 		for(Entity e : platforms){

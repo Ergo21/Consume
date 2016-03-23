@@ -15,52 +15,39 @@ public class CollideSpawnerControl extends AbstractControl {
 	private int numEnemies;
 	private Point2D[] spawnPoints;
 	private ArrayList<Pair<Entity,Entity>> enemies;
+	private boolean generated = false;
 	
 	public CollideSpawnerControl(Function<Point2D, Pair<Entity,Entity>> sMethod, int numEne, Point2D... s) {
 		spawnMethod = sMethod;
 		numEnemies = numEne;
 		spawnPoints = s;
-		enemies = new ArrayList<Pair<Entity,Entity>>();
-		spawnEnemy();
+		enemies = new ArrayList<>();
 	}
 
-	private int frames = 10;
 	@Override
 	public void onUpdate(Entity entity, long now){
-		frames++;
-		if(frames >= 5){
-			actualUpdate(entity, now);
-			frames = 0;
+		if(enemies.size() == 0 && !generated){
+			generateEnemies();
+			generated = true;
 		}
 	}
 	
-	public void actualUpdate(Entity entity, long now){
-		for(Pair<Entity,Entity> enemy : enemies){
-			if(!enemy.getKey().isAlive()){
-				enemies.remove(enemy);
-			}
-		}
-		
-		if(enemies.size() < numEnemies){
-			spawnEnemy();
-		}
-	}
-	
-	public ArrayList<Pair<Entity,Entity>> getEnemies(){
-		return enemies;
-	}
-	
-	private ArrayList<Pair<Entity,Entity>> spawnEnemy(){
+	private void generateEnemies(){
 		while(enemies.size() < numEnemies){
 			if(spawnPoints.length == 0){
-				enemies.add(spawnMethod.apply(entity.getPosition()));
+				enemies.add(spawnMethod.apply(new Point2D(0,0)));
 			}
 			for(Point2D sp : spawnPoints){
 				enemies.add(spawnMethod.apply(sp));
 			}
 		}
-		
-		return enemies;
+	}
+	
+	public ArrayList<Pair<Entity,Entity>> spawnEnemies(){
+		ArrayList<Pair<Entity,Entity>> tEne = new ArrayList<>();
+		tEne.addAll(enemies);
+		enemies.clear();
+		return tEne;
 	}
 
 	@Override
@@ -68,4 +55,6 @@ public class CollideSpawnerControl extends AbstractControl {
 		// TODO Auto-generated method stub
 
 	}
+	
+	
 }

@@ -1,54 +1,70 @@
 package com.almasb.consume.ai;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Set;
 
 import com.almasb.consume.Types;
 import com.almasb.consume.Types.AnimationActions;
+import com.almasb.fxgl.asset.Assets;
+import com.almasb.fxgl.asset.StaticAnimatedTexture;
 import com.almasb.fxgl.asset.Texture;
 import com.almasb.fxgl.entity.Control;
 import com.almasb.fxgl.entity.Entity;
 
-import javafx.geometry.Rectangle2D;
+import javafx.scene.transform.Translate;
 import javafx.util.Duration;
 
 public class AnimatedEnemyControl implements Control {
-
-	public static class AnimationDetails{
-		public final Rectangle2D area;
-		public final int frames;
-		public final double period;
-		public final boolean startAnimation;
-		
-		public AnimationDetails(Rectangle2D are, int fra, double per, boolean staAnim){
-			area = are;
-			frames = fra;
-			period = per;
-			startAnimation = staAnim;
-		}
-	}
-	
 	private HashMap<Types.AnimationActions, Texture> animations = new HashMap<>();
-	private HashMap<Types.AnimationActions, AnimationDetails> aniDetails;
 	private Entity enemy;
-	private Texture spriteSheet;
 	private boolean prevVisible;
 	private AnimationActions curAnimation = null; 
 
-	public AnimatedEnemyControl(Entity e, HashMap<Types.AnimationActions, AnimationDetails> hashMap, Texture sS) {
+	public AnimatedEnemyControl(Entity e, HashMap<Types.AnimationActions, Double> hashMap, String sD, Assets as) {
 		enemy = e;
-		aniDetails = hashMap;
-		spriteSheet = sS;
+		Set<String> kS = as.TextureKeySet();
 		
-		for(Types.AnimationActions aA : aniDetails.keySet()){
-			AnimationDetails val = aniDetails.get(aA);
-			if(val != null){
-				if(val.startAnimation && val.frames > 1){
-					animations.put(aA, spriteSheet.subTexture(val.area).
-							toStaticAnimatedTexture(val.frames, Duration.seconds(val.period)));
+		AnimationActions defAct;
+				
+		if(kS.contains(sD + "/IDLE_1.png")){
+			defAct = AnimationActions.IDLE;
+		}
+		else{
+			defAct = AnimationActions.MOVE;
+		}
+		
+		for(Types.AnimationActions aA : Types.AnimationActions.values()){
+			ArrayList<Texture> texs = new ArrayList<>();
+			for(int i = 1; i < 5; i++){
+				if(kS.contains(sD + "/" + aA + "_" + i + ".png")){
+					texs.add(as.getTexture(sD + "/" + aA + "_" + i + ".png"));
+				}
+				else if(i == 1){
+					texs.add(as.getTexture(sD + "/" + defAct + "_" + i + ".png"));
+					break;
 				}
 				else{
-					animations.put(aA, spriteSheet.subTexture(val.area));
+					break;
 				}
+			}
+				
+			if(texs.size() > 1){
+				Texture[] tS = new Texture[texs.size()];
+				texs.toArray(tS);
+				StaticAnimatedTexture sAT = new StaticAnimatedTexture(enemy.getWidth(), Duration.seconds(hashMap.get(aA)),
+						tS);
+				animations.put(aA, sAT);
+			}
+			else{
+				Texture t = texs.get(0);
+				t.setPreserveRatio(true);
+		       	t.setFitHeight(t.getImage().getHeight()/4);
+		        		
+		       	Translate off = new Translate();
+		       	off.setX(-(t.getImage().getWidth()/4 - enemy.getWidth())/2);
+		       	t.getTransforms().add(off);
+				animations.put(aA, t);
 			}
 		}
 		
@@ -94,13 +110,14 @@ public class AnimatedEnemyControl implements Control {
 				if(enemy.<Boolean> getProperty("attacking") && animations.get(AnimationActions.JATK) != null){
 					if(curAnimation != AnimationActions.JATK){
 						t = animations.get(AnimationActions.JATK);
-						if(!aniDetails.get(AnimationActions.JATK).startAnimation && curAnimation != AnimationActions.JATK){
-							t = t.toStaticAnimatedTexture(aniDetails.get(AnimationActions.JATK).frames, 
-								Duration.seconds(aniDetails.get(AnimationActions.JATK).period));
+						if(curAnimation != AnimationActions.JATK && t.getClass() == StaticAnimatedTexture.class){
+							((StaticAnimatedTexture) t).getTimeline().stop();
+							((StaticAnimatedTexture) t).getTimeline().play();
 						}
+						
 						curAnimation = AnimationActions.JATK;
 						t.setPreserveRatio(true);
-						t.setTranslateX(-30);
+						t.setTranslateX(0);
 						t.setTranslateY(-40);
 						t.setFitHeight(75);
 					}
@@ -108,13 +125,13 @@ public class AnimatedEnemyControl implements Control {
 				else{
 					if(curAnimation != AnimationActions.JUMP){
 						t = animations.get(AnimationActions.JUMP);
-						if(!aniDetails.get(AnimationActions.JUMP).startAnimation && curAnimation != AnimationActions.JUMP){
-							t = t.toStaticAnimatedTexture(aniDetails.get(AnimationActions.JUMP).frames, 
-								Duration.seconds(aniDetails.get(AnimationActions.JUMP).period));
+						if(curAnimation != AnimationActions.JUMP && t.getClass() == StaticAnimatedTexture.class){
+							((StaticAnimatedTexture) t).getTimeline().stop();
+							((StaticAnimatedTexture) t).getTimeline().play();
 						}
 						curAnimation = AnimationActions.JUMP;
 						t.setPreserveRatio(true);
-						t.setTranslateX(-30);
+						t.setTranslateX(0);
 						t.setTranslateY(-40);
 						t.setFitHeight(75);
 					}
@@ -124,13 +141,13 @@ public class AnimatedEnemyControl implements Control {
 				if(enemy.<Boolean> getProperty("attacking") && animations.get(AnimationActions.MATK) != null){
 					if(curAnimation != AnimationActions.MATK){
 						t = animations.get(AnimationActions.MATK);
-						if(!aniDetails.get(AnimationActions.MATK).startAnimation && curAnimation != AnimationActions.MATK){
-							t = t.toStaticAnimatedTexture(aniDetails.get(AnimationActions.MATK).frames, 
-								Duration.seconds(aniDetails.get(AnimationActions.MATK).period));
+						if(curAnimation != AnimationActions.MATK && t.getClass() == StaticAnimatedTexture.class){
+							((StaticAnimatedTexture) t).getTimeline().stop();
+							((StaticAnimatedTexture) t).getTimeline().play();
 						}
 						curAnimation = AnimationActions.MATK;
 						t.setPreserveRatio(true);
-						t.setTranslateX(-30);
+						t.setTranslateX(0);
 						t.setTranslateY(-40);
 						t.setFitHeight(75);	
 					}
@@ -138,13 +155,13 @@ public class AnimatedEnemyControl implements Control {
 				else{
 					if(curAnimation != AnimationActions.MOVE){
 						t = animations.get(AnimationActions.MOVE);
-						if(!aniDetails.get(AnimationActions.MOVE).startAnimation && curAnimation != AnimationActions.MOVE){
-							t = t.toStaticAnimatedTexture(aniDetails.get(AnimationActions.MOVE).frames, 
-								Duration.seconds(aniDetails.get(AnimationActions.MOVE).period));
+						if(curAnimation != AnimationActions.MOVE && t.getClass() == StaticAnimatedTexture.class){
+							((StaticAnimatedTexture) t).getTimeline().stop();
+							((StaticAnimatedTexture) t).getTimeline().play();
 						}
 						curAnimation = AnimationActions.MOVE;
 						t.setPreserveRatio(true);
-						t.setTranslateX(-30);
+						t.setTranslateX(0);
 						t.setTranslateY(-40);
 						t.setFitHeight(75);	
 					}
@@ -153,13 +170,13 @@ public class AnimatedEnemyControl implements Control {
 			else if(enemy.<Boolean> getProperty("attacking") && animations.get(AnimationActions.ATK) != null){
 				if(curAnimation != AnimationActions.ATK){
 					t = animations.get(AnimationActions.ATK);
-					if(!aniDetails.get(AnimationActions.ATK).startAnimation){
-						t = t.toStaticAnimatedTexture(aniDetails.get(AnimationActions.ATK).frames, 
-							Duration.seconds(aniDetails.get(AnimationActions.ATK).period));
+					if(t.getClass() == StaticAnimatedTexture.class){
+						((StaticAnimatedTexture) t).getTimeline().stop();
+						((StaticAnimatedTexture) t).getTimeline().play();
 					}
 					curAnimation = AnimationActions.ATK;
 					t.setPreserveRatio(true);
-					t.setTranslateX(-30);
+					t.setTranslateX(0);
 					t.setTranslateY(-40);
 					t.setFitHeight(75);	
 				}
@@ -167,13 +184,13 @@ public class AnimatedEnemyControl implements Control {
 			else if(animations.get(AnimationActions.IDLE) != null) {
 				if(curAnimation != AnimationActions.IDLE){
 					t = animations.get(AnimationActions.IDLE);
-					if(!aniDetails.get(AnimationActions.IDLE).startAnimation){
-						t = t.toStaticAnimatedTexture(aniDetails.get(AnimationActions.IDLE).frames, 
-							Duration.seconds(aniDetails.get(AnimationActions.IDLE).period));
+					if(t.getClass() == StaticAnimatedTexture.class){
+						((StaticAnimatedTexture) t).getTimeline().stop();
+						((StaticAnimatedTexture) t).getTimeline().play();
 					}
 					curAnimation = AnimationActions.IDLE;
 					t.setPreserveRatio(true);
-					t.setTranslateX(-30);
+					t.setTranslateX(0);
 					t.setTranslateY(-40);
 					t.setFitHeight(75);
 				}

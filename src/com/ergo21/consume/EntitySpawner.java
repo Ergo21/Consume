@@ -7,7 +7,6 @@ import java.util.HashMap;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.geometry.Point2D;
-import javafx.geometry.Rectangle2D;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
@@ -24,7 +23,6 @@ import com.almasb.consume.Types.Powerup;
 import com.almasb.consume.Types.Property;
 import com.almasb.consume.Types.Type;
 import com.almasb.consume.ai.AnimatedElephantControl;
-import com.almasb.consume.ai.AnimatedElephantControl.AnimationDetailsE;
 import com.almasb.consume.ai.AnimatedEnemyControl;
 import com.almasb.consume.ai.AnubisControl;
 import com.almasb.consume.ai.BayonetControl;
@@ -55,7 +53,6 @@ import com.almasb.consume.ai.SimpleJumpControl;
 import com.almasb.consume.ai.SimpleMoveControl;
 import com.almasb.consume.ai.SpearThrowerControl;
 import com.almasb.consume.ai.StoneThrowerControl;
-import com.almasb.consume.ai.AnimatedEnemyControl.AnimationDetails;
 import com.almasb.fxgl.asset.Texture;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.FXGLEvent;
@@ -76,7 +73,7 @@ public class EntitySpawner {
 
 		enemy.setGraphics(rect);
 		enemy.setCollidable(true);
-		enemy.setProperty(Property.DATA, new Enemy(consApp.getAssetManager().loadText("enemies/enemy_FireElemental.txt")));
+		enemy.setProperty(Property.DATA, new Enemy(consApp.assets.getText("enemies/enemy_FireElemental.txt")));
 		enemy.setProperty("physics", consApp.physics);
 		enemy.setPosition(spawnPoint.getX(), spawnPoint.getY());
 		enemy.addControl(new PhysicsControl(consApp.physics));
@@ -96,7 +93,7 @@ public class EntitySpawner {
 
 		enemy.setGraphics(rect);
 		enemy.setCollidable(true);
-		enemy.setProperty(Property.DATA, new Enemy(consApp.getAssetManager().loadText("enemies/enemy_FireElemental.txt")));
+		enemy.setProperty(Property.DATA, new Enemy(consApp.assets.getText("enemies/enemy_FireElemental.txt")));
 		enemy.setProperty("physics", consApp.physics);
 		enemy.setProperty("shover", true);
 		enemy.setPosition(spawnPoint.getX(), spawnPoint.getY());
@@ -114,7 +111,7 @@ public class EntitySpawner {
 			} , Config.ENEMY_CHARGE_DELAY);
 		});
 		
-		enemy.setVisible(false);
+		enemy.setVisible(true);
 		enemy.setProperty("jumping", false);
 		enemy.setProperty("attacking", true);
 		
@@ -124,19 +121,20 @@ public class EntitySpawner {
 		ePic.setPosition(spawnPoint.getX(), spawnPoint.getY());
 		ePic.translateXProperty().bind(enemy.translateXProperty());
 		ePic.translateYProperty().bind(enemy.translateYProperty());
-		HashMap<Types.AnimationActions, AnimationDetails> hashMap = new HashMap<>();
+		
+		HashMap<Types.AnimationActions, Double> hashMap = new HashMap<>();
 		for(Types.AnimationActions aa : Types.AnimationActions.values()){
 			switch(aa){
-				case ATK: hashMap.put(aa, new AnimationDetails(new Rectangle2D(0,  0, 300, 300), 1, 1, true)); break;
-				case IDLE: hashMap.put(aa, new AnimationDetails(new Rectangle2D(0, 0, 300, 300), 1, 1, true)); break;
-				case JATK: hashMap.put(aa, new AnimationDetails(new Rectangle2D(0, 1200, 300, 300), 1, 1, true)); break;
-				case JUMP: hashMap.put(aa, new AnimationDetails(new Rectangle2D(0, 1200, 300, 300), 1, 1, true)); break;
-				case MATK: hashMap.put(aa, new AnimationDetails(new Rectangle2D(0, 300, 1200, 300), 4, 1, true)); break;
-				case MOVE: hashMap.put(aa, new AnimationDetails(new Rectangle2D(0, 300, 1200, 300), 4, 1, true)); break;
+				case ATK: hashMap.put(aa, 1.0); break;
+				case IDLE: hashMap.put(aa, 1.0); break;
+				case JATK: hashMap.put(aa, 1.0); break;
+				case JUMP: hashMap.put(aa, 1.0); break;
+				case MATK: hashMap.put(aa, 1.0); break;
+				case MOVE: hashMap.put(aa, 1.0); break;
 				default: break;
 			}
 		}
-		ePic.addControl(new AnimatedEnemyControl(enemy, hashMap, consApp.getTexture(FileNames.ZULU_SH_TEX)));
+		ePic.addControl(new AnimatedEnemyControl(enemy, hashMap, FileNames.ZULU_SH_DIR, consApp.assets));
 		ePic.addFXGLEventHandler(Event.DEATH, (event) -> consApp.getSceneManager().removeEntity(ePic));
 		enemy.aliveProperty().addListener(new ChangeListener<Boolean>(){
 			@Override
@@ -158,7 +156,7 @@ public class EntitySpawner {
 
 		enemy.setGraphics(rect);
 		enemy.setCollidable(true);
-		enemy.setProperty(Property.DATA, new Enemy(consApp.getAssetManager().loadText("enemies/enemy_FireElemental.txt")));
+		enemy.setProperty(Property.DATA, new Enemy(consApp.assets.getText("enemies/enemy_FireElemental.txt")));
 		enemy.setProperty("physics", consApp.physics);
 		enemy.setProperty("shover", true);
 		enemy.setPosition(spawnPoint.getX(), spawnPoint.getY());
@@ -166,7 +164,7 @@ public class EntitySpawner {
 		enemy.addControl(new SimpleJumpControl(consApp, consApp.player, Speed.ENEMY_JUMP));
 		enemy.addFXGLEventHandler(Event.DEATH, this::onEnemyDeath);
 		
-		enemy.setVisible(false);
+		enemy.setVisible(true);
 		enemy.setProperty("jumping", false);
 		enemy.setProperty("attacking", false);
 		
@@ -174,28 +172,22 @@ public class EntitySpawner {
 		ePic.setVisible(true);
 		ePic.setCollidable(false);
 		ePic.setPosition(spawnPoint.getX(), spawnPoint.getY());
-		ePic.translateXProperty().bind(enemy.translateXProperty().add(10));
+		ePic.translateXProperty().bind(enemy.translateXProperty());
 		ePic.translateYProperty().bind(enemy.translateYProperty().add(-15));
-		int fS = 300;
-		HashMap<Types.AnimationActions, AnimationDetails> hashMap = new HashMap<>();
+		
+		HashMap<Types.AnimationActions, Double> hashMap = new HashMap<>();
 		for(Types.AnimationActions aa : Types.AnimationActions.values()){
 			switch(aa){
-				case ATK: hashMap.put(aa, new AnimationDetails(
-						new Rectangle2D	(0,   0*fS, 1*fS, fS), 1, 1, true)); break;
-				case IDLE: hashMap.put(aa, new AnimationDetails(
-						new Rectangle2D	(0,   0*fS, 1*fS, fS), 1, 1, true)); break;
-				case JATK: hashMap.put(aa, new AnimationDetails(
-						new Rectangle2D	(0,   4*fS, 1*fS, fS), 1, 1, true)); break;
-				case JUMP: hashMap.put(aa, new AnimationDetails(
-						new Rectangle2D	(0,   4*fS, 1*fS, fS), 1, 1, true)); break;
-				case MATK: hashMap.put(aa, new AnimationDetails(
-						new Rectangle2D	(0,   0*fS, 1*fS, fS), 1, 1, true)); break;
-				case MOVE: hashMap.put(aa, new AnimationDetails(
-						new Rectangle2D	(0,   0*fS, 1*fS, fS), 1, 1, true)); break;
+				case ATK: hashMap.put(aa, 1.0); break;
+				case IDLE: hashMap.put(aa, 1.0); break;
+				case JATK: hashMap.put(aa, 1.0); break;
+				case JUMP: hashMap.put(aa, 1.0); break;
+				case MATK: hashMap.put(aa, 1.0); break;
+				case MOVE: hashMap.put(aa, 1.0); break;
 				default: break;
 			}
 		}
-		ePic.addControl(new AnimatedEnemyControl(enemy, hashMap, consApp.getTexture(FileNames.SCARAB_TEX)));
+		ePic.addControl(new AnimatedEnemyControl(enemy, hashMap, FileNames.SCARAB_DIR, consApp.assets));
 		ePic.addFXGLEventHandler(Event.DEATH, (event) -> consApp.getSceneManager().removeEntity(ePic));
 		enemy.aliveProperty().addListener(new ChangeListener<Boolean>(){
 			@Override
@@ -217,7 +209,7 @@ public class EntitySpawner {
 
 		enemy.setGraphics(rect);
 		enemy.setCollidable(true);
-		enemy.setProperty(Property.DATA, new Enemy(consApp.getAssetManager().loadText("enemies/enemy_FireElemental.txt")));
+		enemy.setProperty(Property.DATA, new Enemy(consApp.assets.getText("enemies/enemy_FireElemental.txt")));
 		enemy.setProperty("physics", consApp.physics);
 		enemy.setProperty("shover", true);
 		enemy.setProperty("facingRight", false);
@@ -228,7 +220,7 @@ public class EntitySpawner {
 		enemy.setProperty(Property.ENABLE_GRAVITY, false);
 		
 		
-		enemy.setVisible(false);
+		enemy.setVisible(true);
 		enemy.setProperty("jumping", false);
 		enemy.setProperty("attacking", false);
 		
@@ -238,26 +230,20 @@ public class EntitySpawner {
 		ePic.setPosition(spawnPoint.getX(), spawnPoint.getY());
 		ePic.translateXProperty().bind(enemy.translateXProperty().add(5));
 		ePic.translateYProperty().bind(enemy.translateYProperty());
-		int fS = 300;
-		HashMap<Types.AnimationActions, AnimationDetails> hashMap = new HashMap<>();
+		
+		HashMap<Types.AnimationActions, Double> hashMap = new HashMap<>();
 		for(Types.AnimationActions aa : Types.AnimationActions.values()){
 			switch(aa){
-				case ATK: hashMap.put(aa, new AnimationDetails(
-						new Rectangle2D	(0,   1*fS, 2*fS, fS), 2, 0.05, true)); break;
-				case IDLE: hashMap.put(aa, new AnimationDetails(
-						new Rectangle2D	(0,   1*fS, 2*fS, fS), 2, 0.05, true)); break;
-				case JATK: hashMap.put(aa, new AnimationDetails(
-						new Rectangle2D	(0,   1*fS, 2*fS, fS), 2, 0.05, true)); break;
-				case JUMP: hashMap.put(aa, new AnimationDetails(
-						new Rectangle2D	(0,   1*fS, 2*fS, fS), 2, 0.05, true)); break;
-				case MATK: hashMap.put(aa, new AnimationDetails(
-						new Rectangle2D	(0,   1*fS, 2*fS, fS), 2, 0.05, true)); break;
-				case MOVE: hashMap.put(aa, new AnimationDetails(
-						new Rectangle2D	(0,   1*fS, 2*fS, fS), 2, 0.05, true)); break;
+				case ATK: hashMap.put(aa, 0.05); break;
+				case IDLE: hashMap.put(aa, 0.05); break;
+				case JATK: hashMap.put(aa, 0.05); break;
+				case JUMP: hashMap.put(aa, 0.05); break;
+				case MATK: hashMap.put(aa, 0.05); break;
+				case MOVE: hashMap.put(aa, 0.05); break;
 				default: break;
 			}
 		}
-		ePic.addControl(new AnimatedEnemyControl(enemy, hashMap, consApp.getTexture(FileNames.LOCUST_TEX)));
+		ePic.addControl(new AnimatedEnemyControl(enemy, hashMap, FileNames.LOCUST_DIR, consApp.assets));
 		ePic.addFXGLEventHandler(Event.DEATH, (event) -> consApp.getSceneManager().removeEntity(ePic));
 		enemy.aliveProperty().addListener(new ChangeListener<Boolean>(){
 			@Override
@@ -279,7 +265,7 @@ public class EntitySpawner {
 
 		enemy.setGraphics(rect);
 		enemy.setCollidable(true);
-		enemy.setProperty(Property.DATA, new Enemy(consApp.getAssetManager().loadText(FileNames.STATS_ELOKO)));
+		enemy.setProperty(Property.DATA, new Enemy(consApp.assets.getText(FileNames.STATS_ELOKO)));
 		enemy.setProperty("physics", consApp.physics);
 		enemy.setProperty("facingRight", true);
 		enemy.setPosition(spawnPoint.getX(), spawnPoint.getY());
@@ -290,7 +276,7 @@ public class EntitySpawner {
 			//consApp.consController.enemyShootProjectile(Element.NEUTRAL2, enemy);
 		});
 		
-		enemy.setVisible(false);
+		enemy.setVisible(true);
 		enemy.setProperty("jumping", false);
 		enemy.setProperty("attacking", false);
 		
@@ -300,26 +286,20 @@ public class EntitySpawner {
 		ePic.setPosition(spawnPoint.getX(), spawnPoint.getY());
 		ePic.translateXProperty().bind(enemy.translateXProperty());
 		ePic.translateYProperty().bind(enemy.translateYProperty());
-		int fS = 300;
-		HashMap<Types.AnimationActions, AnimationDetails> hashMap = new HashMap<>();
+		
+		HashMap<Types.AnimationActions, Double> hashMap = new HashMap<>();
 		for(Types.AnimationActions aa : Types.AnimationActions.values()){
 			switch(aa){
-				case ATK: hashMap.put(aa, new AnimationDetails(
-						new Rectangle2D	(0,   1*fS, 4*fS, fS), 4, 1, true)); break;
-				case IDLE: hashMap.put(aa, new AnimationDetails(
-						new Rectangle2D	(0,   0*fS, 1*fS, fS), 1, 1, true)); break;
-				case JATK: hashMap.put(aa, new AnimationDetails(
-						new Rectangle2D	(0,   1*fS, 4*fS, fS), 4, 1, true)); break;
-				case JUMP: hashMap.put(aa, new AnimationDetails(
-						new Rectangle2D	(0,   1*fS, 4*fS, fS), 4, 1, true)); break;
-				case MATK: hashMap.put(aa, new AnimationDetails(
-						new Rectangle2D	(0,   1*fS, 4*fS, fS), 4, 1, true)); break;
-				case MOVE: hashMap.put(aa, new AnimationDetails(
-						new Rectangle2D	(0,   1*fS, 4*fS, fS), 4, 1, true)); break;
+				case ATK: hashMap.put(aa, 1.0); break;
+				case IDLE: hashMap.put(aa, 1.0); break;
+				case JATK: hashMap.put(aa, 1.0); break;
+				case JUMP: hashMap.put(aa, 1.0); break;
+				case MATK: hashMap.put(aa, 1.0); break;
+				case MOVE: hashMap.put(aa, 1.0); break;
 				default: break;
 			}
 		}
-		ePic.addControl(new AnimatedEnemyControl(enemy, hashMap, consApp.getTexture(FileNames.ELOKO_TEX)));
+		ePic.addControl(new AnimatedEnemyControl(enemy, hashMap, FileNames.ELOKO_DIR, consApp.assets));
 		ePic.addFXGLEventHandler(Event.DEATH, (event) -> consApp.getSceneManager().removeEntity(ePic));
 		enemy.aliveProperty().addListener(new ChangeListener<Boolean>(){
 			@Override
@@ -341,7 +321,7 @@ public class EntitySpawner {
 
 		enemy.setGraphics(rect);
 		enemy.setCollidable(true);
-		enemy.setProperty(Property.DATA, new Enemy(consApp.getAssetManager().loadText("enemies/enemy_FireElemental.txt")));
+		enemy.setProperty(Property.DATA, new Enemy(consApp.assets.getText("enemies/enemy_FireElemental.txt")));
 		enemy.setProperty("physics", consApp.physics);
 		enemy.setProperty("facingRight", true);
 		enemy.setPosition(spawnPoint.getX(), spawnPoint.getY());
@@ -352,7 +332,7 @@ public class EntitySpawner {
 			//consApp.consController.enemyShootProjectile(Element.NEUTRAL2, enemy);
 		});
 		
-		enemy.setVisible(false);
+		enemy.setVisible(true);
 		enemy.setProperty("jumping", false);
 		enemy.setProperty("attacking", false);
 		
@@ -362,26 +342,20 @@ public class EntitySpawner {
 		ePic.setPosition(spawnPoint.getX(), spawnPoint.getY());
 		ePic.translateXProperty().bind(enemy.translateXProperty());
 		ePic.translateYProperty().bind(enemy.translateYProperty());
-		int fS = 300;
-		HashMap<Types.AnimationActions, AnimationDetails> hashMap = new HashMap<>();
+		
+		HashMap<Types.AnimationActions, Double> hashMap = new HashMap<>();
 		for(Types.AnimationActions aa : Types.AnimationActions.values()){
 			switch(aa){
-				case ATK: hashMap.put(aa, new AnimationDetails(
-						new Rectangle2D	(0,   1*fS, 4*fS, fS), 4, 1, true)); break;
-				case IDLE: hashMap.put(aa, new AnimationDetails(
-						new Rectangle2D	(0,   1*fS, 4*fS, fS), 4, 1, true)); break;
-				case JATK: hashMap.put(aa, new AnimationDetails(
-						new Rectangle2D	(0,   1*fS, 4*fS, fS), 4, 1, true)); break;
-				case JUMP: hashMap.put(aa, new AnimationDetails(
-						new Rectangle2D	(0,   1*fS, 4*fS, fS), 4, 1, true)); break;
-				case MATK: hashMap.put(aa, new AnimationDetails(
-						new Rectangle2D	(0,   1*fS, 4*fS, fS), 4, 1, true)); break;
-				case MOVE: hashMap.put(aa, new AnimationDetails(
-						new Rectangle2D	(0,   1*fS, 4*fS, fS), 4, 1, true)); break;
+				case ATK: hashMap.put(aa, 1.0); break;
+				case IDLE: hashMap.put(aa, 1.0); break;
+				case JATK: hashMap.put(aa, 1.0); break;
+				case JUMP: hashMap.put(aa, 1.0); break;
+				case MATK: hashMap.put(aa, 1.0); break;
+				case MOVE: hashMap.put(aa, 1.0); break;
 				default: break;
 			}
 		}
-		ePic.addControl(new AnimatedEnemyControl(enemy, hashMap, consApp.getTexture(FileNames.MUMMY_TEX)));
+		ePic.addControl(new AnimatedEnemyControl(enemy, hashMap, FileNames.MUMMY_DIR, consApp.assets));
 		ePic.addFXGLEventHandler(Event.DEATH, (event) -> consApp.getSceneManager().removeEntity(ePic));
 		enemy.aliveProperty().addListener(new ChangeListener<Boolean>(){
 			@Override
@@ -403,7 +377,7 @@ public class EntitySpawner {
 
 		enemy.setGraphics(rect);
 		enemy.setCollidable(true);
-		enemy.setProperty(Property.DATA, new Enemy(consApp.getAssetManager().loadText(FileNames.STATS_BANDIT_SPEAR)));
+		enemy.setProperty(Property.DATA, new Enemy(consApp.assets.getText(FileNames.STATS_BANDIT_SPEAR)));
 		enemy.setProperty("physics", consApp.physics);
 		enemy.setProperty("facingRight", true);
 		enemy.setPosition(spawnPoint.getX(), spawnPoint.getY());
@@ -423,7 +397,7 @@ public class EntitySpawner {
 			}, Config.ENEMY_SPEAR_DECAY);
 		});
 		
-		enemy.setVisible(false);
+		enemy.setVisible(true);
 		enemy.setProperty("jumping", false);
 		enemy.setProperty("attacking", false);
 		
@@ -433,19 +407,20 @@ public class EntitySpawner {
 		ePic.setPosition(spawnPoint.getX(), spawnPoint.getY());
 		ePic.translateXProperty().bind(enemy.translateXProperty());
 		ePic.translateYProperty().bind(enemy.translateYProperty());
-		HashMap<Types.AnimationActions, AnimationDetails> hashMap = new HashMap<>();
+		
+		HashMap<Types.AnimationActions, Double> hashMap = new HashMap<>();
 		for(Types.AnimationActions aa : Types.AnimationActions.values()){
 			switch(aa){
-				case ATK: hashMap.put(aa, new AnimationDetails(new Rectangle2D(0, 900, 300, 300), 1, 1, true)); break;
-				case IDLE: hashMap.put(aa, new AnimationDetails(new Rectangle2D(0, 0, 300, 300), 1, 1, true)); break;
-				case JATK: hashMap.put(aa, new AnimationDetails(new Rectangle2D(0, 900, 300, 300), 1, 1, true)); break;
-				case JUMP: hashMap.put(aa, new AnimationDetails(new Rectangle2D(0, 300, 1200, 300), 4, 1, true)); break;
-				case MATK: hashMap.put(aa, new AnimationDetails(new Rectangle2D(0, 600, 600, 300), 2, 1, true)); break;
-				case MOVE: hashMap.put(aa, new AnimationDetails(new Rectangle2D(0, 300, 1200, 300), 4, 1, true)); break;
+				case ATK: hashMap.put(aa, 1.0); break;
+				case IDLE: hashMap.put(aa, 1.0); break;
+				case JATK: hashMap.put(aa, 1.0); break;
+				case JUMP: hashMap.put(aa, 1.0); break;
+				case MATK: hashMap.put(aa, 1.0); break;
+				case MOVE: hashMap.put(aa, 1.0); break;
 				default: break;
 			}
 		}
-		ePic.addControl(new AnimatedEnemyControl(enemy, hashMap, consApp.getTexture(FileNames.BANDIT_S_TEX)));
+		ePic.addControl(new AnimatedEnemyControl(enemy, hashMap, FileNames.BANDIT_S_DIR, consApp.assets));
 		ePic.addFXGLEventHandler(Event.DEATH, (event) -> consApp.getSceneManager().removeEntity(ePic));
 		enemy.aliveProperty().addListener(new ChangeListener<Boolean>(){
 			@Override
@@ -467,7 +442,7 @@ public class EntitySpawner {
 
 		enemy.setGraphics(rect);
 		enemy.setCollidable(true);
-		enemy.setProperty(Property.DATA, new Enemy(consApp.getAssetManager().loadText("enemies/enemy_FireElemental.txt")));
+		enemy.setProperty(Property.DATA, new Enemy(consApp.assets.getText("enemies/enemy_FireElemental.txt")));
 		enemy.setProperty("physics", consApp.physics);
 		enemy.setProperty("facingRight", true);
 		enemy.setPosition(spawnPoint.getX(), spawnPoint.getY());
@@ -487,7 +462,7 @@ public class EntitySpawner {
 			}, Config.ENEMY_SPEAR_DECAY);
 		});
 		
-		enemy.setVisible(false);
+		enemy.setVisible(true);
 		enemy.setProperty("jumping", false);
 		enemy.setProperty("attacking", false);
 		
@@ -497,19 +472,20 @@ public class EntitySpawner {
 		ePic.setPosition(spawnPoint.getX(), spawnPoint.getY());
 		ePic.translateXProperty().bind(enemy.translateXProperty());
 		ePic.translateYProperty().bind(enemy.translateYProperty());
-		HashMap<Types.AnimationActions, AnimationDetails> hashMap = new HashMap<>();
+		
+		HashMap<Types.AnimationActions, Double> hashMap = new HashMap<>();
 		for(Types.AnimationActions aa : Types.AnimationActions.values()){
 			switch(aa){
-				case ATK: hashMap.put(aa, new AnimationDetails(new Rectangle2D(0, 900, 300, 300), 1, 1, true)); break;
-				case IDLE: hashMap.put(aa, new AnimationDetails(new Rectangle2D(0, 0, 300, 300), 1, 1, true)); break;
-				case JATK: hashMap.put(aa, new AnimationDetails(new Rectangle2D(0, 900, 300, 300), 1, 1, true)); break;
-				case JUMP: hashMap.put(aa, new AnimationDetails(new Rectangle2D(0, 300, 1200, 300), 4, 1, true)); break;
-				case MATK: hashMap.put(aa, new AnimationDetails(new Rectangle2D(0, 300, 1200, 300), 4, 1, true)); break;
-				case MOVE: hashMap.put(aa, new AnimationDetails(new Rectangle2D(0, 300, 1200, 300), 4, 1, true)); break;
+				case ATK: hashMap.put(aa, 1.0); break;
+				case IDLE: hashMap.put(aa, 1.0); break;
+				case JATK: hashMap.put(aa, 1.0); break;
+				case JUMP: hashMap.put(aa, 1.0); break;
+				case MATK: hashMap.put(aa, 1.0); break;
+				case MOVE: hashMap.put(aa, 1.0); break;
 				default: break;
 			}
 		}
-		ePic.addControl(new AnimatedEnemyControl(enemy, hashMap, consApp.getTexture(FileNames.ZULU_SP_TEX)));
+		ePic.addControl(new AnimatedEnemyControl(enemy, hashMap, FileNames.ZULU_SP_DIR, consApp.assets));
 		ePic.addFXGLEventHandler(Event.DEATH, (event) -> consApp.getSceneManager().removeEntity(ePic));
 		enemy.aliveProperty().addListener(new ChangeListener<Boolean>(){
 			@Override
@@ -531,7 +507,7 @@ public class EntitySpawner {
 
 		enemy.setGraphics(rect);
 		enemy.setCollidable(true);
-		enemy.setProperty(Property.DATA, new Enemy(consApp.getAssetManager().loadText("enemies/enemy_FireElemental.txt")));
+		enemy.setProperty(Property.DATA, new Enemy(consApp.assets.getText("enemies/enemy_FireElemental.txt")));
 		enemy.setProperty("physics", consApp.physics);
 		enemy.setProperty("facingRight", true);
 		enemy.setPosition(spawnPoint.getX(), spawnPoint.getY());
@@ -553,7 +529,7 @@ public class EntitySpawner {
 			}, Config.ENEMY_SCORPION_DECAY);
 		});
 		
-		enemy.setVisible(false);
+		enemy.setVisible(true);
 		enemy.setProperty("jumping", false);
 		enemy.setProperty("attacking", false);
 		
@@ -561,28 +537,22 @@ public class EntitySpawner {
 		ePic.setVisible(true);
 		ePic.setCollidable(false);
 		ePic.setPosition(spawnPoint.getX(), spawnPoint.getY());
-		ePic.translateXProperty().bind(enemy.translateXProperty().add(5));
+		ePic.translateXProperty().bind(enemy.translateXProperty());
 		ePic.translateYProperty().bind(enemy.translateYProperty().add(-10));
-		int fS = 300;
-		HashMap<Types.AnimationActions, AnimationDetails> hashMap = new HashMap<>();
+		
+		HashMap<Types.AnimationActions, Double> hashMap = new HashMap<>();
 		for(Types.AnimationActions aa : Types.AnimationActions.values()){
 			switch(aa){
-				case ATK: hashMap.put(aa, new AnimationDetails(
-						new Rectangle2D	(0,   3*fS, 1*fS, fS), 1, 1, true)); break;
-				case IDLE: hashMap.put(aa, new AnimationDetails(
-						new Rectangle2D	(0,   0*fS, 1*fS, fS), 1, 1, true)); break;
-				case JATK: hashMap.put(aa, new AnimationDetails(
-						new Rectangle2D	(0,   3*fS, 1*fS, fS), 1, 1, true)); break;
-				case JUMP: hashMap.put(aa, new AnimationDetails(
-						new Rectangle2D	(0,   0*fS, 1*fS, fS), 1, 1, true)); break;
-				case MATK: hashMap.put(aa, new AnimationDetails(
-						new Rectangle2D	(0,   1*fS, 4*fS, fS), 4, 1, true)); break;
-				case MOVE: hashMap.put(aa, new AnimationDetails(
-						new Rectangle2D	(0,   1*fS, 4*fS, fS), 4, 1, true)); break;
+				case ATK: hashMap.put(aa, 1.0); break;
+				case IDLE: hashMap.put(aa, 1.0); break;
+				case JATK: hashMap.put(aa, 1.0); break;
+				case JUMP: hashMap.put(aa, 1.0); break;
+				case MATK: hashMap.put(aa, 1.0); break;
+				case MOVE: hashMap.put(aa, 1.0); break;
 				default: break;
 			}
 		}
-		ePic.addControl(new AnimatedEnemyControl(enemy, hashMap, consApp.getTexture(FileNames.SCORPION_TEX)));
+		ePic.addControl(new AnimatedEnemyControl(enemy, hashMap, FileNames.SCORPION_DIR, consApp.assets));
 		ePic.addFXGLEventHandler(Event.DEATH, (event) -> consApp.getSceneManager().removeEntity(ePic));
 		enemy.aliveProperty().addListener(new ChangeListener<Boolean>(){
 			@Override
@@ -605,7 +575,7 @@ public class EntitySpawner {
 
 		enemy.setGraphics(rect);
 		enemy.setCollidable(false);
-		enemy.setProperty(Property.DATA, new Enemy(consApp.getAssetManager().loadText("enemies/enemy_FireElemental.txt")));
+		enemy.setProperty(Property.DATA, new Enemy(consApp.assets.getText("enemies/enemy_FireElemental.txt")));
 		enemy.setProperty("physics", consApp.physics);
 		enemy.setProperty("facingRight", false);
 		enemy.setPosition(spawnPoint.getX(), spawnPoint.getY());
@@ -634,7 +604,7 @@ public class EntitySpawner {
 		rect.setFill(Color.RED);
 
 		enemy.setCollidable(false);
-		enemy.setProperty(Property.DATA, new Enemy(consApp.getAssetManager().loadText("enemies/enemy_FireElemental.txt")));
+		enemy.setProperty(Property.DATA, new Enemy(consApp.assets.getText("enemies/enemy_FireElemental.txt")));
 		enemy.setProperty("physics", consApp.physics);
 		enemy.setProperty("facingRight", false);
 		enemy.setPosition(spawnPoint.getX(), spawnPoint.getY());
@@ -682,7 +652,7 @@ public class EntitySpawner {
 
 		enemy.setGraphics(rect);
 		enemy.setCollidable(true);
-		enemy.setProperty(Property.DATA, new Enemy(consApp.getAssetManager().loadText("enemies/enemy_FireElemental.txt")));
+		enemy.setProperty(Property.DATA, new Enemy(consApp.assets.getText("enemies/enemy_FireElemental.txt")));
 		enemy.setProperty("physics", consApp.physics);
 		enemy.setProperty("facingRight", false);
 		enemy.setPosition(spawnPoint.getX(), spawnPoint.getY());
@@ -704,7 +674,7 @@ public class EntitySpawner {
 			}, Config.ENEMY_STONE_THROW_DELAY.multiply(3.5));
 		});
 		
-		enemy.setVisible(false);
+		enemy.setVisible(true);
 		enemy.setProperty("jumping", false);
 		enemy.setProperty("attacking", false);
 		
@@ -714,26 +684,20 @@ public class EntitySpawner {
 		ePic.setPosition(spawnPoint.getX(), spawnPoint.getY());
 		ePic.translateXProperty().bind(enemy.translateXProperty());
 		ePic.translateYProperty().bind(enemy.translateYProperty().add(10));
-		int fS = 300;
-		HashMap<Types.AnimationActions, AnimationDetails> hashMap = new HashMap<>();
+		
+		HashMap<Types.AnimationActions, Double> hashMap = new HashMap<>();
 		for(Types.AnimationActions aa : Types.AnimationActions.values()){
 			switch(aa){
-				case ATK: hashMap.put(aa, new AnimationDetails(
-						new Rectangle2D	(0,   3*fS, 2*fS, fS), 2, 1, false)); break;
-				case IDLE: hashMap.put(aa, new AnimationDetails(
-						new Rectangle2D	(0,   0*fS, 1*fS, fS), 1, 1, true)); break;
-				case JATK: hashMap.put(aa, new AnimationDetails(
-						new Rectangle2D	(fS,  3*fS, 2*fS, fS), 2, 1, true)); break;
-				case JUMP: hashMap.put(aa, new AnimationDetails(
-						new Rectangle2D	(0,   1*fS, 1*fS, fS), 1, 1, true)); break;
-				case MATK: hashMap.put(aa, new AnimationDetails(
-						new Rectangle2D	(0,   3*fS, 2*fS, fS), 2, 1, false)); break;
-				case MOVE: hashMap.put(aa, new AnimationDetails(
-						new Rectangle2D	(0,   1*fS, 4*fS, fS), 4, 1, true)); break;
+				case ATK: hashMap.put(aa, 1.0); break;
+				case IDLE: hashMap.put(aa, 1.0); break;
+				case JATK: hashMap.put(aa, 1.0); break;
+				case JUMP: hashMap.put(aa, 1.0); break;
+				case MATK: hashMap.put(aa, 1.0); break;
+				case MOVE: hashMap.put(aa, 1.0); break;
 				default: break;
 			}
 		}
-		ePic.addControl(new AnimatedEnemyControl(enemy, hashMap, consApp.getTexture(FileNames.GOLEM_TEX)));
+		ePic.addControl(new AnimatedEnemyControl(enemy, hashMap, FileNames.GOLEM_DIR, consApp.assets));
 		ePic.addFXGLEventHandler(Event.DEATH, (event) -> consApp.getSceneManager().removeEntity(ePic));
 		enemy.aliveProperty().addListener(new ChangeListener<Boolean>(){
 			@Override
@@ -755,7 +719,7 @@ public class EntitySpawner {
 
 		enemy.setGraphics(rect);
 		enemy.setCollidable(true);
-		enemy.setProperty(Property.DATA, new Enemy(consApp.getAssetManager().loadText("enemies/enemy_FireElemental.txt")));
+		enemy.setProperty(Property.DATA, new Enemy(consApp.assets.getText("enemies/enemy_FireElemental.txt")));
 		enemy.setProperty("physics", consApp.physics);
 		enemy.setPosition(spawnPoint.getX(), spawnPoint.getY());
 		enemy.addControl(new PhysicsControl(consApp.physics));
@@ -766,7 +730,7 @@ public class EntitySpawner {
 			consApp.consController.enemyPlayFlute(enemy);
 		});
 		
-		enemy.setVisible(false);
+		enemy.setVisible(true);
 		enemy.setProperty("jumping", false);
 		enemy.setProperty("attacking", false);
 		
@@ -776,26 +740,20 @@ public class EntitySpawner {
 		ePic.setPosition(spawnPoint.getX(), spawnPoint.getY());
 		ePic.translateXProperty().bind(enemy.translateXProperty());
 		ePic.translateYProperty().bind(enemy.translateYProperty());
-		int fS = 300;
-		HashMap<Types.AnimationActions, AnimationDetails> hashMap = new HashMap<>();
+		
+		HashMap<Types.AnimationActions, Double> hashMap = new HashMap<>();
 		for(Types.AnimationActions aa : Types.AnimationActions.values()){
 			switch(aa){
-				case ATK: hashMap.put(aa, new AnimationDetails(
-						new Rectangle2D	(0,   3*fS, 1*fS, fS), 1, 1, true)); break;
-				case IDLE: hashMap.put(aa, new AnimationDetails(
-						new Rectangle2D	(0,   0*fS, 4*fS, fS), 4, 1, true)); break;
-				case JATK: hashMap.put(aa, new AnimationDetails(
-						new Rectangle2D	(fS,  4*fS, 1*fS, fS), 1, 1, true)); break;
-				case JUMP: hashMap.put(aa, new AnimationDetails(
-						new Rectangle2D	(0,   4*fS, 1*fS, fS), 1, 1, true)); break;
-				case MATK: hashMap.put(aa, new AnimationDetails(
-						new Rectangle2D	(0,   0*fS, 4*fS, fS), 4, 1, true)); break;
-				case MOVE: hashMap.put(aa, new AnimationDetails(
-						new Rectangle2D	(0,   0*fS, 4*fS, fS), 4, 1, true)); break;
+				case ATK: hashMap.put(aa, 1.0); break;
+				case IDLE: hashMap.put(aa, 1.0); break;
+				case JATK: hashMap.put(aa, 1.0); break;
+				case JUMP: hashMap.put(aa, 1.0); break;
+				case MATK: hashMap.put(aa, 1.0); break;
+				case MOVE: hashMap.put(aa, 1.0); break;
 				default: break;
 			}
 		}
-		ePic.addControl(new AnimatedEnemyControl(enemy, hashMap, consApp.getTexture(FileNames.MUSICIAN_TEX)));
+		ePic.addControl(new AnimatedEnemyControl(enemy, hashMap, FileNames.MUSICIAN_DIR, consApp.assets));
 		ePic.addFXGLEventHandler(Event.DEATH, (event) -> consApp.getSceneManager().removeEntity(ePic));
 		enemy.aliveProperty().addListener(new ChangeListener<Boolean>(){
 			@Override
@@ -817,7 +775,7 @@ public class EntitySpawner {
 
 		enemy.setGraphics(rect);
 		enemy.setCollidable(true);
-		enemy.setProperty(Property.DATA, new Enemy(consApp.getAssetManager().loadText("enemies/enemy_FireElemental.txt")));
+		enemy.setProperty(Property.DATA, new Enemy(consApp.assets.getText("enemies/enemy_FireElemental.txt")));
 		enemy.setProperty("physics", consApp.physics);
 		enemy.setProperty("shover", true);
 		enemy.setPosition(spawnPoint.getX(), spawnPoint.getY());
@@ -825,7 +783,7 @@ public class EntitySpawner {
 		enemy.addControl(new ComplexJumpControl(consApp, consApp.player, Speed.ENEMY_JUMP));
 		enemy.addFXGLEventHandler(Event.DEATH, this::onEnemyDeath);
 		
-		enemy.setVisible(false);
+		enemy.setVisible(true);
 		enemy.setProperty("jumping", false);
 		enemy.setProperty("attacking", false);
 		
@@ -835,26 +793,20 @@ public class EntitySpawner {
 		ePic.setPosition(spawnPoint.getX(), spawnPoint.getY());
 		ePic.translateXProperty().bind(enemy.translateXProperty());
 		ePic.translateYProperty().bind(enemy.translateYProperty());
-		int fS = 300;
-		HashMap<Types.AnimationActions, AnimationDetails> hashMap = new HashMap<>();
+		
+		HashMap<Types.AnimationActions, Double> hashMap = new HashMap<>();
 		for(Types.AnimationActions aa : Types.AnimationActions.values()){
 			switch(aa){
-				case ATK: hashMap.put(aa, new AnimationDetails(
-						new Rectangle2D	(0,   0*fS, 4*fS, fS), 4, 1, true)); break;
-				case IDLE: hashMap.put(aa, new AnimationDetails(
-						new Rectangle2D	(0,   0*fS, 4*fS, fS), 4, 1, true)); break;
-				case JATK: hashMap.put(aa, new AnimationDetails(
-						new Rectangle2D	(0,   4*fS, 1*fS, fS), 1, 1, true)); break;
-				case JUMP: hashMap.put(aa, new AnimationDetails(
-						new Rectangle2D	(0,   4*fS, 1*fS, fS), 1, 1, true)); break;
-				case MATK: hashMap.put(aa, new AnimationDetails(
-						new Rectangle2D	(0,   0*fS, 4*fS, fS), 4, 1, true)); break;
-				case MOVE: hashMap.put(aa, new AnimationDetails(
-						new Rectangle2D	(0,   0*fS, 4*fS, fS), 4, 1, true)); break;
+				case ATK: hashMap.put(aa, 1.0); break;
+				case IDLE: hashMap.put(aa, 1.0); break;
+				case JATK: hashMap.put(aa, 1.0); break;
+				case JUMP: hashMap.put(aa, 1.0); break;
+				case MATK: hashMap.put(aa, 1.0); break;
+				case MOVE: hashMap.put(aa, 1.0); break;
 				default: break;
 			}
 		}
-		ePic.addControl(new AnimatedEnemyControl(enemy, hashMap, consApp.getTexture(FileNames.DANCERS_TEX)));
+		ePic.addControl(new AnimatedEnemyControl(enemy, hashMap, FileNames.DANCERS_DIR, consApp.assets));
 		ePic.addFXGLEventHandler(Event.DEATH, (event) -> consApp.getSceneManager().removeEntity(ePic));
 		enemy.aliveProperty().addListener(new ChangeListener<Boolean>(){
 			@Override
@@ -871,12 +823,12 @@ public class EntitySpawner {
 	
 	public Pair<Entity, Entity> spawnDog(Point2D spawnPoint) {
 		Entity enemy = new Entity(Type.ENEMY);
-		Rectangle rect = new Rectangle(40, 20);
+		Rectangle rect = new Rectangle(30, 20);
 		rect.setFill(Color.RED);
 
 		enemy.setGraphics(rect);
 		enemy.setCollidable(true);
-		enemy.setProperty(Property.DATA, new Enemy(consApp.getAssetManager().loadText("enemies/enemy_FireElemental.txt")));
+		enemy.setProperty(Property.DATA, new Enemy(consApp.assets.getText("enemies/enemy_FireElemental.txt")));
 		enemy.setProperty("physics", consApp.physics);
 		enemy.setProperty("shover", true);
 		enemy.setPosition(spawnPoint.getX(), spawnPoint.getY());
@@ -894,7 +846,7 @@ public class EntitySpawner {
 			} , Config.ENEMY_CHARGE_DELAY);
 		});
 		
-		enemy.setVisible(false);
+		enemy.setVisible(true);
 		enemy.setProperty("jumping", false);
 		enemy.setProperty("attacking", false);
 		
@@ -902,28 +854,22 @@ public class EntitySpawner {
 		ePic.setVisible(true);
 		ePic.setCollidable(false);
 		ePic.setPosition(spawnPoint.getX(), spawnPoint.getY());
-		ePic.translateXProperty().bind(enemy.translateXProperty().add(10));
+		ePic.translateXProperty().bind(enemy.translateXProperty());
 		ePic.translateYProperty().bind(enemy.translateYProperty().add(-10));
-		int fS = 300;
-		HashMap<Types.AnimationActions, AnimationDetails> hashMap = new HashMap<>();
+		
+		HashMap<Types.AnimationActions, Double> hashMap = new HashMap<>();
 		for(Types.AnimationActions aa : Types.AnimationActions.values()){
 			switch(aa){
-				case ATK: hashMap.put(aa, new AnimationDetails(
-						new Rectangle2D	(0,   4*fS, 1*fS, fS), 1, 1, true)); break;
-				case IDLE: hashMap.put(aa, new AnimationDetails(
-						new Rectangle2D	(0,   0*fS, 1*fS, fS), 1, 1, true)); break;
-				case JATK: hashMap.put(aa, new AnimationDetails(
-						new Rectangle2D	(0,   4*fS, 1*fS, fS), 1, 1, true)); break;
-				case JUMP: hashMap.put(aa, new AnimationDetails(
-						new Rectangle2D	(0,   4*fS, 1*fS, fS), 1, 1, true)); break;
-				case MATK: hashMap.put(aa, new AnimationDetails(
-						new Rectangle2D	(0,   4*fS, 1*fS, fS), 1, 1, true)); break;
-				case MOVE: hashMap.put(aa, new AnimationDetails(
-						new Rectangle2D	(0,   1*fS, 4*fS, fS), 4, 1, true)); break;
+				case ATK: hashMap.put(aa, 1.0); break;
+				case IDLE: hashMap.put(aa, 1.0); break;
+				case JATK: hashMap.put(aa, 1.0); break;
+				case JUMP: hashMap.put(aa, 1.0); break;
+				case MATK: hashMap.put(aa, 1.0); break;
+				case MOVE: hashMap.put(aa, 1.0); break;
 				default: break;
 			}
 		}
-		ePic.addControl(new AnimatedEnemyControl(enemy, hashMap, consApp.getTexture(FileNames.DOG_TEX)));
+		ePic.addControl(new AnimatedEnemyControl(enemy, hashMap, FileNames.DOG_DIR, consApp.assets));
 		ePic.addFXGLEventHandler(Event.DEATH, (event) -> consApp.getSceneManager().removeEntity(ePic));
 		enemy.aliveProperty().addListener(new ChangeListener<Boolean>(){
 			@Override
@@ -945,7 +891,7 @@ public class EntitySpawner {
 
 		enemy.setGraphics(rect);
 		enemy.setCollidable(true);
-		enemy.setProperty(Property.DATA, new Enemy(consApp.getAssetManager().loadText("enemies/enemy_FireElemental.txt")));
+		enemy.setProperty(Property.DATA, new Enemy(consApp.assets.getText("enemies/enemy_FireElemental.txt")));
 		enemy.setProperty("physics", consApp.physics);
 		enemy.setProperty("shover", true);
 		enemy.setPosition(spawnPoint.getX(), spawnPoint.getY());
@@ -954,7 +900,7 @@ public class EntitySpawner {
 		enemy.addFXGLEventHandler(Event.DEATH, this::onEnemyDeath);
 		enemy.setProperty(Property.ENABLE_GRAVITY, false);
 		
-		enemy.setVisible(false);
+		enemy.setVisible(true);
 		enemy.setProperty("jumping", false);
 		enemy.setProperty("attacking", false);
 		
@@ -964,26 +910,20 @@ public class EntitySpawner {
 		ePic.setPosition(spawnPoint.getX(), spawnPoint.getY());
 		ePic.translateXProperty().bind(enemy.translateXProperty().add(5));
 		ePic.translateYProperty().bind(enemy.translateYProperty());
-		int fS = 300;
-		HashMap<Types.AnimationActions, AnimationDetails> hashMap = new HashMap<>();
+		
+		HashMap<Types.AnimationActions, Double> hashMap = new HashMap<>();
 		for(Types.AnimationActions aa : Types.AnimationActions.values()){
 			switch(aa){
-				case ATK: hashMap.put(aa, new AnimationDetails(
-						new Rectangle2D	(0,   1*fS, 5*fS, fS), 5, 1, true)); break;
-				case IDLE: hashMap.put(aa, new AnimationDetails(
-						new Rectangle2D	(0,   1*fS, 5*fS, fS), 5, 1, true)); break;
-				case JATK: hashMap.put(aa, new AnimationDetails(
-						new Rectangle2D	(0,   1*fS, 5*fS, fS), 5, 1, true)); break;
-				case JUMP: hashMap.put(aa, new AnimationDetails(
-						new Rectangle2D	(0,   1*fS, 5*fS, fS), 5, 1, true)); break;
-				case MATK: hashMap.put(aa, new AnimationDetails(
-						new Rectangle2D	(0,   1*fS, 5*fS, fS), 5, 1, true)); break;
-				case MOVE: hashMap.put(aa, new AnimationDetails(
-						new Rectangle2D	(0,   1*fS, 5*fS, fS), 5, 1, true)); break;
+				case ATK: hashMap.put(aa, 1.0); break;
+				case IDLE: hashMap.put(aa, 1.0); break;
+				case JATK: hashMap.put(aa, 1.0); break;
+				case JUMP: hashMap.put(aa, 1.0); break;
+				case MATK: hashMap.put(aa, 1.0); break;
+				case MOVE: hashMap.put(aa, 1.0); break;
 				default: break;
 			}
 		}
-		ePic.addControl(new AnimatedEnemyControl(enemy, hashMap, consApp.getTexture(FileNames.ICE_SPIRIT_TEX)));
+		ePic.addControl(new AnimatedEnemyControl(enemy, hashMap, FileNames.ICE_SPIRIT_DIR, consApp.assets));
 		ePic.addFXGLEventHandler(Event.DEATH, (event) -> consApp.getSceneManager().removeEntity(ePic));
 		enemy.aliveProperty().addListener(new ChangeListener<Boolean>(){
 			@Override
@@ -1005,7 +945,7 @@ public class EntitySpawner {
 
 		enemy.setGraphics(rect);
 		enemy.setCollidable(true);
-		enemy.setProperty(Property.DATA, new Enemy(consApp.getAssetManager().loadText("enemies/enemy_FireElemental.txt")));
+		enemy.setProperty(Property.DATA, new Enemy(consApp.assets.getText("enemies/enemy_FireElemental.txt")));
 		enemy.setProperty("physics", consApp.physics);
 		enemy.setProperty("facingRight", false);
 		enemy.setPosition(spawnPoint.getX(), spawnPoint.getY());
@@ -1029,7 +969,7 @@ public class EntitySpawner {
 			}, Config.ENEMY_SCORPION_DECAY.multiply(1.25));
 		});
 		
-		enemy.setVisible(false);
+		enemy.setVisible(true);
 		enemy.setProperty("jumping", false);
 		enemy.setProperty("attacking", false);
 		
@@ -1039,19 +979,20 @@ public class EntitySpawner {
 		ePic.setPosition(spawnPoint.getX(), spawnPoint.getY());
 		ePic.translateXProperty().bind(enemy.translateXProperty());
 		ePic.translateYProperty().bind(enemy.translateYProperty().add(-10));
-		HashMap<Types.AnimationActions, AnimationDetails> hashMap = new HashMap<>();
+		
+		HashMap<Types.AnimationActions, Double> hashMap = new HashMap<>();
 		for(Types.AnimationActions aa : Types.AnimationActions.values()){
 			switch(aa){
-				case ATK: hashMap.put(aa, new AnimationDetails(new Rectangle2D(0,  900, 300, 300), 1, 1, true)); break;
-				case IDLE: hashMap.put(aa, new AnimationDetails(new Rectangle2D(0, 0, 600, 300), 2, 1, true)); break;
-				case JATK: hashMap.put(aa, new AnimationDetails(new Rectangle2D(0, 900, 300, 300), 1, 1, true)); break;
-				case JUMP: hashMap.put(aa, new AnimationDetails(new Rectangle2D(0, 0, 600, 300), 2, 1, true)); break;
-				case MATK: hashMap.put(aa, new AnimationDetails(new Rectangle2D(0, 900, 300, 300), 1, 1, true)); break;
-				case MOVE: hashMap.put(aa, new AnimationDetails(new Rectangle2D(0, 0, 600, 300), 2, 1, true)); break;
+				case ATK: hashMap.put(aa, 1.0); break;
+				case IDLE: hashMap.put(aa, 1.0); break;
+				case JATK: hashMap.put(aa, 1.0); break;
+				case JUMP: hashMap.put(aa, 1.0); break;
+				case MATK: hashMap.put(aa, 1.0); break;
+				case MOVE: hashMap.put(aa, 1.0); break;
 				default: break;
 			}
 		}
-		ePic.addControl(new AnimatedEnemyControl(enemy, hashMap, consApp.getTexture(FileNames.CANNON_TEX)));
+		ePic.addControl(new AnimatedEnemyControl(enemy, hashMap, FileNames.CANNON_DIR, consApp.assets));
 		ePic.addFXGLEventHandler(Event.DEATH, (event) -> consApp.getSceneManager().removeEntity(ePic));
 		enemy.aliveProperty().addListener(new ChangeListener<Boolean>(){
 			@Override
@@ -1073,7 +1014,7 @@ public class EntitySpawner {
 
 		enemy.setGraphics(rect);
 		enemy.setCollidable(true);
-		enemy.setProperty(Property.DATA, new Enemy(consApp.getAssetManager().loadText("enemies/enemy_FireElemental.txt")));
+		enemy.setProperty(Property.DATA, new Enemy(consApp.assets.getText("enemies/enemy_FireElemental.txt")));
 		enemy.setProperty("physics", consApp.physics);
 		enemy.setProperty("facingRight", false);
 		enemy.setPosition(spawnPoint.getX(), spawnPoint.getY());
@@ -1097,7 +1038,7 @@ public class EntitySpawner {
 			}, Config.ENEMY_SCORPION_DECAY);
 		});
 		
-		enemy.setVisible(false);
+		enemy.setVisible(true);
 		enemy.setProperty("jumping", false);
 		enemy.setProperty("attacking", false);
 		
@@ -1107,19 +1048,20 @@ public class EntitySpawner {
 		ePic.setPosition(spawnPoint.getX(), spawnPoint.getY());
 		ePic.translateXProperty().bind(enemy.translateXProperty());
 		ePic.translateYProperty().bind(enemy.translateYProperty());
-		HashMap<Types.AnimationActions, AnimationDetails> hashMap = new HashMap<>();
+		
+		HashMap<Types.AnimationActions, Double> hashMap = new HashMap<>();
 		for(Types.AnimationActions aa : Types.AnimationActions.values()){
 			switch(aa){
-				case ATK: hashMap.put(aa, new AnimationDetails(new Rectangle2D(0,  900, 300, 300), 1, 1, true)); break;
-				case IDLE: hashMap.put(aa, new AnimationDetails(new Rectangle2D(0, 0, 300, 300), 1, 1, true)); break;
-				case JATK: hashMap.put(aa, new AnimationDetails(new Rectangle2D(0, 900, 300, 300), 1, 1, true)); break;
-				case JUMP: hashMap.put(aa, new AnimationDetails(new Rectangle2D(0, 300, 1200, 300), 4, 1, true)); break;
-				case MATK: hashMap.put(aa, new AnimationDetails(new Rectangle2D(0, 600, 1200, 300), 4, 1, true)); break;
-				case MOVE: hashMap.put(aa, new AnimationDetails(new Rectangle2D(0, 300, 1200, 300), 4, 1, true)); break;
+				case ATK: hashMap.put(aa, 1.0); break;
+				case IDLE: hashMap.put(aa, 1.0); break;
+				case JATK: hashMap.put(aa, 1.0); break;
+				case JUMP: hashMap.put(aa, 1.0); break;
+				case MATK: hashMap.put(aa, 1.0); break;
+				case MOVE: hashMap.put(aa, 1.0); break;
 				default: break;
 			}
 		}
-		ePic.addControl(new AnimatedEnemyControl(enemy, hashMap, consApp.getTexture(FileNames.BRITISH_TEX)));
+		ePic.addControl(new AnimatedEnemyControl(enemy, hashMap, FileNames.BRITISH_DIR, consApp.assets));
 		ePic.addFXGLEventHandler(Event.DEATH, (event) -> consApp.getSceneManager().removeEntity(ePic));
 		enemy.aliveProperty().addListener(new ChangeListener<Boolean>(){
 			@Override
@@ -1141,7 +1083,7 @@ public class EntitySpawner {
 
 		enemy.setGraphics(rect);
 		enemy.setCollidable(true);
-		enemy.setProperty(Property.DATA, new Enemy(consApp.getAssetManager().loadText("enemies/enemy_FireElemental.txt")));
+		enemy.setProperty(Property.DATA, new Enemy(consApp.assets.getText("enemies/enemy_FireElemental.txt")));
 		enemy.setProperty("physics", consApp.physics);
 		enemy.setProperty("facingRight", false);
 		enemy.setPosition(spawnPoint.getX(), spawnPoint.getY());
@@ -1152,7 +1094,7 @@ public class EntitySpawner {
 			consApp.consController.enemyStab(enemy);
 		});
 		
-		enemy.setVisible(false);
+		enemy.setVisible(true);
 		enemy.setProperty("jumping", false);
 		enemy.setProperty("attacking", true);
 		
@@ -1162,19 +1104,20 @@ public class EntitySpawner {
 		ePic.setPosition(spawnPoint.getX(), spawnPoint.getY());
 		ePic.translateXProperty().bind(enemy.translateXProperty());
 		ePic.translateYProperty().bind(enemy.translateYProperty());
-		HashMap<Types.AnimationActions, AnimationDetails> hashMap = new HashMap<>();
+		
+		HashMap<Types.AnimationActions, Double> hashMap = new HashMap<>();
 		for(Types.AnimationActions aa : Types.AnimationActions.values()){
 			switch(aa){
-				case ATK: hashMap.put(aa, new AnimationDetails(new Rectangle2D(0,  0, 300, 300), 1, 1, true)); break;
-				case IDLE: hashMap.put(aa, new AnimationDetails(new Rectangle2D(0, 0, 300, 300), 1, 1, true)); break;
-				case JATK: hashMap.put(aa, new AnimationDetails(new Rectangle2D(0, 900, 300, 300), 1, 1, true)); break;
-				case JUMP: hashMap.put(aa, new AnimationDetails(new Rectangle2D(0, 300, 1200, 300), 4, 1, true)); break;
-				case MATK: hashMap.put(aa, new AnimationDetails(new Rectangle2D(0, 600, 1200, 300), 4, 1, true)); break;
-				case MOVE: hashMap.put(aa, new AnimationDetails(new Rectangle2D(0, 300, 1200, 300), 4, 1, true)); break;
+				case ATK: hashMap.put(aa, 1.0); break;
+				case IDLE: hashMap.put(aa, 1.0); break;
+				case JATK: hashMap.put(aa, 1.0); break;
+				case JUMP: hashMap.put(aa, 1.0); break;
+				case MATK: hashMap.put(aa, 1.0); break;
+				case MOVE: hashMap.put(aa, 1.0); break;
 				default: break;
 			}
 		}
-		ePic.addControl(new AnimatedEnemyControl(enemy, hashMap, consApp.getTexture(FileNames.BRITISH_TEX)));
+		ePic.addControl(new AnimatedEnemyControl(enemy, hashMap, FileNames.BRITISH_DIR, consApp.assets));
 		ePic.addFXGLEventHandler(Event.DEATH, (event) -> consApp.getSceneManager().removeEntity(ePic));
 		enemy.aliveProperty().addListener(new ChangeListener<Boolean>(){
 			@Override
@@ -1196,8 +1139,8 @@ public class EntitySpawner {
 
 		enemy.setGraphics(rect);
 		enemy.setCollidable(true);
-		enemy.setVisible(false);
-		enemy.setProperty(Property.DATA, new Enemy(consApp.getAssetManager().loadText(FileNames.STATS_BANDIT_KNIFE)));
+		enemy.setVisible(true);
+		enemy.setProperty(Property.DATA, new Enemy(consApp.assets.getText(FileNames.STATS_BANDIT_KNIFE)));
 		enemy.setProperty("physics", consApp.physics);
 		enemy.setProperty("facingRight", true);
 		enemy.setProperty("jumping", false);
@@ -1212,19 +1155,20 @@ public class EntitySpawner {
 		ePic.setPosition(spawnPoint.getX(), spawnPoint.getY());
 		ePic.translateXProperty().bind(enemy.translateXProperty());
 		ePic.translateYProperty().bind(enemy.translateYProperty());
-		HashMap<Types.AnimationActions, AnimationDetails> hashMap = new HashMap<>();
+		
+		HashMap<Types.AnimationActions, Double> hashMap = new HashMap<>();
 		for(Types.AnimationActions aa : Types.AnimationActions.values()){
 			switch(aa){
-				case ATK: hashMap.put(aa, new AnimationDetails(new Rectangle2D(0, 900, 600, 300), 2, 2.5, false)); break;
-				case IDLE: hashMap.put(aa, new AnimationDetails(new Rectangle2D(0, 0, 300, 300), 1, 1, true)); break;
-				case JATK: hashMap.put(aa, new AnimationDetails(new Rectangle2D(0, 600, 600, 300), 2, 1, true)); break;
-				case JUMP: hashMap.put(aa, new AnimationDetails(new Rectangle2D(0, 300, 1200, 300), 4, 1, true)); break;
-				case MATK: hashMap.put(aa, new AnimationDetails(new Rectangle2D(0, 600, 600, 300), 2, 1, true)); break;
-				case MOVE: hashMap.put(aa, new AnimationDetails(new Rectangle2D(0, 300, 1200, 300), 4, 1, true)); break;
+				case ATK: hashMap.put(aa, 2.5); break;
+				case IDLE: hashMap.put(aa, 1.0); break;
+				case JATK: hashMap.put(aa, 1.0); break;
+				case JUMP: hashMap.put(aa, 1.0); break;
+				case MATK: hashMap.put(aa, 1.0); break;
+				case MOVE: hashMap.put(aa, 1.0); break;
 				default: break;
 			}
 		}
-		ePic.addControl(new AnimatedEnemyControl(enemy, hashMap, consApp.getTexture(FileNames.BANDIT_K_TEX)));
+		ePic.addControl(new AnimatedEnemyControl(enemy, hashMap, FileNames.BANDIT_K_DIR, consApp.assets));
 		ePic.addFXGLEventHandler(Event.DEATH, (event) -> consApp.getSceneManager().removeEntity(ePic));
 		enemy.aliveProperty().addListener(new ChangeListener<Boolean>(){
 			@Override
@@ -1254,8 +1198,8 @@ public class EntitySpawner {
 
 		enemy.setGraphics(rect);
 		enemy.setCollidable(true);
-		enemy.setVisible(false);
-		enemy.setProperty(Property.DATA, new Enemy(consApp.getAssetManager().loadText("enemies/enemy_FireElemental.txt")));
+		enemy.setVisible(true);
+		enemy.setProperty(Property.DATA, new Enemy(consApp.assets.getText("enemies/enemy_FireElemental.txt")));
 		enemy.setProperty("physics", consApp.physics);
 		enemy.setProperty("facingRight", true);
 		enemy.setProperty("jumping", false);
@@ -1270,19 +1214,20 @@ public class EntitySpawner {
 		ePic.setPosition(spawnPoint.getX(), spawnPoint.getY());
 		ePic.translateXProperty().bind(enemy.translateXProperty());
 		ePic.translateYProperty().bind(enemy.translateYProperty());
-		HashMap<Types.AnimationActions, AnimationDetails> hashMap = new HashMap<>();
+		
+		HashMap<Types.AnimationActions, Double> hashMap = new HashMap<>();
 		for(Types.AnimationActions aa : Types.AnimationActions.values()){
 			switch(aa){
-				case ATK: hashMap.put(aa, new AnimationDetails(new Rectangle2D(0, 900, 300, 300), 1, 1, true)); break;
-				case IDLE: hashMap.put(aa, new AnimationDetails(new Rectangle2D(0, 0, 300, 300), 1, 1, true)); break;
-				case JATK: hashMap.put(aa, new AnimationDetails(new Rectangle2D(0, 1200, 300, 300), 1, 1, true)); break;
-				case JUMP: hashMap.put(aa, new AnimationDetails(new Rectangle2D(0, 1200, 300, 300), 1, 1, true)); break;
-				case MATK: hashMap.put(aa, new AnimationDetails(new Rectangle2D(0, 600, 600, 300), 2, 1, true)); break;
-				case MOVE: hashMap.put(aa, new AnimationDetails(new Rectangle2D(0, 300, 1200, 300), 4, 1, true)); break;
+				case ATK: hashMap.put(aa, 1.0); break;
+				case IDLE: hashMap.put(aa, 1.0); break;
+				case JATK: hashMap.put(aa, 1.0); break;
+				case JUMP: hashMap.put(aa, 1.0); break;
+				case MATK: hashMap.put(aa, 1.0); break;
+				case MOVE: hashMap.put(aa, 1.0); break;
 				default: break;
 			}
 		}
-		ePic.addControl(new AnimatedEnemyControl(enemy, hashMap, consApp.getTexture(FileNames.ZULU_K_TEX)));
+		ePic.addControl(new AnimatedEnemyControl(enemy, hashMap, FileNames.ZULU_K_DIR, consApp.assets));
 		ePic.addFXGLEventHandler(Event.DEATH, (event) -> consApp.getSceneManager().removeEntity(ePic));
 		enemy.aliveProperty().addListener(new ChangeListener<Boolean>(){
 			@Override
@@ -1312,8 +1257,8 @@ public class EntitySpawner {
 
 		enemy.setGraphics(rect);
 		enemy.setCollidable(true);
-		enemy.setVisible(false);
-		enemy.setProperty(Property.DATA, new Enemy(consApp.getAssetManager().loadText("enemies/enemy_FireElemental.txt")));
+		enemy.setVisible(true);
+		enemy.setProperty(Property.DATA, new Enemy(consApp.assets.getText("enemies/enemy_FireElemental.txt")));
 		enemy.setProperty("physics", consApp.physics);
 		enemy.setProperty("facingRight", false);
 		enemy.setProperty("jumping", false);
@@ -1348,19 +1293,20 @@ public class EntitySpawner {
 		ePic.setPosition(spawnPoint.getX(), spawnPoint.getY());
 		ePic.translateXProperty().bind(enemy.translateXProperty());
 		ePic.translateYProperty().bind(enemy.translateYProperty());
-		HashMap<Types.AnimationActions, AnimationDetails> hashMap = new HashMap<>();
+		
+		HashMap<Types.AnimationActions, Double> hashMap = new HashMap<>();
 		for(Types.AnimationActions aa : Types.AnimationActions.values()){
 			switch(aa){
-				case ATK: hashMap.put(aa, new AnimationDetails(new Rectangle2D(0, 900, 600, 300), 2, 0.8, false)); break;
-				case IDLE: hashMap.put(aa, new AnimationDetails(new Rectangle2D(0, 0, 300, 300), 1, 1, true)); break;
-				case JATK: hashMap.put(aa, new AnimationDetails(new Rectangle2D(0, 600, 600, 300), 2, 0.8, false)); break;
-				case JUMP: hashMap.put(aa, new AnimationDetails(new Rectangle2D(0, 300, 300, 300), 1, 1, true)); break;
-				case MATK: hashMap.put(aa, new AnimationDetails(new Rectangle2D(0, 600, 600, 300), 2, 0.8, false)); break;
-				case MOVE: hashMap.put(aa, new AnimationDetails(new Rectangle2D(0, 300, 1200, 300), 4, 1, true)); break;
+				case ATK: hashMap.put(aa, 0.8); break;
+				case IDLE: hashMap.put(aa, 1.0); break;
+				case JATK: hashMap.put(aa, 0.8); break;
+				case JUMP: hashMap.put(aa, 1.0); break;
+				case MATK: hashMap.put(aa, 0.8); break;
+				case MOVE: hashMap.put(aa, 1.0); break;
 				default: break;
 			}
 		}
-		ePic.addControl(new AnimatedEnemyControl(enemy, hashMap, consApp.getTexture(FileNames.BANDIT_M_TEX)));
+		ePic.addControl(new AnimatedEnemyControl(enemy, hashMap, FileNames.BANDIT_M_DIR, consApp.assets));
 		ePic.addFXGLEventHandler(Event.DEATH, (event) -> consApp.getSceneManager().removeEntity(ePic));
 		enemy.aliveProperty().addListener(new ChangeListener<Boolean>(){
 			@Override
@@ -1383,7 +1329,7 @@ public class EntitySpawner {
 
 		enemy.setGraphics(rect);
 		enemy.setCollidable(true);
-		enemy.setProperty(Property.DATA, new Enemy(consApp.getAssetManager().loadText("enemies/enemy_FireElemental.txt")));
+		enemy.setProperty(Property.DATA, new Enemy(consApp.assets.getText("enemies/enemy_FireElemental.txt")));
 		enemy.setProperty(Property.SUB_TYPE, Type.BOSS);
 		enemy.setProperty("physics", consApp.physics);
 		enemy.setProperty("shover", true);
@@ -1401,15 +1347,15 @@ public class EntitySpawner {
 		rect.setFill(Color.RED);
 
 		enemy.setGraphics(rect);
-		enemy.setVisible(false);
+		enemy.setVisible(true);
 		enemy.setCollidable(false);
-		enemy.setProperty(Property.DATA, new Enemy(consApp.getAssetManager().loadText("enemies/enemy_FireElemental.txt")));
+		enemy.setProperty(Property.DATA, new Enemy(consApp.assets.getText("enemies/enemy_FireElemental.txt")));
 		enemy.setProperty(Property.SUB_TYPE, Type.BOSS);
 		enemy.setProperty("physics", consApp.physics);
 		enemy.setProperty("shover", true);
 		enemy.setPosition(spawnPoint.getX(), spawnPoint.getY());
 		enemy.addControl(new PhysicsControl(consApp.physics));
-		enemy.addControl(new SandBossControl(consApp.player));
+		enemy.addControl(new SandBossControl(consApp, consApp.player));
 		enemy.addFXGLEventHandler(Event.DEATH, this::onEnemyDeath);
 		enemy.addFXGLEventHandler(Event.ENEMY_FIRED, event -> {
 			consApp.getTimerManager().runOnceAfter(() -> {
@@ -1434,7 +1380,7 @@ public class EntitySpawner {
 			}, Config.ENEMY_SCORPION_DECAY);
 		});
 		
-		//enemy.setVisible(false);
+		//enemy.setVisible(true);
 		enemy.setProperty("jumping", false);
 		enemy.setProperty("attacking", false);
 		
@@ -1444,26 +1390,19 @@ public class EntitySpawner {
 		ePic.setPosition(spawnPoint.getX(), spawnPoint.getY());
 		ePic.translateXProperty().bind(enemy.translateXProperty());
 		ePic.translateYProperty().bind(enemy.translateYProperty().add(10));
-		int fS = 300;
-		HashMap<Types.AnimationActions, AnimationDetailsE> hashMap = new HashMap<>();
+		HashMap<Types.AnimationActions, Double> hashMap = new HashMap<>();
 		for(Types.AnimationActions aa : Types.AnimationActions.values()){
 			switch(aa){
-				case ATK: hashMap.put(aa, new AnimationDetailsE(
-						new Rectangle2D	(0,   4*fS, 2*fS, fS), 2, 1, false)); break;
-				case IDLE: hashMap.put(aa, new AnimationDetailsE(
-						new Rectangle2D	(0,   0*fS, 1*fS, fS), 1, 1, true)); break;
-				case JATK: hashMap.put(aa, new AnimationDetailsE(
-						new Rectangle2D	(0,   0*fS, 1*fS, fS), 1, 1, true)); break;
-				case JUMP: hashMap.put(aa, new AnimationDetailsE(
-						new Rectangle2D	(0,   1*fS, 5*fS, fS), 5, 1, true)); break;
-				case MATK: hashMap.put(aa, new AnimationDetailsE(
-						new Rectangle2D	(0,   4*fS, 2*fS, fS), 2, 1, true)); break;
-				case MOVE: hashMap.put(aa, new AnimationDetailsE(
-						new Rectangle2D	(0,   1*fS, 4*fS, fS), 4, 1, false)); break;
+				case ATK: hashMap.put(aa, 1.0); break;
+				case IDLE: hashMap.put(aa, 1.0); break;
+				case JATK: hashMap.put(aa, 1.0); break;
+				case JUMP: hashMap.put(aa, 1.0); break;
+				case MATK: hashMap.put(aa, 1.0); break;
+				case MOVE: hashMap.put(aa, 1.0); break;
 				default: break;
 			}
 		}
-		ePic.addControl(new AnimatedElephantControl(enemy, hashMap, consApp.getTexture(FileNames.SAND_ELEPHANT_TEX)));
+		ePic.addControl(new AnimatedElephantControl(enemy, hashMap, FileNames.SAND_ELEPHANT_DIR, consApp.assets));
 		ePic.addFXGLEventHandler(Event.DEATH, (event) -> consApp.getSceneManager().removeEntity(ePic));
 		enemy.aliveProperty().addListener(new ChangeListener<Boolean>(){
 			@Override
@@ -1484,9 +1423,9 @@ public class EntitySpawner {
 		rect.setFill(Color.RED);
 
 		enemy.setGraphics(rect);
-		enemy.setVisible(false);
+		enemy.setVisible(true);
 		enemy.setCollidable(true);
-		enemy.setProperty(Property.DATA, new Enemy(consApp.getAssetManager().loadText("enemies/enemy_FireElemental.txt")));
+		enemy.setProperty(Property.DATA, new Enemy(consApp.assets.getText("enemies/enemy_FireElemental.txt")));
 		enemy.setProperty(Property.SUB_TYPE, Type.BOSS);
 		enemy.setProperty("physics", consApp.physics);
 		enemy.setProperty("shover", true);
@@ -1502,19 +1441,20 @@ public class EntitySpawner {
 		ePic.setPosition(spawnPoint.getX(), spawnPoint.getY());
 		ePic.translateXProperty().bind(enemy.translateXProperty());
 		ePic.translateYProperty().bind(enemy.translateYProperty());
-		HashMap<Types.AnimationActions, AnimationDetails> hashMap = new HashMap<>();
+		
+		HashMap<Types.AnimationActions, Double> hashMap = new HashMap<>();
 		for(Types.AnimationActions aa : Types.AnimationActions.values()){
 			switch(aa){
-				case ATK: hashMap.put(aa, new AnimationDetails(new Rectangle2D(0, 900, 600, 300), 2, 2.5, false)); break;
-				case IDLE: hashMap.put(aa, new AnimationDetails(new Rectangle2D(0, 0, 600, 300), 2, 1, true)); break;
-				case JATK: hashMap.put(aa, new AnimationDetails(new Rectangle2D(0, 1200, 300, 300), 1, 1, true)); break;
-				case JUMP: hashMap.put(aa, new AnimationDetails(new Rectangle2D(0, 1200, 300, 300), 1, 1, true)); break;
-				case MATK: hashMap.put(aa, new AnimationDetails(new Rectangle2D(0, 300, 1200, 300), 4, 1, true)); break;
-				case MOVE: hashMap.put(aa, new AnimationDetails(new Rectangle2D(0, 300, 1200, 300), 4, 1, true)); break;
+				case ATK: hashMap.put(aa, 2.5); break;
+				case IDLE: hashMap.put(aa, 1.0); break;
+				case JATK: hashMap.put(aa, 1.0); break;
+				case JUMP: hashMap.put(aa, 1.0); break;
+				case MATK: hashMap.put(aa, 1.0); break;
+				case MOVE: hashMap.put(aa, 1.0); break;
 				default: break;
 			}
 		}
-		ePic.addControl(new AnimatedEnemyControl(enemy, hashMap, consApp.getTexture(FileNames.ANUBIS_TEX)));
+		ePic.addControl(new AnimatedEnemyControl(enemy, hashMap, FileNames.ANUBIS_DIR, consApp.assets));
 		ePic.addFXGLEventHandler(Event.DEATH, (event) -> consApp.getSceneManager().removeEntity(ePic));
 		enemy.aliveProperty().addListener(new ChangeListener<Boolean>(){
 			@Override
@@ -1570,7 +1510,7 @@ public class EntitySpawner {
 		enemy.setGraphics(rect);
 		enemy.setVisible(true);
 		enemy.setCollidable(true);
-		enemy.setProperty(Property.DATA, new Enemy(consApp.getAssetManager().loadText("enemies/enemy_FireElemental.txt")));
+		enemy.setProperty(Property.DATA, new Enemy(consApp.assets.getText("enemies/enemy_FireElemental.txt")));
 		enemy.setProperty(Property.SUB_TYPE, Type.BOSS);
 		enemy.setProperty("physics", consApp.physics);
 		enemy.setProperty("shover", true);
@@ -1645,7 +1585,7 @@ public class EntitySpawner {
 			}
 		});
 		
-		enemy.setVisible(false);
+		enemy.setVisible(true);
 		enemy.setProperty("jumping", false);
 		enemy.setProperty("attacking", false);
 		
@@ -1655,26 +1595,20 @@ public class EntitySpawner {
 		ePic.setPosition(spawnPoint.getX(), spawnPoint.getY());
 		ePic.translateXProperty().bind(enemy.translateXProperty());
 		ePic.translateYProperty().bind(enemy.translateYProperty());
-		int fS = 300;
-		HashMap<Types.AnimationActions, AnimationDetails> hashMap = new HashMap<>();
+		
+		HashMap<Types.AnimationActions, Double> hashMap = new HashMap<>();
 		for(Types.AnimationActions aa : Types.AnimationActions.values()){
 			switch(aa){
-				case ATK: hashMap.put(aa, new AnimationDetails(
-						new Rectangle2D	(0,   3*fS, 2*fS, fS), 2, 1, true)); break;
-				case IDLE: hashMap.put(aa, new AnimationDetails(
-						new Rectangle2D	(0,   0*fS, 1*fS, fS), 1, 1, true)); break;
-				case JATK: hashMap.put(aa, new AnimationDetails(
-						new Rectangle2D	(1*fS,4*fS, 1*fS, fS), 1, 1, true)); break;
-				case JUMP: hashMap.put(aa, new AnimationDetails(
-						new Rectangle2D	(0,   4*fS, 1*fS, fS), 1, 1, true)); break;
-				case MATK: hashMap.put(aa, new AnimationDetails(
-						new Rectangle2D	(0,   1*fS, 4*fS, fS), 4, 1, true)); break;
-				case MOVE: hashMap.put(aa, new AnimationDetails(
-						new Rectangle2D	(0,   1*fS, 4*fS, fS), 4, 1, true)); break;
+				case ATK: hashMap.put(aa, 1.0); break;
+				case IDLE: hashMap.put(aa, 1.0); break;
+				case JATK: hashMap.put(aa, 1.0); break;
+				case JUMP: hashMap.put(aa, 1.0); break;
+				case MATK: hashMap.put(aa, 1.0); break;
+				case MOVE: hashMap.put(aa, 1.0); break;
 				default: break;
 			}
 		}
-		ePic.addControl(new AnimatedEnemyControl(enemy, hashMap, consApp.getTexture(FileNames.SHANGO_TEX)));
+		ePic.addControl(new AnimatedEnemyControl(enemy, hashMap, FileNames.SHANGO_DIR, consApp.assets));
 		ePic.addFXGLEventHandler(Event.DEATH, (event) -> consApp.getSceneManager().removeEntity(ePic));
 		enemy.aliveProperty().addListener(new ChangeListener<Boolean>(){
 			@Override
@@ -1697,7 +1631,7 @@ public class EntitySpawner {
 		enemy.setGraphics(rect);
 		enemy.setVisible(true);
 		enemy.setCollidable(true);
-		enemy.setProperty(Property.DATA, new Enemy(consApp.getAssetManager().loadText("enemies/enemy_FireElemental.txt")));
+		enemy.setProperty(Property.DATA, new Enemy(consApp.assets.getText("enemies/enemy_FireElemental.txt")));
 		enemy.setProperty(Property.SUB_TYPE, Type.BOSS);
 		enemy.setProperty("physics", consApp.physics);
 		enemy.setProperty("shover", true);
@@ -1782,7 +1716,7 @@ public class EntitySpawner {
 		});
 		
 		
-		enemy.setVisible(false);
+		enemy.setVisible(true);
 		enemy.setProperty("jumping", false);
 		enemy.setProperty("attacking", false);
 		
@@ -1792,26 +1726,20 @@ public class EntitySpawner {
 		ePic.setPosition(spawnPoint.getX(), spawnPoint.getY());
 		ePic.translateXProperty().bind(enemy.translateXProperty());
 		ePic.translateYProperty().bind(enemy.translateYProperty());
-		int fS = 300;
-		HashMap<Types.AnimationActions, AnimationDetails> hashMap = new HashMap<>();
+		
+		HashMap<Types.AnimationActions, Double> hashMap = new HashMap<>();
 		for(Types.AnimationActions aa : Types.AnimationActions.values()){
 			switch(aa){
-				case ATK: hashMap.put(aa, new AnimationDetails(
-						new Rectangle2D	(0,   3*fS, 2*fS, fS), 2, 0.35, false)); break;
-				case IDLE: hashMap.put(aa, new AnimationDetails(
-						new Rectangle2D	(0,   0*fS, 1*fS, fS), 1, 1, true)); break;
-				case JATK: hashMap.put(aa, new AnimationDetails(
-						new Rectangle2D	(fS,  4*fS, 1*fS, fS), 1, 1, true)); break;
-				case JUMP: hashMap.put(aa, new AnimationDetails(
-						new Rectangle2D	(0,   4*fS, 1*fS, fS), 1, 1, true)); break;
-				case MATK: hashMap.put(aa, new AnimationDetails(
-						new Rectangle2D	(0,   2*fS, 2*fS, fS), 2, 0.5, false)); break;
-				case MOVE: hashMap.put(aa, new AnimationDetails(
-						new Rectangle2D	(0,   1*fS, 4*fS, fS), 4, 1, true)); break;
+				case ATK: hashMap.put(aa, 0.35); break;
+				case IDLE: hashMap.put(aa, 1.0); break;
+				case JATK: hashMap.put(aa, 1.0); break;
+				case JUMP: hashMap.put(aa, 1.0); break;
+				case MATK: hashMap.put(aa, 0.5); break;
+				case MOVE: hashMap.put(aa, 1.0); break;
 				default: break;
 			}
 		}
-		ePic.addControl(new AnimatedEnemyControl(enemy, hashMap, consApp.getTexture(FileNames.KIBO_TEX)));
+		ePic.addControl(new AnimatedEnemyControl(enemy, hashMap, FileNames.KIBO_DIR, consApp.assets));
 		ePic.addFXGLEventHandler(Event.DEATH, (event) -> consApp.getSceneManager().removeEntity(ePic));
 		enemy.aliveProperty().addListener(new ChangeListener<Boolean>(){
 			@Override
@@ -1834,7 +1762,7 @@ public class EntitySpawner {
 		enemy.setGraphics(rect);
 		enemy.setVisible(true);
 		enemy.setCollidable(true);
-		enemy.setProperty(Property.DATA, new Enemy(consApp.getAssetManager().loadText("enemies/enemy_FireElemental.txt")));
+		enemy.setProperty(Property.DATA, new Enemy(consApp.assets.getText("enemies/enemy_FireElemental.txt")));
 		enemy.setProperty(Property.SUB_TYPE, Type.BOSS);
 		enemy.setProperty("physics", consApp.physics);
 		enemy.setProperty("shover", true);
@@ -1950,7 +1878,7 @@ public class EntitySpawner {
 			}
 		});
 		
-		enemy.setVisible(false);
+		enemy.setVisible(true);
 		enemy.setProperty("jumping", false);
 		enemy.setProperty("attacking", false);
 		
@@ -1960,26 +1888,20 @@ public class EntitySpawner {
 		ePic.setPosition(spawnPoint.getX(), spawnPoint.getY());
 		ePic.translateXProperty().bind(enemy.translateXProperty());
 		ePic.translateYProperty().bind(enemy.translateYProperty());
-		int fS = 300;
-		HashMap<Types.AnimationActions, AnimationDetails> hashMap = new HashMap<>();
+		
+		HashMap<Types.AnimationActions, Double> hashMap = new HashMap<>();
 		for(Types.AnimationActions aa : Types.AnimationActions.values()){
 			switch(aa){
-				case ATK: hashMap.put(aa, new AnimationDetails(
-						new Rectangle2D	(0,   3*fS, 2*fS, fS), 2, 1, false)); break;
-				case IDLE: hashMap.put(aa, new AnimationDetails(
-						new Rectangle2D	(0,   0*fS, 1*fS, fS), 1, 1, true)); break;
-				case JATK: hashMap.put(aa, new AnimationDetails(
-						new Rectangle2D	(fS,  4*fS, 1*fS, fS), 1, 1, true)); break;
-				case JUMP: hashMap.put(aa, new AnimationDetails(
-						new Rectangle2D	(0,   4*fS, 1*fS, fS), 1, 1, true)); break;
-				case MATK: hashMap.put(aa, new AnimationDetails(
-						new Rectangle2D	(0,   2*fS, 2*fS, fS), 2, 1, false)); break;
-				case MOVE: hashMap.put(aa, new AnimationDetails(
-						new Rectangle2D	(0,   1*fS, 4*fS, fS), 4, 1, true)); break;
+				case ATK: hashMap.put(aa, 1.0); break;
+				case IDLE: hashMap.put(aa, 1.0); break;
+				case JATK: hashMap.put(aa, 1.0); break;
+				case JUMP: hashMap.put(aa, 1.0); break;
+				case MATK: hashMap.put(aa, 1.0); break;
+				case MOVE: hashMap.put(aa, 1.0); break;
 				default: break;
 			}
 		}
-		ePic.addControl(new AnimatedEnemyControl(enemy, hashMap, consApp.getTexture(FileNames.GENTLEMAN_TEX)));
+		ePic.addControl(new AnimatedEnemyControl(enemy, hashMap, FileNames.GENTLEMAN_DIR, consApp.assets));
 		ePic.addFXGLEventHandler(Event.DEATH, (event) -> consApp.getSceneManager().removeEntity(ePic));
 		enemy.aliveProperty().addListener(new ChangeListener<Boolean>(){
 			@Override
@@ -2003,7 +1925,7 @@ public class EntitySpawner {
 		enemy.setGraphics(rect);
 		enemy.setVisible(true);
 		enemy.setCollidable(true);
-		enemy.setProperty(Property.DATA, new Enemy(consApp.getAssetManager().loadText("enemies/enemy_FireElemental.txt")));
+		enemy.setProperty(Property.DATA, new Enemy(consApp.assets.getText("enemies/enemy_FireElemental.txt")));
 		enemy.setProperty(Property.SUB_TYPE, Type.BOSS);
 		enemy.setProperty("physics", consApp.physics);
 		enemy.setProperty("shover", true);
@@ -2065,7 +1987,7 @@ public class EntitySpawner {
 
 		});
 		
-		enemy.setVisible(false);
+		enemy.setVisible(true);
 		enemy.setProperty("jumping", false);
 		enemy.setProperty("attacking", false);
 		
@@ -2075,26 +1997,20 @@ public class EntitySpawner {
 		ePic.setPosition(spawnPoint.getX(), spawnPoint.getY());
 		ePic.translateXProperty().bind(enemy.translateXProperty());
 		ePic.translateYProperty().bind(enemy.translateYProperty());
-		int fS = 300;
-		HashMap<Types.AnimationActions, AnimationDetails> hashMap = new HashMap<>();
+		
+		HashMap<Types.AnimationActions, Double> hashMap = new HashMap<>();
 		for(Types.AnimationActions aa : Types.AnimationActions.values()){
 			switch(aa){
-				case ATK: hashMap.put(aa, new AnimationDetails(
-						new Rectangle2D	(0,   3*fS, 2*fS, fS), 2, 1.5, false)); break;
-				case IDLE: hashMap.put(aa, new AnimationDetails(
-						new Rectangle2D	(0,   0*fS, 1*fS, fS), 1, 1, true)); break;
-				case JATK: hashMap.put(aa, new AnimationDetails(
-						new Rectangle2D	(0,   4*fS, 1*fS, fS), 1, 1, true)); break;
-				case JUMP: hashMap.put(aa, new AnimationDetails(
-						new Rectangle2D	(0,   4*fS, 1*fS, fS), 1, 1, true)); break;
-				case MATK: hashMap.put(aa, new AnimationDetails(
-						new Rectangle2D	(0,   2*fS, 4*fS, fS), 4, 1, true)); break;
-				case MOVE: hashMap.put(aa, new AnimationDetails(
-						new Rectangle2D	(0,   1*fS, 4*fS, fS), 4, 1, true)); break;
+				case ATK: hashMap.put(aa, 1.5); break;
+				case IDLE: hashMap.put(aa, 1.0); break;
+				case JATK: hashMap.put(aa, 1.0); break;
+				case JUMP: hashMap.put(aa, 1.0); break;
+				case MATK: hashMap.put(aa, 1.0); break;
+				case MOVE: hashMap.put(aa, 1.0); break;
 				default: break;
 			}
 		}
-		ePic.addControl(new AnimatedEnemyControl(enemy, hashMap, consApp.getTexture(FileNames.SHAKA_TEX)));
+		ePic.addControl(new AnimatedEnemyControl(enemy, hashMap, FileNames.SHAKA_DIR, consApp.assets));
 		ePic.addFXGLEventHandler(Event.DEATH, (event) -> consApp.getSceneManager().removeEntity(ePic));
 		enemy.aliveProperty().addListener(new ChangeListener<Boolean>(){
 			@Override
@@ -2117,7 +2033,7 @@ public class EntitySpawner {
 		enemy.setGraphics(rect);
 		enemy.setVisible(true);
 		enemy.setCollidable(true);
-		enemy.setProperty(Property.DATA, new Enemy(consApp.getAssetManager().loadText("enemies/enemy_FireElemental.txt")));
+		enemy.setProperty(Property.DATA, new Enemy(consApp.assets.getText("enemies/enemy_FireElemental.txt")));
 		enemy.setProperty(Property.SUB_TYPE, Type.BOSS);
 		enemy.setProperty("physics", consApp.physics);
 		enemy.setProperty("shover", true);
@@ -2140,7 +2056,7 @@ public class EntitySpawner {
 			}
 		});
 		
-		enemy.setVisible(false);
+		enemy.setVisible(true);
 		enemy.setProperty("jumping", false);
 		enemy.setProperty("attacking", false);
 		
@@ -2150,26 +2066,20 @@ public class EntitySpawner {
 		ePic.setPosition(spawnPoint.getX(), spawnPoint.getY());
 		ePic.translateXProperty().bind(enemy.translateXProperty());
 		ePic.translateYProperty().bind(enemy.translateYProperty().add(10));
-		int fS = 300;
-		HashMap<Types.AnimationActions, AnimationDetails> hashMap = new HashMap<>();
+		
+		HashMap<Types.AnimationActions, Double> hashMap = new HashMap<>();
 		for(Types.AnimationActions aa : Types.AnimationActions.values()){
 			switch(aa){
-				case ATK: hashMap.put(aa, new AnimationDetails(
-						new Rectangle2D	(0,   3*fS, 2*fS, fS), 2, 1, true)); break;
-				case IDLE: hashMap.put(aa, new AnimationDetails(
-						new Rectangle2D	(0,   0*fS, 1*fS, fS), 1, 1, true)); break;
-				case JATK: hashMap.put(aa, new AnimationDetails(
-						new Rectangle2D	(fS,  4*fS, 1*fS, fS), 1, 1, true)); break;
-				case JUMP: hashMap.put(aa, new AnimationDetails(
-						new Rectangle2D	(0,   4*fS, 1*fS, fS), 1, 1, true)); break;
-				case MATK: hashMap.put(aa, new AnimationDetails(
-						new Rectangle2D	(0,   2*fS, 4*fS, fS), 4, 1, true)); break;
-				case MOVE: hashMap.put(aa, new AnimationDetails(
-						new Rectangle2D	(0,   1*fS, 4*fS, fS), 4, 1, true)); break;
+				case ATK: hashMap.put(aa, 1.0); break;
+				case IDLE: hashMap.put(aa, 1.0); break;
+				case JATK: hashMap.put(aa, 1.0); break;
+				case JUMP: hashMap.put(aa, 1.0); break;
+				case MATK: hashMap.put(aa, 1.0); break;
+				case MOVE: hashMap.put(aa, 1.0); break;
 				default: break;
 			}
 		}
-		ePic.addControl(new AnimatedEnemyControl(enemy, hashMap, consApp.getTexture(FileNames.ESHU_TEX)));
+		ePic.addControl(new AnimatedEnemyControl(enemy, hashMap, FileNames.ESHU_DIR, consApp.assets));
 		ePic.addFXGLEventHandler(Event.DEATH, (event) -> consApp.getSceneManager().removeEntity(ePic));
 		enemy.aliveProperty().addListener(new ChangeListener<Boolean>(){
 			@Override
@@ -2192,7 +2102,7 @@ public class EntitySpawner {
 		enemy.setGraphics(rect);
 		enemy.setVisible(true);
 		enemy.setCollidable(true);
-		enemy.setProperty(Property.DATA, new Enemy(consApp.getAssetManager().loadText("enemies/enemy_FireElemental.txt")));
+		enemy.setProperty(Property.DATA, new Enemy(consApp.assets.getText("enemies/enemy_FireElemental.txt")));
 		enemy.setProperty(Property.SUB_TYPE, Type.BOSS);
 		enemy.setProperty("physics", consApp.physics);
 		enemy.setProperty("shover", true);
@@ -2215,7 +2125,7 @@ public class EntitySpawner {
 			}
 		});
 		
-		enemy.setVisible(false);
+		enemy.setVisible(true);
 		enemy.setProperty("jumping", false);
 		enemy.setProperty("attacking", false);
 		
@@ -2225,26 +2135,20 @@ public class EntitySpawner {
 		ePic.setPosition(spawnPoint.getX(), spawnPoint.getY());
 		ePic.translateXProperty().bind(enemy.translateXProperty());
 		ePic.translateYProperty().bind(enemy.translateYProperty().add(10));
-		int fS = 300;
-		HashMap<Types.AnimationActions, AnimationDetails> hashMap = new HashMap<>();
+		
+		HashMap<Types.AnimationActions, Double> hashMap = new HashMap<>();
 		for(Types.AnimationActions aa : Types.AnimationActions.values()){
 			switch(aa){
-				case ATK: hashMap.put(aa, new AnimationDetails(
-						new Rectangle2D	(0,   3*fS, 2*fS, fS), 2, 1, true)); break;
-				case IDLE: hashMap.put(aa, new AnimationDetails(
-						new Rectangle2D	(0,   0*fS, 1*fS, fS), 1, 1, true)); break;
-				case JATK: hashMap.put(aa, new AnimationDetails(
-						new Rectangle2D	(fS,  4*fS, 1*fS, fS), 1, 1, true)); break;
-				case JUMP: hashMap.put(aa, new AnimationDetails(
-						new Rectangle2D	(0,   4*fS, 1*fS, fS), 1, 1, true)); break;
-				case MATK: hashMap.put(aa, new AnimationDetails(
-						new Rectangle2D	(0,   2*fS, 4*fS, fS), 4, 1, true)); break;
-				case MOVE: hashMap.put(aa, new AnimationDetails(
-						new Rectangle2D	(0,   1*fS, 4*fS, fS), 4, 1, true)); break;
+				case ATK: hashMap.put(aa, 1.0); break;
+				case IDLE: hashMap.put(aa, 1.0); break;
+				case JATK: hashMap.put(aa, 1.0); break;
+				case JUMP: hashMap.put(aa, 1.0); break;
+				case MATK: hashMap.put(aa, 1.0); break;
+				case MOVE: hashMap.put(aa, 1.0); break;
 				default: break;
 			}
 		}
-		ePic.addControl(new AnimatedEnemyControl(enemy, hashMap, consApp.getTexture(FileNames.ESHU_TEX)));
+		ePic.addControl(new AnimatedEnemyControl(enemy, hashMap, FileNames.ESHU_DIR, consApp.assets));
 		ePic.addFXGLEventHandler(Event.DEATH, (event) -> consApp.getSceneManager().removeEntity(ePic));
 		enemy.aliveProperty().addListener(new ChangeListener<Boolean>(){
 			@Override

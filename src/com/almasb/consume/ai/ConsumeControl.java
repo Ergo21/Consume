@@ -80,6 +80,14 @@ public class ConsumeControl extends AbstractControl {
 	}
 
 	private boolean isTargetInRange() {
-		return target.getPosition().distance(entity.getPosition()) <= Config.ENEMY_FIRE_RANGE/2;
+		if(target == null){
+			System.out.println("Target fail");
+		}
+		return target.
+				getPosition()
+				.distance(
+						entity
+						.getPosition()) 
+				<= Config.ENEMY_FIRE_RANGE/2;
 	}
 }
