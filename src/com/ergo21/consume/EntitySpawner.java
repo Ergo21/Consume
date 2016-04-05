@@ -111,7 +111,7 @@ public class EntitySpawner {
 			} , Config.ENEMY_CHARGE_DELAY);
 		});
 		
-		enemy.setVisible(true);
+		enemy.setVisible(false);
 		enemy.setProperty("jumping", false);
 		enemy.setProperty("attacking", true);
 		
@@ -164,7 +164,7 @@ public class EntitySpawner {
 		enemy.addControl(new SimpleJumpControl(consApp, consApp.player, Speed.ENEMY_JUMP));
 		enemy.addFXGLEventHandler(Event.DEATH, this::onEnemyDeath);
 		
-		enemy.setVisible(true);
+		enemy.setVisible(false);
 		enemy.setProperty("jumping", false);
 		enemy.setProperty("attacking", false);
 		
@@ -220,7 +220,7 @@ public class EntitySpawner {
 		enemy.setProperty(Property.ENABLE_GRAVITY, false);
 		
 		
-		enemy.setVisible(true);
+		enemy.setVisible(false);
 		enemy.setProperty("jumping", false);
 		enemy.setProperty("attacking", false);
 		
@@ -276,7 +276,7 @@ public class EntitySpawner {
 			//consApp.consController.enemyShootProjectile(Element.NEUTRAL2, enemy);
 		});
 		
-		enemy.setVisible(true);
+		enemy.setVisible(false);
 		enemy.setProperty("jumping", false);
 		enemy.setProperty("attacking", false);
 		
@@ -332,7 +332,7 @@ public class EntitySpawner {
 			//consApp.consController.enemyShootProjectile(Element.NEUTRAL2, enemy);
 		});
 		
-		enemy.setVisible(true);
+		enemy.setVisible(false);
 		enemy.setProperty("jumping", false);
 		enemy.setProperty("attacking", false);
 		
@@ -397,7 +397,7 @@ public class EntitySpawner {
 			}, Config.ENEMY_SPEAR_DECAY);
 		});
 		
-		enemy.setVisible(true);
+		enemy.setVisible(false);
 		enemy.setProperty("jumping", false);
 		enemy.setProperty("attacking", false);
 		
@@ -462,7 +462,7 @@ public class EntitySpawner {
 			}, Config.ENEMY_SPEAR_DECAY);
 		});
 		
-		enemy.setVisible(true);
+		enemy.setVisible(false);
 		enemy.setProperty("jumping", false);
 		enemy.setProperty("attacking", false);
 		
@@ -529,7 +529,7 @@ public class EntitySpawner {
 			}, Config.ENEMY_SCORPION_DECAY);
 		});
 		
-		enemy.setVisible(true);
+		enemy.setVisible(false);
 		enemy.setProperty("jumping", false);
 		enemy.setProperty("attacking", false);
 		
@@ -674,7 +674,7 @@ public class EntitySpawner {
 			}, Config.ENEMY_STONE_THROW_DELAY.multiply(3.5));
 		});
 		
-		enemy.setVisible(true);
+		enemy.setVisible(false);
 		enemy.setProperty("jumping", false);
 		enemy.setProperty("attacking", false);
 		
@@ -730,7 +730,7 @@ public class EntitySpawner {
 			consApp.consController.enemyPlayFlute(enemy);
 		});
 		
-		enemy.setVisible(true);
+		enemy.setVisible(false);
 		enemy.setProperty("jumping", false);
 		enemy.setProperty("attacking", false);
 		
@@ -783,7 +783,7 @@ public class EntitySpawner {
 		enemy.addControl(new ComplexJumpControl(consApp, consApp.player, Speed.ENEMY_JUMP));
 		enemy.addFXGLEventHandler(Event.DEATH, this::onEnemyDeath);
 		
-		enemy.setVisible(true);
+		enemy.setVisible(false);
 		enemy.setProperty("jumping", false);
 		enemy.setProperty("attacking", false);
 		
@@ -846,7 +846,7 @@ public class EntitySpawner {
 			} , Config.ENEMY_CHARGE_DELAY);
 		});
 		
-		enemy.setVisible(true);
+		enemy.setVisible(false);
 		enemy.setProperty("jumping", false);
 		enemy.setProperty("attacking", false);
 		
@@ -900,7 +900,7 @@ public class EntitySpawner {
 		enemy.addFXGLEventHandler(Event.DEATH, this::onEnemyDeath);
 		enemy.setProperty(Property.ENABLE_GRAVITY, false);
 		
-		enemy.setVisible(true);
+		enemy.setVisible(false);
 		enemy.setProperty("jumping", false);
 		enemy.setProperty("attacking", false);
 		
@@ -969,7 +969,7 @@ public class EntitySpawner {
 			}, Config.ENEMY_SCORPION_DECAY.multiply(1.25));
 		});
 		
-		enemy.setVisible(true);
+		enemy.setVisible(false);
 		enemy.setProperty("jumping", false);
 		enemy.setProperty("attacking", false);
 		
@@ -1038,7 +1038,7 @@ public class EntitySpawner {
 			}, Config.ENEMY_SCORPION_DECAY);
 		});
 		
-		enemy.setVisible(true);
+		enemy.setVisible(false);
 		enemy.setProperty("jumping", false);
 		enemy.setProperty("attacking", false);
 		
@@ -1094,7 +1094,7 @@ public class EntitySpawner {
 			consApp.consController.enemyStab(enemy);
 		});
 		
-		enemy.setVisible(true);
+		enemy.setVisible(false);
 		enemy.setProperty("jumping", false);
 		enemy.setProperty("attacking", true);
 		
@@ -1139,7 +1139,7 @@ public class EntitySpawner {
 
 		enemy.setGraphics(rect);
 		enemy.setCollidable(true);
-		enemy.setVisible(true);
+		enemy.setVisible(false);
 		enemy.setProperty(Property.DATA, new Enemy(consApp.assets.getText(FileNames.STATS_BANDIT_KNIFE)));
 		enemy.setProperty("physics", consApp.physics);
 		enemy.setProperty("facingRight", true);
@@ -1159,7 +1159,7 @@ public class EntitySpawner {
 		HashMap<Types.AnimationActions, Double> hashMap = new HashMap<>();
 		for(Types.AnimationActions aa : Types.AnimationActions.values()){
 			switch(aa){
-				case ATK: hashMap.put(aa, 2.5); break;
+				case ATK: hashMap.put(aa, 1.0); break;
 				case IDLE: hashMap.put(aa, 1.0); break;
 				case JATK: hashMap.put(aa, 1.0); break;
 				case JUMP: hashMap.put(aa, 1.0); break;
@@ -1180,11 +1180,13 @@ public class EntitySpawner {
 		
 		enemy.addFXGLEventHandler(Event.DEATH, this::onEnemyDeath);
 		enemy.addFXGLEventHandler(Event.ENEMY_FIRED, event -> {
-			consApp.consController.enemyShootProjectile(Element.NEUTRAL2, enemy);
 			enemy.setProperty("attacking", true);
 			consApp.getTimerManager().runOnceAfter(() -> {
-				enemy.setProperty("attacking", false);
+				consApp.consController.enemyShootProjectile(Element.NEUTRAL2, enemy);
 			}, Config.CONSUME_DECAY);
+			consApp.getTimerManager().runOnceAfter(() -> {
+				enemy.setProperty("attacking", false);
+			}, Config.CONSUME_DECAY.multiply(2));
 		});
 		//consApp.getSceneManager().addEntities(ePic);
 
@@ -1198,7 +1200,7 @@ public class EntitySpawner {
 
 		enemy.setGraphics(rect);
 		enemy.setCollidable(true);
-		enemy.setVisible(true);
+		enemy.setVisible(false);
 		enemy.setProperty(Property.DATA, new Enemy(consApp.assets.getText("enemies/enemy_FireElemental.txt")));
 		enemy.setProperty("physics", consApp.physics);
 		enemy.setProperty("facingRight", true);
@@ -1239,11 +1241,13 @@ public class EntitySpawner {
 		
 		enemy.addFXGLEventHandler(Event.DEATH, this::onEnemyDeath);
 		enemy.addFXGLEventHandler(Event.ENEMY_FIRED, event -> {
-			consApp.consController.enemyShootProjectile(Element.NEUTRAL2, enemy);
 			enemy.setProperty("attacking", true);
 			consApp.getTimerManager().runOnceAfter(() -> {
-				enemy.setProperty("attacking", false);
+				consApp.consController.enemyShootProjectile(Element.NEUTRAL2, enemy);
 			}, Config.CONSUME_DECAY);
+			consApp.getTimerManager().runOnceAfter(() -> {
+				enemy.setProperty("attacking", false);
+			}, Config.CONSUME_DECAY.multiply(2));
 		});
 		//consApp.getSceneManager().addEntities(ePic);
 
@@ -1257,7 +1261,7 @@ public class EntitySpawner {
 
 		enemy.setGraphics(rect);
 		enemy.setCollidable(true);
-		enemy.setVisible(true);
+		enemy.setVisible(false);
 		enemy.setProperty(Property.DATA, new Enemy(consApp.assets.getText("enemies/enemy_FireElemental.txt")));
 		enemy.setProperty("physics", consApp.physics);
 		enemy.setProperty("facingRight", false);
@@ -1347,7 +1351,7 @@ public class EntitySpawner {
 		rect.setFill(Color.RED);
 
 		enemy.setGraphics(rect);
-		enemy.setVisible(true);
+		enemy.setVisible(false);
 		enemy.setCollidable(false);
 		enemy.setProperty(Property.DATA, new Enemy(consApp.assets.getText("enemies/enemy_FireElemental.txt")));
 		enemy.setProperty(Property.SUB_TYPE, Type.BOSS);
@@ -1380,7 +1384,7 @@ public class EntitySpawner {
 			}, Config.ENEMY_SCORPION_DECAY);
 		});
 		
-		//enemy.setVisible(true);
+		//enemy.setVisible(false);
 		enemy.setProperty("jumping", false);
 		enemy.setProperty("attacking", false);
 		
@@ -1423,7 +1427,7 @@ public class EntitySpawner {
 		rect.setFill(Color.RED);
 
 		enemy.setGraphics(rect);
-		enemy.setVisible(true);
+		enemy.setVisible(false);
 		enemy.setCollidable(true);
 		enemy.setProperty(Property.DATA, new Enemy(consApp.assets.getText("enemies/enemy_FireElemental.txt")));
 		enemy.setProperty(Property.SUB_TYPE, Type.BOSS);
@@ -1508,7 +1512,7 @@ public class EntitySpawner {
 		rect.setFill(Color.RED);
 
 		enemy.setGraphics(rect);
-		enemy.setVisible(true);
+		enemy.setVisible(false);
 		enemy.setCollidable(true);
 		enemy.setProperty(Property.DATA, new Enemy(consApp.assets.getText("enemies/enemy_FireElemental.txt")));
 		enemy.setProperty(Property.SUB_TYPE, Type.BOSS);
@@ -1585,7 +1589,7 @@ public class EntitySpawner {
 			}
 		});
 		
-		enemy.setVisible(true);
+		enemy.setVisible(false);
 		enemy.setProperty("jumping", false);
 		enemy.setProperty("attacking", false);
 		
@@ -1629,7 +1633,7 @@ public class EntitySpawner {
 		rect.setFill(Color.RED);
 
 		enemy.setGraphics(rect);
-		enemy.setVisible(true);
+		enemy.setVisible(false);
 		enemy.setCollidable(true);
 		enemy.setProperty(Property.DATA, new Enemy(consApp.assets.getText("enemies/enemy_FireElemental.txt")));
 		enemy.setProperty(Property.SUB_TYPE, Type.BOSS);
@@ -1716,7 +1720,7 @@ public class EntitySpawner {
 		});
 		
 		
-		enemy.setVisible(true);
+		enemy.setVisible(false);
 		enemy.setProperty("jumping", false);
 		enemy.setProperty("attacking", false);
 		
@@ -1760,7 +1764,7 @@ public class EntitySpawner {
 		rect.setFill(Color.RED);
 
 		enemy.setGraphics(rect);
-		enemy.setVisible(true);
+		enemy.setVisible(false);
 		enemy.setCollidable(true);
 		enemy.setProperty(Property.DATA, new Enemy(consApp.assets.getText("enemies/enemy_FireElemental.txt")));
 		enemy.setProperty(Property.SUB_TYPE, Type.BOSS);
@@ -1878,7 +1882,7 @@ public class EntitySpawner {
 			}
 		});
 		
-		enemy.setVisible(true);
+		enemy.setVisible(false);
 		enemy.setProperty("jumping", false);
 		enemy.setProperty("attacking", false);
 		
@@ -1923,7 +1927,7 @@ public class EntitySpawner {
 		rect.setFill(Color.RED);
 
 		enemy.setGraphics(rect);
-		enemy.setVisible(true);
+		enemy.setVisible(false);
 		enemy.setCollidable(true);
 		enemy.setProperty(Property.DATA, new Enemy(consApp.assets.getText("enemies/enemy_FireElemental.txt")));
 		enemy.setProperty(Property.SUB_TYPE, Type.BOSS);
@@ -1987,7 +1991,7 @@ public class EntitySpawner {
 
 		});
 		
-		enemy.setVisible(true);
+		enemy.setVisible(false);
 		enemy.setProperty("jumping", false);
 		enemy.setProperty("attacking", false);
 		
@@ -2031,7 +2035,7 @@ public class EntitySpawner {
 		rect.setFill(Color.RED);
 
 		enemy.setGraphics(rect);
-		enemy.setVisible(true);
+		enemy.setVisible(false);
 		enemy.setCollidable(true);
 		enemy.setProperty(Property.DATA, new Enemy(consApp.assets.getText("enemies/enemy_FireElemental.txt")));
 		enemy.setProperty(Property.SUB_TYPE, Type.BOSS);
@@ -2056,7 +2060,7 @@ public class EntitySpawner {
 			}
 		});
 		
-		enemy.setVisible(true);
+		enemy.setVisible(false);
 		enemy.setProperty("jumping", false);
 		enemy.setProperty("attacking", false);
 		
@@ -2100,7 +2104,7 @@ public class EntitySpawner {
 		rect.setFill(Color.RED);
 
 		enemy.setGraphics(rect);
-		enemy.setVisible(true);
+		enemy.setVisible(false);
 		enemy.setCollidable(true);
 		enemy.setProperty(Property.DATA, new Enemy(consApp.assets.getText("enemies/enemy_FireElemental.txt")));
 		enemy.setProperty(Property.SUB_TYPE, Type.BOSS);
@@ -2125,7 +2129,7 @@ public class EntitySpawner {
 			}
 		});
 		
-		enemy.setVisible(true);
+		enemy.setVisible(false);
 		enemy.setProperty("jumping", false);
 		enemy.setProperty("attacking", false);
 		

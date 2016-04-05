@@ -152,9 +152,9 @@ public class ConsumeApp extends GameApplication {
 	@Override
 	protected void initAssets() throws Exception {
 		if(assets == null){
-			printMemoryUsage("Assets Before Init");
+			//printMemoryUsage("Assets Before Init");
 			assets = getAssetManager().cache();
-			printMemoryUsage("Assets After Init");
+			//printMemoryUsage("Assets After Init");
 			assets.logCached();
 		}
 		
@@ -203,12 +203,12 @@ public class ConsumeApp extends GameApplication {
 		
 		eSpawner = new EntitySpawner(this);
 		
-		printMemoryUsage("Game Init");
+		//printMemoryUsage("Game Init");
 
 		initLevels();
-		printMemoryUsage("Levels Init");
+		//printMemoryUsage("Levels Init");
 		loadLevel(playerData.getCurrentLevel());
-		printMemoryUsage("Levels Load");
+		//printMemoryUsage("Levels Load");
 	}
 
 	@Override
@@ -243,7 +243,7 @@ public class ConsumeApp extends GameApplication {
 			}
 		});
 		
-		printMemoryUsage("Physics Init");
+		//printMemoryUsage("Physics Init");
 	}
 
 	//private Text debug = new Text();
@@ -307,7 +307,7 @@ public class ConsumeApp extends GameApplication {
 
         indiLoop = new IndependentLoop(this);
         //indiLoop.start();
-		printMemoryUsage("UI Init");
+		//printMemoryUsage("UI Init");
 	}
 
 	private void initLevels() {
@@ -712,13 +712,15 @@ public class ConsumeApp extends GameApplication {
 			getSceneManager().getEntities().forEach(getSceneManager()::removeEntity);
 			hud.setBossHealthBarVisible(false);
 			//levels.set(playerData.getCurrentLevel(), parser.parse(playerData.getCurrentLevel()));
-			getInputManager().setProcessActions(true);
-					
+			
 			loadLevel(playerData.getCurrentLevel());
 			
 			levelMenu.setVisible(false);
 			
-			getTimerManager().runOnceAfter(() -> fadeIn.play(), Duration.seconds(0.5));
+			getTimerManager().runOnceAfter(() -> {
+				getInputManager().setProcessActions(true);
+				fadeIn.play();
+			}, Duration.seconds(0.5));
 		};
 		fadeScreen.setVisible(true);
 		fadeOut.play();

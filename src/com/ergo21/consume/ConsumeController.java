@@ -320,12 +320,7 @@ public class ConsumeController {
 			Entity ePic = new Entity(Type.ENEMY_PROJECTILE);
 			ePic.setProperty(Property.SUB_TYPE, element);
 			ePic.setPosition(e.getPosition());
-			if(consApp.player.<Boolean>getProperty("facingRight")){
-				ePic.translateXProperty().bind(e.translateXProperty());
-			}
-			else{
-				ePic.translateXProperty().bind(e.translateXProperty().add(-20));
-			}			
+			ePic.translateXProperty().bind(e.translateXProperty());	
 			ePic.translateYProperty().bind(e.translateYProperty());
 			e.aliveProperty().addListener(new ChangeListener<Boolean>(){
 				@Override

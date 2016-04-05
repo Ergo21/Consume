@@ -101,101 +101,53 @@ public class AnimatedEnemyControl implements Control {
 		}
 	}
 	
+	int teFr = 0;
+	
 	private Texture getCurrentImage() {
 		Texture t = null;
+		AnimationActions nAni = null;
 		
 		PhysicsControl ec = enemy.getControl(PhysicsControl.class);
 		if (enemy != null && ec != null) {
 			if(enemy.<Boolean> getProperty("jumping") && animations.get(AnimationActions.JUMP) != null){
 				if(enemy.<Boolean> getProperty("attacking") && animations.get(AnimationActions.JATK) != null){
-					if(curAnimation != AnimationActions.JATK){
-						t = animations.get(AnimationActions.JATK);
-						if(curAnimation != AnimationActions.JATK && t.getClass() == StaticAnimatedTexture.class){
-							((StaticAnimatedTexture) t).getTimeline().stop();
-							((StaticAnimatedTexture) t).getTimeline().play();
-						}
-						
-						curAnimation = AnimationActions.JATK;
-						t.setPreserveRatio(true);
-						t.setTranslateX(0);
-						t.setTranslateY(-40);
-						t.setFitHeight(75);
-					}
+					nAni = AnimationActions.JATK;
 				}
 				else{
-					if(curAnimation != AnimationActions.JUMP){
-						t = animations.get(AnimationActions.JUMP);
-						if(curAnimation != AnimationActions.JUMP && t.getClass() == StaticAnimatedTexture.class){
-							((StaticAnimatedTexture) t).getTimeline().stop();
-							((StaticAnimatedTexture) t).getTimeline().play();
-						}
-						curAnimation = AnimationActions.JUMP;
-						t.setPreserveRatio(true);
-						t.setTranslateX(0);
-						t.setTranslateY(-40);
-						t.setFitHeight(75);
-					}
+					nAni = AnimationActions.JUMP;
 				}
 			}
 			else if (ec.getVelocity().getX() != 0 && animations.get(AnimationActions.MOVE) != null) {
 				if(enemy.<Boolean> getProperty("attacking") && animations.get(AnimationActions.MATK) != null){
-					if(curAnimation != AnimationActions.MATK){
-						t = animations.get(AnimationActions.MATK);
-						if(curAnimation != AnimationActions.MATK && t.getClass() == StaticAnimatedTexture.class){
-							((StaticAnimatedTexture) t).getTimeline().stop();
-							((StaticAnimatedTexture) t).getTimeline().play();
-						}
-						curAnimation = AnimationActions.MATK;
-						t.setPreserveRatio(true);
-						t.setTranslateX(0);
-						t.setTranslateY(-40);
-						t.setFitHeight(75);	
-					}
+					nAni = AnimationActions.MATK;
 				}
 				else{
-					if(curAnimation != AnimationActions.MOVE){
-						t = animations.get(AnimationActions.MOVE);
-						if(curAnimation != AnimationActions.MOVE && t.getClass() == StaticAnimatedTexture.class){
-							((StaticAnimatedTexture) t).getTimeline().stop();
-							((StaticAnimatedTexture) t).getTimeline().play();
-						}
-						curAnimation = AnimationActions.MOVE;
-						t.setPreserveRatio(true);
-						t.setTranslateX(0);
-						t.setTranslateY(-40);
-						t.setFitHeight(75);	
-					}
+					nAni = AnimationActions.MOVE;
 				}
 			} 
 			else if(enemy.<Boolean> getProperty("attacking") && animations.get(AnimationActions.ATK) != null){
-				if(curAnimation != AnimationActions.ATK){
-					t = animations.get(AnimationActions.ATK);
-					if(t.getClass() == StaticAnimatedTexture.class){
-						((StaticAnimatedTexture) t).getTimeline().stop();
-						((StaticAnimatedTexture) t).getTimeline().play();
-					}
-					curAnimation = AnimationActions.ATK;
-					t.setPreserveRatio(true);
-					t.setTranslateX(0);
-					t.setTranslateY(-40);
-					t.setFitHeight(75);	
-				}
+				nAni = AnimationActions.ATK;
 			}
 			else if(animations.get(AnimationActions.IDLE) != null) {
-				if(curAnimation != AnimationActions.IDLE){
-					t = animations.get(AnimationActions.IDLE);
-					if(t.getClass() == StaticAnimatedTexture.class){
-						((StaticAnimatedTexture) t).getTimeline().stop();
-						((StaticAnimatedTexture) t).getTimeline().play();
-					}
-					curAnimation = AnimationActions.IDLE;
-					t.setPreserveRatio(true);
-					t.setTranslateX(0);
-					t.setTranslateY(-40);
-					t.setFitHeight(75);
-				}
+				nAni = AnimationActions.IDLE;
 			}
 		}
+		
+		if(nAni != null && curAnimation != nAni){
+			t = animations.get(nAni);
+			if(t.getClass() == StaticAnimatedTexture.class && 
+					(nAni == AnimationActions.ATK || nAni == AnimationActions.JATK || nAni == AnimationActions.MATK)){
+				((StaticAnimatedTexture) t).resetTimeline();
+			}
+			
+			curAnimation = nAni;
+			t.setPreserveRatio(true);
+			t.setTranslateX(0);
+			t.setTranslateY(-40);
+			t.setFitHeight(75);
+		}
+		
+		
 		
 		return t;
 	}
