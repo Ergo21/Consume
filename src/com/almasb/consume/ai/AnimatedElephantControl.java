@@ -23,7 +23,6 @@ public class AnimatedElephantControl implements Control {
 	private ArrayList<Texture> form;
 	private ArrayList<Texture> atk;
 	private Entity enemy;
-	private boolean prevVisible;
 	private AnimationActions curAnimation = null; 
 
 	public AnimatedElephantControl(Entity e, HashMap<Types.AnimationActions, Double> hashMap, String sD, Assets as) {
@@ -121,14 +120,17 @@ public class AnimatedElephantControl implements Control {
 	}
 	
 	public void actualUpdate(Entity entity, long now) {
-		if(enemy != null && enemy.getProperty("beenHit") != null && enemy.<Boolean>getProperty("beenHit")){
-			prevVisible = true;
+		if(enemy != null && 
+			enemy.getControl(SandBossControl.class) != null && enemy.getControl(SandBossControl.class).isUnderground()){
+			entity.setVisible(false);
+		}
+		else if(enemy != null && enemy.getProperty("beenHit") != null && enemy.<Boolean>getProperty("beenHit")){
 			entity.setVisible(!entity.isVisible());
 		}
-		else if(enemy != null && enemy.getProperty("beenHit") != null && !enemy.<Boolean>getProperty("beenHit") &&
-				!entity.isVisible() && prevVisible){
+		else if(!entity.isVisible()){
 			entity.setVisible(true);
 		}
+		
 		Texture t = getCurrentImage(now);
 		if(t != null){
 			t.translateYProperty().bind(enemy.heightProperty().add(-120));
@@ -141,12 +143,6 @@ public class AnimatedElephantControl implements Control {
 					entity.setScaleX(entity.getScaleX()*-1);
 				}
 			}
-		}
-		
-		
-		
-		if(enemy != null && enemy.getControl(SandBossControl.class) != null){
-			entity.setVisible(!enemy.getControl(SandBossControl.class).isUnderground());
 		}
 		
 	}

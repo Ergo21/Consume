@@ -1,22 +1,22 @@
-i                      d               u    i0
-i iiiii                dU              i    i0
-i   i i                di                   i0
-i                      i         i          i0
-i                                           i0 
-i 1         5               i                i0 
-iiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii       i0
-i   d       p                               i0
-i v d       p                               i0
-iiiiiiiiiiiipiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii0
-i  p        pi0
-i  p        pi0
-i  p        pi0
-i ipiiii  iiii0
-i  p       p i0
-i  p       p i0
-i  p       p i0
-i iii  iiiipii0
-i       d  p i0
-i       d  p i0
-i 2     d  p i0
-iiiiiiiiiiiiii0
+i3                             lllllllllllllllllllllll 0
+i                              lllllllllllllllllllllll 0
+i1                 t  s        lllllllllllllllllllllll 0
+ lllll           llllll         llllllllllllllllllllll 0
+ lllllll   llllllllllllll          lllllllllllllllllll 0
+2lllllllllllllllllllllllllll       lllllllllllllllllll 0
+ llllllllllllllllllllllllllll       llllllllllllllllll 0
+4llllllllllllllllllllllllllllll     llllllllllllllllll 0
+ llllllllllllllllllllllllllllll     llllllllllllllllll 0
+ llllllllllllllllllllllllllllll     llllllllllllllllll 0
+ llllllllllllllllllllllllllllll     ll             lll 0
+ llllllllllllllllllllllllllllll     ll             lll 0
+ llllllllllllllllllllllllllllll     gg             lll 0
+ llllllllllllllllllllllllllllll     gg             lll 0
+ llllllllllllllllllllllllllllll     ggC            lll 0
+ llllllllllllllllllllllllllllllllllllllllllllllllllll  0
+ llllllllllllllllllllllllllllllllllllllllllllllllllll  0
+ llllllllllllllllllllllllllllllllllllllllllllllllllll  0
+ llllllllllllllllllllllllllllllllllllllllllllllllllll  0
+                                                      30
+                                                
+                                                

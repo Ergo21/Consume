@@ -308,7 +308,7 @@ public class GameScene extends Group {
 		}
 		Entity e2 = Entity.noType();
 		e2.setPosition(app.player.getPosition());
-		e2.addControl(new CameraControl(app.player.getPosition().add(Config.BLOCK_SIZE*5,0)));
+		e2.addControl(new CameraControl(app.player.getPosition().add(Config.BLOCK_SIZE*7,0)));
 		e2.setVisible(false);
 		app.getSceneManager().bindViewportOrigin(e2, 320, 180);
 		app.getSceneManager().addEntities(p.getKey(), p.getValue(), e2);

@@ -142,4 +142,11 @@ public final class FileNames{
 	public static final String STATS_ELOKO 			= "enemies/Eloko.txt";
 	public static final String STATS_BANDIT_KNIFE	= "enemies/Bandit(Knife).txt";
 	public static final String STATS_BANDIT_SPEAR	= "enemies/Bandit(Spear).txt";
+	
+	public static final String STATS_SCARAB			= "enemies/Scarab.txt";
+	public static final String STATS_LOCUST			= "enemies/Locust.txt";
+	public static final String STATS_SCORPION		= "enemies/Scorpion.txt";
+	public static final String STATS_GOLEM			= "enemies/Golem.txt";	
+	public static final String STATS_SAND_ELEPHANT	= "enemies/Sand_Elephant.txt";
+	
 }

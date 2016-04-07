@@ -184,15 +184,29 @@ public class LevelMenu extends Group{
 		}
 	}
 	
+	public ArrayList<Integer> getLevelsComplete(){
+		ArrayList<Integer> com = new ArrayList<>();
+		
+		for(int i = 0; i < mIList.size(); i++){
+			if(mIList.get(i).isComplete()){
+				com.add(i+1);
+			}
+		}
+		
+		return com;
+	}
+	
 	private class MenuItem extends StackPane {
 
 		private Background defBack;
 		private Texture icon;
 		private Background hovBack;
 		private Background preBack;
+		private boolean complete;
 
 		public MenuItem(Texture ico) {
 			icon = ico;
+			complete = false;
 			LinearGradient gradient = new LinearGradient(0, 1, 0, 0, true, CycleMethod.NO_CYCLE,
 					new Stop[] { new Stop(0.5, Color.DARKRED), new Stop(1, Color.RED) });
 
@@ -234,6 +248,7 @@ public class LevelMenu extends Group{
 		}
 		
 		public void setComplete(){
+			complete = true;
 			double rLen = this.getWidth() - 5; 
 			Polygon s1 = new Polygon(0, (rLen-5)/2,
 									(rLen-5)/2, (rLen-5)/2,
@@ -252,6 +267,10 @@ public class LevelMenu extends Group{
 			s1.setStroke(Color.BLACK);
 			s1.setStrokeWidth(3);
 			getChildren().addAll(s1);
+		}
+		
+		public boolean isComplete(){
+			return complete;
 		}
 	}
 }

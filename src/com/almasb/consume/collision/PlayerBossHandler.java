@@ -14,7 +14,6 @@ import com.almasb.fxgl.physics.CollisionHandler;
 import com.ergo21.consume.FileNames;
 import com.ergo21.consume.Player;
 
-import javafx.scene.text.Text;
 import javafx.util.Duration;
 
 public class PlayerBossHandler extends CollisionHandler {

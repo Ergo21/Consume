@@ -37,7 +37,7 @@ public class SimpleJumpControl extends AbstractControl {
 			entity.getControl(PhysicsControl.class).setJump(jump);
 		}
 		if (lastJumped == -1) {
-			lastJumped = now;
+			lastJumped = 0;
 		}
 
 		if (now - lastJumped > TimerManager.toNanos(Config.ENEMY_JUMP_DELAY)) {

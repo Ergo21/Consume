@@ -13,8 +13,6 @@ import com.almasb.fxgl.entity.FXGLEvent;
 import com.almasb.fxgl.physics.CollisionHandler;
 import com.ergo21.consume.Enemy;
 
-import javafx.animation.FadeTransition;
-import javafx.scene.text.Text;
 import javafx.util.Duration;
 
 public class ProjectileBossHandler extends CollisionHandler {
@@ -62,14 +60,14 @@ public class ProjectileBossHandler extends CollisionHandler {
 			break;
 		}
 		
-		String modifier = " x1";
+		//String modifier = " x1";
 
 		if (resists.contains(element)) {
 			damage = (int) (damage * 0.5);
-			modifier = "x0.5";
+			//modifier = "x0.5";
 		} else if (weaknesses.contains(element)) {
 			damage *= 2;
-			modifier = "x2";
+			//modifier = "x2";
 		}
 		
 		//Shows Damage
@@ -88,9 +86,13 @@ public class ProjectileBossHandler extends CollisionHandler {
 		app.getSceneManager().removeEntity(projectile);
 		
 		enemy.setProperty("beenHit", true);
+		enemy.setCollidable(false);
 		
-		app.getTimerManager().runOnceAfter(() -> {if(enemy != null){enemy.setProperty("beenHit", false);}}, Duration.seconds(0.5));
-
+		app.getTimerManager().runOnceAfter(() -> {if(enemy != null){
+			enemy.setProperty("beenHit", false);
+			enemy.setCollidable(true);
+		}}, Duration.seconds(1));
+		
 		if (enemyData.getCurrentHealth() <= 0) {
 			enemy.fireFXGLEvent(new FXGLEvent(Event.DEATH));
 		}

@@ -15,22 +15,22 @@ public class CameraControl extends AbstractControl {
 
 	@Override
 	public void onUpdate(Entity entity, long now) {
-		if(target.distance(entity.getPosition()) < 1){
+		if(target.distance(entity.getPosition()) < 2){
 			entity.setPosition(target);
 		}
 		
 		if(target.getX() > entity.getPosition().getX()){
-			entity.setPosition(entity.getPosition().add(1,0));
+			entity.setPosition(entity.getPosition().add(2,0));
 		}
 		else if(target.getX() < entity.getPosition().getX()){
-			entity.setPosition(entity.getPosition().add(-1,0));
+			entity.setPosition(entity.getPosition().add(-2,0));
 		}
 		
 		if(target.getY() > entity.getPosition().getY()){
-			entity.setPosition(entity.getPosition().add(0,1));
+			entity.setPosition(entity.getPosition().add(0,2));
 		}
 		else if(target.getY() < entity.getPosition().getY()){
-			entity.setPosition(entity.getPosition().add(0,-1));
+			entity.setPosition(entity.getPosition().add(0,-2));
 		}
 	}
 

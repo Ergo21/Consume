@@ -131,7 +131,7 @@ public class EntitySpawner {
 				case JUMP: hashMap.put(aa, 1.0); break;
 				case MATK: hashMap.put(aa, 1.0); break;
 				case MOVE: hashMap.put(aa, 1.0); break;
-				default: break;
+				default: hashMap.put(aa, 1.0); break;
 			}
 		}
 		ePic.addControl(new AnimatedEnemyControl(enemy, hashMap, FileNames.ZULU_SH_DIR, consApp.assets));
@@ -156,7 +156,7 @@ public class EntitySpawner {
 
 		enemy.setGraphics(rect);
 		enemy.setCollidable(true);
-		enemy.setProperty(Property.DATA, new Enemy(consApp.assets.getText("enemies/enemy_FireElemental.txt")));
+		enemy.setProperty(Property.DATA, new Enemy(consApp.assets.getText(FileNames.STATS_SCARAB)));
 		enemy.setProperty("physics", consApp.physics);
 		enemy.setProperty("shover", true);
 		enemy.setPosition(spawnPoint.getX(), spawnPoint.getY());
@@ -184,7 +184,7 @@ public class EntitySpawner {
 				case JUMP: hashMap.put(aa, 1.0); break;
 				case MATK: hashMap.put(aa, 1.0); break;
 				case MOVE: hashMap.put(aa, 1.0); break;
-				default: break;
+				default: hashMap.put(aa, 1.0); break;
 			}
 		}
 		ePic.addControl(new AnimatedEnemyControl(enemy, hashMap, FileNames.SCARAB_DIR, consApp.assets));
@@ -209,7 +209,7 @@ public class EntitySpawner {
 
 		enemy.setGraphics(rect);
 		enemy.setCollidable(true);
-		enemy.setProperty(Property.DATA, new Enemy(consApp.assets.getText("enemies/enemy_FireElemental.txt")));
+		enemy.setProperty(Property.DATA, new Enemy(consApp.assets.getText(FileNames.STATS_LOCUST)));
 		enemy.setProperty("physics", consApp.physics);
 		enemy.setProperty("shover", true);
 		enemy.setProperty("facingRight", false);
@@ -240,7 +240,7 @@ public class EntitySpawner {
 				case JUMP: hashMap.put(aa, 0.05); break;
 				case MATK: hashMap.put(aa, 0.05); break;
 				case MOVE: hashMap.put(aa, 0.05); break;
-				default: break;
+				default: hashMap.put(aa, 0.05); break;
 			}
 		}
 		ePic.addControl(new AnimatedEnemyControl(enemy, hashMap, FileNames.LOCUST_DIR, consApp.assets));
@@ -296,7 +296,7 @@ public class EntitySpawner {
 				case JUMP: hashMap.put(aa, 1.0); break;
 				case MATK: hashMap.put(aa, 1.0); break;
 				case MOVE: hashMap.put(aa, 1.0); break;
-				default: break;
+				default: hashMap.put(aa, 1.0); break;
 			}
 		}
 		ePic.addControl(new AnimatedEnemyControl(enemy, hashMap, FileNames.ELOKO_DIR, consApp.assets));
@@ -352,7 +352,7 @@ public class EntitySpawner {
 				case JUMP: hashMap.put(aa, 1.0); break;
 				case MATK: hashMap.put(aa, 1.0); break;
 				case MOVE: hashMap.put(aa, 1.0); break;
-				default: break;
+				default: hashMap.put(aa, 1.0); break;
 			}
 		}
 		ePic.addControl(new AnimatedEnemyControl(enemy, hashMap, FileNames.MUMMY_DIR, consApp.assets));
@@ -417,7 +417,7 @@ public class EntitySpawner {
 				case JUMP: hashMap.put(aa, 1.0); break;
 				case MATK: hashMap.put(aa, 1.0); break;
 				case MOVE: hashMap.put(aa, 1.0); break;
-				default: break;
+				default: hashMap.put(aa, 1.0); break;
 			}
 		}
 		ePic.addControl(new AnimatedEnemyControl(enemy, hashMap, FileNames.BANDIT_S_DIR, consApp.assets));
@@ -482,7 +482,7 @@ public class EntitySpawner {
 				case JUMP: hashMap.put(aa, 1.0); break;
 				case MATK: hashMap.put(aa, 1.0); break;
 				case MOVE: hashMap.put(aa, 1.0); break;
-				default: break;
+				default: hashMap.put(aa, 1.0); break;
 			}
 		}
 		ePic.addControl(new AnimatedEnemyControl(enemy, hashMap, FileNames.ZULU_SP_DIR, consApp.assets));
@@ -507,7 +507,7 @@ public class EntitySpawner {
 
 		enemy.setGraphics(rect);
 		enemy.setCollidable(true);
-		enemy.setProperty(Property.DATA, new Enemy(consApp.assets.getText("enemies/enemy_FireElemental.txt")));
+		enemy.setProperty(Property.DATA, new Enemy(consApp.assets.getText(FileNames.STATS_SCORPION)));
 		enemy.setProperty("physics", consApp.physics);
 		enemy.setProperty("facingRight", true);
 		enemy.setPosition(spawnPoint.getX(), spawnPoint.getY());
@@ -519,11 +519,11 @@ public class EntitySpawner {
 			consApp.getTimerManager().runOnceAfter(() -> {
 				if(enemy != null && enemy.getControl(ScorpionControl.class) != null){
 					consApp.consController.enemyShootProjectile(Element.METAL, enemy);
+					enemy.setProperty("attacking", false);
 				}			
 			}, Config.ENEMY_SCORPION_DELAY);
 			consApp.getTimerManager().runOnceAfter(() -> {
 				if(enemy != null && enemy.getControl(ScorpionControl.class) != null){
-					enemy.setProperty("attacking", false);
 					enemy.getControl(ScorpionControl.class).setSpearThrown(false);
 				}			
 			}, Config.ENEMY_SCORPION_DECAY);
@@ -549,7 +549,7 @@ public class EntitySpawner {
 				case JUMP: hashMap.put(aa, 1.0); break;
 				case MATK: hashMap.put(aa, 1.0); break;
 				case MOVE: hashMap.put(aa, 1.0); break;
-				default: break;
+				default: hashMap.put(aa, 1.0); break;
 			}
 		}
 		ePic.addControl(new AnimatedEnemyControl(enemy, hashMap, FileNames.SCORPION_DIR, consApp.assets));
@@ -652,7 +652,7 @@ public class EntitySpawner {
 
 		enemy.setGraphics(rect);
 		enemy.setCollidable(true);
-		enemy.setProperty(Property.DATA, new Enemy(consApp.assets.getText("enemies/enemy_FireElemental.txt")));
+		enemy.setProperty(Property.DATA, new Enemy(consApp.assets.getText(FileNames.STATS_GOLEM)));
 		enemy.setProperty("physics", consApp.physics);
 		enemy.setProperty("facingRight", false);
 		enemy.setPosition(spawnPoint.getX(), spawnPoint.getY());
@@ -694,7 +694,7 @@ public class EntitySpawner {
 				case JUMP: hashMap.put(aa, 1.0); break;
 				case MATK: hashMap.put(aa, 1.0); break;
 				case MOVE: hashMap.put(aa, 1.0); break;
-				default: break;
+				default: hashMap.put(aa, 1.0); break;
 			}
 		}
 		ePic.addControl(new AnimatedEnemyControl(enemy, hashMap, FileNames.GOLEM_DIR, consApp.assets));
@@ -750,7 +750,7 @@ public class EntitySpawner {
 				case JUMP: hashMap.put(aa, 1.0); break;
 				case MATK: hashMap.put(aa, 1.0); break;
 				case MOVE: hashMap.put(aa, 1.0); break;
-				default: break;
+				default: hashMap.put(aa, 1.0); break;
 			}
 		}
 		ePic.addControl(new AnimatedEnemyControl(enemy, hashMap, FileNames.MUSICIAN_DIR, consApp.assets));
@@ -803,7 +803,7 @@ public class EntitySpawner {
 				case JUMP: hashMap.put(aa, 1.0); break;
 				case MATK: hashMap.put(aa, 1.0); break;
 				case MOVE: hashMap.put(aa, 1.0); break;
-				default: break;
+				default: hashMap.put(aa, 1.0); break;
 			}
 		}
 		ePic.addControl(new AnimatedEnemyControl(enemy, hashMap, FileNames.DANCERS_DIR, consApp.assets));
@@ -866,7 +866,7 @@ public class EntitySpawner {
 				case JUMP: hashMap.put(aa, 1.0); break;
 				case MATK: hashMap.put(aa, 1.0); break;
 				case MOVE: hashMap.put(aa, 1.0); break;
-				default: break;
+				default: hashMap.put(aa, 1.0); break;
 			}
 		}
 		ePic.addControl(new AnimatedEnemyControl(enemy, hashMap, FileNames.DOG_DIR, consApp.assets));
@@ -920,7 +920,7 @@ public class EntitySpawner {
 				case JUMP: hashMap.put(aa, 1.0); break;
 				case MATK: hashMap.put(aa, 1.0); break;
 				case MOVE: hashMap.put(aa, 1.0); break;
-				default: break;
+				default: hashMap.put(aa, 1.0); break;
 			}
 		}
 		ePic.addControl(new AnimatedEnemyControl(enemy, hashMap, FileNames.ICE_SPIRIT_DIR, consApp.assets));
@@ -989,7 +989,7 @@ public class EntitySpawner {
 				case JUMP: hashMap.put(aa, 1.0); break;
 				case MATK: hashMap.put(aa, 1.0); break;
 				case MOVE: hashMap.put(aa, 1.0); break;
-				default: break;
+				default: hashMap.put(aa, 1.0); break;
 			}
 		}
 		ePic.addControl(new AnimatedEnemyControl(enemy, hashMap, FileNames.CANNON_DIR, consApp.assets));
@@ -1058,7 +1058,7 @@ public class EntitySpawner {
 				case JUMP: hashMap.put(aa, 1.0); break;
 				case MATK: hashMap.put(aa, 1.0); break;
 				case MOVE: hashMap.put(aa, 1.0); break;
-				default: break;
+				default: hashMap.put(aa, 1.0); break;
 			}
 		}
 		ePic.addControl(new AnimatedEnemyControl(enemy, hashMap, FileNames.BRITISH_DIR, consApp.assets));
@@ -1114,7 +1114,7 @@ public class EntitySpawner {
 				case JUMP: hashMap.put(aa, 1.0); break;
 				case MATK: hashMap.put(aa, 1.0); break;
 				case MOVE: hashMap.put(aa, 1.0); break;
-				default: break;
+				default: hashMap.put(aa, 1.0); break;
 			}
 		}
 		ePic.addControl(new AnimatedEnemyControl(enemy, hashMap, FileNames.BRITISH_DIR, consApp.assets));
@@ -1165,7 +1165,7 @@ public class EntitySpawner {
 				case JUMP: hashMap.put(aa, 1.0); break;
 				case MATK: hashMap.put(aa, 1.0); break;
 				case MOVE: hashMap.put(aa, 1.0); break;
-				default: break;
+				default: hashMap.put(aa, 1.0); break;
 			}
 		}
 		ePic.addControl(new AnimatedEnemyControl(enemy, hashMap, FileNames.BANDIT_K_DIR, consApp.assets));
@@ -1226,7 +1226,7 @@ public class EntitySpawner {
 				case JUMP: hashMap.put(aa, 1.0); break;
 				case MATK: hashMap.put(aa, 1.0); break;
 				case MOVE: hashMap.put(aa, 1.0); break;
-				default: break;
+				default: hashMap.put(aa, 1.0); break;
 			}
 		}
 		ePic.addControl(new AnimatedEnemyControl(enemy, hashMap, FileNames.ZULU_K_DIR, consApp.assets));
@@ -1307,7 +1307,7 @@ public class EntitySpawner {
 				case JUMP: hashMap.put(aa, 1.0); break;
 				case MATK: hashMap.put(aa, 0.8); break;
 				case MOVE: hashMap.put(aa, 1.0); break;
-				default: break;
+				default: hashMap.put(aa, 1.0); break;
 			}
 		}
 		ePic.addControl(new AnimatedEnemyControl(enemy, hashMap, FileNames.BANDIT_M_DIR, consApp.assets));
@@ -1353,7 +1353,7 @@ public class EntitySpawner {
 		enemy.setGraphics(rect);
 		enemy.setVisible(false);
 		enemy.setCollidable(false);
-		enemy.setProperty(Property.DATA, new Enemy(consApp.assets.getText("enemies/enemy_FireElemental.txt")));
+		enemy.setProperty(Property.DATA, new Enemy(consApp.assets.getText(FileNames.STATS_SAND_ELEPHANT)));
 		enemy.setProperty(Property.SUB_TYPE, Type.BOSS);
 		enemy.setProperty("physics", consApp.physics);
 		enemy.setProperty("shover", true);
@@ -1365,7 +1365,7 @@ public class EntitySpawner {
 			consApp.getTimerManager().runOnceAfter(() -> {
 				if(enemy != null && enemy.getControl(SandBossControl.class) != null){
 					if(enemy.getControl(SandBossControl.class).isUnderground()){
-						consApp.consController.enemyCreatePillar(enemy, consApp.player, spawnPoint.getY() + Config.BLOCK_SIZE/2);
+						consApp.consController.enemyCreatePillar(enemy, consApp.player, spawnPoint.getY() + Config.BLOCK_SIZE);
 					}
 					else{
 						enemy.setProperty("attacking", true);
@@ -1403,7 +1403,7 @@ public class EntitySpawner {
 				case JUMP: hashMap.put(aa, 1.0); break;
 				case MATK: hashMap.put(aa, 1.0); break;
 				case MOVE: hashMap.put(aa, 1.0); break;
-				default: break;
+				default: hashMap.put(aa, 1.0); break;
 			}
 		}
 		ePic.addControl(new AnimatedElephantControl(enemy, hashMap, FileNames.SAND_ELEPHANT_DIR, consApp.assets));
@@ -1455,7 +1455,7 @@ public class EntitySpawner {
 				case JUMP: hashMap.put(aa, 1.0); break;
 				case MATK: hashMap.put(aa, 1.0); break;
 				case MOVE: hashMap.put(aa, 1.0); break;
-				default: break;
+				default: hashMap.put(aa, 1.0); break;
 			}
 		}
 		ePic.addControl(new AnimatedEnemyControl(enemy, hashMap, FileNames.ANUBIS_DIR, consApp.assets));
@@ -1609,7 +1609,7 @@ public class EntitySpawner {
 				case JUMP: hashMap.put(aa, 1.0); break;
 				case MATK: hashMap.put(aa, 1.0); break;
 				case MOVE: hashMap.put(aa, 1.0); break;
-				default: break;
+				default: hashMap.put(aa, 1.0); break;
 			}
 		}
 		ePic.addControl(new AnimatedEnemyControl(enemy, hashMap, FileNames.SHANGO_DIR, consApp.assets));
@@ -1740,7 +1740,7 @@ public class EntitySpawner {
 				case JUMP: hashMap.put(aa, 1.0); break;
 				case MATK: hashMap.put(aa, 0.5); break;
 				case MOVE: hashMap.put(aa, 1.0); break;
-				default: break;
+				default: hashMap.put(aa, 1.0); break;
 			}
 		}
 		ePic.addControl(new AnimatedEnemyControl(enemy, hashMap, FileNames.KIBO_DIR, consApp.assets));
@@ -1902,7 +1902,7 @@ public class EntitySpawner {
 				case JUMP: hashMap.put(aa, 1.0); break;
 				case MATK: hashMap.put(aa, 1.0); break;
 				case MOVE: hashMap.put(aa, 1.0); break;
-				default: break;
+				default: hashMap.put(aa, 1.0); break;
 			}
 		}
 		ePic.addControl(new AnimatedEnemyControl(enemy, hashMap, FileNames.GENTLEMAN_DIR, consApp.assets));
@@ -2011,7 +2011,7 @@ public class EntitySpawner {
 				case JUMP: hashMap.put(aa, 1.0); break;
 				case MATK: hashMap.put(aa, 1.0); break;
 				case MOVE: hashMap.put(aa, 1.0); break;
-				default: break;
+				default: hashMap.put(aa, 1.0); break;
 			}
 		}
 		ePic.addControl(new AnimatedEnemyControl(enemy, hashMap, FileNames.SHAKA_DIR, consApp.assets));
@@ -2080,7 +2080,7 @@ public class EntitySpawner {
 				case JUMP: hashMap.put(aa, 1.0); break;
 				case MATK: hashMap.put(aa, 1.0); break;
 				case MOVE: hashMap.put(aa, 1.0); break;
-				default: break;
+				default: hashMap.put(aa, 1.0); break;
 			}
 		}
 		ePic.addControl(new AnimatedEnemyControl(enemy, hashMap, FileNames.ESHU_DIR, consApp.assets));
@@ -2149,7 +2149,7 @@ public class EntitySpawner {
 				case JUMP: hashMap.put(aa, 1.0); break;
 				case MATK: hashMap.put(aa, 1.0); break;
 				case MOVE: hashMap.put(aa, 1.0); break;
-				default: break;
+				default: hashMap.put(aa, 1.0); break;
 			}
 		}
 		ePic.addControl(new AnimatedEnemyControl(enemy, hashMap, FileNames.ESHU_DIR, consApp.assets));

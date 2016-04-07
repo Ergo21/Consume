@@ -1,6 +1,7 @@
 package com.almasb.consume.ai;
 
 
+import com.almasb.consume.Config;
 import com.almasb.consume.ConsumeApp;
 import com.almasb.consume.Event;
 import com.almasb.fxgl.entity.AbstractControl;
@@ -115,6 +116,7 @@ public class SandBossControl extends AbstractControl {
 					rect.setFill(Color.RED);
 					entity.setPosition(entity.getPosition().subtract(0, 20));
 					entity.setGraphics(rect);
+					entity.setCollidable(true);
 					curAction = BossActions.NONE;
 					mergeDelay = -1;
 					cycle = 0;
@@ -125,7 +127,6 @@ public class SandBossControl extends AbstractControl {
 					rect.setFill(Color.RED);
 					entity.setPosition(entity.getPosition().subtract(0, 20));
 					entity.setGraphics(rect);
-					entity.setCollidable(true);
 					cycle = 2;
 				}
 				else if(now - mergeDelay >= TimerManager.toNanos(Duration.seconds(0.33)) && cycle == 0){
@@ -145,6 +146,10 @@ public class SandBossControl extends AbstractControl {
 				if(mergeDelay == -1){
 					mergeDelay = now;
 					form = 3;
+				}
+				
+				if(cycle != 0){
+					entity.setCollidable(false);
 				}
 				
 				if(now - mergeDelay >= TimerManager.toNanos(Duration.seconds(0.75)) && cycle == 2){
@@ -167,11 +172,11 @@ public class SandBossControl extends AbstractControl {
 								break;
 							}
 							case 1:{
-								curPos = startPos.subtract(100, 0); // 5 of 10
+								curPos = startPos.subtract(Config.BLOCK_SIZE*4, 0); // 5 of 10
 								break;
 							}
 							case 2:{
-								curPos = startPos.subtract(200, 0); // 2.5 of 10
+								curPos = startPos.subtract(Config.BLOCK_SIZE*9, 0); // 2.5 of 10
 								break;
 							}
 						}
@@ -190,7 +195,6 @@ public class SandBossControl extends AbstractControl {
 					Rectangle rect = new Rectangle(60, 20);
 					rect.setFill(Color.RED);
 					entity.setGraphics(rect);
-					entity.setCollidable(false);
 					cycle = 2;
 					entity.setPosition(entity.getPosition().add(0, 20));
 				}

@@ -38,7 +38,7 @@ public class StoneThrowerControl extends AbstractControl {
 			whenThrown = now;
 			entity.fireFXGLEvent(new FXGLEvent(Event.ENEMY_FIRED));
 		} else if (isTargetInRange()) {
-			if(now - whenThrown < TimerManager.toNanos(Config.ENEMY_CHARGE_DELAY) || target.getPosition().distance(entity.getPosition()) > Config.ENEMY_FIRE_RANGE*9/10){
+			if(now - whenThrown < TimerManager.toNanos(Config.ENEMY_CHARGE_DELAY) || target.getPosition().distance(entity.getPosition()) > Config.ENEMY_FIRE_RANGE/2){
 				entity.getControl(PhysicsControl.class).moveX(0);
 			}
 			else if (entity.getPosition().getX() > target.getPosition().getX()) {

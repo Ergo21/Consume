@@ -36,18 +36,27 @@ public class AnimatedEnemyControl implements Control {
 		
 		for(Types.AnimationActions aA : Types.AnimationActions.values()){
 			ArrayList<Texture> texs = new ArrayList<>();
-			for(int i = 1; i < 5; i++){
-				if(kS.contains(sD + "/" + aA + "_" + i + ".png")){
-					texs.add(as.getTexture(sD + "/" + aA + "_" + i + ".png"));
-				}
-				else if(i == 1){
-					texs.add(as.getTexture(sD + "/" + defAct + "_" + i + ".png"));
-					break;
-				}
-				else{
-					break;
+			if(kS.contains(sD + "/" + aA + "_" + 1 + ".png")){
+				for(int i = 1; i < 5; i++){
+					if(kS.contains(sD + "/" + aA + "_" + i + ".png")){
+						texs.add(as.getTexture(sD + "/" + aA + "_" + i + ".png"));
+					}
+					else{
+						break;
+					}
 				}
 			}
+			else{
+				for(int i = 1; i < 5; i++){
+					if(kS.contains(sD + "/" + defAct + "_" + i + ".png")){
+						texs.add(as.getTexture(sD + "/" + defAct + "_" + i + ".png"));
+					}
+					else{
+						break;
+					}
+				}
+			}
+			
 				
 			if(texs.size() > 1){
 				Texture[] tS = new Texture[texs.size()];
@@ -132,6 +141,7 @@ public class AnimatedEnemyControl implements Control {
 				nAni = AnimationActions.IDLE;
 			}
 		}
+		
 		
 		if(nAni != null && curAnimation != nAni){
 			t = animations.get(nAni);

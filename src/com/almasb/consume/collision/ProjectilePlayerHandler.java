@@ -15,8 +15,6 @@ import com.almasb.fxgl.entity.FXGLEvent;
 import com.almasb.fxgl.physics.CollisionHandler;
 import com.ergo21.consume.Enemy;
 
-import javafx.animation.FadeTransition;
-import javafx.scene.text.Text;
 import javafx.util.Duration;
 
 public class ProjectilePlayerHandler extends CollisionHandler {
@@ -68,14 +66,14 @@ public class ProjectilePlayerHandler extends CollisionHandler {
 		default:
 			break;
 		}
-		String modifier = "x1";
+		//String modifier = "x1";
 
 		if (resists.contains(element)) {
 			damage = (int) (damage * 0.5);
-			modifier = "x0.5";
+			//modifier = "x0.5";
 		} else if (weaknesses.contains(element)) {
 			damage *= 2;
-			modifier = "x2";
+			//modifier = "x2";
 		}
 
 		//Shows Damage

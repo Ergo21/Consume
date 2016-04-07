@@ -127,6 +127,10 @@ public class LevelParser {
 				case 'a':
 				case 'A':
 				case 'b':
+				case 'g':
+				case 'G':
+				case 'h':
+				case 'H':
 					e = new Entity(Types.Type.BLOCK);
 					e.setProperty(Property.SUB_TYPE, Block.BARRIER);
 					e.setProperty("state", "idle");
@@ -136,7 +140,6 @@ public class LevelParser {
 					e.setVisible(false);
 					break;
 				case 'B':{
-					//TODO: BOSS SPAWNER, add Boss, add Boss Health Bar, bind viewport to center of arena, start scene
 					e = new Entity(Type.BOSS_SPAWNER);
 					rect.setFill(Color.RED);
 					e.setVisible(false);
@@ -145,6 +148,10 @@ public class LevelParser {
 				}
 				case 'c':
 				case 'C':{
+					if(line.charAt(j) == 'C' && consApp.levelMenu.getLevelsComplete().contains(levelNumber/3)){
+						break;
+					}
+					
 					Entity en = new Entity(Type.BLOCK);
 					en.setProperty(Property.SUB_TYPE, Type.ENEMY_SPAWNER);
 					rect.setFill(Color.RED);
@@ -170,17 +177,18 @@ public class LevelParser {
 					else{
 						en.addControl(new CollideSpawnerControl(
 								(Function<Point2D, Pair<Entity,Entity>>) (tS) -> consApp.eSpawner.spawnSandBoss(tS), 
-								1, en.getPosition().add(Config.BLOCK_SIZE*8, Config.BLOCK_SIZE/2)));
+								1, en.getPosition().add(Config.BLOCK_SIZE*10, Config.BLOCK_SIZE/2)));
 						en.addFXGLEventHandler(Event.ENEMY_FIRED, event -> {
 							if(en != null && en.getControl(CollideSpawnerControl.class) != null){
 								ArrayList<Pair<Entity,Entity>> ens = en.getControl(CollideSpawnerControl.class).spawnEnemies();
 								consApp.gScene.setupBoss(ens.get(0), true);
-								consApp.getSceneManager().addEntities(ens.get(0).getValue());
 							}
 						});
+						en.setVisible(false);
 					}
 					
 					level.entities.add(en);
+					
 					break;
 				}
 				case 'd':
@@ -556,11 +564,22 @@ public class LevelParser {
 			bUEn.setVisible(true);
 			bUEn.setPosition(0, 0);
 			
-			Rectangle backUCol = new Rectangle(0,0,level.width,backY.getY());
-			backUCol.setFill(getBackground(levelNumber).getImage().getPixelReader().getColor(1, 1));
+			Rectangle backUCol = new Rectangle(0,0,level.width,backY.getY() + 1);
+			backUCol.setFill(getBackground(levelNumber).getImage().getPixelReader().getColor(0, 0));
 			bUEn.setGraphics(backUCol);
 						
 			backEn.add(bUEn);
+			
+			Entity bDEn = new Entity(Types.Type.BACKGROUND);
+			bDEn.setCollidable(false);
+			bDEn.setVisible(true);
+			bDEn.setPosition(0, (backY.getY() + backHeight - 1));
+			
+			Rectangle backDCol = new Rectangle(0,0,level.width, (level.height - (backY.getY() + backHeight)) + 1);
+			backDCol.setFill(getBackground(levelNumber).getImage().getPixelReader().getColor(0, backHeight-1));
+			bDEn.setGraphics(backDCol);
+						
+			backEn.add(bDEn);
 			
 			for(int i = 0; i * backWidth <= level.width; i++) {
 				Entity bEn = new Entity(Types.Type.BACKGROUND);
@@ -572,16 +591,7 @@ public class LevelParser {
 				backEn.add(bEn);
 			}
 			
-			Entity bDEn = new Entity(Types.Type.BACKGROUND);
-			bDEn.setCollidable(false);
-			bDEn.setVisible(true);
-			bDEn.setPosition(0, (backY.getY() + backHeight));
 			
-			Rectangle backDCol = new Rectangle(0,0,level.width, level.height - (backY.getY() + backHeight));
-			backDCol.setFill(getBackground(levelNumber).getImage().getPixelReader().getColor(1, backHeight-1));
-			bDEn.setGraphics(backDCol);
-						
-			backEn.add(bDEn);
 		}
 
 		return backEn;

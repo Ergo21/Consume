@@ -1022,29 +1022,50 @@ public class ConsumeApp extends GameApplication {
 			Entity e2 = new Entity(Type.PLATFORM);
 			e2.setPosition(e.getTranslateX(), e.getTranslateY());
 			e2.setVisible(false);
-			if((char)e.getProperty("blockImg") == 'a'){	
-				Texture t = getTexture(FileNames.FIREBALL_PROJ);
-				t.setScaleY(-1);
-				t.setPreserveRatio(true);
-				t.setFitWidth(Config.BLOCK_SIZE);
-				t.setTranslateY(-Config.BLOCK_SIZE/2);
-				e2.setGraphics(t);	
-			}
-			else if((char)e.getProperty("blockImg") == 'A'){
-				Texture t = getTexture(FileNames.U_STONE_BLOCK);
-				t.setScaleY(-1);
-				t.setPreserveRatio(true);
-				t.setFitWidth(Config.BLOCK_SIZE);
-				//t.setTranslateY(-Config.BLOCK_SIZE/2);
-				e2.setGraphics(t);
-			}
-			else{
-				Texture t = getTexture(FileNames.DES_CRATE_BLOCK);
-				t.setScaleY(-1);
-				t.setPreserveRatio(true);
-				t.setFitWidth(Config.BLOCK_SIZE);
-				//t.setTranslateY(-Config.BLOCK_SIZE/2);
-				e2.setGraphics(t);
+			
+			switch((char)e.getProperty("blockImg")){
+				case 'a':{
+					Texture t = getTexture(FileNames.FIREBALL_PROJ);
+					t.setScaleY(-1);
+					t.setPreserveRatio(true);
+					t.setFitWidth(Config.BLOCK_SIZE);
+					t.setTranslateY(-Config.BLOCK_SIZE/2);
+					e2.setGraphics(t);
+					break;
+				}
+				case 'A':{
+					Texture t = getTexture(FileNames.U_STONE_BLOCK);
+					t.setScaleY(-1);
+					t.setPreserveRatio(true);
+					t.setFitWidth(Config.BLOCK_SIZE);
+					//t.setTranslateY(-Config.BLOCK_SIZE/2);
+					e2.setGraphics(t);
+					break;
+				}
+				case 'b':{
+					Texture t = getTexture(FileNames.DES_CRATE_BLOCK);
+					t.setScaleY(-1);
+					t.setPreserveRatio(true);
+					t.setFitWidth(Config.BLOCK_SIZE);
+					e2.setGraphics(t);
+					break;
+				}
+				case 'g':{
+					Texture t = getTexture(FileNames.U_N_SAND_BLOCK);
+					t.setScaleY(-1);
+					t.setPreserveRatio(true);
+					t.setFitWidth(Config.BLOCK_SIZE);
+					e2.setGraphics(t);
+					break;
+				}
+				default:{		//G, h, H symbols potentially usable
+					Texture t = getTexture(FileNames.DES_CRATE_BLOCK);
+					t.setScaleY(-1);
+					t.setPreserveRatio(true);
+					t.setFitWidth(Config.BLOCK_SIZE);
+					e2.setGraphics(t);
+					break;
+				}
 			}
 			
 

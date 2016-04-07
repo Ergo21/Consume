@@ -1,0 +1,8 @@
+Name="Scorpion"
+Health="3"
+Mana="10"
+ManaR="1"
+Element="EARTH"
+Resists="EARTH"
+Weak="METAL"
+Spritesheet=""

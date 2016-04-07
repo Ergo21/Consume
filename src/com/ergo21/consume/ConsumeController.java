@@ -596,6 +596,7 @@ public class ConsumeController {
 			e2.setProperty(Property.SUB_TYPE, element);
 			e2.setPosition(p.add(0, 220));
 			e2.setCollidable(true);
+			e2.setVisible(false);
 			e2.setGraphics(new Rectangle(10, 10));
 			e2.addControl(new PhysicsControl(consApp.physics));
 			e2.addFXGLEventHandler(Event.COLLIDED_PLATFORM, event -> {
@@ -655,7 +656,7 @@ public class ConsumeController {
 			
 			consApp.getTimerManager().runOnceAfter(() -> slashed = false, Config.CONSUME_DECAY.multiply(2));
 			slashed = true;
-			// e.setVisible(true);
+			e.setVisible(false);
 			e.setCollidable(true);
 			e.setGraphics(new Rectangle(0, 0, consApp.player.getWidth() / 2, consApp.player.getHeight()));
 			e.setProperty(Property.ENABLE_GRAVITY, false);
