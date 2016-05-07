@@ -73,7 +73,7 @@ public class EntitySpawner {
 
 		enemy.setGraphics(rect);
 		enemy.setCollidable(true);
-		enemy.setProperty(Property.DATA, new Enemy(consApp.assets.getText("enemies/enemy_FireElemental.txt")));
+		enemy.setProperty(Property.DATA, new Enemy(consApp.assets.getText("enemies/enemy_FireElemental.txt"))); //TODO: Replace
 		enemy.setProperty("physics", consApp.physics);
 		enemy.setPosition(spawnPoint.getX(), spawnPoint.getY());
 		enemy.addControl(new PhysicsControl(consApp.physics));
@@ -93,7 +93,7 @@ public class EntitySpawner {
 
 		enemy.setGraphics(rect);
 		enemy.setCollidable(true);
-		enemy.setProperty(Property.DATA, new Enemy(consApp.assets.getText("enemies/enemy_FireElemental.txt")));
+		enemy.setProperty(Property.DATA, new Enemy(consApp.assets.getText("enemies/enemy_FireElemental.txt"))); //TODO: Replace
 		enemy.setProperty("physics", consApp.physics);
 		enemy.setProperty("shover", true);
 		enemy.setPosition(spawnPoint.getX(), spawnPoint.getY());
@@ -321,7 +321,7 @@ public class EntitySpawner {
 
 		enemy.setGraphics(rect);
 		enemy.setCollidable(true);
-		enemy.setProperty(Property.DATA, new Enemy(consApp.assets.getText("enemies/enemy_FireElemental.txt")));
+		enemy.setProperty(Property.DATA, new Enemy(consApp.assets.getText("enemies/Mummy.txt")));
 		enemy.setProperty("physics", consApp.physics);
 		enemy.setProperty("facingRight", true);
 		enemy.setPosition(spawnPoint.getX(), spawnPoint.getY());
@@ -442,7 +442,7 @@ public class EntitySpawner {
 
 		enemy.setGraphics(rect);
 		enemy.setCollidable(true);
-		enemy.setProperty(Property.DATA, new Enemy(consApp.assets.getText("enemies/enemy_FireElemental.txt")));
+		enemy.setProperty(Property.DATA, new Enemy(consApp.assets.getText("enemies/enemy_FireElemental.txt"))); //TODO: Replace
 		enemy.setProperty("physics", consApp.physics);
 		enemy.setProperty("facingRight", true);
 		enemy.setPosition(spawnPoint.getX(), spawnPoint.getY());
@@ -575,7 +575,7 @@ public class EntitySpawner {
 
 		enemy.setGraphics(rect);
 		enemy.setCollidable(false);
-		enemy.setProperty(Property.DATA, new Enemy(consApp.assets.getText("enemies/enemy_FireElemental.txt")));
+		enemy.setProperty(Property.DATA, new Enemy(consApp.assets.getText("enemies/enemy_FireElemental.txt"))); //TODO: Replace
 		enemy.setProperty("physics", consApp.physics);
 		enemy.setProperty("facingRight", false);
 		enemy.setPosition(spawnPoint.getX(), spawnPoint.getY());
@@ -602,9 +602,10 @@ public class EntitySpawner {
 		Entity enemy = new Entity(Type.ENEMY);
 		Rectangle rect = new Rectangle(40, 40);
 		rect.setFill(Color.RED);
-
+		enemy.setGraphics(rect);
+		enemy.setVisible(false);
 		enemy.setCollidable(false);
-		enemy.setProperty(Property.DATA, new Enemy(consApp.assets.getText("enemies/enemy_FireElemental.txt")));
+		enemy.setProperty(Property.DATA, new Enemy(consApp.assets.getText("enemies/enemy_FireElemental.txt"))); 
 		enemy.setProperty("physics", consApp.physics);
 		enemy.setProperty("facingRight", false);
 		enemy.setPosition(spawnPoint.getX(), spawnPoint.getY());
@@ -620,16 +621,12 @@ public class EntitySpawner {
 				if(enemy != null && enemy.getControl(BurnerControl.class) != null){
 					enemy.getControl(BurnerControl.class).setSpearThrown(false);
 				}			
-			}, Config.ENEMY_FIRE_THROW_DELAY);
+			}, Config.ENEMY_FIRE_THROW_DELAY.divide(2));
 		});
 		
 		Entity ePic = new Entity(Type.ENEMY);
-		ePic.setVisible(true);
+		ePic.setVisible(false);
 		ePic.setCollidable(false);
-		Texture t = consApp.getTexture(FileNames.COFFIN_BLOCK);
-		t.setPreserveRatio(true);
-		t.setFitHeight(80);
-		ePic.setGraphics(t);
 		ePic.setPosition(spawnPoint.getX(), spawnPoint.getY());
 		ePic.translateXProperty().bind(enemy.translateXProperty());
 		ePic.translateYProperty().bind(enemy.translateYProperty());
@@ -719,7 +716,7 @@ public class EntitySpawner {
 
 		enemy.setGraphics(rect);
 		enemy.setCollidable(true);
-		enemy.setProperty(Property.DATA, new Enemy(consApp.assets.getText("enemies/enemy_FireElemental.txt")));
+		enemy.setProperty(Property.DATA, new Enemy(consApp.assets.getText("enemies/enemy_FireElemental.txt"))); //TODO: Replace
 		enemy.setProperty("physics", consApp.physics);
 		enemy.setPosition(spawnPoint.getX(), spawnPoint.getY());
 		enemy.addControl(new PhysicsControl(consApp.physics));
@@ -775,7 +772,7 @@ public class EntitySpawner {
 
 		enemy.setGraphics(rect);
 		enemy.setCollidable(true);
-		enemy.setProperty(Property.DATA, new Enemy(consApp.assets.getText("enemies/enemy_FireElemental.txt")));
+		enemy.setProperty(Property.DATA, new Enemy(consApp.assets.getText("enemies/enemy_FireElemental.txt"))); //TODO: Replace
 		enemy.setProperty("physics", consApp.physics);
 		enemy.setProperty("shover", true);
 		enemy.setPosition(spawnPoint.getX(), spawnPoint.getY());
@@ -828,7 +825,7 @@ public class EntitySpawner {
 
 		enemy.setGraphics(rect);
 		enemy.setCollidable(true);
-		enemy.setProperty(Property.DATA, new Enemy(consApp.assets.getText("enemies/enemy_FireElemental.txt")));
+		enemy.setProperty(Property.DATA, new Enemy(consApp.assets.getText("enemies/enemy_FireElemental.txt"))); //TODO: Replace
 		enemy.setProperty("physics", consApp.physics);
 		enemy.setProperty("shover", true);
 		enemy.setPosition(spawnPoint.getX(), spawnPoint.getY());
@@ -891,7 +888,7 @@ public class EntitySpawner {
 
 		enemy.setGraphics(rect);
 		enemy.setCollidable(true);
-		enemy.setProperty(Property.DATA, new Enemy(consApp.assets.getText("enemies/enemy_FireElemental.txt")));
+		enemy.setProperty(Property.DATA, new Enemy(consApp.assets.getText("enemies/Death_Spirit.txt")));
 		enemy.setProperty("physics", consApp.physics);
 		enemy.setProperty("shover", true);
 		enemy.setPosition(spawnPoint.getX(), spawnPoint.getY());
@@ -945,7 +942,7 @@ public class EntitySpawner {
 
 		enemy.setGraphics(rect);
 		enemy.setCollidable(true);
-		enemy.setProperty(Property.DATA, new Enemy(consApp.assets.getText("enemies/enemy_FireElemental.txt")));
+		enemy.setProperty(Property.DATA, new Enemy(consApp.assets.getText("enemies/enemy_FireElemental.txt"))); //TODO: Replace
 		enemy.setProperty("physics", consApp.physics);
 		enemy.setProperty("facingRight", false);
 		enemy.setPosition(spawnPoint.getX(), spawnPoint.getY());
@@ -1014,7 +1011,7 @@ public class EntitySpawner {
 
 		enemy.setGraphics(rect);
 		enemy.setCollidable(true);
-		enemy.setProperty(Property.DATA, new Enemy(consApp.assets.getText("enemies/enemy_FireElemental.txt")));
+		enemy.setProperty(Property.DATA, new Enemy(consApp.assets.getText("enemies/enemy_FireElemental.txt"))); //TODO: Replace
 		enemy.setProperty("physics", consApp.physics);
 		enemy.setProperty("facingRight", false);
 		enemy.setPosition(spawnPoint.getX(), spawnPoint.getY());
@@ -1083,7 +1080,7 @@ public class EntitySpawner {
 
 		enemy.setGraphics(rect);
 		enemy.setCollidable(true);
-		enemy.setProperty(Property.DATA, new Enemy(consApp.assets.getText("enemies/enemy_FireElemental.txt")));
+		enemy.setProperty(Property.DATA, new Enemy(consApp.assets.getText("enemies/enemy_FireElemental.txt"))); //TODO: Replace
 		enemy.setProperty("physics", consApp.physics);
 		enemy.setProperty("facingRight", false);
 		enemy.setPosition(spawnPoint.getX(), spawnPoint.getY());
@@ -1201,7 +1198,7 @@ public class EntitySpawner {
 		enemy.setGraphics(rect);
 		enemy.setCollidable(true);
 		enemy.setVisible(false);
-		enemy.setProperty(Property.DATA, new Enemy(consApp.assets.getText("enemies/enemy_FireElemental.txt")));
+		enemy.setProperty(Property.DATA, new Enemy(consApp.assets.getText("enemies/enemy_FireElemental.txt"))); //TODO: Replace
 		enemy.setProperty("physics", consApp.physics);
 		enemy.setProperty("facingRight", true);
 		enemy.setProperty("jumping", false);
@@ -1262,7 +1259,7 @@ public class EntitySpawner {
 		enemy.setGraphics(rect);
 		enemy.setCollidable(true);
 		enemy.setVisible(false);
-		enemy.setProperty(Property.DATA, new Enemy(consApp.assets.getText("enemies/enemy_FireElemental.txt")));
+		enemy.setProperty(Property.DATA, new Enemy(consApp.assets.getText("enemies/enemy_FireElemental.txt"))); //TODO: Replace
 		enemy.setProperty("physics", consApp.physics);
 		enemy.setProperty("facingRight", false);
 		enemy.setProperty("jumping", false);
@@ -1333,7 +1330,7 @@ public class EntitySpawner {
 
 		enemy.setGraphics(rect);
 		enemy.setCollidable(true);
-		enemy.setProperty(Property.DATA, new Enemy(consApp.assets.getText("enemies/enemy_FireElemental.txt")));
+		enemy.setProperty(Property.DATA, new Enemy(consApp.assets.getText("enemies/enemy_FireElemental.txt"))); //TODO: Replace
 		enemy.setProperty(Property.SUB_TYPE, Type.BOSS);
 		enemy.setProperty("physics", consApp.physics);
 		enemy.setProperty("shover", true);
@@ -1429,7 +1426,7 @@ public class EntitySpawner {
 		enemy.setGraphics(rect);
 		enemy.setVisible(false);
 		enemy.setCollidable(true);
-		enemy.setProperty(Property.DATA, new Enemy(consApp.assets.getText("enemies/enemy_FireElemental.txt")));
+		enemy.setProperty(Property.DATA, new Enemy(consApp.assets.getText("enemies/Anubis.txt")));
 		enemy.setProperty(Property.SUB_TYPE, Type.BOSS);
 		enemy.setProperty("physics", consApp.physics);
 		enemy.setProperty("shover", true);
@@ -1514,7 +1511,7 @@ public class EntitySpawner {
 		enemy.setGraphics(rect);
 		enemy.setVisible(false);
 		enemy.setCollidable(true);
-		enemy.setProperty(Property.DATA, new Enemy(consApp.assets.getText("enemies/enemy_FireElemental.txt")));
+		enemy.setProperty(Property.DATA, new Enemy(consApp.assets.getText("enemies/enemy_FireElemental.txt"))); //TODO: Replace
 		enemy.setProperty(Property.SUB_TYPE, Type.BOSS);
 		enemy.setProperty("physics", consApp.physics);
 		enemy.setProperty("shover", true);
@@ -1635,7 +1632,7 @@ public class EntitySpawner {
 		enemy.setGraphics(rect);
 		enemy.setVisible(false);
 		enemy.setCollidable(true);
-		enemy.setProperty(Property.DATA, new Enemy(consApp.assets.getText("enemies/enemy_FireElemental.txt")));
+		enemy.setProperty(Property.DATA, new Enemy(consApp.assets.getText("enemies/enemy_FireElemental.txt"))); //TODO: Replace
 		enemy.setProperty(Property.SUB_TYPE, Type.BOSS);
 		enemy.setProperty("physics", consApp.physics);
 		enemy.setProperty("shover", true);
@@ -1766,7 +1763,7 @@ public class EntitySpawner {
 		enemy.setGraphics(rect);
 		enemy.setVisible(false);
 		enemy.setCollidable(true);
-		enemy.setProperty(Property.DATA, new Enemy(consApp.assets.getText("enemies/enemy_FireElemental.txt")));
+		enemy.setProperty(Property.DATA, new Enemy(consApp.assets.getText("enemies/enemy_FireElemental.txt"))); //TODO: Replace
 		enemy.setProperty(Property.SUB_TYPE, Type.BOSS);
 		enemy.setProperty("physics", consApp.physics);
 		enemy.setProperty("shover", true);
@@ -1929,7 +1926,7 @@ public class EntitySpawner {
 		enemy.setGraphics(rect);
 		enemy.setVisible(false);
 		enemy.setCollidable(true);
-		enemy.setProperty(Property.DATA, new Enemy(consApp.assets.getText("enemies/enemy_FireElemental.txt")));
+		enemy.setProperty(Property.DATA, new Enemy(consApp.assets.getText("enemies/enemy_FireElemental.txt"))); //TODO: Replace
 		enemy.setProperty(Property.SUB_TYPE, Type.BOSS);
 		enemy.setProperty("physics", consApp.physics);
 		enemy.setProperty("shover", true);
@@ -2037,7 +2034,7 @@ public class EntitySpawner {
 		enemy.setGraphics(rect);
 		enemy.setVisible(false);
 		enemy.setCollidable(true);
-		enemy.setProperty(Property.DATA, new Enemy(consApp.assets.getText("enemies/enemy_FireElemental.txt")));
+		enemy.setProperty(Property.DATA, new Enemy(consApp.assets.getText("enemies/enemy_FireElemental.txt"))); //TODO: Replace
 		enemy.setProperty(Property.SUB_TYPE, Type.BOSS);
 		enemy.setProperty("physics", consApp.physics);
 		enemy.setProperty("shover", true);
@@ -2106,7 +2103,7 @@ public class EntitySpawner {
 		enemy.setGraphics(rect);
 		enemy.setVisible(false);
 		enemy.setCollidable(true);
-		enemy.setProperty(Property.DATA, new Enemy(consApp.assets.getText("enemies/enemy_FireElemental.txt")));
+		enemy.setProperty(Property.DATA, new Enemy(consApp.assets.getText("enemies/enemy_FireElemental.txt"))); //TODO: Replace
 		enemy.setProperty(Property.SUB_TYPE, Type.BOSS);
 		enemy.setProperty("physics", consApp.physics);
 		enemy.setProperty("shover", true);

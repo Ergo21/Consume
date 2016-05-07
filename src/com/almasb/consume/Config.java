@@ -82,7 +82,7 @@ public final class Config {
 	public static final Duration ENEMY_STONE_THROW_DELAY = Duration.seconds(0.33);
 	public static final Duration ENEMY_STONE_THROW_RECHARGE = Duration.seconds(3);
 
-	public static final Duration ENEMY_FIRE_GROWTH_DELAY = Duration.seconds(0.66);
+	public static final Duration ENEMY_FIRE_GROWTH_DELAY = Duration.seconds(0.33);
 	public static final Duration ENEMY_FIRE_THROW_DELAY = Duration.seconds(3);
 
 	public static final Duration ENEMY_SOUND_GROWTH_DELAY = Duration.seconds(0.33);

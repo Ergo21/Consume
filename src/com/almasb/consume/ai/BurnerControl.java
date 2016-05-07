@@ -44,6 +44,6 @@ public class BurnerControl extends AbstractControl {
 	}
 
 	private boolean isTargetInRange() {
-		return target.getPosition().distance(entity.getPosition()) <= Config.ENEMY_FIRE_RANGE/2;
+		return target.getPosition().distance(entity.getPosition()) <= Config.ENEMY_FIRE_RANGE*3/4;
 	}
 }

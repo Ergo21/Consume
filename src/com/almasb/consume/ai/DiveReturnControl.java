@@ -11,9 +11,11 @@ public class DiveReturnControl extends AbstractControl {
 	private Entity target;
 	private int vel = 0;
 	private double dive = 0;
-	private boolean notDived = true;
 	private double originalY;
 	private long startWait = 0;
+	
+	private int state = 0; //0 = Hover, 1 = Drop, 2 = Rise 
+	private boolean onRight = true;
 
 	public DiveReturnControl(Entity target, double oY) {
 		this.target = target;
@@ -22,54 +24,85 @@ public class DiveReturnControl extends AbstractControl {
 
 	@Override	
 	public void onUpdate(Entity entity, long now) {
-		if (isTargetInRange() && notDived) {
-			dive += Config.ENEMY_DIVEBOMB_ACC;
-			if (target.getControl(PhysicsControl.class).getVelocity().getX() > 0) {
-				dive += Config.ENEMY_DIVEBOMB_ACC;
-			} else if (target.getControl(PhysicsControl.class).getVelocity().getX() < 0) {
-				dive -= Config.ENEMY_DIVEBOMB_ACC / 2;
-			}
-			if (target.getTranslateY() <= entity.getTranslateY()) {
-				dive = -Config.ENEMY_DIVEBOMB_ACC;
-				notDived = false;
-			}
-			
-		} else if (entity.getTranslateY() > originalY) {
-			dive -= Config.ENEMY_DIVEBOMB_ACC;
-			if ((target.getControl(PhysicsControl.class).getVelocity().getX() <= 0 &&
-				target.getTranslateX() < entity.getTranslateX()) || 
-				(target.getControl(PhysicsControl.class).getVelocity().getX() > 0 &&
-				target.getTranslateX() > entity.getTranslateX())) {
-				dive += Config.ENEMY_DIVEBOMB_ACC / 2;
-			}
-		} else {
-			dive = 0;
+		double diveHeight = originalY + entity.getHeight() + Config.BLOCK_SIZE*2;
+		if(diveHeight + Config.BLOCK_SIZE <  target.getPosition().getY() + target.getHeight()/2){
+			//Move down
+			originalY += Config.BLOCK_SIZE;
+		}
+		else if(diveHeight >  target.getPosition().getY() + target.getHeight()/2){
+			//Move up
+			originalY -= Config.BLOCK_SIZE;
 		}
 		
-		if(entity.getTranslateX() > target.getTranslateX() && notDived){
-			//To Right of player
-			vel = -Speed.ENEMY_PATROL + (int)target.getControl(PhysicsControl.class).getVelocity().getX();
-		}
-		else if (notDived){
-			vel = Speed.ENEMY_PATROL + (int)target.getControl(PhysicsControl.class).getVelocity().getX();
-		}
-
-		entity.setTranslateX(entity.getTranslateX() + vel);
-		// entity.getControl(PhysicsControl.class).moveY((int)dive);
-		entity.setTranslateY(entity.getTranslateY() + dive);
-		if (entity.getTranslateX() - target.getTranslateX() <= -200 || 
-			entity.getTranslateX() - target.getTranslateX() >= 200) {
-			vel = (int)target.getControl(PhysicsControl.class).getVelocity().getX();
-			if(dive == 0){
-				if(startWait == 0){
-					startWait = now;
-				}
-				if(now - startWait >= TimerManager.toNanos(Config.ENEMY_CHARGE_DELAY)){
-					notDived = true;
-					startWait = 0;
-				}
+		if(state == 0){	
+			if(startWait == 0){
+				startWait = now;
+			}
+			if(now - startWait >= TimerManager.toNanos(Config.ENEMY_CHARGE_DELAY)){
+				dive = 0;
+				state = 1;
+				startWait = 0;
+				onRight = !onRight;
 			}
 		}
+		else if(state == 1){
+			dive += Config.ENEMY_DIVEBOMB_ACC;
+
+			if (target.getTranslateY() <= entity.getTranslateY()) {
+				state = 2;
+			}
+					
+			if(Math.abs(dive) > Speed.PLAYER_MOVE){
+				dive = Speed.PLAYER_MOVE * (dive < 0 ? -1: 1);
+			}
+		}
+		else{
+			dive -= Config.ENEMY_DIVEBOMB_ACC;
+			
+			if(Math.abs(dive) > Speed.PLAYER_MOVE){
+				dive = Speed.PLAYER_MOVE * (dive < 0 ? -1: 1);
+			}
+			
+			if(entity.getTranslateY() <= originalY){
+				dive = 0;
+				state = 0;
+			}
+		}
+
+		if(onRight){
+			if(entity.getTranslateX() - target.getTranslateX() <= 200){
+				vel = (int) accelerate(vel, (Speed.ENEMY_PATROL + 1));
+			}
+			else if(entity.getTranslateX() - target.getTranslateX() >= 250){
+				vel = (int) accelerate(vel, -(Speed.ENEMY_PATROL + 1));
+			}
+			else{
+				vel = (int) accelerate(vel, 0);
+			}
+		}
+		else{
+			if(entity.getTranslateX() - target.getTranslateX() >= -200){
+				vel = (int) accelerate(vel, -(Speed.ENEMY_PATROL + 1));
+			}
+			else if(entity.getTranslateX() - target.getTranslateX() <= -250){
+				vel = (int) accelerate(vel, (Speed.ENEMY_PATROL + 1));
+			}
+			else{
+				vel = (int) accelerate(vel, 0);
+			}
+		}
+		
+		
+		entity.setTranslateX(entity.getTranslateX() + vel);
+		entity.setTranslateY(entity.getTranslateY() + dive);
+	}
+	
+	private double accelerate(int ori, int goal){
+		if(Math.abs(goal - ori) <= 1){
+			return goal;
+		}
+		
+		return ori + (goal > ori ? 1 : -1);
 	}
 
 	@Override
@@ -77,9 +110,9 @@ public class DiveReturnControl extends AbstractControl {
 		// TODO Auto-generated method stub
 	}
 
-	private boolean isTargetInRange() {
+	/*private boolean isTargetInRange() {
 		return target.getPosition().distance(entity.getPosition()) <= Config.ENEMY_FIRE_RANGE;
-	}
+	}*/
 
 	public int getVelocity() {
 		return vel;

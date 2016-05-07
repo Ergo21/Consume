@@ -65,7 +65,9 @@ public class PlayerEnemyHandler extends CollisionHandler {
 		if(playerData.getCurrentHealth() > 0){
 			player.setCollidable(false);
 			player.setProperty("stunned", true);
-			
+			player.setProperty("climb", false);
+			player.setProperty("climbing", false);
+			player.setProperty(Property.ENABLE_GRAVITY, true);
 			//Show invincibility
 			/*Entity e = Entity.noType().setGraphics(new Text("INVINCIBLE"));
 			e.translateXProperty().bind(player.translateXProperty());
@@ -76,7 +78,7 @@ public class PlayerEnemyHandler extends CollisionHandler {
 				if(player != null){
 					player.setCollidable(true);
 				}
-			} , Duration.seconds(2));
+			} , Duration.seconds(1.2));
 			
 			
 			consApp.getTimerManager().runOnceAfter(() -> {

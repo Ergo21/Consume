@@ -8,6 +8,12 @@ public final class FileNames{
 	public static final String EMPTY			= "empty.png";
 	public static final String PLAYER_ICON		= "icons/player icon.png";
 	
+	public static final String UBACK_DIRT		= "backgrounds/underground dirt.jpg";
+	public static final String UBACK_SAND		= "backgrounds/underground sand.jpg";
+	public static final String UBACK_SAND_N		= "backgrounds/underground sand night.jpg";
+	public static final String UBACK_SANDSTONE	= "backgrounds/underground sandstone.jpg";
+	public static final String UBACK_STONE		= "backgrounds/underground stone.jpg";
+	
 	public static final String FOREST1_MUSIC 	= "02 Forests (Part I).mp3";
 	public static final String FOREST1_BACK_1 	= "backgrounds/forest1.jpg";
 	public static final String FOREST1_BACK_2 	= "backgrounds/forest2.jpg";
@@ -97,7 +103,7 @@ public final class FileNames{
 	public static final String DES_THATCH_BLOCK 	= "statics/thatch.png";
 	public static final String DES_CRATE_BLOCK 		= "statics/crate.png";
 	public static final String DES_SANDSTONE_BLOCK 	= "statics/cracked sandstone.png";
-	public static final String DES_BRICK_BLOCK 		= "statics/cracked bricks.png";
+	public static final String DES_LIMESTONE_BLOCK  = "statics/cracked lime.png";
 	public static final String DES_ICE_BLOCK 		= "statics/ice.png";
 	
 	

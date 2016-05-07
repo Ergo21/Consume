@@ -65,7 +65,9 @@ public class PlayerBossHandler extends CollisionHandler {
 		if(playerData.getCurrentHealth() > 0){
 			player.setCollidable(false);
 			player.setProperty("stunned", true);
-			
+			player.setProperty("climb", false);
+			player.setProperty("climbing", false);
+			player.setProperty(Property.ENABLE_GRAVITY, true);
 			//Shows invincibility
 			/*Entity e = Entity.noType().setGraphics(new Text("INVINCIBLE"));
 			e.translateXProperty().bind(player.translateXProperty());

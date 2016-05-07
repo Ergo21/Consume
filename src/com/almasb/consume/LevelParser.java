@@ -8,6 +8,7 @@ import java.util.stream.IntStream;
 
 import javafx.geometry.Point2D;
 import javafx.geometry.Rectangle2D;
+import javafx.scene.image.PixelReader;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.util.Pair;
@@ -102,8 +103,8 @@ public class LevelParser {
 					e.setProperty("played", false);
 					e.setCollidable(true);
 					e.setVisible(false);
-					e.setPosition(0, -Config.BLOCK_SIZE);
-					rect.setHeight(Config.BLOCK_SIZE*2);
+					e.setPosition(0, -Config.BLOCK_SIZE*2);
+					rect.setHeight(Config.BLOCK_SIZE*3);
 					String chTe = "" + line.charAt(j);
 					int scNo = Integer.parseInt(chTe);
 					scNo -= 4;
@@ -135,9 +136,29 @@ public class LevelParser {
 					e.setProperty(Property.SUB_TYPE, Block.BARRIER);
 					e.setProperty("state", "idle");
 					e.setProperty("start", "none");
-					e.setCollidable(true);
+					e.setCollidable(false);
 					e.setProperty("blockImg", line.charAt(j)); //See activateBarrier() in ConsumeApp for pic choice
 					e.setVisible(false);
+					if(i == 0 || data.get(i-1).charAt(j) != line.charAt(j)){ 
+						int hei = 1;
+						for(hei = 1; hei + i < data.size(); hei++){
+							if(data.get(i+hei).charAt(j) != line.charAt(j)){
+								break;
+							}
+						}
+						Entity e2 = new Entity(Types.Type.BLOCK);
+						e2.setProperty(Property.SUB_TYPE, Block.BARRIER);
+						e2.setProperty("state", "idle");
+						e2.setProperty("start", "none");
+						e2.setProperty("blockImg", line.charAt(j));
+						e2.setCollidable(true);
+						e2.setVisible(false);
+						e2.setPosition(j*Config.BLOCK_SIZE, i*Config.BLOCK_SIZE);
+						Rectangle rect2 = new Rectangle(Config.BLOCK_SIZE, Config.BLOCK_SIZE*hei);
+						rect2.setFill(Color.BLACK);
+						e2.setGraphics(rect2);
+						level.entities.add(e2);
+					}
 					break;
 				case 'B':{
 					e = new Entity(Type.BOSS_SPAWNER);
@@ -154,16 +175,17 @@ public class LevelParser {
 					
 					Entity en = new Entity(Type.BLOCK);
 					en.setProperty(Property.SUB_TYPE, Type.ENEMY_SPAWNER);
-					rect.setFill(Color.RED);
-					en.setPosition(en.getPosition().add(j * Config.BLOCK_SIZE, (i * Config.BLOCK_SIZE) - Config.BLOCK_SIZE/2));
-					en.setGraphics(rect);
-					
+					Rectangle rect2 = new Rectangle(Config.BLOCK_SIZE/2, Config.BLOCK_SIZE*3);
+					rect2.setFill(Color.RED);
+					en.setGraphics(rect2);
+					en.setVisible(true);
 					en.setCollidable(true);
 					if(line.charAt(j) == 'c'){
+						en.setPosition(en.getPosition().add(j * Config.BLOCK_SIZE, ((i-1) * Config.BLOCK_SIZE)));
 						en.addControl(new CollideSpawnerControl(
 								(Function<Point2D, Pair<Entity, Entity>>) (tS) -> consApp.eSpawner.spawnMummy(tS), 
-								2, en.getPosition().add(-Config.BLOCK_SIZE*2, Config.BLOCK_SIZE/2), 
-								en.getPosition().add(Config.BLOCK_SIZE*2, Config.BLOCK_SIZE/2)));
+								2, en.getPosition().add(-Config.BLOCK_SIZE*3, Config.BLOCK_SIZE*2), 
+								en.getPosition().add(Config.BLOCK_SIZE*3, Config.BLOCK_SIZE*2)));
 						en.addFXGLEventHandler(Event.ENEMY_FIRED, event -> {
 							if(en != null && en.getControl(CollideSpawnerControl.class) != null){
 								ArrayList<Pair<Entity,Entity>> ens = en.getControl(CollideSpawnerControl.class).spawnEnemies();
@@ -175,16 +197,16 @@ public class LevelParser {
 						});
 					}
 					else{
+						en.setPosition(en.getPosition().add(j * Config.BLOCK_SIZE, ((i-1) * Config.BLOCK_SIZE)));
 						en.addControl(new CollideSpawnerControl(
 								(Function<Point2D, Pair<Entity,Entity>>) (tS) -> consApp.eSpawner.spawnSandBoss(tS), 
-								1, en.getPosition().add(Config.BLOCK_SIZE*10, Config.BLOCK_SIZE/2)));
+								1, en.getPosition().add(Config.BLOCK_SIZE*11.5, Config.BLOCK_SIZE*2)));
 						en.addFXGLEventHandler(Event.ENEMY_FIRED, event -> {
 							if(en != null && en.getControl(CollideSpawnerControl.class) != null){
 								ArrayList<Pair<Entity,Entity>> ens = en.getControl(CollideSpawnerControl.class).spawnEnemies();
 								consApp.gScene.setupBoss(ens.get(0), true);
 							}
 						});
-						en.setVisible(false);
 					}
 					
 					level.entities.add(en);
@@ -213,7 +235,7 @@ public class LevelParser {
 							case 'd': t = consApp.getTexture(FileNames.DES_THATCH_BLOCK); break;
 							case 'D': t = consApp.getTexture(FileNames.DES_CRATE_BLOCK); break;
 							case 'e': t = consApp.getTexture(FileNames.DES_SANDSTONE_BLOCK); break;
-							case 'E': t = consApp.getTexture(FileNames.DES_BRICK_BLOCK); break;
+							case 'E': t = consApp.getTexture(FileNames.DES_LIMESTONE_BLOCK); break;
 							case 'f': t = consApp.getTexture(FileNames.DES_ICE_BLOCK); break;
 						}
 						t.setPreserveRatio(true);
@@ -231,6 +253,7 @@ public class LevelParser {
 				case 'L':
 				case 'm':
 				case 'M':
+				case 'n':
 					if(i >= 1 && j + 1 < line.length() && isSameZone(line.charAt(j), line.charAt(j+1)) && 
 								isPlatform(data.get(i-1).charAt(j))){
 						int len = 1;
@@ -262,7 +285,7 @@ public class LevelParser {
 						rect.setFill(Color.BROWN);
 						if(Config.RELEASE){
 							if(i >= 1 && data.get(i-1) != null && 
-									(data.get(i-1).charAt(j) != 'i' && data.get(i-1).charAt(j) != 'I' && data.get(i-1).charAt(j) != 'j')){
+									!(isPlatform(data.get(i-1).charAt(j)))){
 								t = consApp.getTexture(getSurfaceTexture(line.charAt(j)));
 							}
 							else{
@@ -277,54 +300,14 @@ public class LevelParser {
 						}
 					}
 					break;
-				case 'n':
-					if(j + 1 < line.length() && line.charAt(j) == line.charAt(j+1) && 
-						(data.get(i-1).charAt(j) == 'n')){
-						int len = 1;
-						for(int b = 1; b + j < line.length(); b++){
-							if(len < 40 && i >= 1 && data.get(i-1) != null && 
-								(data.get(i-1).charAt(j + b) == 'n')){
-								len++;
-							}
-							else{
-								break;
-							}
-						}
-			
-						Entity en = new Entity(Types.Type.PLATFORM);
-						en.setProperty(Property.SUB_TYPE, Platform.INDESTRUCTIBLE);
-						Texture tex = consApp.getTexture(FileNames.U_STONE_LINE);
-						tex = tex.subTexture(new Rectangle2D(0,0,200*len, 200));
-						tex.setPreserveRatio(true);
-						tex.setFitHeight(Config.BLOCK_SIZE);
-						en.setGraphics(tex);
-						en.setPosition(en.getPosition().add(j * Config.BLOCK_SIZE, i * Config.BLOCK_SIZE));
-						j = j + len - 1;
-						level.entities.add(en);
-					}
-					else{
-						e = new Entity(Types.Type.PLATFORM);
-						e.setProperty(Property.SUB_TYPE, Platform.INDESTRUCTIBLE);
-						rect.setFill(Color.BROWN);
-						if(Config.RELEASE){
-							if(i >= 1 && data.get(i-1) != null && (data.get(i-1).charAt(j) != 'n')){
-								t = consApp.getTexture(FileNames.S_SANDSTONE_BLOCK);
-							}
-							else{
-								t = consApp.getTexture(FileNames.U_SANDSTONE_BLOCK);
-							}
-							if(j >= 1 && line.charAt(j-1) == line.charAt(j) && level.entities.get(level.entities.size() - 1).getScaleX() == 1){
-								e.setScaleX(-1);
-							}
-							t.setPreserveRatio(true);
-							t.setFitHeight(40);
-						}
-					}
-					break;
 				case 'p':
 					e = new Entity(Types.Type.BLOCK);
 					e.setProperty(Property.SUB_TYPE, Block.LADDER);
+					e.setProperty("top", 
+							(i >= 1 && data.get(i-1) != null && 
+								data.get(i-1).charAt(j) != 'p'));
 					e.setCollidable(true);
+					e.setPosition(0, -1);
 					rect.setFill(Color.GREY);
 					if(Config.RELEASE){
 						t = consApp.getTexture(FileNames.LADDER_BLOCK);
@@ -514,6 +497,8 @@ public class LevelParser {
 				return FileNames.S_STONE_BLOCK;
 			case 'M':
 				return FileNames.SN_STONE_BLOCK;
+			case 'n':
+				return FileNames.S_SANDSTONE_BLOCK;
 		}
 
 		return FileNames.S_DIRT_BLOCK;
@@ -534,6 +519,8 @@ public class LevelParser {
 		case 'm':
 		case 'M':
 			return FileNames.U_STONE_BLOCK;
+		case 'n':
+			return FileNames.U_SANDSTONE_BLOCK;
 	}
 
 	return FileNames.U_DIRT_BLOCK;
@@ -565,9 +552,33 @@ public class LevelParser {
 			bUEn.setPosition(0, 0);
 			
 			Rectangle backUCol = new Rectangle(0,0,level.width,backY.getY() + 1);
-			backUCol.setFill(getBackground(levelNumber).getImage().getPixelReader().getColor(0, 0));
+			
+			PixelReader pRead = getBackground(levelNumber).getImage().getPixelReader();
+			double red = 0;
+			double green = 0;
+			double blue = 0;
+			int count = 0;
+			
+			for(int i = 0; i <= backWidth; i += 5){
+				if(i > 0){
+					red += pRead.getColor(i-1, 0).getRed();
+					green += pRead.getColor(i-1, 0).getGreen();
+					blue += pRead.getColor(i-1, 0).getBlue();
+				}
+				else{
+					red += pRead.getColor(0, 0).getRed();
+					green += pRead.getColor(0, 0).getGreen();
+					blue += pRead.getColor(0, 0).getBlue();
+				}
+				count++;
+			}
+			
+			backUCol.setFill(new Color((double)red/count, (double)green/count, (double)blue/count, 1));
+			red = 0;
+			green = 0;
+			blue = 0;
+			count = 0;
 			bUEn.setGraphics(backUCol);
-						
 			backEn.add(bUEn);
 			
 			Entity bDEn = new Entity(Types.Type.BACKGROUND);
@@ -576,7 +587,22 @@ public class LevelParser {
 			bDEn.setPosition(0, (backY.getY() + backHeight - 1));
 			
 			Rectangle backDCol = new Rectangle(0,0,level.width, (level.height - (backY.getY() + backHeight)) + 1);
-			backDCol.setFill(getBackground(levelNumber).getImage().getPixelReader().getColor(0, backHeight-1));
+			
+			for(int i = 0; i <= backWidth; i += 5){
+				if(i > 0){
+					red += pRead.getColor(i-1, backHeight-1).getRed();
+					green += pRead.getColor(i-1, backHeight-1).getGreen();
+					blue += pRead.getColor(i-1, backHeight-1).getBlue();
+				}
+				else{
+					red += pRead.getColor(0, backHeight-1).getRed();
+					green += pRead.getColor(0, backHeight-1).getGreen();
+					blue += pRead.getColor(0, backHeight-1).getBlue();
+				}
+				count++;
+			}
+			
+			backDCol.setFill(new Color((double)red/count, (double)green/count, (double)blue/count, 1));
 			bDEn.setGraphics(backDCol);
 						
 			backEn.add(bDEn);
@@ -618,12 +644,17 @@ public class LevelParser {
 				return true;
 			}
 		}
+		else if(p == 'n'){
+			if(p2 == 'n'){
+				return true;
+			}
+		}
 		
 		return false;
 	}
 	private boolean isPlatform(char p){
 		if(p == 'i' || p == 'I' || p == 'j' || p == 'k' || p == 'K' ||
-				p == 'l' || p == 'L' || p == 'm' || p == 'M'){
+				p == 'l' || p == 'L' || p == 'm' || p == 'M' || p == 'n'){
 			return true;
 		}
 		return false;
@@ -639,8 +670,11 @@ public class LevelParser {
 		else if(p == 'l' || p == 'L'){
 			return FileNames.U_N_SAND_LINE;
 		}
-		else{
+		else if (p == 'm' || p == 'M'){
 			return FileNames.U_STONE_LINE;
+		}
+		else{
+			return FileNames.U_SANDSTONE_LINE;
 		}
 	}
 
@@ -766,7 +800,7 @@ public class LevelParser {
 				}
 				else if (c == 't'){
 					return new ESpawnerControl(consApp, spawner.getPosition(), (Function<Point2D, Pair<Entity, Entity>>) (t) -> consApp.eSpawner.spawnBurner(t), 
-							1);
+							1, true);
 				}
 				else{
 					return new ESpawnerControl(consApp, spawner.getPosition(), (Function<Point2D, Pair<Entity, Entity>>) (t) -> consApp.eSpawner.spawnIceSpirit(t), 

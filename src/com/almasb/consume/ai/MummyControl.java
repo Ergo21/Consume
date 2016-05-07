@@ -1,6 +1,5 @@
 package com.almasb.consume.ai;
 
-import com.almasb.consume.Config;
 import com.almasb.consume.Config.Speed;
 import com.almasb.fxgl.entity.AbstractControl;
 import com.almasb.fxgl.entity.Entity;
@@ -66,6 +65,6 @@ public class MummyControl extends AbstractControl {
 	}
 
 	private boolean isTargetInRange() {
-		return target.getPosition().distance(entity.getPosition()) <= Config.ENEMY_FIRE_RANGE*2/3;
+		return true;
 	}
 }

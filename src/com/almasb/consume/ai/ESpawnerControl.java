@@ -22,14 +22,20 @@ public class ESpawnerControl extends AbstractControl {
 	private long countDown;
 	private ArrayList<Pair<Entity,Entity>> enemies;
 	private boolean generated = false;
+	private boolean autoSpawn;
 	
-	public ESpawnerControl(ConsumeApp cApp, Point2D spPoi, Function<Point2D, Pair<Entity,Entity>> sMethod, int maxEne) {
+	public ESpawnerControl(ConsumeApp cApp, Point2D spPoi, Function<Point2D, Pair<Entity,Entity>> sMethod, int maxEne){
+		this(cApp, spPoi, sMethod, maxEne, false);
+	}
+	
+	public ESpawnerControl(ConsumeApp cApp, Point2D spPoi, Function<Point2D, Pair<Entity,Entity>> sMethod, int maxEne, boolean aSpawn) {
 		consApp = cApp;
 		spawnPoint = spPoi;
 		spawnMethod = sMethod;
 		maxEnemies = maxEne;
 		countDown = 0;
 		enemies = new ArrayList<>();
+		autoSpawn = aSpawn;
 	}
 
 	private int frames = 10;
@@ -51,7 +57,7 @@ public class ESpawnerControl extends AbstractControl {
 		else if(enemies.size() == 0){
 			entity.fireFXGLEvent(new FXGLEvent(Event.DEATH));
 		}
-		else if(isTargetInRange() && now - countDown > TimerManager.secondsToNanos(1)){
+		else if((isTargetInRange() && now - countDown > TimerManager.secondsToNanos(1)) || autoSpawn){
 			entity.fireFXGLEvent(new FXGLEvent(Event.ENEMY_FIRED));
 			countDown = now;
 		}

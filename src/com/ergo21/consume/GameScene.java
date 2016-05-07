@@ -306,9 +306,16 @@ public class GameScene extends Group {
 		if(bossBarVisible){
 			app.hud.setBossBar(p.getKey());
 		}
+		Point2D startPos = app.player.getPosition();
+		Point2D endPos = new Point2D((app.player.getPosition().getX() < p.getKey().getPosition().getX() ? 
+				p.getKey().getPosition().getX() - Config.BLOCK_SIZE*4.5 : 
+				p.getKey().getPosition().getX() + Config.BLOCK_SIZE*4.5 + p.getKey().getWidth()), 
+				p.getKey().getPosition().getY());
+		
 		Entity e2 = Entity.noType();
-		e2.setPosition(app.player.getPosition());
-		e2.addControl(new CameraControl(app.player.getPosition().add(Config.BLOCK_SIZE*7,0)));
+		e2.setPosition(startPos);
+		
+		e2.addControl(new CameraControl(endPos));
 		e2.setVisible(false);
 		app.getSceneManager().bindViewportOrigin(e2, 320, 180);
 		app.getSceneManager().addEntities(p.getKey(), p.getValue(), e2);

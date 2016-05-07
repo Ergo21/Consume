@@ -26,10 +26,10 @@ public class CameraControl extends AbstractControl {
 			entity.setPosition(entity.getPosition().add(-2,0));
 		}
 		
-		if(target.getY() > entity.getPosition().getY()){
+		if(target.getY() - 2 > entity.getPosition().getY()){
 			entity.setPosition(entity.getPosition().add(0,2));
 		}
-		else if(target.getY() < entity.getPosition().getY()){
+		else if(target.getY() + 2 < entity.getPosition().getY()){
 			entity.setPosition(entity.getPosition().add(0,-2));
 		}
 	}

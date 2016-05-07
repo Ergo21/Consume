@@ -44,6 +44,9 @@ public class PhysicsControl extends AbstractControl {
 
 		}
 		physics.moveY(entity, (int) velocity.getY());
+		/*if(!moved){
+			velocity = new Point2D(velocity.getX(), 1); 
+		}*/
 	}
 
 	public void moveX(int value) {

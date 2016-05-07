@@ -1,0 +1,8 @@
+Name="Death Spirit"
+Health="5"
+Mana="10"
+ManaR="1"
+Element="DEATH"
+Resists="DEATH"
+Weak="FIRE"
+Spritesheet=""

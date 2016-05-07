@@ -6,6 +6,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -39,6 +40,7 @@ import com.almasb.fxgl.settings.GameSettings;
 import com.almasb.fxgl.time.TimerManager;
 import com.almasb.fxgl.ui.FXGLMenu;
 import com.almasb.fxgl.ui.FXGLMenuFactory;
+import com.almasb.fxgl.ui.UIFactory;
 import com.ergo21.consume.ConsumeController;
 import com.ergo21.consume.ConsumeGameMenu;
 import com.ergo21.consume.ConsumeMainMenu;
@@ -114,6 +116,7 @@ public class ConsumeApp extends GameApplication {
 	private Point2D spawnPoint;
 	
 	private Pair<Point2D, Point2D> limits; //First is upper left limit, second bottom right limit
+	public PlayerBlockHandler plBlHandler;
 
 	@Override
 	protected void initSettings(GameSettings settings) {
@@ -220,11 +223,13 @@ public class ConsumeApp extends GameApplication {
 		physicsManager.addCollisionHandler(new ProjectileEnemyHandler(this));
 		physicsManager.addCollisionHandler(new PlayerBossHandler(this));
 		physicsManager.addCollisionHandler(new ProjectileBossHandler(this));
-		physicsManager.addCollisionHandler(new PlayerBlockHandler(this, (String scName) -> {
+		plBlHandler = new PlayerBlockHandler(this, (String scName) -> {
 			gScene.changeScene(assets.getText(scName));
 			gScene.playScene();
-		}));
+		});
+		physicsManager.addCollisionHandler(plBlHandler);
 		physicsManager.addCollisionHandler(new ProjectilePlayerHandler(this));
+		
 
 		physicsManager.addCollisionHandler(new CollisionHandler(Type.PLAYER, Type.NEXT_LEVEL_POINT) {
 			@Override
@@ -240,6 +245,24 @@ public class ConsumeApp extends GameApplication {
 			@Override
             public void onCollisionEnd(Entity a, Entity b) {
 				a.setProperty("inDoor", false);
+			}
+		});
+		
+		physicsManager.addCollisionHandler(new CollisionHandler(Type.BLOCK, Type.ENEMY) {
+			@Override
+			public void onCollision(Entity block, Entity enemy) {
+				if (block.getProperty(Property.SUB_TYPE) == Block.LADDER) {
+					if(block.<Boolean>getProperty("top")){
+						if(enemy.getControl(PhysicsControl.class) != null){
+							double movingDown = enemy.getControl(PhysicsControl.class).getVelocity().getY();
+							if (movingDown > 0) {
+								enemy.setTranslateY(block.getTranslateY() - (enemy.getHeight())); 
+								enemy.getControl(PhysicsControl.class).moveY(0);
+								enemy.setProperty("jumping", false);
+							} 
+						}
+					}				
+				}	
 			}
 		});
 		
@@ -533,6 +556,21 @@ public class ConsumeApp extends GameApplication {
 					}
 				}, KeyCode.P);
 				
+				getInputManager().addAction(new UserAction("Choose Level") {
+					@Override
+					protected void onActionBegin() {
+						UIFactory.getDialogBox().showInputBox("Choose Level", new Consumer<String>(){
+							@Override
+							public void accept(String arg0) {
+								playerData.setCurrentLevel(Integer.parseInt(arg0));
+								changeLevel();
+							}							
+						});
+						
+					}
+				}, KeyCode.SEMICOLON);
+				
+				
 				getInputManager().addAction(new UserAction("Entity number") {
 					@Override
 					protected void onActionBegin() {
@@ -549,6 +587,15 @@ public class ConsumeApp extends GameApplication {
 						printMemoryUsage("Manual memory test");
 					}
 				}, KeyCode.M);
+				
+				getInputManager().addAction(new UserAction("Ladder test"){
+					@Override
+					protected void onActionBegin() {
+						System.out.println("Ladder Size: " + plBlHandler.laddersOn.size() );
+						System.out.println("Climb: " + player.getProperty("climb"));
+						System.out.println("Climbing: " + player.getProperty("climbing"));
+					}
+				}, KeyCode.I);
 	}
 
 	@Override
@@ -578,6 +625,12 @@ public class ConsumeApp extends GameApplication {
 			}, Duration.seconds(0.5));
 		}
 		
+		/*if(plBlHandler.laddersOn.isEmpty()){
+			player.setProperty("climbing", false);
+			player.setProperty("climb", false);
+			player.setProperty(Property.ENABLE_GRAVITY, true);
+		}*/
+		
 		if(playerData.getCurrentMana() == playerData.getMaxMana()){
 			regenTime = getNow();
 		}
@@ -592,7 +645,7 @@ public class ConsumeApp extends GameApplication {
 			player.fireFXGLEvent(new FXGLEvent(Event.PLAYER_DEATH));
 		}
 
-		for (Entity e : getSceneManager().getEntities(Type.BLOCK)) {
+		/*for (Entity e : getSceneManager().getEntities(Type.BLOCK)) {
 			if (e.getProperty(Property.SUB_TYPE) == Block.BARRIER && "idle".equals(e.getProperty("state"))
 					&& !"none".equals(e.getProperty("start"))) {
 
@@ -616,7 +669,7 @@ public class ConsumeApp extends GameApplication {
 
 			if (e.getProperty(Property.SUB_TYPE) == Block.BARRIER)
 				e.setProperty("state", "idle");
-		}
+		}*/
 
 		//debug.setText("Debug text goes here");
 	}
@@ -710,10 +763,12 @@ public class ConsumeApp extends GameApplication {
 				playerData.setCurrentMana(playerData.getMaxMana());
 			}
 			getSceneManager().getEntities().forEach(getSceneManager()::removeEntity);
+			
 			hud.setBossHealthBarVisible(false);
 			//levels.set(playerData.getCurrentLevel(), parser.parse(playerData.getCurrentLevel()));
 			
 			loadLevel(playerData.getCurrentLevel());
+			plBlHandler.laddersOn.clear();
 			
 			levelMenu.setVisible(false);
 			
@@ -962,6 +1017,9 @@ public class ConsumeApp extends GameApplication {
 	private void playerDied(FXGLEvent e){
 		if (!playerDied){
 			player.setProperty("stunned", true);
+			player.setProperty("climb", false);
+			player.setProperty("climbing", false);
+			player.setProperty(Property.ENABLE_GRAVITY, true);
 			playerDied = true;
 			getTimerManager().runOnceAfter(this::changeLevel, Duration.seconds(0.5));
 		}
@@ -972,19 +1030,10 @@ public class ConsumeApp extends GameApplication {
 		getSceneManager().getEntities().forEach(getSceneManager()::removeEntity);
 	}
 
-	private void activateBarrier(Entity block) {
+	public void activateBarrier(Entity block) {
 		block.setProperty("state", "dying");
-		ArrayList<Entity> barriers = new ArrayList<Entity>();
-		barriers.add(block);
-
-		for (Entity b : getSceneManager().getEntitiesInRange(
-				new Rectangle2D(block.getTranslateX() - 40, block.getTranslateY() - 40, 120, 120), Type.BLOCK)) {
-			if (b.getProperty(Property.SUB_TYPE) == Block.BARRIER && !"dying".equals(b.getProperty("state"))) {
-				barriers.add(b);
-				barriers.addAll(collectBarriers(b));
-			}
-		}
-		
+		ArrayList<Entity> barriers = new ArrayList<Entity>(collectBarriersVLine(block));
+		barriers.remove(block);
 		if((char)block.getProperty("blockImg") == 'a'){ 
 			barriers.sort(new Comparator<Entity>(){
 				@Override
@@ -1058,7 +1107,15 @@ public class ConsumeApp extends GameApplication {
 					e2.setGraphics(t);
 					break;
 				}
-				default:{		//G, h, H symbols potentially usable
+				case 'G':{
+					Texture t = getTexture(FileNames.U_SANDSTONE_BLOCK);
+					t.setScaleY(-1);
+					t.setPreserveRatio(true);
+					t.setFitWidth(Config.BLOCK_SIZE);
+					e2.setGraphics(t);
+					break;
+				}
+				default:{		//h, H symbols potentially usable
 					Texture t = getTexture(FileNames.DES_CRATE_BLOCK);
 					t.setScaleY(-1);
 					t.setPreserveRatio(true);
@@ -1085,6 +1142,36 @@ public class ConsumeApp extends GameApplication {
 		return assets.getTexture(address);
 	}
 
+	private ArrayList<Entity> collectBarriersVLine(Entity block){
+		block.setProperty("state", "dying");
+		ArrayList<Entity> barriers = new ArrayList<Entity>();
+		barriers.add(block);
+		
+		for (Entity b : getSceneManager().getEntitiesInRange(
+				new Rectangle2D(block.getTranslateX() + 10, block.getTranslateY() - 40, 20, 120), Type.BLOCK)) {
+			if (b.getProperty(Property.SUB_TYPE) == Block.BARRIER && !"dying".equals(b.getProperty("state"))) {
+				barriers.addAll(collectBarriersVLine(b));
+			}
+		}
+		
+		return barriers;
+	}
+	
+	/*private ArrayList<Entity> collectBarriersHLine(Entity block){
+		block.setProperty("state", "dying");
+		ArrayList<Entity> barriers = new ArrayList<Entity>();
+		barriers.add(block);
+		
+		for (Entity b : getSceneManager().getEntitiesInRange(
+				new Rectangle2D(block.getTranslateX() - 40, block.getTranslateY() + 10, 120, 20), Type.BLOCK)) {
+			if (b.getProperty(Property.SUB_TYPE) == Block.BARRIER && !"dying".equals(b.getProperty("state"))) {
+				barriers.addAll(collectBarriersHLine(b));
+			}
+		}
+		
+		
+		return barriers;
+	}
 	private ArrayList<Entity> collectBarriers(Entity block){
 		block.setProperty("state", "dying");
 		ArrayList<Entity> barriers = new ArrayList<Entity>();
@@ -1099,7 +1186,7 @@ public class ConsumeApp extends GameApplication {
 		
 		
 		return barriers;
-	}
+	}*/
 
 	public void destroyBlock(Entity block) {
 		block.setProperty("state", "dying");

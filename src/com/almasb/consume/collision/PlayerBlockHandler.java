@@ -13,11 +13,12 @@ import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.FXGLEvent;
 import com.almasb.fxgl.physics.CollisionHandler;
 
+
 public class PlayerBlockHandler extends CollisionHandler {
 
 	private ConsumeApp consApp;
 	private Consumer<String> changeScene;
-	private ArrayList<Entity> laddersOn;
+	public ArrayList<Entity> laddersOn;
 
 	public PlayerBlockHandler(ConsumeApp cA, Consumer<String> chSc) {
 		super(Type.PLAYER, Type.BLOCK);
@@ -39,9 +40,16 @@ public class PlayerBlockHandler extends CollisionHandler {
 				}
 			}
 		} else if (block.getProperty(Property.SUB_TYPE) == Block.LADDER) {
-			player.setProperty("climb", true);
-			player.setProperty(Property.ENABLE_GRAVITY, false);
-		}
+			if(!player.<Boolean>getProperty("climb") && block.<Boolean>getProperty("top")){
+				double movingDown = player.getControl(PhysicsControl.class).getVelocity().getY();
+				if (movingDown > 0) {
+					player.setTranslateY(block.getTranslateY() - (player.getHeight())); 
+					player.getControl(PhysicsControl.class).moveY(0);
+					player.setProperty("jumping", false);
+				} 		
+			}				
+		}		
+		
 	}
 
 	@Override
@@ -52,12 +60,17 @@ public class PlayerBlockHandler extends CollisionHandler {
 			String sNam = block.getProperty("sceneName");
 			changeScene.accept(sNam);
 		} else if (block.getProperty(Property.SUB_TYPE) == Block.LADDER) {
-			player.setProperty("climb", true);
 			if(!laddersOn.contains(block)){
 				laddersOn.add(block);
 			}
-			player.setProperty(Property.ENABLE_GRAVITY, false);
-			player.getControl(PhysicsControl.class).moveY(0);
+			if(!player.<Boolean>getProperty("climb") && block.<Boolean>getProperty("top")){
+				double movingDown = player.getControl(PhysicsControl.class).getVelocity().getY();
+				if (movingDown > 0) {
+					player.setTranslateY(block.getTranslateY() - (player.getHeight())); 
+					player.getControl(PhysicsControl.class).moveY(0);
+					player.setProperty("jumping", false);
+				} 		
+			}
 		}
 		else if(block.getProperty(Property.SUB_TYPE) == Type.ENEMY_SPAWNER){
 			block.fireFXGLEvent(new FXGLEvent(Event.ENEMY_FIRED));
@@ -70,10 +83,31 @@ public class PlayerBlockHandler extends CollisionHandler {
 		if (block.getProperty(Property.SUB_TYPE) == Block.LADDER) {
 			laddersOn.remove(block);
 			if(laddersOn.isEmpty()){
-				player.setProperty("climbing", false);
 				player.setProperty("climb", false);
+				player.setProperty("climbing", false);
 				player.setProperty(Property.ENABLE_GRAVITY, true);
 			}
 		}
+		else if(block.getProperty(Property.SUB_TYPE) == Block.BARRIER){
+			if("left".equals(block.getProperty("start"))){
+				if(player.getTranslateX() > block.getTranslateX() + block.getWidth()){
+					consApp.activateBarrier(block);
+				}
+				else{
+					block.setProperty("start", "none");
+					block.setProperty("state", "idle");
+				}
+			}
+			else if("right".equals(block.getProperty("start"))){
+				if(player.getTranslateX() + player.getWidth() < block.getTranslateX()){
+					consApp.activateBarrier(block);
+				}
+				else{
+					block.setProperty("start", "none");
+					block.setProperty("state", "idle");
+				}
+			}
+		}
 	}
+	
 }

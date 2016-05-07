@@ -102,7 +102,9 @@ public class ProjectilePlayerHandler extends CollisionHandler {
 		if(playerData.getCurrentHealth() > 0){
 			player.setCollidable(false);
 			player.setProperty("stunned", true);
-
+			player.setProperty("climb", false);
+			player.setProperty("climbing", false);
+			player.setProperty(Property.ENABLE_GRAVITY, true);
 			/*Entity e2 = Entity.noType().setGraphics(new Text("INVINCIBLE"));
 			e2.translateXProperty().bind(player.translateXProperty());
 			e2.translateYProperty().bind(player.translateYProperty().subtract(20));

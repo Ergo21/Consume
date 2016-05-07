@@ -178,7 +178,7 @@ public class Physics {
 		return true;
 	}
 
-	public void moveY(Entity e, int value) {
+	public boolean moveY(Entity e, int value) {
 		if(app.getSceneManager().getPlatformsChanged()){
 			updatePlatforms();
 		}
@@ -193,12 +193,12 @@ public class Physics {
 							e.fireFXGLEvent(new FXGLEvent(Event.COLLIDED_PLATFORM, platform));
 							e.setTranslateY(e.getTranslateY() - 1);
 							e.setProperty("jumping", false);
-							return;
+							return false;
 						}
 					} else {
 						if (e.getTranslateY() == platform.getTranslateY() + platform.getHeight()) {
 							e.fireFXGLEvent(new FXGLEvent(Event.COLLIDED_PLATFORM, platform));
-							return;
+							return false;
 						}
 					}
 				
@@ -209,5 +209,7 @@ public class Physics {
 			e.setTranslateY(e.getTranslateY() + (movingDown ? 1 : -1));
 			e.setProperty("jumping", true);
 		}
+		
+		return true;
 	}
 }

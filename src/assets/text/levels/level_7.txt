@@ -1,22 +1,29 @@
-i                      d               u    i0
-i iiiii                dU              i    i0
-i   iii                di                   i0
-i                      i         i          i0
-i                                           i0 
-i 1                        i                i0 
-iiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii       i0
-i   d       p                               i0
-i v d       p   T t T t T t T t             i0
-iiiiiiiiiiiipiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii0
-i  p        pi0
-i  p        pi0
-i  p        pi0
-i ipiiii  iiii0
-i  p       p i0
-i  p       p i0
-i  p       p i0
-i iii  iiiipii0
-i       d  p i0
-i       d  p i0
-i 2     d  p i0
-iiiiiiiiiiiiii0
+i3                                           ni0
+i   1                   S               n    ni0
+innnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn  nnnn0
+in                                           ni0
+in                                           ni0
+in                                         T ni0
+in       t       t       t       t           ni0
+in       Y       Y       Y       Y           ni0
+innnpnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnni0
+innnpnnnnnnnnnn   nnnnnnnnnnn   nnnnnnnnnnnnnni0
+in  p      n  n n    S        n  n           ni0
+in  p      n  npnnnnnnnnnnnnnnnpnn           ni0
+in  p      nnpnp     nnnnn    n              ni0
+in  p      n pnp nnnpnn       n              nT0
+Tn  p      n pnp  nnpnnnnpnnnnn  nn          ni0
+in  p      npnnnnpnnp n  p     pnnnnn nnnnnnnni0
+in  p       p   npnnnp   p     pnnn          ni0
+in  p       p    pnnnp   p     p  n          ni0
+innnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnpnnni0
+innnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnpnnni0
+innnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn    p  ni0
+innnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn    p  ni0
+innnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn    p  ni0
+innnnnnn   nnnnn   nnnnn   nnnnn   nnn    p  ni0
+in  nnn     nnn     nnn     nnn     nn    p  ni0
+in  nnn  c  nnn  c  nnn  c  nnn  c  nn    p  ni0
+inQ   Y  Y  Y Y  Y  Y Y  Y  Y Y  Y  Y     p  ni0
+innnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnni0
+i                                             30
