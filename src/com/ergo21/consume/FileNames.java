@@ -144,6 +144,7 @@ public final class FileNames{
 	public static final String ZULU_SH_DIR 		= "spritesheets/zulu_Sh";
 	public static final String ZULU_SP_DIR 		= "spritesheets/zulu_Sp";
 
+	public static final String STATS_DEFAULT 		= "enemies/enemy_FireElemental.txt";
 	
 	public static final String STATS_ELOKO 			= "enemies/Eloko.txt";
 	public static final String STATS_BANDIT_KNIFE	= "enemies/Bandit(Knife).txt";
@@ -154,5 +155,14 @@ public final class FileNames{
 	public static final String STATS_SCORPION		= "enemies/Scorpion.txt";
 	public static final String STATS_GOLEM			= "enemies/Golem.txt";	
 	public static final String STATS_SAND_ELEPHANT	= "enemies/Sand_Elephant.txt";
+
+	public static final String STATS_SPIRIT 		= "enemies/Death_Spirit.txt";
+	public static final String STATS_MUMMY 			= "enemies/Mummy.txt";
+	public static final String STATS_ANUBIS 		= "enemies/Anubis.txt";
+
+	public static final String STATS_DOG 			= "enemies/Dog.txt";
+	public static final String STATS_DANCER 		= "enemies/Dancer.txt";
+	public static final String STATS_MUSICIAN 		= "enemies/Musician.txt";
+	public static final String STATS_SHANGO 		= "enemies/Shango.txt";
 	
 }

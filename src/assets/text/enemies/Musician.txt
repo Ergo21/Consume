@@ -1,0 +1,8 @@
+Name="Musician"
+Health="6"
+Mana="10"
+ManaR="1"
+Element="NEUTRAL"
+Resists=""
+Weak=""
+Spritesheet=""

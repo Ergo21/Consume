@@ -631,6 +631,10 @@ public class ConsumeApp extends GameApplication {
 			player.setProperty(Property.ENABLE_GRAVITY, true);
 		}*/
 		
+		if(!player.isCollidable()){
+			plBlHandler.laddersOn.clear();
+		}
+		
 		if(playerData.getCurrentMana() == playerData.getMaxMana()){
 			regenTime = getNow();
 		}
@@ -756,7 +760,7 @@ public class ConsumeApp extends GameApplication {
 
 	public void changeLevel() {
 		getInputManager().setProcessActions(false);
-		
+		player.setCollidable(false);
 		fOutComMet = () -> {
 			if(playerData.getCurrentHealth() <= 0){
 				playerData.setCurrentHealth(playerData.getMaxHealth());
@@ -774,6 +778,7 @@ public class ConsumeApp extends GameApplication {
 			
 			getTimerManager().runOnceAfter(() -> {
 				getInputManager().setProcessActions(true);
+				player.setCollidable(true);
 				fadeIn.play();
 			}, Duration.seconds(0.5));
 		};

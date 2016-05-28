@@ -5,7 +5,7 @@ in                                           ni0
 in                                           ni0
 in                                         T ni0
 in       t       t       t       t           ni0
-in       Y       Y       Y       Y           ni0
+in       X       X       X       X           ni0
 innnpnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnni0
 innnpnnnnnnnnnn   nnnnnnnnnnn   nnnnnnnnnnnnnni0
 in  p      n  n n    S        n  n           ni0
@@ -24,6 +24,6 @@ innnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn    p  ni0
 innnnnnn   nnnnn   nnnnn   nnnnn   nnn    p  ni0
 in  nnn     nnn     nnn     nnn     nn    p  ni0
 in  nnn  c  nnn  c  nnn  c  nnn  c  nn    p  ni0
-inQ   Y  Y  Y Y  Y  Y Y  Y  Y Y  Y  Y     p  ni0
+inQ   X  X  X X  X  X X  X  X X  X  X     p  ni0
 innnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnni0
 i                                             30

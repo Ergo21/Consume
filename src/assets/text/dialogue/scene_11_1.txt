@@ -1,0 +1,12 @@
+Shango (SHANGO) *spawnboss(3)*= "Hey man! You here to party?!"
+Seble (PLAYER)= "..."
+Seble (PLAYER)= "No, I'm looking for the one with the power of lightning."
+Shango (SHANGO)= "That's me! Shango, groovy god of storms. Grab a drink and dance, or take a load off. You know, whatever's cool." 
+Seble (PLAYER)= "... YOU can summon lightning?"
+Shango (SHANGO)= "Well, yeah, but I prefer to focus on the groovy part of my title. Currently you're throwing it off man."
+Seble (PLAYER)= "I need to learn to summon lightning."
+Shango (SHANGO)= "Eugh, then see me during my working hours, this is my time off. Now just relax, I play a mean drum."
+Seble (PLAYER)= "I don't have time for this. Give it to me or I'll take it."
+Shango (SHANGO)= "Hey buzzkill, settle down or I'll have to make you leave." 
+Seble (PLAYER)= "Taking it is then."
+END

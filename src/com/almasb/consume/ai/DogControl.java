@@ -12,7 +12,8 @@ public class DogControl extends AbstractControl {
 
 	private Entity target;
 	private int vel = 0;
-	private long firstTimeSaw = -1; // Stores when the enemy first sees the player
+	private boolean seenPlayer = false; // Stores when the enemy first sees the player
+	private long startAttack = -1;
 	private long decelerate = -1;
 
 	public DogControl(Entity target) {
@@ -26,14 +27,13 @@ public class DogControl extends AbstractControl {
 
 	@Override	
 	public void onUpdate(Entity entity, long now) {
-		if(isTargetInRange()){
-			if (firstTimeSaw == -1) {
-				firstTimeSaw = now;
-				entity.fireFXGLEvent(new FXGLEvent(Event.ENEMY_SAW_PLAYER));
-			} 
+		if(!seenPlayer && isTargetInRange()){
+			seenPlayer = true;
 		}
-		else{
-			firstTimeSaw = -1;
+		
+		if(seenPlayer && startAttack == -1){
+			entity.fireFXGLEvent(new FXGLEvent(Event.ENEMY_SAW_PLAYER));
+			startAttack = now;
 		}
 		
 		vel = (int)entity.getControl(PhysicsControl.class).getVelocity().getX();
@@ -48,7 +48,8 @@ public class DogControl extends AbstractControl {
 				vel += Speed.ENEMY_SEEK_DECEL;
 				entity.getControl(PhysicsControl.class).moveX(vel);
 				if(vel >= 0){
-					firstTimeSaw = -1;
+					startAttack = -1;
+					decelerate = -1;
 				}
 			}
 		}
@@ -61,12 +62,12 @@ public class DogControl extends AbstractControl {
 				vel -= Speed.ENEMY_SEEK_DECEL;
 				entity.getControl(PhysicsControl.class).moveX(vel);
 				if(vel <= 0){
-					firstTimeSaw = -1;
+					startAttack = -1;
+					decelerate = -1;
 				}
 			}
 		}
-		else if(firstTimeSaw != -1 && now - firstTimeSaw >= TimerManager.toNanos(Config.ENEMY_CHARGE_DELAY)){
-			decelerate = - 1;
+		else if(startAttack != -1 && now - startAttack >= TimerManager.toNanos(Config.ENEMY_CHARGE_DELAY)){
 			vel += right ? Speed.ENEMY_SEEK_ACCEL : -Speed.ENEMY_SEEK_ACCEL;
 
 			if (Math.abs(vel) >= Speed.ENEMY_SEEK_MAX - 1)

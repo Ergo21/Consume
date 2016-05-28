@@ -1,0 +1,8 @@
+Name="Dancer"
+Health="8"
+Mana="10"
+ManaR="1"
+Element="NEUTRAL"
+Resists=""
+Weak=""
+Spritesheet=""

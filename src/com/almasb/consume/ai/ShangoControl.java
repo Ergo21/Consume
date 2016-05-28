@@ -23,7 +23,8 @@ public class ShangoControl extends AbstractControl {
 	private BossActions curAction;
 	private Point2D startPos;
 	private Point2D curPos;
-	private Point2D jumpPos;
+	private Point2D jumpPos1;
+	private Point2D jumpPos2;
 	private boolean start = false;
 	private boolean attacking = false;
 	private int vel = 0;
@@ -62,7 +63,8 @@ public class ShangoControl extends AbstractControl {
 			if(entity != null && entity.getPosition() != null){
 				startPos = entity.getPosition();
 				curPos = entity.getPosition();
-				jumpPos = startPos.subtract(Config.BLOCK_SIZE*7, 0);
+				jumpPos1 = startPos.subtract(Config.BLOCK_SIZE*6, 0);
+				jumpPos2 = startPos.subtract(Config.BLOCK_SIZE*10, 0);
 			}
 		}
 		
@@ -123,7 +125,7 @@ public class ShangoControl extends AbstractControl {
 			}
 			case JATTACK:{
 				
-				if(!(boolean)entity.getProperty("jumping") && (cycle == 0 || cycle == 3)){
+				if(!(boolean)entity.getProperty("jumping") && (cycle == 0 || cycle == 7)){
 					int spd = calculateJumpSpeed(entity.getPosition(), startPos);
 					entity.getControl(PhysicsControl.class).moveX(spd);
 					entity.setProperty("facingRight", spd >= 0);
@@ -132,8 +134,8 @@ public class ShangoControl extends AbstractControl {
 					consApp.soundManager.playSFX(FileNames.JUMP);
 					cycle++;
 				}
-				else if(!(boolean)entity.getProperty("jumping") && cycle == 1){
-					int spd = calculateJumpSpeed(entity.getPosition(), jumpPos);
+				else if(!(boolean)entity.getProperty("jumping") && (cycle == 1 || cycle == 5)){
+					int spd = calculateJumpSpeed(entity.getPosition(), jumpPos1);
 					entity.getControl(PhysicsControl.class).moveX(spd);
 					entity.setProperty("facingRight", spd >= 0);
 					
@@ -141,14 +143,23 @@ public class ShangoControl extends AbstractControl {
 					consApp.soundManager.playSFX(FileNames.JUMP);
 					cycle++;
 				}
-				else if((boolean)entity.getProperty("jumping") && (cycle == 2 || cycle == 4)){
+				else if(!(boolean)entity.getProperty("jumping") && cycle == 3){
+					int spd = calculateJumpSpeed(entity.getPosition(), jumpPos2);
+					entity.getControl(PhysicsControl.class).moveX(spd);
+					entity.setProperty("facingRight", spd >= 0);
+					
+					entity.getControl(PhysicsControl.class).jump();
+					consApp.soundManager.playSFX(FileNames.JUMP);
+					cycle++;
+				}
+				else if((boolean)entity.getProperty("jumping") && (cycle == 2 || cycle == 4 || cycle == 6 || cycle == 8)){
 					if(!attacking){
 						entity.fireFXGLEvent(new FXGLEvent(Event.ENEMY_FIRED));
 						attacking = true;
 						cycle++;
 					}
 				}
-				else if(!(boolean)entity.getProperty("jumping") && cycle == 5){
+				else if(!(boolean)entity.getProperty("jumping") && cycle == 9){
 					entity.getControl(PhysicsControl.class).moveX(0);
 					cycle = 0;
 					curAction = BossActions.NONE;
@@ -174,11 +185,11 @@ public class ShangoControl extends AbstractControl {
 	}
 	
 	private Point2D chooseJumpPoint(){
-		if(target.getPosition().distance(startPos) > target.getPosition().distance(jumpPos)){
+		if(target.getPosition().distance(startPos) > target.getPosition().distance(jumpPos2)){
 			return startPos;
 		}
 		else{
-			return jumpPos;
+			return jumpPos2;
 		}
 	}
 	

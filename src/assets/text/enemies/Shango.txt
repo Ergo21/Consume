@@ -1,0 +1,8 @@
+Name="Shango"
+Health="30"
+Mana="10"
+ManaR="1"
+Element="LIGHTNING"
+Resists="LIGHTNING"
+Weak="EARTH"
+Spritesheet=""

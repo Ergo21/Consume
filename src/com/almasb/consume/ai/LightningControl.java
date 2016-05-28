@@ -46,6 +46,7 @@ public class LightningControl extends AbstractControl {
 
 		if (now - created > TimerManager.toNanos(Config.LIGHTNING_DECAY) && nPlayed) {
 			nPlayed = false;
+			entity.setCollidable(false);
 			FadeTransition ft = new FadeTransition(Duration.seconds(0.4), ligGraphics);
 			ft.setFromValue(1);
 			ft.setToValue(0);
