@@ -1,0 +1,8 @@
+Name="Kibo"
+Health="30"
+Mana="10"
+ManaR="1"
+Element="FIRE"
+Resists="FIRE"
+Weak="EARTH"
+Spritesheet=""

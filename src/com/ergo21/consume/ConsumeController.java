@@ -259,14 +259,45 @@ public class ConsumeController {
 			}
 		});
 		allActions.put(Actions.SHOOT, new UserAction("Shoot") {
+			private int held = 0;
+			private boolean aiming = false;
+			private boolean tempFired = false;
 			@Override
 			protected void onActionBegin() {
 				if (consApp.player != null && consApp.player.getProperty("stunned") != null && !(boolean) consApp.player.getProperty("stunned") &&
 						consApp.player.getProperty("eating") != null && !(boolean) consApp.player.getProperty("eating") && 
 						consApp.player.getProperty("climb") != null  && !(boolean) consApp.player.getProperty("climb") &&
 						consApp.player.getProperty("scenePlaying") != null && !(boolean) consApp.player.getProperty("scenePlaying")) {
-					shootProjectile();
+					
+					if(consApp.playerData.getCurrentPower() == Element.NEUTRAL){
+						held = 0;
+						aiming = true;
+						tempFired = false;
+					}
+					else{
+						shootProjectile();
+					}
 				}
+			}
+			
+			@Override
+			protected void onAction(){
+				if(aiming && consApp.playerData.getCurrentPower() == Element.NEUTRAL){
+					held++;
+					if(held > 10 && !tempFired){
+						tempFired = true;
+						shootProjectile(true);
+					}
+				}
+			}
+			
+			@Override
+			protected void onActionEnd(){
+				if(aiming && consApp.playerData.getCurrentPower() == Element.NEUTRAL && !tempFired){
+					shootProjectile(false);
+				}
+				
+				aiming = false;
 			}
 		});
 		allActions.put(Actions.CHPOWP, new UserAction("Change Power +") {
@@ -314,8 +345,12 @@ public class ConsumeController {
 
 	private boolean fired;
 	private boolean slashed;
+	
+	public void shootProjectile(){
+		shootProjectile(false);
+	}
 
-	public void shootProjectile() {
+	public void shootProjectile(boolean spearLongThrow) {
 		Element element = consApp.playerData.getCurrentPower();
 
 		Entity e = new Entity(Type.PLAYER_PROJECTILE);
@@ -370,8 +405,7 @@ public class ConsumeController {
 			ePic.setGraphics(t);
 			consApp.getSceneManager().addEntities(ePic);
 			
-			
-			SpearProjectileControl spc = new SpearProjectileControl(consApp.player, ePic);
+			SpearProjectileControl spc = new SpearProjectileControl(consApp.player, ePic, (spearLongThrow ? Speed.PROJECTILE : Speed.PROJECTILE/2), (spearLongThrow ? -Speed.PROJECTILE : -Speed.PROJECTILE+1));
 			e.addControl(spc);
 			break;
 		}
@@ -1068,7 +1102,7 @@ public class ConsumeController {
 
 		Entity e = new Entity(ty);
 		e.setProperty(Property.SUB_TYPE, sourceData.getElement());
-		e.setPosition(source.getPosition().add(0, source.getHeight() / 2));
+		e.setPosition(source.getPosition().add(source.getWidth(), source.getHeight() / 2));
 		e.setCollidable(true);
 		e.setGraphics(new Rectangle(10, 1));
 		e.addControl(new PhysicsControl(consApp.physics));
@@ -1373,7 +1407,7 @@ public class ConsumeController {
 		});
 
 		
-		e.setVisible(true);
+		e.setVisible(false);
 		e.setGraphics(new Rectangle(0, 0, 20, 15));
 		e.setProperty(Property.ENABLE_GRAVITY, false);
 		e.addControl(new StabControl(source));

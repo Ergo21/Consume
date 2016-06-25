@@ -36,7 +36,7 @@ public class BulletProjectileControl extends AbstractControl {
 		control.moveX(facingRight ? 
 				(Speed.PROJECTILE + Speed.PROJECTILE / 2) : -(Speed.PROJECTILE + Speed.PROJECTILE / 2));
 
-		if (Math.abs(entity.getTranslateX() - player.getTranslateX()) >= 550) {
+		if (Math.abs(entity.getTranslateX() - player.getTranslateX()) >= 700) {
 			entity.fireFXGLEvent(new FXGLEvent(Event.DEATH));
 		}
 	}

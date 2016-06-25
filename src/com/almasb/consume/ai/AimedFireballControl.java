@@ -57,8 +57,8 @@ public class AimedFireballControl extends AbstractControl {
 			entity.getControl(PhysicsControl.class).moveY(movY);
 		}
 		
-		if (Math.abs(entity.getPosition().getX() - target.getPosition().getX()) >= 350
-				|| Math.abs(entity.getPosition().getY() - target.getPosition().getY()) >= 350) {
+		if (Math.abs(entity.getPosition().getX() - target.getPosition().getX()) >= 700
+				|| Math.abs(entity.getPosition().getY() - target.getPosition().getY()) >= 500) {
 			entity.fireFXGLEvent(new FXGLEvent(Event.DEATH));
 		}
 	}

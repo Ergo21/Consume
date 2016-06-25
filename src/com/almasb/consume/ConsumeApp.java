@@ -518,28 +518,28 @@ public class ConsumeApp extends GameApplication {
 						Pair<Entity, Entity> pEn = eSpawner.spawnKiboBoss(spawnPoint.add(500, -100));
 						getSceneManager().addEntities(pEn.getKey(), pEn.getValue());
 					}
-				}, KeyCode.F3);
+				}, KeyCode.F4);
 				getInputManager().addAction(new UserAction("Spawn Sand Elephant Boss") {
 					@Override
 					protected void onActionBegin() {
 						Pair<Entity, Entity> pEn = eSpawner.spawnSandBoss(spawnPoint.add(500, -60));// Config.BLOCK_SIZE/2 -40));
 						getSceneManager().addEntities(pEn.getKey(), pEn.getValue());
 					}
-				}, KeyCode.F4);
+				}, KeyCode.F5);
 				getInputManager().addAction(new UserAction("Spawn Shaka Boss") {
 					@Override
 					protected void onActionBegin() {
 						Pair<Entity, Entity> pEn = eSpawner.spawnShakaBoss(spawnPoint.add(500, -100));
 						getSceneManager().addEntities(pEn.getKey(), pEn.getValue());
 					}
-				}, KeyCode.F5);
+				}, KeyCode.F6);
 				getInputManager().addAction(new UserAction("Spawn Shango Boss") {
 					@Override
 					protected void onActionBegin() {
 						Pair<Entity, Entity> pEn = eSpawner.spawnShangoBoss(spawnPoint.add(500, -100));
 						getSceneManager().addEntities(pEn.getKey(), pEn.getValue());
 					}
-				}, KeyCode.F6);
+				}, KeyCode.F7);
 				
 				getInputManager().addAction(new UserAction("Level screen") {
 					@Override

@@ -59,7 +59,7 @@ public class GameScene extends Group {
 		super.getChildren().add(grid);
 		name = new Text();
 		line = new Text();
-		line.setWrappingWidth(275);
+		line.setWrappingWidth(250);
 		icon = new ImageView();
 		icon.setPreserveRatio(true);
 		icon.setFitWidth(60);
@@ -341,14 +341,20 @@ public class GameScene extends Group {
 				});
 			}
 			else{
-				hBox.setTranslateX(2);
+				hBox.setTranslateX(15);
 			}
-			hBox.heightProperty().addListener(new ChangeListener<Number>(){
-				@Override
-				public void changed(ObservableValue<? extends Number> arg0, Number arg1, Number arg2) {
-					hBox.setTranslateY((background.getHeight() - arg2.doubleValue())/2);
-				}
-			});
+			
+			if(centerX){
+				hBox.heightProperty().addListener(new ChangeListener<Number>(){
+					@Override
+					public void changed(ObservableValue<? extends Number> arg0, Number arg1, Number arg2) {
+						hBox.setTranslateY((background.getHeight() - arg2.doubleValue())/2);
+					}
+				});
+			}
+			else{
+				hBox.setTranslateY(10);
+			}
 			
 			this.getChildren().addAll(background, hBox);
 		}

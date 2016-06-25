@@ -76,7 +76,7 @@ public class SandProjectileControl extends AbstractControl {
 			}
 		}
 
-		if (Math.abs(entity.getTranslateX() - player.getTranslateX()) >= 350 || now - created > TimerManager.toNanos(Config.SAND_DECAY)) {
+		if (Math.abs(entity.getTranslateX() - player.getTranslateX()) >= 700 || now - created > TimerManager.toNanos(Config.SAND_DECAY)) {
 			entity.fireFXGLEvent(new FXGLEvent(Event.DEATH));
 		}
 	}

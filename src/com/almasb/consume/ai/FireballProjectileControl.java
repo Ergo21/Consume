@@ -35,7 +35,7 @@ public class FireballProjectileControl extends AbstractControl {
 		PhysicsControl control = entity.getControl(PhysicsControl.class);
 		control.moveX(facingRight ? Speed.PROJECTILE : -Speed.PROJECTILE);
 
-		if (Math.abs(entity.getTranslateX() - player.getTranslateX()) >= 350) {
+		if (Math.abs(entity.getTranslateX() - player.getTranslateX()) >= 700) {
 			entity.fireFXGLEvent(new FXGLEvent(Event.DEATH));
 		}
 	}

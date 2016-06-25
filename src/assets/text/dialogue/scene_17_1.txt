@@ -1,0 +1,7 @@
+Kibo (KIBO) *spawnboss(4)*= "Watch your step friend, you nearly stepped in my fire."
+Seble (PLAYER)= "What are you trying to do? Cook me?"
+Kibo (KIBO)= "Just trying to keep warm. Now who are you and what do you want?"
+Seble (PLAYER)= "Fire powers."
+Kibo (KIBO)= "Who doesn't want those? I can teach you, but"
+Seble (PLAYER)= "I've no time for this."
+END

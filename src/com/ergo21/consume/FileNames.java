@@ -165,4 +165,6 @@ public final class FileNames{
 	public static final String STATS_MUSICIAN 		= "enemies/Musician.txt";
 	public static final String STATS_SHANGO 		= "enemies/Shango.txt";
 	
+	public static final String STATS_KIBO			= "enemies/Kibo.txt";
+	
 }

@@ -40,8 +40,8 @@ public class AimedProjectileControl extends AbstractControl {
 		entity.setTranslateX(entity.getTranslateX() + (Math.round(-(float) Math.sin(angle) * Speed.PROJECTILE)));
 		entity.setTranslateY(entity.getTranslateY() + (Math.round((float) Math.cos(angle) * Speed.PROJECTILE)));
 
-		if (Math.abs(entity.getTranslateX() - target.getTranslateX()) >= 350
-				|| Math.abs(entity.getTranslateY() - target.getTranslateY()) >= 350) {
+		if (Math.abs(entity.getTranslateX() - target.getTranslateX()) >= 700
+				|| Math.abs(entity.getTranslateY() - target.getTranslateY()) >= 500) {
 			entity.fireFXGLEvent(new FXGLEvent(Event.DEATH));
 		}
 	}

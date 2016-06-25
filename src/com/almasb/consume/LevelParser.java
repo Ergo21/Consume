@@ -178,7 +178,7 @@ public class LevelParser {
 					Rectangle rect2 = new Rectangle(Config.BLOCK_SIZE/2, Config.BLOCK_SIZE*3);
 					rect2.setFill(Color.RED);
 					en.setGraphics(rect2);
-					en.setVisible(true);
+					en.setVisible(false);
 					en.setCollidable(true);
 					if(line.charAt(j) == 'c'){
 						en.setPosition(en.getPosition().add(j * Config.BLOCK_SIZE, ((i-1) * Config.BLOCK_SIZE)));
@@ -301,24 +301,48 @@ public class LevelParser {
 					}
 					break;
 				case 'p':
-					e = new Entity(Types.Type.BLOCK);
-					e.setProperty(Property.SUB_TYPE, Block.LADDER);
-					e.setProperty("top", 
-							(i >= 1 && data.get(i-1) != null && 
-								data.get(i-1).charAt(j) != 'p'));
-					e.setCollidable(true);
-					e.setPosition(0, -1);
-					rect.setFill(Color.GREY);
-					if(Config.RELEASE){
-						t = consApp.getTexture(FileNames.LADDER_BLOCK);
-						t.setPreserveRatio(true);
-						t.setFitHeight(40);
+					if((i >= 1 && data.get(i-1) != null && 
+								data.get(i-1).charAt(j) != 'p')){
+						e = new Entity(Types.Type.BLOCK);
+						e.setProperty(Property.SUB_TYPE, Block.LADDER);
+						e.setProperty("top", false);
+						e.setCollidable(true);
+						e.setPosition(0, -1);
+						rect.setFill(Color.GREY);
+						if(Config.RELEASE){
+							t = consApp.getTexture(FileNames.LADDER_BLOCK);
+							t.setPreserveRatio(true);
+							t.setFitHeight(40);
+						}
+						Entity en = new Entity(Types.Type.BLOCK);
+						en.setProperty(Property.SUB_TYPE, Block.LADDER);
+						en.setProperty("top", true);
+						en.setCollidable(true);
+						en.setGraphics(new Rectangle(Config.BLOCK_SIZE, 2));
+						en.setVisible(false);
+						en.setPosition(j * Config.BLOCK_SIZE, i * Config.BLOCK_SIZE - 1);
+						level.entities.add(en);
+					}
+					else{
+						e = new Entity(Types.Type.BLOCK);
+						e.setProperty(Property.SUB_TYPE, Block.LADDER);
+						e.setProperty("top", false);
+						e.setCollidable(true);
+						e.setPosition(0, -1);
+						rect.setFill(Color.GREY);
+						if(Config.RELEASE){
+							t = consApp.getTexture(FileNames.LADDER_BLOCK);
+							t.setPreserveRatio(true);
+							t.setFitHeight(40);
+						}
 					}
 					break;
 				case 'q':
 				case 'Q':
 				case 'r':
-					if(level.nextLevelEntity == null){
+					if(level.nextLevelEntity == null && 
+							(i+1 >= data.size() || data.get(i+1) == null || 
+								data.get(i+1).charAt(j) != '1')){
 						e = new Entity(Types.Type.NEXT_LEVEL_POINT);
 						e.setCollidable(true);
 						e.setProperty("autoDoor", false);
@@ -327,17 +351,49 @@ public class LevelParser {
 						if(Config.RELEASE){
 							if(line.charAt(j) == 'q'){
 								t = consApp.getTexture(FileNames.W_DOOR);
+								t.setFitHeight(60);
+								e.setPosition(0, -18);
 							}
 							else if(line.charAt(j) == 'Q'){
 								t = consApp.getTexture(FileNames.S_DOOR);
+								t.setFitHeight(60);
+								e.setPosition(0, -18);
 							}
 							else{
-								t = consApp.getTexture(FileNames.CAVE);				
+								t = consApp.getTexture(FileNames.CAVE);	
+								t.setFitWidth(80);
+								e.setPosition(0, -24);
 							}
 						
 							t.setPreserveRatio(true);
-							t.setFitHeight(60);
-							e.setPosition(0, -20);
+						}
+					}
+					else if(i+1 < data.size() && data.get(i+1) != null || 
+							data.get(i+1).charAt(j) == '1'){
+						e = new Entity(Types.Type.PROP);
+						e.setCollidable(false);
+						rect.setFill(Color.VIOLET);
+						if(Config.RELEASE){
+							if(line.charAt(j) == 'q'){
+								t = consApp.getTexture(FileNames.W_DOOR);
+								t.setFitHeight(60);
+								e.setPosition(0, 22);
+								t.setPreserveRatio(true);
+							}
+							else if(line.charAt(j) == 'Q'){
+								t = consApp.getTexture(FileNames.S_DOOR);
+								t.setFitHeight(60);
+								e.setPosition(0, 22);
+								t.setPreserveRatio(true);
+							}
+							else{
+								t = consApp.getTexture(FileNames.CAVE);
+								t.setPreserveRatio(false);
+								t.setFitWidth(80);
+								t.setFitHeight(80);
+								e.setPosition(0, 0);
+								
+							}
 						}
 					}
 					break;
@@ -859,7 +915,7 @@ public class LevelParser {
 							1);
 				}
 				else if (c == 't'){
-					return new ESpawnerControl(consApp, spawner.getPosition(), (Function<Point2D, Pair<Entity, Entity>>) (t) -> consApp.eSpawner.spawnIceSpirit(t), 
+					return new ESpawnerControl(consApp, spawner.getPosition(), (Function<Point2D, Pair<Entity, Entity>>) (t) -> consApp.eSpawner.spawnBKnifer(t), 
 							1);
 				}
 				else{

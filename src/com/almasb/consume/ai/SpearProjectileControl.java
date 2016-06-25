@@ -90,7 +90,7 @@ public class SpearProjectileControl extends AbstractControl {
 		}
 		
 		
-		if (Math.abs(entity.getTranslateX() - player.getTranslateX()) >= 350) {
+		if (Math.abs(entity.getTranslateX() - player.getTranslateX()) >= 700) {
 			entity.fireFXGLEvent(new FXGLEvent(Event.DEATH));
 		}
 	}

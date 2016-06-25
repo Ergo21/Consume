@@ -1639,7 +1639,7 @@ public class EntitySpawner {
 		enemy.setGraphics(rect);
 		enemy.setVisible(false);
 		enemy.setCollidable(true);
-		enemy.setProperty(Property.DATA, new Enemy(consApp.assets.getText(FileNames.STATS_DEFAULT))); //TODO: Replace
+		enemy.setProperty(Property.DATA, new Enemy(consApp.assets.getText(FileNames.STATS_KIBO)));
 		enemy.setProperty(Property.SUB_TYPE, Type.BOSS);
 		enemy.setProperty("physics", consApp.physics);
 		enemy.setProperty("shover", true);
@@ -2193,7 +2193,6 @@ public class EntitySpawner {
 			Collections.shuffle(drops);
 
 			Entity e = new Entity(Type.POWERUP);
-			e.setPosition((int) enemy.getPosition().getX(), (int) enemy.getPosition().getY());
 			if(enemy.getProperty(Property.SUB_TYPE) == Type.BOSS){
 				Enemy ed = enemy.getProperty(Property.DATA);
 				e.setProperty(Property.SUB_TYPE, getPowerup(ed.curElement.getValue()));
@@ -2230,6 +2229,7 @@ public class EntitySpawner {
 				r.setFill(Color.PINK);
 				e.setGraphics(r);
 			}*/
+			e.setPosition((int) enemy.getPosition().getX(), (int) enemy.getPosition().getY() - (e.getHeight() + 2));
 			e.addControl(new PhysicsControl(consApp.physics));
 			e.setCollidable(true);
 
