@@ -499,8 +499,8 @@ public class LevelParser {
 					if(Config.RELEASE){
 						t = consApp.getTexture(FileNames.MOTHER_STAND);
 						t.setPreserveRatio(true);
-						t.setFitHeight(80);
-						e.setPosition(0, -40);
+						t.setFitHeight(40);
+						//e.setPosition(0, -40);
 					}
 					break;
 				}
@@ -935,11 +935,11 @@ public class LevelParser {
 							1);
 				}
 				else if (c == 't'){
-					return new ESpawnerControl(consApp, spawner.getPosition(), (Function<Point2D, Pair<Entity, Entity>>) (t) -> consApp.eSpawner.spawnRifler(t), 
+					return new ESpawnerControl(consApp, spawner.getPosition(), (Function<Point2D, Pair<Entity, Entity>>) (t) -> consApp.eSpawner.spawnRifler(t, false), 
 							1);
 				}
 				else{
-					return new ESpawnerControl(consApp, spawner.getPosition(), (Function<Point2D, Pair<Entity, Entity>>) (t) -> consApp.eSpawner.spawnBayoneter(t), 
+					return new ESpawnerControl(consApp, spawner.getPosition(), (Function<Point2D, Pair<Entity, Entity>>) (t) -> consApp.eSpawner.spawnRifler(t, true), 
 							1);
 				}
 			}

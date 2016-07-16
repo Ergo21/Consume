@@ -39,6 +39,7 @@ import javafx.scene.paint.CycleMethod;
 import javafx.scene.paint.LinearGradient;
 import javafx.scene.paint.Stop;
 import javafx.scene.text.Text;
+import javafx.util.Duration;
 import javafx.util.Pair;
 
 public class GameScene extends Group {
@@ -226,7 +227,8 @@ public class GameScene extends Group {
 			case 3: return ()-> setupBoss(app.eSpawner.spawnShangoBoss(p), true);
 			case 4: return ()-> setupBoss(app.eSpawner.spawnKiboBoss(p), true);
 			case 5: return ()-> setupBoss(app.eSpawner.spawnGentlemanBoss(p), true);
-			case 6: return ()-> setupBoss(app.eSpawner.spawnEshuBoss(p), true);
+			case 6: return ()-> setupBoss(app.eSpawner.spawnShakaBoss(p), true);
+			case 7: return ()-> setupBoss(app.eSpawner.spawnEshuBoss(p), true);
 			
 			}
 		}
@@ -266,7 +268,18 @@ public class GameScene extends Group {
 				app.player.getControl(PhysicsControl.class).moveX
 					(value.contains("right") ? Speed.PLAYER_MOVE*3/4 : -Speed.PLAYER_MOVE*3/4);
 				app.player.setProperty("facingRight", value.contains("right"));
-					};
+				if(value.contains(",")){
+					String val = method.substring(method.indexOf(",") + 1, method.indexOf(")"));
+					double iVal = Double.parseDouble(val);
+					if(iVal > 0){
+						app.getTimerManager().runOnceAfter(() -> {
+							if((boolean) app.player.getProperty("scenePlaying")){
+								app.player.getControl(PhysicsControl.class).moveX(0);
+							}
+						}, Duration.seconds(iVal));
+					}
+				}
+			};
 		}
 		else if(method.contains("bossstop")){
 			return ()-> {

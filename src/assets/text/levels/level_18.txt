@@ -1,21 +1,13 @@
-i3                                           i0
-i      ipi                                   i0
-i       p i                                  i0
-i       pii                                  i0
-i       p  i   ipi                           i0 
-i 1     pi i    p                            i0 
-iiiiiiiip ii    p                            i0
-i       piii    p                            i0
-i ii II p   i   p                            i0
-i       pi  i   p                            i0
-i jj JJ p i i   p                            i0
-i       pii i   p                            i0
-i kk KK p  ii   p  d D e E f                 i0
-i       pi ii   p  d D e E f                 i0
-i ll LL p iii   piiiiiiiiiiiiiiiiiiiiiiii    i0   
-i       piiii   p i   i i   i i   i i   i    i0
-i mm MM p       p i s i i S i i t i i T i    i0
-i       p       p i   i i   i i   i i   i    i0
-i    nn p       p iiiii iiiii iiiii iiiii    i0
-i       p u U v p                          2 i0
-iiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii0
+i3                                                    i0
+i                                                     i0
+i                                                     i0
+i                                                     i0
+i                                                     i0 
+i                                                     i0 
+i                 T                                   i0
+i 1        5      i   s        S          t          2i0
+iIIIIIIIIIIIIIIiiiiiiijjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjji0
+iiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii0
+iiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii0
+iiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii0
+iiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii3i0

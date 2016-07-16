@@ -1,0 +1,8 @@
+Name="Charger"
+Health="5"
+Mana="10"
+ManaR="1"
+Element="NEUTRAL"
+Resists=""
+Weak=""
+Spritesheet=""

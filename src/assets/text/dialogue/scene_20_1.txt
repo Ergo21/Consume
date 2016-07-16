@@ -1,3 +1,9 @@
-Shaka (SHAKA)= "For the deaths of those behind you, I Shaka, Leader of the Zulus, will kill you."
-PLAYER (PLAYER)= "For the deaths I seek to prevent, I will not stop."
+Noble (GENTLEMAN) *spawnboss(5)*= "What could you possibly want that you would kill so many of my men."
+Seble (PLAYER)= "Guns, my village has a bandit problem."
+Noble (GENTLEMAN)= "..."
+Noble (GENTLEMAN)= "While I cannot just give away weapons, I can have men sent to assist."
+Noble (GENTLEMAN)= "For a price of course."
+Seble (PLAYER)= "No."
+Noble (GENTLEMAN)= "You don't want to hear the terms or negot.."
+Seble (PLAYER)= "I have no interest in borrowed power."
 END

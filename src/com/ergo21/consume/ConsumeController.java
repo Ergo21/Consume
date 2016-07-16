@@ -1219,11 +1219,13 @@ public class ConsumeController {
 					if(lowFirst){
 						consApp.getTimerManager().runOnceAfter(() -> {
 							consApp.getSceneManager().addEntities(e);
+							consApp.soundManager.playSFX(FileNames.STONE_THROW);
 						}, Config.ENEMY_STONE_THROW_DELAY);
 					}
 					else{
 						consApp.getTimerManager().runOnceAfter(() -> {
 							consApp.getSceneManager().addEntities(e);
+							consApp.soundManager.playSFX(FileNames.STONE_THROW);
 						}, Config.ENEMY_STONE_THROW_DELAY.multiply(3));
 					}
 					break;
@@ -1232,6 +1234,7 @@ public class ConsumeController {
 					e.addControl(new SpearProjectileControl(source, Speed.PROJECTILE*2/3, -Speed.PROJECTILE*2/3));
 					consApp.getTimerManager().runOnceAfter(() -> {
 						consApp.getSceneManager().addEntities(e);
+						consApp.soundManager.playSFX(FileNames.STONE_THROW);
 					}, Config.ENEMY_STONE_THROW_DELAY.multiply(2));
 					break;
 				}
@@ -1240,11 +1243,13 @@ public class ConsumeController {
 					if(lowFirst){
 						consApp.getTimerManager().runOnceAfter(() -> {
 							consApp.getSceneManager().addEntities(e);
+							consApp.soundManager.playSFX(FileNames.STONE_THROW);
 						}, Config.ENEMY_STONE_THROW_DELAY.multiply(3));
 					}
 					else{
 						consApp.getTimerManager().runOnceAfter(() -> {
 							consApp.getSceneManager().addEntities(e);
+							consApp.soundManager.playSFX(FileNames.STONE_THROW);
 						}, Config.ENEMY_STONE_THROW_DELAY);
 					}
 					break;
@@ -1255,9 +1260,6 @@ public class ConsumeController {
 				}
 			}
 		}
-		
-		//TODO: Replace 
-		consApp.soundManager.playSFX(FileNames.SPEAR_THROW);
 	}
 	
 	public void enemyShootFireball(Entity source) {
@@ -1297,7 +1299,7 @@ public class ConsumeController {
 			e.fireFXGLEvent(new FXGLEvent(Event.DEATH));
 		}, Config.ENEMY_FIRE_GROWTH_DELAY.multiply(3));
 				
-		consApp.soundManager.playSFX(FileNames.FIRE_COAL);
+		consApp.soundManager.playSFX(FileNames.FIRE_TRAP);
 		
 		consApp.getSceneManager().addEntities(e);
 	}
@@ -1317,13 +1319,13 @@ public class ConsumeController {
 			consApp.getSceneManager().removeEntity(event.getTarget());
 		});
 
-		//TODO Cannon Sound
-		consApp.soundManager.playSFX(FileNames.RIFLE_SHOT);
+		consApp.soundManager.playSFX(FileNames.CANNON_SHOT);
 		e.addControl(new BulletProjectileControl(consApp.player, source.getProperty("facingRight")));
 		e.setProperty(Property.ENABLE_GRAVITY, true);
 			
 		Circle p = new Circle(8);
-		p.setFill(Color.SILVER);
+		p.setFill(Color.GRAY);
+		p.setStroke(Color.BLACK);
 		if(!source.<Boolean>getProperty("facingRight")){
 			e.setPosition(source.getPosition().add(-source.getWidth()/2 - 10, 0));
 		}
@@ -1382,7 +1384,7 @@ public class ConsumeController {
 			e.fireFXGLEvent(new FXGLEvent(Event.DEATH));
 		}, Config.ENEMY_SOUND_GROWTH_DELAY.multiply(3));
 				
-		//TODO: Play Sound Effect: consApp.soundManager.playSFX(FileNames.FIRE_COAL);
+		consApp.soundManager.playSFX(FileNames.FLUTE_TUNE);
 		
 		consApp.getSceneManager().addEntities(e);
 	}

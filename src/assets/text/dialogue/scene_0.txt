@@ -1,5 +1,5 @@
-Seble (PLAYER) *move(left)*   = "......."
-Seble (PLAYER)                = "Phuh, get the water Seble, get the firewood Seble."
+Seble (PLAYER) *turn(left)*    = "......."
+Seble (PLAYER) *move(left, 4)* = "Phuh, get the water Seble, get the firewood Seble."
 Seble (PLAYER) *stop( )*      = "A man with my abilities shouldn't demean himself with such things."
 Seble (PLAYER)                = "I just need an opportunity."
     ()       *turn(right)*  ="*screams*"

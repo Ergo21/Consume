@@ -58,6 +58,11 @@ public final class FileNames{
 	public static final String RIFLE_SHOT		= "02 Rifle Shot.mp3";
 	public static final String FIRE_COAL		= "03 Flaming Coals.mp3";
 	public static final String LIGHTNING_DRUM	= "04 Thunder & Drums.mp3";
+	public static final String FIRE_TRAP		= "11 Fire Trap.mp3";
+	public static final String CANNON_SHOT		= "12 Cannon.mp3";
+	public static final String FLUTE_TUNE		= "13 Flute.mp3";
+	public static final String STONE_THROW		= "14 Stone Throw.mp3";
+	public static final String KEYBOARD_TYPE	= "15 Keyboard.mp3";
 	
 	public static final String EATING			= "06 Eating.mp3";
 	
@@ -112,8 +117,11 @@ public final class FileNames{
 	public static final String LADDER_BLOCK		= "statics/ladder.png";
 	public static final String FOOD_BLOCK		= "statics/food 1.png";
 	public static final String POWERUP_BLOCK	= "statics/food 2.png";
+	public static final String DEATH_BLOOD		= "statics/death_blood.png";
+	public static final String DEATH_COBBLE		= "statics/death_cobble.png";
+	public static final String MOTHER_DEAD		= "statics/mother_dead.png";
 	public static final String MOTHER_LYING 	= "statics/mother_lying.png";
-	public static final String MOTHER_STAND 	= "statics/mother_stand.png";
+	public static final String MOTHER_STAND 	= "statics/mother_standing.png";
 	
 	public static final String FIREBALL_PROJ	= "projectiles/fireball.png";
 	public static final String STONE_PROJ		= "projectiles/stone.png";
@@ -166,5 +174,10 @@ public final class FileNames{
 	public static final String STATS_SHANGO 		= "enemies/Shango.txt";
 	
 	public static final String STATS_KIBO			= "enemies/Kibo.txt";
+	
+	public static final String STATS_BAYONETER		= "enemies/Bayoneter.txt";
+	public static final String STATS_CANNON			= "enemies/Cannon.txt";
+	public static final String STATS_RIFLER			= "enemies/Rifler.txt";
+	public static final String STATS_GENTLEMAN		= "enemies/Gentleman.txt";
 	
 }

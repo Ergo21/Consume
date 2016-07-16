@@ -211,6 +211,7 @@ public class ConsumeApp extends GameApplication {
 		initLevels();
 		//printMemoryUsage("Levels Init");
 		loadLevel(playerData.getCurrentLevel());
+		
 		//printMemoryUsage("Levels Load");
 	}
 
@@ -374,7 +375,7 @@ public class ConsumeApp extends GameApplication {
 				getInputManager().addAction(new UserAction("Spawn Rifler"){
 					@Override
 					protected void onActionBegin() {
-						Pair<Entity, Entity> pEn = eSpawner.spawnRifler(spawnPoint.add(500, -100));
+						Pair<Entity, Entity> pEn = eSpawner.spawnRifler(spawnPoint.add(500, -100), false);
 						getSceneManager().addEntities(pEn.getKey(), pEn.getValue());
 					}
 				}, KeyCode.DIGIT4);
@@ -788,14 +789,12 @@ public class ConsumeApp extends GameApplication {
 	}
 
 	public void showLevelScreen(){
-		//TODO
 		fOutComMet = () -> {
 			consGameMenu.updatePowerMenu(playerData);
 
 			//this.getInputManager().
 			//this.getSceneManager().closeGameMenu();
 			this.soundManager.stopAll();
-			this.soundManager.setBackgroundMusic(FileNames.THEME_MUSIC);
 			if(playerData.getLevsComp().size() > 5){
 				levelMenu.setFinalLevelVisible(true);
 			}
@@ -803,10 +802,13 @@ public class ConsumeApp extends GameApplication {
 				levelMenu.setFinalLevelVisible(false);
 			}
 			levelMenu.setVisible(true);
+			getSceneManager().getEntities().forEach(getSceneManager()::removeEntity);
 			
 			getTimerManager().runOnceAfter(() -> fadeIn.play(), Duration.seconds(0.5));
 		};
 		fInComMet = () -> {
+			this.soundManager.setBackgroundMusic(FileNames.THEME_MUSIC);
+			this.soundManager.playBackgroundMusic();
 			fadeScreen.setVisible(false);
 		};
 		fadeOut.play();
@@ -1070,6 +1072,10 @@ public class ConsumeApp extends GameApplication {
 			}});
 		}
 		
+		if((char)block.getProperty("blockImg") == 'a'){
+			soundManager.playSFX(FileNames.FIRE_TRAP);
+		}
+		
 		for(int i = 0; i < barriers.size(); i++){
 			Entity e = barriers.get(i);
 			getSceneManager().removeEntity(e);
@@ -1136,6 +1142,7 @@ public class ConsumeApp extends GameApplication {
 				@Override
 				public void run() {
 					e2.setVisible(true);
+					
 				}
 			}, Duration.seconds(0.5).multiply(i));
 			

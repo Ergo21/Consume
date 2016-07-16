@@ -1,0 +1,8 @@
+Name="Gentleman"
+Health="30"
+Mana="10"
+ManaR="1"
+Element="METAL"
+Resists="METAL"
+Weak="LIGHTNING"
+Spritesheet=""

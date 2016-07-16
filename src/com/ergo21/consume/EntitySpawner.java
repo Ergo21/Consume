@@ -949,7 +949,7 @@ public class EntitySpawner {
 
 		enemy.setGraphics(rect);
 		enemy.setCollidable(true);
-		enemy.setProperty(Property.DATA, new Enemy(consApp.assets.getText(FileNames.STATS_DEFAULT))); //TODO: Replace
+		enemy.setProperty(Property.DATA, new Enemy(consApp.assets.getText(FileNames.STATS_CANNON))); 
 		enemy.setProperty("physics", consApp.physics);
 		enemy.setProperty("facingRight", false);
 		enemy.setPosition(spawnPoint.getX(), spawnPoint.getY());
@@ -1006,24 +1006,22 @@ public class EntitySpawner {
 				}
 			}});
 		
-		//consApp.getSceneManager().addEntities(ePic);
-
 		return new Pair<Entity, Entity>(enemy, ePic);
 	}
 	
-	public Pair<Entity, Entity> spawnRifler(Point2D spawnPoint){
+	public Pair<Entity, Entity> spawnRifler(Point2D spawnPoint, boolean passive){
 		Entity enemy = new Entity(Type.ENEMY);
 		Rectangle rect = new Rectangle(20, 30);
 		rect.setFill(Color.RED);
 
 		enemy.setGraphics(rect);
 		enemy.setCollidable(true);
-		enemy.setProperty(Property.DATA, new Enemy(consApp.assets.getText(FileNames.STATS_DEFAULT))); //TODO: Replace
+		enemy.setProperty(Property.DATA, new Enemy(consApp.assets.getText(FileNames.STATS_RIFLER)));
 		enemy.setProperty("physics", consApp.physics);
 		enemy.setProperty("facingRight", false);
 		enemy.setPosition(spawnPoint.getX(), spawnPoint.getY());
 		enemy.addControl(new PhysicsControl(consApp.physics));
-		enemy.addControl(new RifleControl(consApp.player));
+		enemy.addControl(new RifleControl(consApp, consApp.player, passive));
 		enemy.addFXGLEventHandler(Event.DEATH, this::onEnemyDeath);
 		enemy.addFXGLEventHandler(Event.ENEMY_FIRED, event -> {
 			consApp.getTimerManager().runOnceAfter(() -> {
@@ -1087,7 +1085,7 @@ public class EntitySpawner {
 
 		enemy.setGraphics(rect);
 		enemy.setCollidable(true);
-		enemy.setProperty(Property.DATA, new Enemy(consApp.assets.getText(FileNames.STATS_DEFAULT))); //TODO: Replace
+		enemy.setProperty(Property.DATA, new Enemy(consApp.assets.getText(FileNames.STATS_BAYONETER))); 
 		enemy.setProperty("physics", consApp.physics);
 		enemy.setProperty("facingRight", false);
 		enemy.setPosition(spawnPoint.getX(), spawnPoint.getY());
@@ -2175,6 +2173,52 @@ public class EntitySpawner {
 		Entity enemy = event.getTarget();
 		consApp.getSceneManager().removeEntity(enemy);
 
+		Entity e2 = new Entity(Type.PROP);
+		Texture t2;
+		
+		if(enemy.getControl(CannonControl.class) != null || 
+			enemy.getControl(StoneThrowerControl.class) != null ||
+			enemy.getControl(DiveReturnControl.class) != null ||
+			enemy.getControl(SandBossControl.class) != null){
+			t2 = consApp.getTexture(FileNames.DEATH_COBBLE);
+		}
+		else{
+			t2 = consApp.getTexture(FileNames.DEATH_BLOOD);
+		}
+		
+		if(Config.RELEASE && t2 != null){
+			e2.setGraphics(t2);
+		}
+		else{
+			Rectangle r = new Rectangle(300, 300);
+			r.setFill(Color.PINK);
+			e2.setGraphics(r);
+		}
+		
+		e2.setPosition((int) enemy.getPosition().getX() + enemy.getWidth()/2 - e2.getWidth()/2, (int) enemy.getPosition().getY() + enemy.getHeight()/2 - e2.getHeight()/2);
+		e2.setCollidable(false);
+		e2.setScaleX(10/300);
+		e2.setScaleY(10/300);
+		e2.setRotate(0);
+		
+		consApp.getTimerManager().runAtIntervalWhile(() -> {
+			e2.setScaleX(e2.getScaleX() + 0.01);
+			e2.setScaleY(e2.getScaleY() + 0.01);
+			e2.setRotate(e2.getRotate() + 36);
+			if(e2.getRotate() >= 360){
+				e2.fireFXGLEvent(new FXGLEvent(Event.DEATH));
+			}
+		}, Duration.seconds(0.035), e2.aliveProperty());
+
+		e2.addFXGLEventHandler(Event.DEATH, new FXGLEventHandler() {
+			@Override
+			public void handle(FXGLEvent event) {
+				consApp.getSceneManager().removeEntity(e2);
+			}
+		});
+
+		consApp.getSceneManager().addEntities(e2);
+		
 		// chance based drop logic
 		if (consApp.getRandom().nextInt(100) <= 33 || enemy.getProperty(Property.SUB_TYPE) == Type.BOSS) { // check if dropping
 			ArrayList<Powerup> drops = new ArrayList<>();

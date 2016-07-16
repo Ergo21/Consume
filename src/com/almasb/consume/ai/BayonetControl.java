@@ -42,9 +42,6 @@ public class BayonetControl extends AbstractControl {
 				entity.fireFXGLEvent(new FXGLEvent(Event.ENEMY_SAW_PLAYER));
 			} 
 		}
-		else{
-			firstTimeSaw = -1;
-		}
 		
 		vel = (int)entity.getControl(PhysicsControl.class).getVelocity().getX();
 		boolean right = target.getPosition().getX() - entity.getPosition().getX() > 0;
@@ -57,9 +54,6 @@ public class BayonetControl extends AbstractControl {
 			if(now - decelerate > TimerManager.toNanos(Config.ENEMY_CHARGE_DELAY.divide(2))){
 				vel += Speed.ENEMY_SEEK_DECEL;
 				entity.getControl(PhysicsControl.class).moveX(vel);
-				if(vel >= 0){
-					firstTimeSaw = -1;
-				}
 			}
 		}
 		else if(vel > 0 && !right){
@@ -70,9 +64,6 @@ public class BayonetControl extends AbstractControl {
 			if(now - decelerate > TimerManager.toNanos(Config.ENEMY_CHARGE_DELAY.divide(2))){
 				vel -= Speed.ENEMY_SEEK_DECEL;
 				entity.getControl(PhysicsControl.class).moveX(vel);
-				if(vel <= 0){
-					firstTimeSaw = -1;
-				}
 			}
 		}
 		else if(firstTimeSaw != -1 && now - firstTimeSaw >= TimerManager.toNanos(Config.ENEMY_CHARGE_DELAY)){
