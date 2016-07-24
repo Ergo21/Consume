@@ -1,0 +1,10 @@
+Eshu (ESHU) *spawnboss(7)*= "If that's everything burn this place to the ground."
+Eshu (ESHU) *bossturn(left)*= "Hmm?"
+Eshu (ESHU)= "....."
+Eshu (ESHU)= "HAHAHAHAHAHA! It's you!"
+Eshu (ESHU)= "You did it didn't you, you took my advice."
+Seble (PLAYER)= "For all those you have killed, I will destroy you."
+Eshu (ESHU)= "If that's what you need to tell yourself."
+Seble (PLAYER)= "You'll no longer steal our food. This is the end."
+Eshu (ESHU)= "Yes, for both of us."
+END

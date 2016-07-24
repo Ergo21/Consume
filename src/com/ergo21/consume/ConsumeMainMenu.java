@@ -4,11 +4,9 @@ import java.util.HashMap;
 
 import com.almasb.consume.ConsumeApp;
 import com.almasb.consume.Types.Actions;
-import com.almasb.fxgl.asset.Music;
 import com.almasb.fxgl.event.MenuEvent;
 import com.almasb.fxgl.ui.FXGLMenu;
 import com.almasb.fxgl.ui.UIFactory;
-import com.almasb.fxgl.util.Version;
 import com.sun.javafx.scene.control.skin.LabeledText;
 
 import javafx.animation.FadeTransition;
@@ -19,6 +17,7 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.geometry.Pos;
 import javafx.scene.Group;
@@ -45,6 +44,7 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
+import javafx.scene.text.TextAlignment;
 import javafx.util.Duration;
 
 /**
@@ -65,6 +65,8 @@ public final class ConsumeMainMenu extends FXGLMenu {
     private MenuBox menuContent;
     private MenuBox menuControls;
     private MenuItem nGPlus;
+    private MenuItem extras;
+    private MenuItem credits;
     
     private Group fadeGroup;
 
@@ -89,7 +91,7 @@ public final class ConsumeMainMenu extends FXGLMenu {
         menuContent.setVisible(false);
 
         Rectangle bg = new Rectangle(consApp.getWidth(), consApp.getHeight());
-        bg.setFill(Color.rgb(10, 1, 1));
+        bg.setFill(Color.color(0.5, 0.01, 0.01, 0.5));
 
         Title title = new Title(consApp.getSettings().getTitle());
         title.setTranslateX(
@@ -97,18 +99,14 @@ public final class ConsumeMainMenu extends FXGLMenu {
         title.setTranslateY(
                 menuControls.getTranslateY() / 2 - title.getLayoutHeight() / 2);
 
-        Text version = new Text("v" + consApp.getSettings().getVersion());
+        Text version = new Text("v" + consApp.getSettings().getVersion() + "	ErgoScrit\u25AE	  FXGL 0.1.6");
         version.setTranslateY(consApp.getHeight() - 2);
         version.setFill(Color.WHITE);
         version.setFont(Font.font(18));
-
-        fadeGroup = new Group(title, version, menuControls, menuContent);
-        getChildren().setAll(bg, fadeGroup);
-
-        Music m = consApp.getAssetManager().loadMusic(FileNames.THEME_MUSIC);
-        m.setCycleCount(Integer.MAX_VALUE);
-        consApp.getAudioManager().playMusic(m);
-        
+        Rectangle blankScreen = new Rectangle(consApp.getWidth(), consApp.getHeight());
+        blankScreen.setFill(Color.color(0, 0, 0, 1));
+        fadeGroup = new Group(consApp.getAssetManager().loadTexture(FileNames.AFRICA), bg, title, version, menuControls, menuContent);
+        getChildren().setAll(blankScreen, fadeGroup);        
     }
 
     private MenuBox createMainMenu() {
@@ -184,15 +182,15 @@ public final class ConsumeMainMenu extends FXGLMenu {
         MenuItem itemOptions = new MenuItem(mainWidth, "Options");
         itemOptions.setChild(createOptionsMenuConsume());
 
-        MenuItem itemExtra = new MenuItem(mainWidth, "EXTRA");
-        itemExtra.setChild(createExtraMenuConsume());
+        extras = new MenuItem(mainWidth, "Extra");
+        extras.setChild(createExtraMenuConsume());
 
         MenuItem itemExit = new MenuItem(mainWidth, "Exit");
         itemExit.setAction(
                 () -> itemExit.fireEvent(new MenuEvent(MenuEvent.EXIT)));
 
         MenuBox menu = new MenuBox(mainWidth, nGPlus, itemNewGame,
-        			itemOptions, itemExtra, itemExit);
+        			itemOptions, extras, itemExit);
         menu.setTranslateX(50);
         menu.setTranslateY(
                 consApp.getHeight() / 2 - menu.getLayoutHeight() / 2);
@@ -329,40 +327,54 @@ public final class ConsumeMainMenu extends FXGLMenu {
     }
 
     private MenuBox createExtraMenuConsume() {
-        MenuItem itemCredits = new MenuItem(mainWidth, "CREDITS");
-        itemCredits.setMenuContent(createContentCredits());
+        credits = new MenuItem(mainWidth, "Credits");
+        credits.setMenuContent(createContentCredits());
 
-        return new MenuBox(mainWidth, itemCredits);
+        return new MenuBox(mainWidth, credits);
     }
 
-    private MenuContent createContentCredits() {
-        Font font = Font.font(18);
+    private MenuContent createContentCredits() {          
+        Text textFXGL = new Text(
+                "Created using the FXGL (JavaFX 2D Game Library) 0.1.6 \n"
+               +"By Almas Baimagambetov @ https://github.com/AlmasB/FXGL");
+        textFXGL.setFont(regFont);
+        textFXGL.setFill(Color.WHITE);
 
-        Text textHead = new Text(
-                "FXGL (JavaFX 2D Game Library) " + Version.getAsString());
-        textHead.setFont(font);
-        textHead.setFill(Color.WHITE);
-
-        Text textJFX = new Text(
-                "Graphics and Application Framework: JavaFX 8.0.51");
-        textJFX.setFont(font);
-        textJFX.setFill(Color.WHITE);
-
-        Text textJBOX = new Text("Physics Engine: JBox2d 2.2.1.1 (jbox2d.org)");
-        textJBOX.setFont(font);
-        textJBOX.setFill(Color.WHITE);
-
-        Text textAuthor = new Text("Author: Almas Baimagambetov (AlmasB)");
-        textAuthor.setFont(font);
-        textAuthor.setFill(Color.WHITE);
-
-        Text textDev = new Text(
-                "Source code available: https://github.com/AlmasB/FXGL");
-        textDev.setFont(font);
-        textDev.setFill(Color.WHITE);
-
-        return new MenuContent(textHead, textJFX, textJBOX, textAuthor,
-                textDev);
+        return new MenuContent(
+        		createCreditArea("Directed & Written by", 
+        						 "Joseph Watts"),
+        		createCreditArea("Programming", 
+						 		 "Almas Baimagambetov \n "
+						 	   + "Joseph Watts"), 
+        		createCreditArea("Art", 
+						 		 "Crazy Animation \n "
+						 	   + "www.crazyanimationstudio.com"), 
+        		createCreditArea("Additional Art", 
+				 		 		 "Ellie Watts"), 
+        		createCreditArea("Music & SFX", 
+		 		 		 		 "James Peacock"), textFXGL);
+    }
+    
+    private Font headFont = Font.font(Font.getDefault().getFamily(), FontWeight.BOLD, 12);
+    private Font regFont = Font.font(12);
+    private VBox createCreditArea(String header, String value){
+        Text creHead = new Text(header);
+        creHead.setFont(headFont);
+        creHead.setFill(Color.WHITE);
+        creHead.setUnderline(true);
+        creHead.setTextAlignment(TextAlignment.CENTER);
+        Text creVal = new Text(value);
+        creVal.setFont(regFont);
+        creVal.setFill(Color.WHITE);
+        creVal.setTextAlignment(TextAlignment.CENTER);
+        VBox creAll = new VBox(creHead, creVal);
+        creAll.setAlignment(Pos.CENTER);
+    	return creAll;
+    }
+    
+    public void showCredits(){
+    	extras.fireEvent(new Event(MouseEvent.MOUSE_CLICKED));
+    	credits.fireEvent(new Event(MouseEvent.MOUSE_CLICKED));
     }
     
     private Text musTexVal;
@@ -546,7 +558,7 @@ public final class ConsumeMainMenu extends FXGLMenu {
     }*/
 
     private void switchMenuTo(MenuBox menu) {
-        Node oldMenu = fadeGroup.getChildren().get(2);
+        Node oldMenu = fadeGroup.getChildren().get(4);
 
         FadeTransition ft = new FadeTransition(Duration.seconds(0.33), oldMenu);
         ft.setToValue(0);
@@ -554,7 +566,7 @@ public final class ConsumeMainMenu extends FXGLMenu {
             menu.setTranslateX(menuX);
             menu.setTranslateY(menuY);
             menu.setOpacity(0);
-            fadeGroup.getChildren().set(2, menu);
+            fadeGroup.getChildren().set(4, menu);
             oldMenu.setOpacity(1);
 
             FadeTransition ft2 = new FadeTransition(Duration.seconds(0.33),
@@ -570,7 +582,7 @@ public final class ConsumeMainMenu extends FXGLMenu {
     private void switchMenuContentTo(MenuContent content) {
         content.setTranslateX(menuX * 2 + 200);
         content.setTranslateY(menuY);
-        fadeGroup.getChildren().set(3, content);
+        fadeGroup.getChildren().set(5, content);
     }
 
     private static class Title extends StackPane {
@@ -751,6 +763,9 @@ public final class ConsumeMainMenu extends FXGLMenu {
             else if (act == Actions.CHPOWP) {
                 itAction = new SimpleStringProperty("NEXT POWER");
             }
+            else if(act == Actions.INTERACT){
+    			itAction = new SimpleStringProperty("EAT/ENTER");
+    		}
             else {
                 itAction = new SimpleStringProperty(act.toString());
             }

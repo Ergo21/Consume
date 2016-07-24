@@ -481,20 +481,22 @@ public class LevelParser {
 					}
 					break;
 					
-				case 'y':		//TODO: Add mother
+				case 'y':		
 					e = new Entity(Types.Type.PROP);
 					e.setCollidable(false);
 					rect.setFill(Color.BLUEVIOLET);
 					if(Config.RELEASE){
 						t = consApp.getTexture(FileNames.MOTHER_LYING);
 						t.setPreserveRatio(true);
-						t.setFitWidth(60);
-						e.setPosition(0, 24);
+						t.setFitWidth(35);
+						t.setScaleX(-1);
+						e.setPosition(5, 9-Config.BLOCK_SIZE*5);
 					}
 					break;
-				case 'Y':		//TODO: Add mother
+				case 'Y':		
 					e = new Entity(Types.Type.PROP);
 					e.setCollidable(false);
+					
 					rect.setFill(Color.VIOLET);
 					if(Config.RELEASE){
 						t = consApp.getTexture(FileNames.MOTHER_STAND);
@@ -951,7 +953,7 @@ public class LevelParser {
 											1);
 				}
 				else if (c == 'S'){
-					return new ESpawnerControl(consApp, spawner.getPosition(), (Function<Point2D, Pair<Entity, Entity>>) (t) -> consApp.eSpawner.spawnZSpearEnemy(t), 
+					return new ESpawnerControl(consApp, spawner.getPosition(), (Function<Point2D, Pair<Entity, Entity>>) (t) -> consApp.eSpawner.spawnZSpearEnemy(t,false), 
 							1);
 				}
 				else if (c == 't'){
@@ -959,7 +961,7 @@ public class LevelParser {
 							1);
 				}
 				else{
-					return new ESpawnerControl(consApp, spawner.getPosition(), (Function<Point2D, Pair<Entity, Entity>>) (t) -> consApp.eSpawner.spawnZKnifer(t), 
+					return new ESpawnerControl(consApp, spawner.getPosition(), (Function<Point2D, Pair<Entity, Entity>>) (t) -> consApp.eSpawner.spawnZSpearEnemy(t,true), 
 							1);
 				}
 			}

@@ -3,5 +3,5 @@ Soldier ()= "State your name and business."
 Seble (PLAYER)= "Seble, Guns"
 Soldier ()= "HaHaHa"
 Soldier ()= "Stop wasting my time."
-Seble (PLAYER)= "And your done wasting mine."
+Seble (PLAYER)= "And your done with mine."
 END

@@ -78,6 +78,7 @@ public final class ConsumeGameMenu extends FXGLMenu {
 	private ConsumeApp consApp;
 	
 	public MenuItem levelMenuItem;
+	public MenuItem itemExit;
 
 	public ConsumeGameMenu(ConsumeApp app) {
 		super(app);
@@ -147,7 +148,7 @@ public final class ConsumeGameMenu extends FXGLMenu {
 			
 		});
 
-		MenuItem itemExit = new MenuItem("Main Menu");
+		itemExit = new MenuItem("Main Menu");
 		itemExit.setAction(() -> {
 			UIFactory.getDialogBox().showConfirmationBox("All progress in this game will be lost. Return to the Main Menu?", (b) -> {
 				if(b){
@@ -155,11 +156,10 @@ public final class ConsumeGameMenu extends FXGLMenu {
 					consApp.soundManager.stopAll();
 					consApp.soundManager.setBackgroundMusic(FileNames.THEME_MUSIC);
 		        	consApp.soundManager.getBackgroundMusic().setCycleCount(Integer.MAX_VALUE);
-		        	consApp.soundManager.playBackgroundMusic();
 		        	consApp.resetWorld();
 
 		        	itemExit.fireEvent(new MenuEvent(MenuEvent.EXIT));
-
+		        	consApp.soundManager.playBackgroundMusic();
 					contentViewer.getChildren().clear();
 					contentViewer.getChildren().add(powerList);
 				}
@@ -311,12 +311,12 @@ public final class ConsumeGameMenu extends FXGLMenu {
 			contentViewer.getChildren().clear();
 			contentViewer.getChildren().add(createContentAudio());
 		});
-		MenuItem itemCredits = new MenuItem("CREDITS");
+		/*MenuItem itemCredits = new MenuItem("CREDITS");
 		itemCredits.setAction(() -> {
 			contentViewer.getChildren().clear();
 			contentViewer.getChildren().add(createContentCredits());
-		});
-		return new MenuBox(5, itemControls, itemAudio, itemCredits);
+		});*/
+		return new MenuBox(5, itemControls, itemAudio);
 	}
 
 	public void updatePowerMenu(Player playerData) {
@@ -738,6 +738,9 @@ public final class ConsumeGameMenu extends FXGLMenu {
     		}
     		else if(act == Actions.CHPOWP){
     			itAction = new SimpleStringProperty("NEXT POWER");
+    		}
+    		else if(act == Actions.INTERACT){
+    			itAction = new SimpleStringProperty("EAT/ENTER");
     		}
     		else{
     			itAction = new SimpleStringProperty(act.toString());

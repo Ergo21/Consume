@@ -117,8 +117,7 @@ public class GameScene extends Group {
 			String icoNam = tVal.substring(0, tVal.indexOf(')'));
 			tVal = tVal.substring(tVal.indexOf('"') + 1, tVal.lastIndexOf('"'));
 			String lin = tVal.trim();
-
-			if(val.indexOf("*") != -1 && val.indexOf("*", val.indexOf("*")+1) != -1) { 
+			if(val.indexOf("*") != -1 && val.indexOf("*", val.indexOf("*")+1) != -1 && val.indexOf("*") < val.indexOf('"')) { 
 				String command = val.substring(val.indexOf("*")+1, val.indexOf("*", val.indexOf("*")+1)).toLowerCase();
 				script.add(new SceneLine(nam, getIconFile(icoNam), lin, getRunnable(command)));
 			}
@@ -179,7 +178,7 @@ public class GameScene extends Group {
 			tVal = tVal.substring(tVal.indexOf('"') + 1, tVal.lastIndexOf('"'));
 			String lin = tVal.trim();
 			
-			if(val.indexOf("*") != -1 && val.indexOf("*", val.indexOf("*")+1) != -1) { 
+			if(val.indexOf("*") != -1 && val.indexOf("*", val.indexOf("*")+1) != -1 && val.indexOf("*") < val.indexOf('"')	) { 
 				String command = val.substring(val.indexOf("*")+1, val.indexOf("*", val.indexOf("*")+1)).toLowerCase();
 				script.add(new SceneLine(nam, getIconFile(icoNam), lin, getRunnable(command)));
 			}
@@ -309,6 +308,19 @@ public class GameScene extends Group {
 					this.fireEvent(new MenuEvent(MenuEvent.RESUME));
 				};
 			}
+		}
+		else if(method.contains("consume")){
+			return ()->{
+				Point2D p;
+				if(!app.getSceneManager().getEntities(Types.Type.BOSS_SPAWNER).isEmpty()){
+					p = app.getSceneManager().getEntities(Types.Type.BOSS_SPAWNER).get(0).getPosition();
+				}
+				else{
+					p = new Point2D(0,0);
+				}
+				app.player.setProperty("consumed", true);
+				app.fillWithFire(p);
+			};
 		}
 		
 		return ()->{};

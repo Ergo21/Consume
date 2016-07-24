@@ -96,8 +96,14 @@ public class ConsumeController {
 		allActions.put(Actions.INTERACT, new UserAction("Interact") {
 			@Override
 			protected void onActionBegin() {
+				if(consApp.introPlaying){
+					return;
+				}
+				
 				if (consApp.gScene.isVisible()) {
-					consApp.gScene.updateScript();
+					if(consApp.player.getProperty("consumed") == null || !(boolean) consApp.player.getProperty("consumed")){
+						consApp.gScene.updateScript();
+					}
 				}
 				else if(consApp.player != null && consApp.player.getProperty("inDoor") != null && (boolean) consApp.player.getProperty("inDoor")){
 					consApp.player.getControl(PhysicsControl.class).moveX(0);
@@ -130,6 +136,10 @@ public class ConsumeController {
 		allActions.put(Actions.LEFT, new UserAction("Left") {
 			@Override
 			protected void onAction() {
+				if(consApp.introPlaying){
+					return;
+				}
+				
 				if (consApp.player != null && consApp.player.getProperty("stunned") != null && !(boolean) consApp.player.getProperty("stunned") &&
 												consApp.player.getProperty("eating") != null && !(boolean) consApp.player.getProperty("eating") &&
 												consApp.player.getProperty("scenePlaying") != null && !(boolean) consApp.player.getProperty("scenePlaying")) {
@@ -142,6 +152,10 @@ public class ConsumeController {
 
 			@Override
 			protected void onActionEnd() {
+				if(consApp.introPlaying){
+					return;
+				}
+				
 				if (consApp.player != null && consApp.player.getProperty("stunned") != null && !(boolean) consApp.player.getProperty("stunned") &&
 						consApp.player.getProperty("eating") != null && !(boolean) consApp.player.getProperty("eating") &&
 						consApp.player.getProperty("scenePlaying") != null && !(boolean) consApp.player.getProperty("scenePlaying")) {
@@ -152,6 +166,10 @@ public class ConsumeController {
 		allActions.put(Actions.RIGHT, new UserAction("Move Right") {
 			@Override
 			protected void onAction() {
+				if(consApp.introPlaying){
+					return;
+				}
+				
 				if (consApp.player != null && consApp.player.getProperty("stunned") != null &&  !(boolean) consApp.player.getProperty("stunned") &&
 						consApp.player.getProperty("eating") != null && !(boolean) consApp.player.getProperty("eating") &&
 						consApp.player.getProperty("scenePlaying") != null && !(boolean) consApp.player.getProperty("scenePlaying")) {
@@ -164,6 +182,10 @@ public class ConsumeController {
 
 			@Override
 			protected void onActionEnd() {
+				if(consApp.introPlaying){
+					return;
+				}
+				
 				if (consApp.player != null && consApp.player.getProperty("stunned") != null && !(boolean) consApp.player.getProperty("stunned") &&
 						consApp.player.getProperty("eating") != null && !(boolean) consApp.player.getProperty("eating") && 
 								consApp.player.getProperty("scenePlaying") != null && !(boolean) consApp.player.getProperty("scenePlaying")){
@@ -174,6 +196,10 @@ public class ConsumeController {
 		allActions.put(Actions.UP, new UserAction("Up") {
 			@Override
 			protected void onAction() {
+				if(consApp.introPlaying){
+					return;
+				}
+				
 				if (consApp.player != null && consApp.player.getProperty("stunned") != null && !(boolean) consApp.player.getProperty("stunned") &&
 						consApp.player.getProperty("eating") != null && !(boolean) consApp.player.getProperty("eating") && 
 								consApp.player.getProperty("scenePlaying") != null && !(boolean) consApp.player.getProperty("scenePlaying")){
@@ -195,6 +221,10 @@ public class ConsumeController {
 			
 			@Override
 			protected void onActionEnd() {
+				if(consApp.introPlaying){
+					return;
+				}
+				
 				if (consApp.player != null && consApp.player.getProperty("stunned") != null && !(boolean) consApp.player.getProperty("stunned") &&
 						consApp.player.getProperty("eating") != null && !(boolean) consApp.player.getProperty("eating") && 
 								consApp.player.getProperty("scenePlaying") != null && !(boolean) consApp.player.getProperty("scenePlaying")){
@@ -208,6 +238,10 @@ public class ConsumeController {
 		allActions.put(Actions.JUMP, new UserAction("Jump / Climb Up") {
 			@Override
 			protected void onAction() {
+				if(consApp.introPlaying){
+					return;
+				}
+				
 				if (consApp.player != null && consApp.player.getProperty("stunned") != null && !(boolean) consApp.player.getProperty("stunned") &&
 						consApp.player.getProperty("eating") != null && !(boolean) consApp.player.getProperty("eating") && 
 								consApp.player.getProperty("scenePlaying") != null && !(boolean) consApp.player.getProperty("scenePlaying")){
@@ -226,6 +260,10 @@ public class ConsumeController {
 		allActions.put(Actions.DOWN, new UserAction("Down") {
 			@Override
 			protected void onAction() {
+				if(consApp.introPlaying){
+					return;
+				}
+				
 				if (consApp.player != null && consApp.player.getProperty("stunned") != null && !(boolean) consApp.player.getProperty("stunned") &&
 						consApp.player.getProperty("eating") != null && !(boolean) consApp.player.getProperty("eating") && 
 								consApp.player.getProperty("scenePlaying") != null && !(boolean) consApp.player.getProperty("scenePlaying")) {
@@ -248,6 +286,10 @@ public class ConsumeController {
 			
 			@Override
 			protected void onActionEnd() {
+				if(consApp.introPlaying){
+					return;
+				}
+				
 				if (consApp.player != null && consApp.player.getProperty("stunned") != null && !(boolean) consApp.player.getProperty("stunned") &&
 						consApp.player.getProperty("eating") != null && !(boolean) consApp.player.getProperty("eating") && 
 								consApp.player.getProperty("scenePlaying") != null && !(boolean) consApp.player.getProperty("scenePlaying")){
@@ -264,6 +306,10 @@ public class ConsumeController {
 			private boolean tempFired = false;
 			@Override
 			protected void onActionBegin() {
+				if(consApp.introPlaying){
+					return;
+				}
+				
 				if (consApp.player != null && consApp.player.getProperty("stunned") != null && !(boolean) consApp.player.getProperty("stunned") &&
 						consApp.player.getProperty("eating") != null && !(boolean) consApp.player.getProperty("eating") && 
 						consApp.player.getProperty("climb") != null  && !(boolean) consApp.player.getProperty("climb") &&
@@ -282,6 +328,10 @@ public class ConsumeController {
 			
 			@Override
 			protected void onAction(){
+				if(consApp.introPlaying){
+					return;
+				}
+				
 				if(aiming && consApp.playerData.getCurrentPower() == Element.NEUTRAL){
 					held++;
 					if(held > 10 && !tempFired){
@@ -293,6 +343,10 @@ public class ConsumeController {
 			
 			@Override
 			protected void onActionEnd(){
+				if(consApp.introPlaying){
+					return;
+				}
+				
 				if(aiming && consApp.playerData.getCurrentPower() == Element.NEUTRAL && !tempFired){
 					shootProjectile(false);
 				}
@@ -303,6 +357,10 @@ public class ConsumeController {
 		allActions.put(Actions.CHPOWP, new UserAction("Change Power +") {
 			@Override
 			protected void onActionBegin() {
+				if(consApp.introPlaying){
+					return;
+				}
+				
 				if (consApp.player != null && consApp.player.getProperty("stunned") != null && !(boolean) consApp.player.getProperty("stunned") &&
 						consApp.player.getProperty("eating") != null && !(boolean) consApp.player.getProperty("eating") && 
 								consApp.player.getProperty("scenePlaying") != null && !(boolean) consApp.player.getProperty("scenePlaying")) {
@@ -313,6 +371,10 @@ public class ConsumeController {
 		allActions.put(Actions.CHPOWN, new UserAction("Change Power -") {
 			@Override
 			protected void onActionBegin() {
+				if(consApp.introPlaying){
+					return;
+				}
+				
 				if (consApp.player != null && consApp.player.getProperty("stunned") != null && !(boolean) consApp.player.getProperty("stunned") &&
 						consApp.player.getProperty("eating") != null && !(boolean) consApp.player.getProperty("eating") && 
 								consApp.player.getProperty("scenePlaying") != null && !(boolean) consApp.player.getProperty("scenePlaying")) {

@@ -1,0 +1,8 @@
+Name="Eshu"
+Health="45"
+Mana="10"
+ManaR="1"
+Element="CONSUME"
+Resists=""
+Weak=""
+Spritesheet=""

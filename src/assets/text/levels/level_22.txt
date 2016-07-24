@@ -1,22 +1,16 @@
-i                      d               u    i0
-i iiiii                dU              i    i0
-i i ii                 di                   i0
-i                      i         i          i0
-i                                           i0 
-i 1                        i                i0 
-iiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii       i0
-i   d       p                               i0
-i v d       p   T t T t T t T t             i0
-iiiiiiiiiiiipiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii0
-i  p        pi0
-i  p        pi0
-i  p        pi0
-i ipiiii  iiii0
-i  p       p i0
-i  p       p i0
-i  p       p i0
-i iii  iiiipii0
-i       d  p i0
-i       d  p i0
-i 2     d  p i0
-iiiiiiiiiiiiii0
+i3                                                                    i0
+i                                                                     i0
+i                                                                     i0
+i                                                                    ii0
+i                            Ss                                      ii0
+i                    pIIIIIIIIIII                                    ii0
+i                    piiiiiiiiiii              S                     ii0
+i 1                t piiiiiiiiiii            tII            s   Stsq ii0
+iiiiIIIIIIIIIIIIIIIIIpiiiiiiiiiiipIIIIIIIIIIIIiiIIIIIIIIIIIIIIIIIIIIIii0
+iiiiiiiiiiiiiiiiiiiiip           piiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii0
+iiiiiiiiiiiiiiiiiiiiip       t   piiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii0
+iiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii0
+iiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii0
+iiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii0
+iiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii0  
+iiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii3i0

@@ -70,7 +70,7 @@ public class PlayerPowerupHandler extends CollisionHandler {
 		case RESTORE_HEALTH_50:
 			playerData.restoreHealth(0.5);
 			break;
-		case NEUTRAL2:
+		case NEUTRAL:
 			if(!playerData.getPowers().contains(Element.NEUTRAL2)){
 				playerData.getPowers().add(Element.NEUTRAL2);
 			}
@@ -150,8 +150,10 @@ public class PlayerPowerupHandler extends CollisionHandler {
 			tLNo = playerData.getCurrentLevel();
 			tLNo /= 3;
 			consApp.levelMenu.setLevelComplete(tLNo);
+			playerData.setCurrentLevel(playerData.getCurrentLevel()+1);
+			consApp.sSettings.setNewGamePlusUnlocked(true);
 			
-			consApp.showLevelScreen();
+			consApp.changeLevel();
 			break;
 		default:
 			log.info("Picked up an unknown powerup: " + type);

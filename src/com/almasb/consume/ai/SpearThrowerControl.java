@@ -3,6 +3,7 @@ package com.almasb.consume.ai;
 import com.almasb.consume.Config;
 import com.almasb.consume.Event;
 import com.almasb.consume.Config.Speed;
+import com.almasb.consume.ConsumeApp;
 import com.almasb.fxgl.entity.AbstractControl;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.FXGLEvent;
@@ -10,16 +11,22 @@ import com.almasb.fxgl.time.TimerManager;
 
 public class SpearThrowerControl extends AbstractControl {
 
+	private ConsumeApp consApp;
 	private Entity target;
 	private int vel;
 	private long whenThrown;
 	private boolean spearThrown;
+	private boolean passive;
+	private boolean sceneStarted;
 	
-	public SpearThrowerControl(Entity target) {
+	public SpearThrowerControl(ConsumeApp cA, Entity target, boolean pass) {
+		this.consApp = cA;
 		this.target = target;
 		vel = -Speed.PLAYER_MOVE;
 		whenThrown = 0;
 		spearThrown = false;
+		passive = pass;
+		sceneStarted = false;
 	}
 
 	private int frames = 10;
@@ -33,6 +40,19 @@ public class SpearThrowerControl extends AbstractControl {
 	}
 	
 	public void actualUpdate(Entity entity, long now) {
+		if(passive){
+			if(sceneStarted){
+				if(!(boolean) consApp.player.getProperty("scenePlaying")){
+					passive = false;
+				}
+			}
+			else{
+				sceneStarted = (boolean) consApp.player.getProperty("scenePlaying");
+			}
+			return;
+		}
+		
+		
 		if (isTargetInRange() && !spearThrown) {
 			spearThrown = true;
 			whenThrown = now;

@@ -12,7 +12,8 @@ public class ChargeControl extends AbstractControl {
 
 	private Entity target;
 	private int vel = 0;
-	private long firstTimeSaw = -1; // Stores when the enemy first sees the player
+	private boolean seenPlayer = false; // Stores when the enemy first sees the player
+	private long startAttack = -1;
 	private long decelerate = -1;
 
 	public ChargeControl(Entity target) {
@@ -35,14 +36,13 @@ public class ChargeControl extends AbstractControl {
 	}
 	
 	public void actualUpdate(Entity entity, long now) {
-		if(isTargetInRange()){
-			if (firstTimeSaw == -1) {
-				firstTimeSaw = now;
-				entity.fireFXGLEvent(new FXGLEvent(Event.ENEMY_SAW_PLAYER));
-			} 
+		if(!seenPlayer && isTargetInRange()){
+			seenPlayer = true;
 		}
-		else{
-			firstTimeSaw = -1;
+		
+		if(seenPlayer && startAttack == -1){
+			entity.fireFXGLEvent(new FXGLEvent(Event.ENEMY_SAW_PLAYER));
+			startAttack = now;
 		}
 		
 		vel = (int)entity.getControl(PhysicsControl.class).getVelocity().getX();
@@ -57,7 +57,8 @@ public class ChargeControl extends AbstractControl {
 				vel += Speed.ENEMY_SEEK_DECEL;
 				entity.getControl(PhysicsControl.class).moveX(vel);
 				if(vel >= 0){
-					firstTimeSaw = -1;
+					startAttack = -1;
+					decelerate = -1;
 				}
 			}
 		}
@@ -70,11 +71,12 @@ public class ChargeControl extends AbstractControl {
 				vel -= Speed.ENEMY_SEEK_DECEL;
 				entity.getControl(PhysicsControl.class).moveX(vel);
 				if(vel <= 0){
-					firstTimeSaw = -1;
+					startAttack = -1;
+					decelerate = -1;
 				}
 			}
 		}
-		else if(firstTimeSaw != -1 && now - firstTimeSaw >= TimerManager.toNanos(Config.ENEMY_CHARGE_DELAY)){
+		else if(startAttack != -1 && now - startAttack >= TimerManager.toNanos(Config.ENEMY_CHARGE_DELAY)){
 			decelerate = - 1;
 			vel += right ? Speed.ENEMY_SEEK_ACCEL : -Speed.ENEMY_SEEK_ACCEL;
 
@@ -88,7 +90,7 @@ public class ChargeControl extends AbstractControl {
 	}
 
 	private boolean isTargetInRange() {
-		return target.getPosition().distance(entity.getPosition()) <= Config.ENEMY_CHARGE_RANGE;
+		return target.getPosition().distance(entity.getPosition()) <= Config.ENEMY_CHARGE_RANGE + Config.BLOCK_SIZE;
 	}
 
 	public int getVelocity() {

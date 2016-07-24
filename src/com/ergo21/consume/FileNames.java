@@ -62,6 +62,8 @@ public final class FileNames{
 	public static final String CANNON_SHOT		= "12 Cannon.mp3";
 	public static final String FLUTE_TUNE		= "13 Flute.mp3";
 	public static final String STONE_THROW		= "14 Stone Throw.mp3";
+	public static final String ELEPHANT_TRUMPET = "16 Elephant Trumpet.mp3";
+	public static final String DOG_BARK			= "17 Dog Bark.mp3";
 	public static final String KEYBOARD_TYPE	= "15 Keyboard.mp3";
 	
 	public static final String EATING			= "06 Eating.mp3";
@@ -180,4 +182,11 @@ public final class FileNames{
 	public static final String STATS_RIFLER			= "enemies/Rifler.txt";
 	public static final String STATS_GENTLEMAN		= "enemies/Gentleman.txt";
 	
+	public static final String STATS_ZULU_KNIFE		= "enemies/Zulu(Knife).txt";
+	public static final String STATS_ZULU_SHIELD	= "enemies/Zulu(Shield).txt";
+	public static final String STATS_ZULU_SPEAR		= "enemies/Zulu(Spear).txt";
+	public static final String STATS_SHAKA			= "enemies/Shaka.txt";
+	
+	public static final String STATS_MAGICIAN		= "enemies/Bandit(Magician).txt";
+	public static final String STATS_ESHU			= "enemies/Eshu.txt";
 }

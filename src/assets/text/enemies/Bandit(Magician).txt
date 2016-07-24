@@ -1,0 +1,8 @@
+Name="Bandit (Magician)"
+Health="6"
+Mana="10"
+ManaR="1"
+Element="FIRE"
+Resists="FIRE"
+Weak="EARTH"
+Spritesheet=""

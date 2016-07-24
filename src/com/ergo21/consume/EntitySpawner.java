@@ -94,7 +94,7 @@ public class EntitySpawner {
 
 		enemy.setGraphics(rect);
 		enemy.setCollidable(true);
-		enemy.setProperty(Property.DATA, new Enemy(consApp.assets.getText(FileNames.STATS_DEFAULT))); //TODO: Replace
+		enemy.setProperty(Property.DATA, new Enemy(consApp.assets.getText(FileNames.STATS_ZULU_SHIELD)));
 		enemy.setProperty("physics", consApp.physics);
 		enemy.setProperty("shover", true);
 		enemy.setPosition(spawnPoint.getX(), spawnPoint.getY());
@@ -104,8 +104,12 @@ public class EntitySpawner {
 		enemy.addFXGLEventHandler(Event.ENEMY_SAW_PLAYER, event -> {
 			Entity tesEnemy = event.getTarget();
 
-			Entity e = Entity.noType().setGraphics(new Text("!"));
-			e.setPosition(tesEnemy.getTranslateX(), tesEnemy.getTranslateY());
+			Text tex = new Text("!");
+			tex.setFont(Font.font("Verdana", 30));
+			tex.setFill(Color.RED);
+			tex.setStroke(Color.BLACK);
+			Entity e = Entity.noType().setGraphics(tex);
+			e.setPosition(tesEnemy.getTranslateX() + (tesEnemy.getWidth() - tex.getLayoutBounds().getWidth())/2, tesEnemy.getTranslateY() - 5);
 			consApp.getSceneManager().addEntities(e);
 			consApp.getTimerManager().runOnceAfter(() -> {
 				consApp.getSceneManager().removeEntity(e);
@@ -383,7 +387,7 @@ public class EntitySpawner {
 		enemy.setProperty("facingRight", true);
 		enemy.setPosition(spawnPoint.getX(), spawnPoint.getY());
 		enemy.addControl(new PhysicsControl(consApp.physics));
-		enemy.addControl(new SpearThrowerControl(consApp.player));
+		enemy.addControl(new SpearThrowerControl(consApp, consApp.player, false));
 		enemy.addFXGLEventHandler(Event.DEATH, this::onEnemyDeath);
 		enemy.addFXGLEventHandler(Event.ENEMY_FIRED, event -> {
 			consApp.consController.enemyShootProjectile(Element.NEUTRAL, enemy);
@@ -436,19 +440,19 @@ public class EntitySpawner {
 		return new Pair<Entity, Entity>(enemy, ePic);
 	}
 	
-	public Pair<Entity, Entity> spawnZSpearEnemy(Point2D spawnPoint){
+	public Pair<Entity, Entity> spawnZSpearEnemy(Point2D spawnPoint, boolean pass){
 		Entity enemy = new Entity(Type.ENEMY);
 		Rectangle rect = new Rectangle(20, 30);
 		rect.setFill(Color.RED);
 
 		enemy.setGraphics(rect);
 		enemy.setCollidable(true);
-		enemy.setProperty(Property.DATA, new Enemy(consApp.assets.getText(FileNames.STATS_DEFAULT))); //TODO: Replace
+		enemy.setProperty(Property.DATA, new Enemy(consApp.assets.getText(FileNames.STATS_ZULU_SPEAR))); 
 		enemy.setProperty("physics", consApp.physics);
-		enemy.setProperty("facingRight", true);
+		enemy.setProperty("facingRight", false);
 		enemy.setPosition(spawnPoint.getX(), spawnPoint.getY());
 		enemy.addControl(new PhysicsControl(consApp.physics));
-		enemy.addControl(new SpearThrowerControl(consApp.player));
+		enemy.addControl(new SpearThrowerControl(consApp, consApp.player, pass));
 		enemy.addFXGLEventHandler(Event.DEATH, this::onEnemyDeath);
 		enemy.addFXGLEventHandler(Event.ENEMY_FIRED, event -> {
 			consApp.consController.enemyShootProjectile(Element.NEUTRAL, enemy);
@@ -847,7 +851,7 @@ public class EntitySpawner {
 				consApp.getSceneManager().removeEntity(e);
 			} , Config.ENEMY_CHARGE_DELAY);
 			
-			//TODO BARK!!!
+			consApp.soundManager.playSFX(FileNames.DOG_BARK);
 		});
 		
 		enemy.setVisible(false);
@@ -1203,7 +1207,7 @@ public class EntitySpawner {
 		enemy.setGraphics(rect);
 		enemy.setCollidable(true);
 		enemy.setVisible(false);
-		enemy.setProperty(Property.DATA, new Enemy(consApp.assets.getText(FileNames.STATS_DEFAULT))); //TODO: Replace
+		enemy.setProperty(Property.DATA, new Enemy(consApp.assets.getText(FileNames.STATS_ZULU_KNIFE))); 
 		enemy.setProperty("physics", consApp.physics);
 		enemy.setProperty("facingRight", true);
 		enemy.setProperty("jumping", false);
@@ -1264,7 +1268,7 @@ public class EntitySpawner {
 		enemy.setGraphics(rect);
 		enemy.setCollidable(true);
 		enemy.setVisible(false);
-		enemy.setProperty(Property.DATA, new Enemy(consApp.assets.getText(FileNames.STATS_DEFAULT))); //TODO: Replace
+		enemy.setProperty(Property.DATA, new Enemy(consApp.assets.getText(FileNames.STATS_MAGICIAN))); 
 		enemy.setProperty("physics", consApp.physics);
 		enemy.setProperty("facingRight", false);
 		enemy.setProperty("jumping", false);
@@ -1366,6 +1370,7 @@ public class EntitySpawner {
 		enemy.addFXGLEventHandler(Event.ENEMY_FIRED, event -> {
 			consApp.getTimerManager().runOnceAfter(() -> {
 				if(enemy != null && enemy.getControl(SandBossControl.class) != null){
+					consApp.soundManager.playSFX(FileNames.ELEPHANT_TRUMPET);
 					if(enemy.getControl(SandBossControl.class).isUnderground()){
 						consApp.consController.enemyCreatePillar(enemy, consApp.player, spawnPoint.getY() + Config.BLOCK_SIZE);
 					}
@@ -1768,7 +1773,7 @@ public class EntitySpawner {
 		enemy.setGraphics(rect);
 		enemy.setVisible(false);
 		enemy.setCollidable(true);
-		enemy.setProperty(Property.DATA, new Enemy(consApp.assets.getText(FileNames.STATS_DEFAULT))); //TODO: Replace
+		enemy.setProperty(Property.DATA, new Enemy(consApp.assets.getText(FileNames.STATS_GENTLEMAN)));
 		enemy.setProperty(Property.SUB_TYPE, Type.BOSS);
 		enemy.setProperty("physics", consApp.physics);
 		enemy.setProperty("shover", true);
@@ -1931,7 +1936,7 @@ public class EntitySpawner {
 		enemy.setGraphics(rect);
 		enemy.setVisible(false);
 		enemy.setCollidable(true);
-		enemy.setProperty(Property.DATA, new Enemy(consApp.assets.getText(FileNames.STATS_DEFAULT))); //TODO: Replace
+		enemy.setProperty(Property.DATA, new Enemy(consApp.assets.getText(FileNames.STATS_SHAKA))); 
 		enemy.setProperty(Property.SUB_TYPE, Type.BOSS);
 		enemy.setProperty("physics", consApp.physics);
 		enemy.setProperty("shover", true);
@@ -2039,11 +2044,11 @@ public class EntitySpawner {
 		enemy.setGraphics(rect);
 		enemy.setVisible(false);
 		enemy.setCollidable(true);
-		enemy.setProperty(Property.DATA, new Enemy(consApp.assets.getText(FileNames.STATS_DEFAULT))); //TODO: Replace
+		enemy.setProperty(Property.DATA, new Enemy(consApp.assets.getText(FileNames.STATS_ESHU))); 
 		enemy.setProperty(Property.SUB_TYPE, Type.BOSS);
 		enemy.setProperty("physics", consApp.physics);
 		enemy.setProperty("shover", true);
-		enemy.setProperty("facingRight", false);
+		enemy.setProperty("facingRight", true);
 		enemy.setPosition(spawnPoint.getX(), spawnPoint.getY());
 		enemy.addControl(new PhysicsControl(consApp.physics));
 		enemy.addControl(new EshuControl(consApp, consApp.player));
@@ -2239,6 +2244,7 @@ public class EntitySpawner {
 			Entity e = new Entity(Type.POWERUP);
 			if(enemy.getProperty(Property.SUB_TYPE) == Type.BOSS){
 				Enemy ed = enemy.getProperty(Property.DATA);
+						
 				e.setProperty(Property.SUB_TYPE, getPowerup(ed.curElement.getValue()));
 			}
 			else{

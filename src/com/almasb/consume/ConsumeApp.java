@@ -33,6 +33,7 @@ import com.almasb.fxgl.asset.SaveLoadManager;
 import com.almasb.fxgl.asset.Texture;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.FXGLEvent;
+import com.almasb.fxgl.event.MenuEvent;
 import com.almasb.fxgl.event.UserAction;
 import com.almasb.fxgl.physics.CollisionHandler;
 import com.almasb.fxgl.physics.PhysicsManager;
@@ -40,9 +41,11 @@ import com.almasb.fxgl.settings.GameSettings;
 import com.almasb.fxgl.time.TimerManager;
 import com.almasb.fxgl.ui.FXGLMenu;
 import com.almasb.fxgl.ui.FXGLMenuFactory;
+import com.almasb.fxgl.ui.Intro;
 import com.almasb.fxgl.ui.UIFactory;
 import com.ergo21.consume.ConsumeController;
 import com.ergo21.consume.ConsumeGameMenu;
+import com.ergo21.consume.ConsumeIntro;
 import com.ergo21.consume.ConsumeMainMenu;
 import com.ergo21.consume.EntitySpawner;
 import com.ergo21.consume.FileNames;
@@ -57,6 +60,7 @@ import com.ergo21.consume.SoundManager;
 
 import javafx.animation.FadeTransition;
 import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -117,15 +121,17 @@ public class ConsumeApp extends GameApplication {
 	
 	private Pair<Point2D, Point2D> limits; //First is upper left limit, second bottom right limit
 	public PlayerBlockHandler plBlHandler;
+	
+	public boolean introPlaying;
 
 	@Override
 	protected void initSettings(GameSettings settings) {
 		settings.setTitle("Consume");
-		settings.setVersion("Alpha");
+		settings.setVersion("Beta");
 		settings.setWidth(640);
 		settings.setHeight(360);
 		settings.setFullScreen(false);
-		settings.setIntroEnabled(false);
+		settings.setIntroEnabled(true);
 		settings.setMenuEnabled(true);
 		settings.setIconFileName("app_icon.png");
 		settings.setShowFPS(false);
@@ -151,6 +157,12 @@ public class ConsumeApp extends GameApplication {
 		backVol = new SimpleDoubleProperty(sSettings.getBackMusicVolume());
 		sfxVol = new SimpleDoubleProperty(sSettings.getSFXVolume());
 	}
+	
+	@Override
+	protected Intro initIntroVideo() {
+		introPlaying = true;
+        return new ConsumeIntro(this, getWidth(), getHeight());
+    }
 
 	@Override
 	protected void initAssets() throws Exception {
@@ -314,8 +326,8 @@ public class ConsumeApp extends GameApplication {
         	}
         });
 		firstPlay = false;
-        
-		getSceneManager().addUINodes(gScene, hud, performance, levelMenu, fadeScreen);
+		Vignette vignette = new Vignette(640, 360, 720);
+		getSceneManager().addUINodes(vignette, gScene, hud, performance, levelMenu, fadeScreen);
 		levelMenu.setVisible(false);
         hud.CurHealthProperty().bind(playerData.CurrentHealthProperty());
         hud.CurManaProperty().bind(playerData.CurrentManaProperty());
@@ -488,7 +500,7 @@ public class ConsumeApp extends GameApplication {
 				getInputManager().addAction(new UserAction("Spawn Zulu Spear Thrower"){
 					@Override
 					protected void onActionBegin() {
-						Pair<Entity, Entity> pEn = eSpawner.spawnZSpearEnemy(spawnPoint.add(500, -100));
+						Pair<Entity, Entity> pEn = eSpawner.spawnZSpearEnemy(spawnPoint.add(500, -100), false);
 						getSceneManager().addEntities(pEn.getKey(), pEn.getValue());
 					}
 				}, KeyCode.NUMPAD0);
@@ -896,7 +908,7 @@ public class ConsumeApp extends GameApplication {
 		player.setPosition(point.getX(), point.getY()).setCollidable(true)
 				.setProperty(Property.DATA, playerData).setProperty("climb", false).setProperty("climbing", false)
 				.setProperty("facingRight", true).setProperty("stunned", false).setProperty("eating", false).setProperty("eaten",  false)
-				.setProperty("scenePlaying", false).setProperty("attacking", false)
+				.setProperty("scenePlaying", false).setProperty("attacking", false).setProperty("consumed", false)
 				.addControl(new PhysicsControl(physics));
 		
 		Rectangle rG = new Rectangle(0, 0, 16, 30);
@@ -1217,6 +1229,49 @@ public class ConsumeApp extends GameApplication {
 		return new Random();
 	}
 
+	public void fillWithFire(Point2D start) {
+		ArrayList<Entity> flames = new ArrayList<>();
+		for(int i = 0; i < 10; i++){
+			for(int j = 0; j < 2; j++){
+				Texture t = getTexture(FileNames.FIREBALL_PROJ);
+				t.setScaleY(-1);
+				t.setPreserveRatio(true);
+				t.setFitWidth(Config.BLOCK_SIZE*2);
+				t.setTranslateY(-Config.BLOCK_SIZE*1.5);
+				Entity e = new Entity(Type.PROP);
+				e.setPosition(start.getX() + Config.BLOCK_SIZE*i*2, start.getY() - Config.BLOCK_SIZE*j*3);
+				e.setGraphics(t);
+				flames.add(e);
+			}
+		}
+		
+		SimpleBooleanProperty tRun = new SimpleBooleanProperty(true);
+		getTimerManager().runAtIntervalWhile(()->{
+			getSceneManager().addEntities(flames.remove(0));
+			soundManager.playSFX(FileNames.FIRE_TRAP);
+			tRun.set(!flames.isEmpty());
+		}, Duration.seconds(0.4), tRun);
+		fOutComMet = () -> {
+				indiLoop.stop();
+				soundManager.stopAll();
+				soundManager.setBackgroundMusic(FileNames.THEME_MUSIC);
+	        	soundManager.getBackgroundMusic().setCycleCount(Integer.MAX_VALUE);
+	        	resetWorld();
+
+	        	consGameMenu.itemExit.fireEvent(new MenuEvent(MenuEvent.EXIT));
+	        	soundManager.playBackgroundMusic();
+		};
+		
+		tRun.addListener(new ChangeListener<Boolean>(){
+			@Override
+			public void changed(ObservableValue<? extends Boolean> arg0, Boolean arg1, Boolean arg2) {
+				if(!arg2){
+					fadeOut.play();
+				}
+			}
+		});
+	}
+	
 	public static void main(String[] args) {
 		launch(args);
 	}
