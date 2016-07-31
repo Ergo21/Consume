@@ -55,7 +55,7 @@ public final class Config {
 	public static final int FIREBALL_COST = 3;
 	public static final int FIREBALL_DAMAGE = 4;
 
-	public static final int SAND_COST = 5;
+	public static final int SAND_COST = 4;
 	public static final int SAND_DAMAGE = 3;
 	public static final Duration SAND_DELAY = Duration.seconds(0.5);
 	public static final Duration SAND_DECAY = Duration.seconds(2);

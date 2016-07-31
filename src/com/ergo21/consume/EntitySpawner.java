@@ -1370,8 +1370,8 @@ public class EntitySpawner {
 		enemy.addFXGLEventHandler(Event.ENEMY_FIRED, event -> {
 			consApp.getTimerManager().runOnceAfter(() -> {
 				if(enemy != null && enemy.getControl(SandBossControl.class) != null){
-					consApp.soundManager.playSFX(FileNames.ELEPHANT_TRUMPET);
 					if(enemy.getControl(SandBossControl.class).isUnderground()){
+					    consApp.soundManager.playSFX(FileNames.ELEPHANT_TRUMPET);
 						consApp.consController.enemyCreatePillar(enemy, consApp.player, spawnPoint.getY() + Config.BLOCK_SIZE);
 					}
 					else{

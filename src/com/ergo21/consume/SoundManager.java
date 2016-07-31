@@ -14,6 +14,9 @@ public class SoundManager {
 	}
 
 	public void setBackgroundMusic(String name){
+	    if(backgroundMusic != null){
+	        app.getAudioManager().stopMusic(backgroundMusic);
+	    }
 		backgroundMusic = app.assets.getMusic(name);
 		backPaused = false;
 	}

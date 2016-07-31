@@ -129,7 +129,7 @@ public final class ConsumeGameMenu extends FXGLMenu {
 			contentViewer.getChildren().add(createContentLoadConsume());
 		});*/
 
-		MenuItem itemOptions = new MenuItem("OPTIONS");
+		MenuItem itemOptions = new MenuItem("Options");
 		itemOptions.setAction(() -> {
 			contentViewer.getChildren().clear();
 			contentViewer.getChildren().add(createOptionsMenuConsume());

@@ -49,11 +49,16 @@ public class LevelMenu extends Group{
 			MenuItem but = new MenuItem(getButtonIcon(i));
 			int lev = (i+1)*3;
 			but.setAction(() -> {
-				consApp.soundManager.stopAll();
 				consApp.playerData.setCurrentLevel(lev);
 				consApp.playerData.setCurrentHealth(consApp.playerData.getMaxHealth());
 				consApp.playerData.setCurrentMana(consApp.playerData.getMaxMana());
-				consApp.soundManager.setBackgroundMusic(consApp.getBackgroundMusic());
+				try {
+                    consApp.assets = consApp.getZoneAssets(consApp.playerData.getCurrentLevel());
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+				consApp.soundManager.stopAll();
+				consApp.soundManager.setBackgroundMusic(consApp.getBackgroundMusic(consApp.playerData.getCurrentLevel()));
 				consApp.soundManager.getBackgroundMusic().setCycleCount(Integer.MAX_VALUE);
 				consApp.changeLevel();
 				consApp.soundManager.playBackgroundMusic();

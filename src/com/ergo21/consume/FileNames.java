@@ -4,9 +4,11 @@ public final class FileNames{
 	public static final String SETTINGS 		= "settings.set";
 	
 	public static final String THEME_MUSIC		= "01 Consume Theme.mp3";
-	public static final String AFRICA 			= "backgrounds/afrika.jpg";
+	public static final String AFRICA 			= "backgrounds/africa.jpg";
 	public static final String EMPTY			= "empty.png";
 	public static final String PLAYER_ICON		= "icons/player icon.png";
+    public static final String PLAYER_DIR       = "spritesheets/player/Player SS.png";
+    public static final String PLAYER_STATS     = "player.txt";
 	
 	public static final String UBACK_DIRT		= "backgrounds/underground dirt.jpg";
 	public static final String UBACK_SAND		= "backgrounds/underground sand.jpg";
@@ -125,7 +127,11 @@ public final class FileNames{
 	public static final String MOTHER_LYING 	= "statics/mother_lying.png";
 	public static final String MOTHER_STAND 	= "statics/mother_standing.png";
 	
+	public static final String SPEAR_PROJECTILE = "projectiles/Spear SS.png";
+	public static final String ANKH_PROJECTILE  = "projectiles/Ankh.png";
+    public static final String COAL_PROJECTILE  = "projectiles/Coal SS.png";
 	public static final String FIREBALL_PROJ	= "projectiles/fireball.png";
+	public static final String SAND_PROJECTILE  = "projectiles/Sand SS.png";
 	public static final String STONE_PROJ		= "projectiles/stone.png";
 	
 	public static final String ANUBIS_DIR		= "spritesheets/anubis";
@@ -189,4 +195,5 @@ public final class FileNames{
 	
 	public static final String STATS_MAGICIAN		= "enemies/Bandit(Magician).txt";
 	public static final String STATS_ESHU			= "enemies/Eshu.txt";
+
 }

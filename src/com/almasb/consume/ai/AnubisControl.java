@@ -166,7 +166,7 @@ public class AnubisControl extends AbstractControl {
 					cycle++;
 				}
 				else if(!(boolean)entity.getProperty("jumping") && cycle == 1){ //Jump to opposite side
-					int spd = calculateJumpSpeed(entity.getPosition(), startPos.subtract(Config.BLOCK_SIZE*7, 0));
+					int spd = calculateJumpSpeed(entity.getPosition(), startPos.subtract(Config.BLOCK_SIZE*11, 0));
 					entity.getControl(PhysicsControl.class).moveX(spd);
 					entity.setProperty("facingRight", spd >= 0);
 					
@@ -210,7 +210,7 @@ public class AnubisControl extends AbstractControl {
 	
 	private int calculateJumpSpeed(Point2D start, Point2D end){
 		double dist = end.getX() - start.getX();
-		if(dist < Speed.ENEMY_PATROL*60 && dist > -Speed.ENEMY_PATROL*60){
+		if(dist < Speed.ENEMY_PATROL*120 && dist > -Speed.ENEMY_PATROL*120){
 			if((int) dist/60 == 0 && dist > 0){
 				return 1;
 			}
@@ -219,11 +219,11 @@ public class AnubisControl extends AbstractControl {
 			}
 			return (int) dist/60;
 		}
-		else if(dist >= Speed.ENEMY_PATROL*60){
-			return Speed.ENEMY_PATROL;
+		else if(dist >= Speed.ENEMY_PATROL*120){
+			return Speed.ENEMY_PATROL*2;
 		}
 		else{
-			return -Speed.ENEMY_PATROL;
+			return -Speed.ENEMY_PATROL*2;
 		}
 	}
 	

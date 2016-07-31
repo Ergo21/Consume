@@ -48,6 +48,7 @@ public class EshuIControl extends AbstractControl {
 					moveStart = -1;
 					entity.getControl(PhysicsControl.class).moveX(0);
 					curAction = BossActions.RETURN;
+					target.<Enemy>getProperty(Property.DATA).CurrentHealthProperty().removeListener(this);
 				}
 			}
 		});;

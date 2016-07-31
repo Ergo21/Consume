@@ -55,7 +55,7 @@ public class Enemy {
 					curElement.set(Element.FIRE);
 					break;
 				}
-				case "LIGHTING": {
+				case "LIGHTNING": {
 					curElement.set(Element.LIGHTNING);
 					break;
 				}

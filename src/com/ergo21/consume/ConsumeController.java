@@ -445,7 +445,7 @@ public class ConsumeController {
 			e.setGraphics(new Rectangle(30,5));
 			e.setVisible(false);
 				
-			Texture t = consApp.getTexture("projectiles/Spear SS.png");
+			Texture t = consApp.getTexture(FileNames.SPEAR_PROJECTILE);
 			t.setPreserveRatio(true);
 			t.setFitWidth(30);
 			if(!consApp.player.<Boolean>getProperty("facingRight")){
@@ -501,7 +501,7 @@ public class ConsumeController {
 				e.setGraphics(new Rectangle(10,10));
 				e.setVisible(false);
 				
-				Texture t = consApp.getTexture("projectiles/Coal SS.png");
+				Texture t = consApp.getTexture(FileNames.COAL_PROJECTILE);
 				t = t.toStaticAnimatedTexture(3, Duration.seconds(0.5));
 				t.setPreserveRatio(true);
 				t.setFitHeight(15);
@@ -576,8 +576,8 @@ public class ConsumeController {
 				e2.setGraphics(new Rectangle(10,10));
 				e2.setVisible(false);
 				consApp.getTimerManager().runOnceAfter(() ->{
-					Texture t = consApp.getTexture("projectiles/Sand SS.png");
-					Texture t2 = consApp.getTexture("projectiles/Sand SS.png");
+					Texture t = consApp.getTexture(FileNames.SAND_PROJECTILE);
+					Texture t2 = consApp.getTexture(FileNames.SAND_PROJECTILE);
 					t = t.toStaticAnimatedTexture(3, Config.SAND_DECAY);
 					t.setPreserveRatio(true);
 					t.setFitHeight(20);
@@ -775,7 +775,7 @@ public class ConsumeController {
 				return;
 			}
 			if(Config.RELEASE){
-				Texture t = consApp.getTexture("projectiles/Ankh.png");
+				Texture t = consApp.getTexture(FileNames.ANKH_PROJECTILE);
 				t.setPreserveRatio(true);
 				t.setFitHeight(15);
 				e.setGraphics(t);
@@ -836,7 +836,7 @@ public class ConsumeController {
 				e.setGraphics(new Rectangle(30,5));
 				e.setVisible(false);
 
-				Texture t = consApp.getTexture("projectiles/Spear SS.png");
+				Texture t = consApp.getTexture(FileNames.SPEAR_PROJECTILE);
 				t.setPreserveRatio(true);
 				t.setFitWidth(30);
 				if(!source.<Boolean>getProperty("facingRight")){
@@ -872,7 +872,7 @@ public class ConsumeController {
 				e.setGraphics(new Rectangle(30,5));
 				e.setVisible(false);
 
-				Texture t = consApp.getTexture("projectiles/Spear SS.png");
+				Texture t = consApp.getTexture(FileNames.SPEAR_PROJECTILE);
 				t.setPreserveRatio(true);
 				t.setFitWidth(30);
 				if(!source.<Boolean>getProperty("facingRight")){
@@ -925,7 +925,7 @@ public class ConsumeController {
 				e.setGraphics(new Rectangle(10,10));
 				e.setVisible(false);
 				
-				Texture t = consApp.getTexture("projectiles/Coal SS.png");
+				Texture t = consApp.getTexture(FileNames.COAL_PROJECTILE);
 				t = t.toStaticAnimatedTexture(3, Duration.seconds(0.5));
 				t.setPreserveRatio(true);
 				t.setFitHeight(15);
@@ -991,8 +991,8 @@ public class ConsumeController {
 				e2.setGraphics(new Rectangle(10,10));
 				e2.setVisible(false);
 				consApp.getTimerManager().runOnceAfter(() ->{
-					Texture t = consApp.getTexture("projectiles/Sand SS.png");
-					Texture t2 = consApp.getTexture("projectiles/Sand SS.png");
+					Texture t = consApp.getTexture(FileNames.SAND_PROJECTILE);
+					Texture t2 = consApp.getTexture(FileNames.SAND_PROJECTILE);
 					t = t.toStaticAnimatedTexture(3, Config.SAND_DECAY);
 					t.setPreserveRatio(true);
 					t.setFitHeight(20);
@@ -1111,7 +1111,7 @@ public class ConsumeController {
 		}
 		case DEATH: {
 			if(Config.RELEASE){
-				Texture t = consApp.getTexture("projectiles/Ankh.png");
+				Texture t = consApp.getTexture(FileNames.ANKH_PROJECTILE);
 				t.setPreserveRatio(true);
 				t.setFitHeight(15);
 				e.setGraphics(t);
@@ -1184,7 +1184,7 @@ public class ConsumeController {
 			e.setGraphics(new Rectangle(10,10));
 			e.setVisible(false);
 			
-			Texture t = consApp.getTexture("projectiles/Coal SS.png");
+			Texture t = consApp.getTexture(FileNames.COAL_PROJECTILE);
 			t = t.toStaticAnimatedTexture(3, Duration.seconds(0.5));
 			t.setPreserveRatio(true);
 			t.setFitHeight(15);

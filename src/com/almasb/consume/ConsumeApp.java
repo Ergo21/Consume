@@ -31,6 +31,8 @@ import com.almasb.fxgl.GameApplication;
 import com.almasb.fxgl.asset.Assets;
 import com.almasb.fxgl.asset.SaveLoadManager;
 import com.almasb.fxgl.asset.Texture;
+import com.almasb.fxgl.asset.AssetManager;
+import com.almasb.fxgl.asset.AssetManager.Asset_Types;
 import com.almasb.fxgl.entity.Entity;
 import com.almasb.fxgl.entity.FXGLEvent;
 import com.almasb.fxgl.event.MenuEvent;
@@ -155,7 +157,7 @@ public class ConsumeApp extends GameApplication {
 			}
 		}
 		backVol = new SimpleDoubleProperty(sSettings.getBackMusicVolume());
-		sfxVol = new SimpleDoubleProperty(sSettings.getSFXVolume());
+		sfxVol = new SimpleDoubleProperty(sSettings.getSFXVolume()); 
 	}
 	
 	@Override
@@ -168,7 +170,7 @@ public class ConsumeApp extends GameApplication {
 	protected void initAssets() throws Exception {
 		if(assets == null){
 			//printMemoryUsage("Assets Before Init");
-			assets = getAssetManager().cache();
+			assets = getZoneAssets(0);
 			//printMemoryUsage("Assets After Init");
 			assets.logCached();
 		}
@@ -177,7 +179,7 @@ public class ConsumeApp extends GameApplication {
 	
 	private long lastMemory = 0;
 	public void printMemoryUsage(String label){
-		Runtime run = Runtime.getRuntime();
+		/*Runtime run = Runtime.getRuntime();
 		
 		long aMem = run.totalMemory();
 		long fMem = run.freeMemory();
@@ -192,12 +194,12 @@ public class ConsumeApp extends GameApplication {
 		//System.out.println("Max memory: " + run.maxMemory());
 		System.out.println("Used memory changed: " + cMem);
 		System.out.println("}");
-		System.out.println();
+		System.out.println();*/
 	}
 
 	@Override
 	protected void initGame() {
-		playerData = new Player(assets.getText("player.txt"));
+		playerData = new Player(assets.getText(FileNames.PLAYER_STATS));
 		if(newGamePlusGame){
 			playerData.getPowers().add(Element.NEUTRAL2);
 			playerData.getPowers().add(Element.FIRE);
@@ -361,7 +363,7 @@ public class ConsumeApp extends GameApplication {
 	protected void initInput() {
 		consController = new ConsumeController(this);
 		consController.initControls();
-		
+		/*
 		// TODO Remove manual spawn
 				getInputManager().addAction(new UserAction("Spawn Bandit Knifer"){
 					@Override
@@ -557,7 +559,7 @@ public class ConsumeApp extends GameApplication {
 				getInputManager().addAction(new UserAction("Level screen") {
 					@Override
 					protected void onActionBegin() {
-						showLevelScreen();
+					    showLevelScreen();
 					}
 				}, KeyCode.L);
 				
@@ -608,7 +610,7 @@ public class ConsumeApp extends GameApplication {
 						System.out.println("Climb: " + player.getProperty("climb"));
 						System.out.println("Climbing: " + player.getProperty("climbing"));
 					}
-				}, KeyCode.I);
+				}, KeyCode.I);*/
 	}
 
 	@Override
@@ -801,9 +803,10 @@ public class ConsumeApp extends GameApplication {
 	}
 
 	public void showLevelScreen(){
+	    getInputManager().setProcessActions(false);
 		fOutComMet = () -> {
 			consGameMenu.updatePowerMenu(playerData);
-
+			getInputManager().setProcessActions(true);
 			//this.getInputManager().
 			//this.getSceneManager().closeGameMenu();
 			this.soundManager.stopAll();
@@ -857,7 +860,7 @@ public class ConsumeApp extends GameApplication {
 			playerData.getLevsComp().clear();
 			playerData.getLevsComp().addAll(g.getLevsComp());
 			consGameMenu.updatePowerMenu(playerData);
-			soundManager.setBackgroundMusic(getBackgroundMusic());
+			soundManager.setBackgroundMusic(getBackgroundMusic(playerData.getCurrentLevel()));
 			soundManager.getBackgroundMusic().setCycleCount(Integer.MAX_VALUE);
 
 			changeLevel();
@@ -867,8 +870,8 @@ public class ConsumeApp extends GameApplication {
 		}
 	}
 
-	public String getBackgroundMusic(){
-		switch(playerData.getCurrentLevel()/3){
+	public String getBackgroundMusic(int level){
+		switch(level/3){
 			case 0:{
 				return FileNames.FOREST1_MUSIC;
 			}
@@ -992,7 +995,7 @@ public class ConsumeApp extends GameApplication {
 			if(playAni == null){
 				printMemoryUsage("Before Animated player control");
 				playAni = new AnimatedPlayerControl(player, playerData, getPlayerImages(),
-						assets.getTexture("spritesheets/player/Player SS.png"));
+						assets.getTexture(FileNames.PLAYER_DIR));
 				printMemoryUsage("After Animated player control");
 			}
 			else{
@@ -1165,6 +1168,233 @@ public class ConsumeApp extends GameApplication {
 	public Texture getTexture(String address) {
 		return assets.getTexture(address);
 	}
+	
+	public Assets getZoneAssets(int levelNumber) throws Exception {
+	    HashMap<Asset_Types, List<String>> toCache = new HashMap<>();
+	    toCache.put(Asset_Types.BINARY, new ArrayList<String>());
+	    toCache.put(Asset_Types.FONTS, new ArrayList<String>());
+	    toCache.put(Asset_Types.MUSIC, new ArrayList<String>());
+	    toCache.put(Asset_Types.SOUNDS, this.getAssetManager().loadFileNames(AssetManager.SOUNDS_DIR));
+	    toCache.put(Asset_Types.TEXT, this.getAssetManager().loadFileNames(AssetManager.TEXT_DIR));
+	    toCache.put(Asset_Types.TEXTURES, new ArrayList<String>());
+	    
+	    toCache.get(Asset_Types.MUSIC).add(FileNames.THEME_MUSIC);
+	    toCache.get(Asset_Types.MUSIC).add(this.getBackgroundMusic(levelNumber));
+	    
+	    toCache.get(Asset_Types.TEXTURES).add(FileNames.EMPTY);
+	    toCache.get(Asset_Types.TEXTURES).add(FileNames.U_DIRT_BLOCK);
+	    toCache.get(Asset_Types.TEXTURES).add(FileNames.S_DIRT_BLOCK);
+	    toCache.get(Asset_Types.TEXTURES).add(FileNames.PLAYER_DIR);
+	    toCache.get(Asset_Types.TEXTURES).add(FileNames.PLAYER_ICON);
+	    toCache.get(Asset_Types.TEXTURES).add(FileNames.LADDER_BLOCK);
+	    toCache.get(Asset_Types.TEXTURES).add(FileNames.FOOD_BLOCK); 
+	    toCache.get(Asset_Types.TEXTURES).add(FileNames.POWERUP_BLOCK);   
+	    toCache.get(Asset_Types.TEXTURES).add(FileNames.DEATH_BLOOD);
+	    toCache.get(Asset_Types.TEXTURES).add(FileNames.DEATH_COBBLE);
+	    
+	    toCache.get(Asset_Types.TEXTURES).add(FileNames.SPEAR_PROJECTILE);
+	    toCache.get(Asset_Types.TEXTURES).add(FileNames.ANKH_PROJECTILE);
+	    toCache.get(Asset_Types.TEXTURES).add(FileNames.COAL_PROJECTILE);
+	    toCache.get(Asset_Types.TEXTURES).add(FileNames.SAND_PROJECTILE);
+	    toCache.get(Asset_Types.TEXTURES).add(FileNames.FIREBALL_PROJ);
+	    toCache.get(Asset_Types.TEXTURES).add(FileNames.STONE_PROJ);
+
+	    switch(levelNumber){
+            case 0:
+            case 1:
+            case 2: {
+                toCache.get(Asset_Types.TEXTURES).add(FileNames.FOREST1_BACK_1);
+                toCache.get(Asset_Types.TEXTURES).add(FileNames.FOREST1_BACK_3);
+                toCache.get(Asset_Types.TEXTURES).add(FileNames.EMPIRE_BACK_2);
+                toCache.get(Asset_Types.TEXTURES).add(FileNames.U_DIRT_LINE);
+                toCache.get(Asset_Types.TEXTURES).add(FileNames.G_DIRT_BLOCK);
+                toCache.get(Asset_Types.TEXTURES).add(FileNames.CORPSE_BLOCK);
+                toCache.get(Asset_Types.TEXTURES).add(FileNames.ESHU_ICON);
+                toCache.get(Asset_Types.TEXTURES).add(FileNames.MOTHER_STAND);
+                String[] enemies = {FileNames.ELOKO_DIR, FileNames.BANDIT_K_DIR, FileNames.BANDIT_S_DIR, FileNames.ESHU_DIR};
+                for(String en : enemies){
+                    for(String fi : this.getAssetManager().loadFileNames(AssetManager.TEXTURES_DIR + en)){
+                        if(en.endsWith("/") || fi.startsWith("/")){
+                            toCache.get(Asset_Types.TEXTURES).add(en + fi);
+                        }
+                        else{
+                            toCache.get(Asset_Types.TEXTURES).add(en + "/" + fi);
+                        }
+                    }
+                }
+                break;
+            }
+            case 3:
+            case 4:
+            case 5: {
+                toCache.get(Asset_Types.TEXTURES).add(FileNames.DESERT_BACK_1);
+                toCache.get(Asset_Types.TEXTURES).add(FileNames.U_N_SAND_BLOCK);
+                toCache.get(Asset_Types.TEXTURES).add(FileNames.U_N_SAND_LINE);
+                toCache.get(Asset_Types.TEXTURES).add(FileNames.S_N_SAND_BLOCK);
+                toCache.get(Asset_Types.TEXTURES).add(FileNames.G_N_SAND_BLOCK);
+                String[] enemies = {FileNames.SCARAB_DIR, FileNames.LOCUST_DIR, FileNames.SCORPION_DIR, FileNames.GOLEM_DIR, FileNames.SAND_ELEPHANT_DIR};
+                for(String en : enemies){
+                    for(String fi : this.getAssetManager().loadFileNames(AssetManager.TEXTURES_DIR + en)){
+                        if(en.endsWith("/") || fi.startsWith("/")){
+                            toCache.get(Asset_Types.TEXTURES).add(en + fi);
+                        }
+                        else{
+                            toCache.get(Asset_Types.TEXTURES).add(en + "/" + fi);
+                        }
+                    }
+                }
+                break;
+            }
+            case 6:
+            case 7:
+            case 8: {
+                toCache.get(Asset_Types.TEXTURES).add(FileNames.PYRAMID_BACK_1);
+                toCache.get(Asset_Types.TEXTURES).add(FileNames.PYRAMID_BACK_2);
+                toCache.get(Asset_Types.TEXTURES).add(FileNames.COFFIN_BLOCK);
+                toCache.get(Asset_Types.TEXTURES).add(FileNames.ANUBIS_ICON);
+                toCache.get(Asset_Types.TEXTURES).add(FileNames.U_SAND_BLOCK);
+                toCache.get(Asset_Types.TEXTURES).add(FileNames.U_SAND_LINE);
+                toCache.get(Asset_Types.TEXTURES).add(FileNames.S_SAND_BLOCK);
+                toCache.get(Asset_Types.TEXTURES).add(FileNames.G_SAND_BLOCK);
+                toCache.get(Asset_Types.TEXTURES).add(FileNames.U_SANDSTONE_BLOCK);
+                toCache.get(Asset_Types.TEXTURES).add(FileNames.U_SANDSTONE_LINE);
+                toCache.get(Asset_Types.TEXTURES).add(FileNames.S_SANDSTONE_BLOCK);
+                toCache.get(Asset_Types.TEXTURES).add(FileNames.DES_SANDSTONE_BLOCK);
+                toCache.get(Asset_Types.TEXTURES).add(FileNames.S_DOOR);
+                String[] enemies = {FileNames.SCARAB_DIR, FileNames.SCORPION_DIR, FileNames.ICE_SPIRIT_DIR, FileNames.MUMMY_DIR, FileNames.ANUBIS_DIR};
+                for(String en : enemies){
+                    for(String fi : this.getAssetManager().loadFileNames(AssetManager.TEXTURES_DIR + en)){
+                        if(en.endsWith("/") || fi.startsWith("/")){
+                            toCache.get(Asset_Types.TEXTURES).add(en + fi);
+                        }
+                        else{
+                            toCache.get(Asset_Types.TEXTURES).add(en + "/" + fi);
+                        }
+                    }
+                }
+                break;
+            }
+            case 9:
+            case 10:
+            case 11: {
+                toCache.get(Asset_Types.TEXTURES).add(FileNames.FESTIVAL_BACK_1);
+                toCache.get(Asset_Types.TEXTURES).add(FileNames.U_DIRT_LINE);
+                toCache.get(Asset_Types.TEXTURES).add(FileNames.G_DIRT_BLOCK);
+                toCache.get(Asset_Types.TEXTURES).add(FileNames.DES_THATCH_BLOCK);
+                toCache.get(Asset_Types.TEXTURES).add(FileNames.SHANGO_ICON);
+                String[] enemies = {FileNames.MUSICIAN_DIR, FileNames.DANCERS_DIR, FileNames.DOG_DIR, FileNames.SHANGO_DIR};
+                for(String en : enemies){
+                    for(String fi : this.getAssetManager().loadFileNames(AssetManager.TEXTURES_DIR + en)){
+                        if(en.endsWith("/") || fi.startsWith("/")){
+                            toCache.get(Asset_Types.TEXTURES).add(en + fi);
+                        }
+                        else{
+                            toCache.get(Asset_Types.TEXTURES).add(en + "/" + fi);
+                        }
+                    }
+                }
+                break;
+            }
+            case 12:
+            case 13:
+            case 14: {
+                toCache.get(Asset_Types.TEXTURES).add(FileNames.FOREST1_BACK_2);
+                toCache.get(Asset_Types.TEXTURES).add(FileNames.FOREST1_BACK_3);
+                toCache.get(Asset_Types.TEXTURES).add(FileNames.EMPIRE_BACK_2);
+                toCache.get(Asset_Types.TEXTURES).add(FileNames.U_DIRT_LINE);
+                toCache.get(Asset_Types.TEXTURES).add(FileNames.G_DIRT_BLOCK);
+                toCache.get(Asset_Types.TEXTURES).add(FileNames.CORPSE_BLOCK);
+                toCache.get(Asset_Types.TEXTURES).add(FileNames.ESHU_ICON);
+                toCache.get(Asset_Types.TEXTURES).add(FileNames.MOTHER_DEAD);
+                toCache.get(Asset_Types.TEXTURES).add(FileNames.MOTHER_LYING);
+                String[] enemies = {FileNames.ELOKO_DIR, FileNames.BANDIT_K_DIR, FileNames.BANDIT_S_DIR, FileNames.BANDIT_M_DIR, FileNames.ESHU_DIR};
+                for(String en : enemies){
+                    for(String fi : this.getAssetManager().loadFileNames(AssetManager.TEXTURES_DIR + en)){
+                        if(en.endsWith("/") || fi.startsWith("/")){
+                            toCache.get(Asset_Types.TEXTURES).add(en + fi);
+                        }
+                        else{
+                            toCache.get(Asset_Types.TEXTURES).add(en + "/" + fi);
+                        }
+                    }
+                }
+                break;
+            }
+            case 15:
+            case 16:
+            case 17: {
+                toCache.get(Asset_Types.TEXTURES).add(FileNames.MOUNTAIN_BACK_1);
+                toCache.get(Asset_Types.TEXTURES).add(FileNames.MOUNTAIN_BACK_2);
+                toCache.get(Asset_Types.TEXTURES).add(FileNames.U_DIRT_LINE);
+                toCache.get(Asset_Types.TEXTURES).add(FileNames.U_STONE_BLOCK);
+                toCache.get(Asset_Types.TEXTURES).add(FileNames.U_STONE_LINE);
+                toCache.get(Asset_Types.TEXTURES).add(FileNames.S_STONE_BLOCK);
+                toCache.get(Asset_Types.TEXTURES).add(FileNames.SN_STONE_BLOCK);
+                toCache.get(Asset_Types.TEXTURES).add(FileNames.DES_ICE_BLOCK);
+                toCache.get(Asset_Types.TEXTURES).add(FileNames.CAVE);
+                toCache.get(Asset_Types.TEXTURES).add(FileNames.KIBO_ICON);
+                String[] enemies = {FileNames.ICE_SPIRIT_DIR, FileNames.GOLEM_DIR, FileNames.BANDIT_K_DIR, FileNames.KIBO_DIR};
+                for(String en : enemies){
+                    for(String fi : this.getAssetManager().loadFileNames(AssetManager.TEXTURES_DIR + en)){
+                        if(en.endsWith("/") || fi.startsWith("/")){
+                            toCache.get(Asset_Types.TEXTURES).add(en + fi);
+                        }
+                        else{
+                            toCache.get(Asset_Types.TEXTURES).add(en + "/" + fi);
+                        }
+                    }
+                }
+                break;
+            }
+            case 18:
+            case 19:
+            case 20: {
+                toCache.get(Asset_Types.TEXTURES).add(FileNames.COLONY_BACK_1);
+                toCache.get(Asset_Types.TEXTURES).add(FileNames.U_DIRT_LINE);
+                toCache.get(Asset_Types.TEXTURES).add(FileNames.G_DIRT_BLOCK);
+                toCache.get(Asset_Types.TEXTURES).add(FileNames.ST_DIRT_BLOCK);
+                toCache.get(Asset_Types.TEXTURES).add(FileNames.DES_CRATE_BLOCK);
+                toCache.get(Asset_Types.TEXTURES).add(FileNames.GENTLEMAN_ICON);
+                String[] enemies = {FileNames.CANNON_DIR, FileNames.BRITISH_DIR, FileNames.GENTLEMAN_DIR};
+                for(String en : enemies){
+                    for(String fi : this.getAssetManager().loadFileNames(AssetManager.TEXTURES_DIR + en)){
+                        if(en.endsWith("/") || fi.startsWith("/")){
+                            toCache.get(Asset_Types.TEXTURES).add(en + fi);
+                        }
+                        else{
+                            toCache.get(Asset_Types.TEXTURES).add(en + "/" + fi);
+                        }
+                    }
+                }
+                break;
+            }
+            case 21:
+            case 22:
+            case 23: {
+                toCache.get(Asset_Types.TEXTURES).add(FileNames.EMPIRE_BACK_1);
+                toCache.get(Asset_Types.TEXTURES).add(FileNames.EMPIRE_BACK_2);
+                toCache.get(Asset_Types.TEXTURES).add(FileNames.G_DIRT_BLOCK);
+                toCache.get(Asset_Types.TEXTURES).add(FileNames.U_DIRT_LINE);
+                toCache.get(Asset_Types.TEXTURES).add(FileNames.DES_LIMESTONE_BLOCK);
+                toCache.get(Asset_Types.TEXTURES).add(FileNames.W_DOOR);
+                toCache.get(Asset_Types.TEXTURES).add(FileNames.SHAKA_ICON);
+                String[] enemies = {FileNames.ZULU_K_DIR, FileNames.ZULU_SH_DIR, FileNames.ZULU_SP_DIR, FileNames.SHAKA_DIR};
+                for(String en : enemies){
+                    for(String fi : this.getAssetManager().loadFileNames(AssetManager.TEXTURES_DIR + en)){
+                        if(en.endsWith("/") || fi.startsWith("/")){
+                            toCache.get(Asset_Types.TEXTURES).add(en + fi);
+                        }
+                        else{
+                            toCache.get(Asset_Types.TEXTURES).add(en + "/" + fi);
+                        }
+                    }
+                }
+                break;
+            }
+	    }
+	    
+	    return this.getAssetManager().cacheGiven(toCache);
+	}
 
 	private ArrayList<Entity> collectBarriersVLine(Entity block){
 		block.setProperty("state", "dying");
@@ -1273,6 +1503,21 @@ public class ConsumeApp extends GameApplication {
 	}
 	
 	public static void main(String[] args) {
-		launch(args);
+	    for(String s : args){
+	        if(s.contains("-Xmx")){
+	            launch(args);
+	            return;
+	        }
+	    }
+	    
+	    String[] args2 = new String[args.length+1];
+	    
+	    for(int i = 0; i < args.length; i++){
+	        args2[i] = args[i];
+	    }
+	    
+	    args2[args.length] = "-Xmx1024M";
+	    
+		launch(args2);
 	}
 }
