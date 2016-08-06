@@ -168,13 +168,10 @@ public class ConsumeApp extends GameApplication {
 
 	@Override
 	protected void initAssets() throws Exception {
-		if(assets == null){
-			//printMemoryUsage("Assets Before Init");
-			assets = getZoneAssets(0);
-			//printMemoryUsage("Assets After Init");
-			assets.logCached();
-		}
-		
+		//printMemoryUsage("Assets Before Init");
+		assets = getZoneAssets(0);
+		//printMemoryUsage("Assets After Init");
+		//assets.logCached();
 	}
 	
 	private long lastMemory = 0;

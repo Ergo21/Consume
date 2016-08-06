@@ -23,6 +23,8 @@ public final class Config {
 	}
 	
 	public static final boolean RELEASE = true;
+	
+	public static final boolean MEMORY_LEAK_CHECK = true;
 
 	public static final int BLOCK_SIZE = 40;
 
